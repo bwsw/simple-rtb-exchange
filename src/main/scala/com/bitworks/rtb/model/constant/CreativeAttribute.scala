@@ -5,7 +5,7 @@ package com.bitworks.rtb.model.constant
   *
   * See List 5.3 in documentation
   */
-object CreativeAttributes extends Enumeration{
+object CreativeAttribute extends Enumeration{
   val audioAdAutoPlay = Value(1)
   val audioAdUserInitiated = Value(2)
   val expandableAutomatic = Value(3)

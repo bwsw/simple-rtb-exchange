@@ -1,6 +1,6 @@
 package com.bitworks.rtb.model.response.builder
 
-import com.bitworks.rtb.model.constant.{CreativeAttributes, NoBidReason}
+import com.bitworks.rtb.model.constant.{CreativeAttribute, NoBidReason}
 import com.bitworks.rtb.model.response.Bid
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -17,18 +17,18 @@ class BidBuilderTest extends FlatSpec with Matchers{
 
   it should "build Bid with enum attributes" in {
     val bid = BidBuilder.builder("one", "two", "12.5")
-      .withAttr(Set(CreativeAttributes.adCanBeSkipped, CreativeAttributes.hasAudioOnOffButton))
+      .withAttr(Set(CreativeAttribute.adCanBeSkipped, CreativeAttribute.hasAudioOnOffButton))
       .build
 
     bid.attr shouldBe defined
     bid.attr.orNull should contain theSameElementsAs
-      Set(CreativeAttributes.hasAudioOnOffButton, CreativeAttributes.adCanBeSkipped)
+      Set(CreativeAttribute.hasAudioOnOffButton, CreativeAttribute.adCanBeSkipped)
   }
 
   it should "correctly build whole Bid" in {
     val bid = Bid("id", "impid", BigDecimal("42.42"), Some("adid"), Some("nurl"),
       Some("adm"), Some(Seq("adomain")), Some("bundle"), Some("iurl"), Some("cid"),
-      Some("crid"), Some(Seq("cat")), Some(Set(CreativeAttributes.audioAdAutoPlay)),
+      Some("crid"), Some(Seq("cat")), Some(Set(CreativeAttribute.audioAdAutoPlay)),
       Some("dealid"), Some(42), Some(12), Some("Just any"))
 
     val buildedBid = BidBuilder.builder("id", "impid", "42.42")
@@ -41,7 +41,7 @@ class BidBuilderTest extends FlatSpec with Matchers{
       .withCid("cid")
       .withCrid("crid")
       .withCat(Seq("cat"))
-      .withAttr(Set(CreativeAttributes.audioAdAutoPlay))
+      .withAttr(Set(CreativeAttribute.audioAdAutoPlay))
       .withDealid("dealid")
       .withH(42)
       .withW(12)

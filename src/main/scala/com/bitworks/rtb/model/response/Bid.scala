@@ -1,6 +1,6 @@
 package com.bitworks.rtb.model.response
 
-import com.bitworks.rtb.model.constant.CreativeAttributes
+import com.bitworks.rtb.model.constant.CreativeAttribute
 
 /** An offer to buy a specific impression under certain business terms.
   *
@@ -35,7 +35,7 @@ case class Bid(
                 nurl: Option[String], adm: Option[String], adomain: Option[Seq[String]],
                 bundle: Option[String], iurl: Option[String],
                 cid: Option[String], crid: Option[String], cat: Option[Seq[String]],
-                attr: Option[Set[CreativeAttributes.Value]], dealid: Option[String],
+                attr: Option[Set[CreativeAttribute.Value]], dealid: Option[String],
                 h: Option[Int], w: Option[Int], ext: Option[Any]
               )
 

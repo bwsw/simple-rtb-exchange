@@ -1,7 +1,7 @@
 package com.bitworks.rtb.model.response.builder
 
 import com.bitworks.rtb.model.response.Bid
-import com.bitworks.rtb.model.constant.CreativeAttributes
+import com.bitworks.rtb.model.constant.CreativeAttribute
 
 /** Builder for Bid model  */
 object BidBuilder{
@@ -16,7 +16,7 @@ object BidBuilder{
     private var cid: Option[String] = None
     private var crid: Option[String] = None
     private var cat: Option[Seq[String]] = None
-    private var attr: Option[Set[CreativeAttributes.Value]] = None
+    private var attr: Option[Set[CreativeAttribute.Value]] = None
     private var dealid: Option[String] = None
     private var h: Option[Int] = None
     private var w: Option[Int] = None
@@ -31,7 +31,7 @@ object BidBuilder{
     def withCid(s: String) = { cid = Some(s); this }
     def withCrid(s: String) = { crid = Some(s); this }
     def withCat(s: Seq[String]) = { cat = Some(s); this }
-    def withAttr(s: Set[CreativeAttributes.Value]) = { attr = Some(s); this }
+    def withAttr(s: Set[CreativeAttribute.Value]) = { attr = Some(s); this }
     def withDealid(s: String) = { dealid = Some(s); this }
     def withH(i: Int) = { h = Some(i); this }
     def withW(i: Int) = { w = Some(i); this }
