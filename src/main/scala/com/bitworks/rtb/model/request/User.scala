@@ -20,7 +20,12 @@ package com.bitworks.rtb.model.request
   * @param ext Placeholder for exchange-specific extensions to OpenRTB.
   */
 case class User(
-                 id: Option[String], buyerid: Option[String], yob: Option[Int],
-                 gender: Option[String], keywords: Option[String], customdata: Option[String],
-                 geo: Option[Geo], data: Option[Seq[Data]], ext: Option[Any]
-               )
+    id: Option[String],
+    buyerid: Option[String],
+    yob: Option[Int],
+    gender: Option[String],
+    keywords: Option[String],
+    customdata: Option[String],
+    geo: Option[Geo],
+    data: Option[Seq[Data]],
+    ext: Option[Any])

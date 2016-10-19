@@ -8,16 +8,16 @@ class UserBuilderTest extends FlatSpec with Matchers{
   "UserBuilder" should "build User correctly" in {
     val user = User(Some("id"), Some("buyerid"), Some(2016),
       Some("gender"), Some("keywords"), Some("customdata"),
-      Some(GeoBuilder.builder.build), Some(Seq.empty), Some("ext"))
+      Some(GeoBuilder().build), Some(Seq.empty), Some("ext"))
 
-    val buildedUser = UserBuilder.builder
+    val buildedUser = UserBuilder()
         .withId("id")
         .withBuyerid("buyerid")
         .withYob(2016)
         .withGender("gender")
         .withKeywords("keywords")
         .withCustomdata("customdata")
-        .withGeo(GeoBuilder.builder.build)
+        .withGeo(GeoBuilder().build)
         .withData(Seq.empty)
         .withExt("ext")
         .build

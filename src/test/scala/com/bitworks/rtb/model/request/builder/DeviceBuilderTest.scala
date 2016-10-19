@@ -7,7 +7,7 @@ import org.scalatest.{FlatSpec, Matchers}
 class DeviceBuilderTest extends FlatSpec with Matchers{
 
   "DeviceBuilder" should "build Device correctly" in {
-    val device = Device(Some("ua"), Some(GeoBuilder.builder.build), Some(1), Some(2),
+    val device = Device(Some("ua"), Some(GeoBuilder().build), Some(1), Some(2),
       Some("ip"), Some("ipv6"), Some(DeviceType.pc), Some("make"),
       Some("model"), Some("os"), Some("osv"), Some("hwv"), Some(3),
       Some(4), Some(5), Some(6), Some(7), Some("flashver"),
@@ -15,9 +15,9 @@ class DeviceBuilderTest extends FlatSpec with Matchers{
       Some("didsha1"), Some("didmd5"), Some("dpidsha1"), Some("dpidmd5"),
       Some("macsha1"), Some("macmd5"), Some("ext"))
 
-    val buildedDevice = DeviceBuilder.builder
+    val buildedDevice = DeviceBuilder()
       .withUa("ua")
-      .withGeo(GeoBuilder.builder.build)
+      .withGeo(GeoBuilder().build)
       .withDnt(1)
       .withLmt(2)
       .withIp("ip")

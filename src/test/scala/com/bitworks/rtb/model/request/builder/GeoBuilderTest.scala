@@ -7,13 +7,13 @@ import org.scalatest.{FlatSpec, Matchers}
 class GeoBuilderTest extends FlatSpec with Matchers{
 
   "GeoBuilder" should "build Geo correctly" in {
-    val geo = Geo(Some(42.42), Some(24.24), Some(LocationType.ipAddress),
+    val geo = Geo(Some(42.42.toFloat), Some(24.24.toFloat), Some(LocationType.ipAddress),
       Some("country"), Some("region"), Some("regionFips"), Some("metro"),
       Some("city"), Some("zip"), Some(14), Some("string"))
 
-    val buildedGeo = GeoBuilder.builder
-      .withLat(42.42)
-      .withLon(24.24)
+    val buildedGeo = GeoBuilder()
+      .withLat(42.42.toFloat)
+      .withLon(24.24.toFloat)
       .withType(LocationType.ipAddress)
       .withCountry("country")
       .withRegion("region")

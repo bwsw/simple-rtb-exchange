@@ -8,7 +8,7 @@ class CommonBuilderTest extends FlatSpec with Matchers{
   "RegsBuilder" should "build Regs correctly" in {
     val regs = Regs(42, Some("ext"))
 
-    val buildedRegs = RegsBuilder.builder
+    val buildedRegs = RegsBuilder()
       .withCoppa(42)
       .withExt("ext")
       .build
@@ -19,7 +19,7 @@ class CommonBuilderTest extends FlatSpec with Matchers{
   "SegmentBuilder" should "build Segment correctly" in {
     val segment = Segment(Some("id"), Some("name"), Some("value"), Some("ext"))
 
-    val buildedSegment = SegmentBuilder.builder
+    val buildedSegment = SegmentBuilder()
       .withId("id")
       .withName("name")
       .withValue("value")
@@ -33,7 +33,7 @@ class CommonBuilderTest extends FlatSpec with Matchers{
     val data = Data(Some("id"), Some("name"),
       Some(Seq.empty), Some("ext"))
 
-    val buildedData = DataBuilder.builder
+    val buildedData = DataBuilder()
       .withId("id")
       .withName("name")
       .withSegment(Seq.empty)

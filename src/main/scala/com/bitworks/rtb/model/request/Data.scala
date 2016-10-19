@@ -15,6 +15,7 @@ package com.bitworks.rtb.model.request
   * @param ext Placeholder for exchange-specific extensions to OpenRTB.
   */
 case class Data(
-                 id: Option[String], name: Option[String],
-                 segment: Option[Seq[Segment]], ext: Option[Any]
-               )
+    id: Option[String],
+    name: Option[String],
+    segment: Option[Seq[Segment]],
+    ext: Option[Any])

@@ -12,6 +12,7 @@ package com.bitworks.rtb.model.request
   * @param ext Placeholder for exchange-specific extensions to OpenRTB
   */
 case class Segment(
-                    id: Option[String], name: Option[String],
-                    value: Option[String], ext: Option[Any]
-                  )
+    id: Option[String],
+    name: Option[String],
+    value: Option[String],
+    ext: Option[Any])

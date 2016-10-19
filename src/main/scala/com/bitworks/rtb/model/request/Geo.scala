@@ -26,8 +26,14 @@ import com.bitworks.rtb.model.constant.LocationType
   * @param ext Placeholder for exchange-specific extensions to OpenRTB.
   */
 case class Geo(
-                lat: Option[Double], lon: Option[Double], `type`: Option[LocationType.Value],
-                country: Option[String], region: Option[String], regionfips104: Option[String],
-                metro: Option[String], city: Option[String], zip: Option[String],
-                utcoffset: Option[Int], ext: Option[Any]
-              )
+    lat: Option[Float],
+    lon: Option[Float],
+    `type`: Option[LocationType.Value],
+    country: Option[String],
+    region: Option[String],
+    regionfips104: Option[String],
+    metro: Option[String],
+    city: Option[String],
+    zip: Option[String],
+    utcoffset: Option[Int],
+    ext: Option[Any])
