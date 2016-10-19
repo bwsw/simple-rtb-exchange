@@ -1,9 +1,14 @@
 package com.bitworks.rtb.model.response
 
-import com.bitworks.rtb.model.constant._
-
 /** Bid response top level object
- *
+  *
+  * Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  *
   * @param id ID of the bid request to which this is a response.
   * @param seatbid Array of seatbid objects; 1+ required if a bid is to be made.
   * @param bidid Bidder generated response ID to assist with logging/tracking.
@@ -21,6 +26,6 @@ case class BidResponse(
     bidid: Option[String],
     cur: String,
     customData: Option[String],
-    nbr: Option[NoBidReason.Value],
+    nbr: Option[Int],
     ext: Option[Any])
 

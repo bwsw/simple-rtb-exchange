@@ -3,7 +3,13 @@ package com.bitworks.rtb.model.response.builder
 import com.bitworks.rtb.model.response.SeatBid
 import org.scalatest.{FlatSpec, Matchers}
 
-
+/** Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  */
 class SeatBidTest extends FlatSpec with Matchers{
   "SeatBidBuilder" should "build SeatBid with required attributes" in {
     val seatBid = SeatBidBuilder(Seq.empty).build

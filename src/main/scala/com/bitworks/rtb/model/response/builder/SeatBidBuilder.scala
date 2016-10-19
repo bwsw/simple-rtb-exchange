@@ -2,7 +2,15 @@ package com.bitworks.rtb.model.response.builder
 
 import com.bitworks.rtb.model.response.{Bid, SeatBid}
 
-/** Builder for SeatBid model  */
+/** Builder for SeatBid model
+  *
+  * Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  */
 protected class SeatBidBuilder(bid: Seq[Bid]){
   private var seat: Option[String] = None
   private var group: Int = 0

@@ -1,11 +1,17 @@
 package com.bitworks.rtb.model.response
 
-import com.bitworks.rtb.model.constant.CreativeAttribute
 
 /** An offer to buy a specific impression under certain business terms.
   *
   * A SeatBid object contains one or more Bid objects, each of which relates to a specific impression in the
   * bid request via the impid attribute and constitutes an offer to buy that impression for a given price.
+  *
+  * Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   *
   * @param id Bidder generated bid ID to assist with logging/tracking.
   * @param impid ID of the Imp object in the related bid request.
@@ -43,7 +49,7 @@ case class Bid(
     cid: Option[String],
     crid: Option[String],
     cat: Option[Seq[String]],
-    attr: Option[Set[CreativeAttribute.Value]],
+    attr: Option[Set[Int]],
     dealid: Option[String],
     h: Option[Int],
     w: Option[Int],
