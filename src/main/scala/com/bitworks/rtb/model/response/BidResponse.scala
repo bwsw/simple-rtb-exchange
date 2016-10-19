@@ -15,10 +15,12 @@ import com.bitworks.rtb.model.constant._
   * @param nbr Reason for not bidding. Refer to List 5.19.
   * @param ext Placeholder for bidder-specific extensions to OpenRTB.
   */
-
 case class BidResponse(
-                        id: String, seatbid: Seq[SeatBid], bidid: Option[String],
-                        cur: String, customData: Option[String], nbr: Option[NoBidReason.Value],
-                        ext: Option[Any]
-                      )
+    id: String,
+    seatbid: Seq[SeatBid],
+    bidid: Option[String],
+    cur: String,
+    customData: Option[String],
+    nbr: Option[NoBidReason.Value],
+    ext: Option[Any])
 

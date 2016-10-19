@@ -7,7 +7,7 @@ import org.scalatest.{FlatSpec, Matchers}
 class BidBuilderTest extends FlatSpec with Matchers{
 
   "BidBuilder" should "build Bid with required attributes" in {
-    val bid = BidBuilder.builder("one", "two", "12.5").build
+    val bid = BidBuilder("one", "two", "12.5").build
 
     bid.id shouldBe "one"
     bid.impid shouldBe "two"
@@ -16,7 +16,7 @@ class BidBuilderTest extends FlatSpec with Matchers{
   }
 
   it should "build Bid with enum attributes" in {
-    val bid = BidBuilder.builder("one", "two", "12.5")
+    val bid = BidBuilder("one", "two", "12.5")
       .withAttr(Set(CreativeAttribute.adCanBeSkipped, CreativeAttribute.hasAudioOnOffButton))
       .build
 
@@ -31,7 +31,7 @@ class BidBuilderTest extends FlatSpec with Matchers{
       Some("crid"), Some(Seq("cat")), Some(Set(CreativeAttribute.audioAdAutoPlay)),
       Some("dealid"), Some(42), Some(12), Some("Just any"))
 
-    val buildedBid = BidBuilder.builder("id", "impid", "42.42")
+    val buildedBid = BidBuilder("id", "impid", "42.42")
       .withAdid("adid")
       .withNurl("nurl")
       .withAdm("adm")

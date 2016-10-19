@@ -6,7 +6,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class BidResponseBuilderTest extends FlatSpec with Matchers{
   "BidResponseBuilder" should "build BidResponse with required attributes" in {
-    val bidResponse = BidResponseBuilder.builder("one", Seq.empty).build
+    val bidResponse = BidResponseBuilder("one", Seq.empty).build
 
     bidResponse.id shouldBe "one"
     bidResponse.seatbid shouldBe empty
@@ -14,7 +14,7 @@ class BidResponseBuilderTest extends FlatSpec with Matchers{
   }
 
   it should "use default value for attribute" in {
-    val bidResponse = BidResponseBuilder.builder("one", Seq.empty).build
+    val bidResponse = BidResponseBuilder("one", Seq.empty).build
 
     bidResponse.cur shouldBe "USD"
   }
@@ -23,7 +23,7 @@ class BidResponseBuilderTest extends FlatSpec with Matchers{
     val bidResponse = BidResponse("id", Seq.empty, Some("bidid"), "EUR",
       Some("custom"), Some(NoBidReason.technicalError), Some("string"))
 
-    val buildedBidResponse = BidResponseBuilder.builder("id", Seq.empty)
+    val buildedBidResponse = BidResponseBuilder("id", Seq.empty)
       .withBidId("bidid")
       .withCur("EUR")
       .withCustomData("custom")

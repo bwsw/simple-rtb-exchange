@@ -31,11 +31,21 @@ import com.bitworks.rtb.model.constant.CreativeAttribute
   * @param ext Placeholder for bidder-specific extensions to OpenRTB.
   */
 case class Bid(
-                id: String, impid: String, price: BigDecimal, adid: Option[String],
-                nurl: Option[String], adm: Option[String], adomain: Option[Seq[String]],
-                bundle: Option[String], iurl: Option[String],
-                cid: Option[String], crid: Option[String], cat: Option[Seq[String]],
-                attr: Option[Set[CreativeAttribute.Value]], dealid: Option[String],
-                h: Option[Int], w: Option[Int], ext: Option[Any]
-              )
+    id: String,
+    impid: String,
+    price: BigDecimal,
+    adid: Option[String],
+    nurl: Option[String],
+    adm: Option[String],
+    adomain: Option[Seq[String]],
+    bundle: Option[String],
+    iurl: Option[String],
+    cid: Option[String],
+    crid: Option[String],
+    cat: Option[Seq[String]],
+    attr: Option[Set[CreativeAttribute.Value]],
+    dealid: Option[String],
+    h: Option[Int],
+    w: Option[Int],
+    ext: Option[Any])
 
