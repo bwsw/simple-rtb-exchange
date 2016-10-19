@@ -39,8 +39,6 @@ class ImageBuilderSuite extends FunSuite {
           Some(80),
           Some(20),
           Some(Seq("image/jpg")),
-          Some("ext")
-        )
-    )
+          Some("ext")))
   }
 }

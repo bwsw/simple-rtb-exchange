@@ -34,8 +34,6 @@ class VideoBuilderSuite extends FunSuite {
           Some(10),
           Some(30),
           Some(Seq(1, 4)),
-          Some("ext")
-        )
-    )
+          Some("ext")))
   }
 }
