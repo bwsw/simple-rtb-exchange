@@ -1,6 +1,15 @@
 package com.bitworks.rtb.model.request.native_adv
 
-/** The main container object for each asset requested or supported by Exchange
+/**
+  *
+  * Created on: 10/18/2016
+  *
+  * @author Tomskih Pavel
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  *
+  * The main container object for each asset requested or supported by Exchange
   * on behalf of the rendering client.
   *
   * @param id       unique assets id
@@ -12,10 +21,10 @@ package com.bitworks.rtb.model.request.native_adv
   * @param ext      a placeholder for exchange-specific extensions to OpenRTB
   */
 case class Asset(
-                  id: Int,
-                  required: Boolean,
-                  title: Option[Title],
-                  img: Option[Image],
-                  video: Option[Video],
-                  data: Option[Data],
-                  ext: Option[Any])
+    id: Int,
+    required: Boolean,
+    title: Option[Title],
+    img: Option[Image],
+    video: Option[Video],
+    data: Option[Data],
+    ext: Option[Any])
