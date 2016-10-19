@@ -8,10 +8,7 @@ package com.bitworks.rtb.request
   * @param domain highest level domain of the publisher
   */
 class Publisher(
-                 val id: String,
-                 val name: String,
-                 val cat: Array[String],
-                 val domain: String
-               ) {
-
-}
+    id: Option[String],
+    name: Option[String],
+    cat: Option[Array[String]],
+    domain: Option[String])

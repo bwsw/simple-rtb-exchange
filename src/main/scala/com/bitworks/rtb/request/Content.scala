@@ -23,25 +23,22 @@ package com.bitworks.rtb.request
   * @param embeddable true if content is embeddable
   */
 class Content(
-               val id: String,
-               val episode: Int,
-               val title: String,
-               val series: String,
-               val season: String,
-               val producer: Producer,
-               val url: String,
-               val cat: Array[String],
-               val videoQuality: Int,
-               val context: Int,
-               val contentRating: String,
-               val userRating: String,
-               val qagMediaRating: Int,
-               val keyWords: String,
-               val liveStream: Boolean,
-               val sourceRelationship: Int,
-               val len: Int,
-               val language: String,
-               val embeddable: Boolean
-             ) {
-
-}
+    id: Option[String],
+    episode: Option[Int],
+    title: Option[String],
+    series: Option[String],
+    season: Option[String],
+    producer: Option[Producer],
+    url: Option[String],
+    cat: Option[Array[String]],
+    videoQuality: Option[Int],
+    context: Option[Int],
+    contentRating: Option[String],
+    userRating: Option[String],
+    qagMediaRating: Option[Int],
+    keyWords: Option[String],
+    liveStream: Option[Boolean],
+    sourceRelationship: Option[Int],
+    len: Option[Int],
+    language: Option[String],
+    embeddable: Option[Option[Boolean]])

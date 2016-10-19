@@ -18,20 +18,17 @@ package com.bitworks.rtb.request
   * @param keyWords comma separated list of keywords about the site
   */
 class Site(
-            val id: String,
-            val name: String,
-            val domain: String,
-            val cat: Array[String],
-            val sectionCat: Array[String],
-            val pageCat: Array[String],
-            val page: String,
-            val ref: String,
-            val search: String,
-            val mobile: Boolean,
-            val privacyPolicy: Boolean,
-            val publisher: Publisher,
-            val content: Content,
-            val keyWords: String
-          ) {
-
-}
+    id: Option[String],
+    name: Option[String],
+    domain: Option[String],
+    cat: Option[Array[String]],
+    sectionCat: Option[Array[String]],
+    pageCat: Option[Array[String]],
+    page: Option[String],
+    ref: Option[String],
+    search: Option[String],
+    mobile: Option[Boolean],
+    privacyPolicy: Option[Boolean],
+    publisher: Option[Publisher],
+    content: Option[Content],
+    keyWords: Option[String])

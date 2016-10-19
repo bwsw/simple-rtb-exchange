@@ -1,6 +1,15 @@
 package com.bitworks.rtb.request
 
-/** Describes the non-browser application in which the ad will be shown.
+/**
+  *
+  * Created on: 10/19/2016
+  *
+  * @author Tomskih Pavel
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  * 
+  * Describes the non-browser application in which the ad will be shown.
   *
   * @param id exchange-specific app ID
   * @param name app name
@@ -17,21 +26,18 @@ package com.bitworks.rtb.request
   * @param content details about the Content
   * @param keyWords comma separated list of keywords about the app
   */
-class App(
-           val id: String,
-           val name: String,
-           val bundle: String,
-           val domain: String,
-           val storeUrl: String,
-           val cat: Array[String],
-           val sectionCat: Array[String],
-           val pageCat: Array[String],
-           val ver: String,
-           val privacyPolicy: Boolean,
-           val paid: Boolean,
-           val publisher: Publisher,
-           val content: Content,
-           val keyWords: String
-         ) {
-
-}
+case class App(
+    id: Option[String],
+    name: Option[String],
+    bundle: Option[String],
+    domain: Option[String],
+    storeUrl: Option[String],
+    cat: Option[Array[String]],
+    sectionCat: Option[Array[String]],
+    pageCat: Option[Array[String]],
+    ver: Option[String],
+    privacyPolicy: Option[Boolean],
+    paid: Option[Boolean],
+    publisher: Option[Publisher],
+    content: Option[Content],
+    keyWords: Option[String])
