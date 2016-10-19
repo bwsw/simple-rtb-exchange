@@ -6,7 +6,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class SeatBidTest extends FlatSpec with Matchers{
   "SeatBidBuilder" should "build SeatBid with required attributes" in {
-    val seatBid = SeatBidBuilder.builder(Seq.empty).build
+    val seatBid = SeatBidBuilder(Seq.empty).build
 
     seatBid.bid shouldBe empty
   }
@@ -14,7 +14,7 @@ class SeatBidTest extends FlatSpec with Matchers{
  it should "correctly build whole SeatBid" in {
    val seatBid = SeatBid(Seq.empty, Some("seat"), 1, Some("string"))
 
-   val buildedSeatBid = SeatBidBuilder.builder(Seq.empty)
+   val buildedSeatBid = SeatBidBuilder(Seq.empty)
      .withSeat("seat")
      .withGroup(1)
      .withExt("string")
