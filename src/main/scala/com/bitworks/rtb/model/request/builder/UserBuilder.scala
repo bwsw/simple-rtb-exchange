@@ -2,8 +2,16 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{Data, Geo, User}
 
-/** Builder for User model  */
-class UserBuilder private{
+/** Builder for User model
+  *
+  * Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  */
+class UserBuilder private {
   private var id: Option[String] = None
   private var buyerid: Option[String] = None
   private var yob: Option[Int] = None
@@ -14,18 +22,53 @@ class UserBuilder private{
   private var data: Option[Seq[Data]] = None
   private var ext: Option[Any] = None
 
-  def withId(s:String) = { id = Some(s); this }
-  def withBuyerid(s:String) = { buyerid = Some(s); this }
-  def withYob(i:Int) = { yob = Some(i); this }
-  def withGender(s:String) = { gender = Some(s); this }
-  def withKeywords(s:String) = { keywords = Some(s); this }
-  def withCustomdata(s:String) = { customdata = Some(s); this }
-  def withGeo(g:Geo) = { geo = Some(g); this }
-  def withData(s:Seq[Data] ) = { data = Some(s); this }
-  def withExt(a:Any) = { ext = Some(a); this }
+  def withId(s: String) = {
+    id = Some(s)
+    this
+  }
+
+  def withBuyerid(s: String) = {
+    buyerid = Some(s)
+    this
+  }
+
+  def withYob(i: Int) = {
+    yob = Some(i)
+    this
+  }
+
+  def withGender(s: String) = {
+    gender = Some(s)
+    this
+  }
+
+  def withKeywords(s: String) = {
+    keywords = Some(s)
+    this
+  }
+
+  def withCustomdata(s: String) = {
+    customdata = Some(s)
+    this
+  }
+
+  def withGeo(g: Geo) = {
+    geo = Some(g)
+    this
+  }
+
+  def withData(s: Seq[Data]) = {
+    data = Some(s)
+    this
+  }
+
+  def withExt(a: Any) = {
+    ext = Some(a)
+    this
+  }
 
   /** Returns User */
-  def build = User(id, buyerid, yob, gender, keywords,  customdata, geo, data, ext)
+  def build = User(id, buyerid, yob, gender, keywords, customdata, geo, data, ext)
 }
 
 /** Builder for User model  */

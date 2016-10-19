@@ -1,11 +1,16 @@
 package com.bitworks.rtb.model.request
 
-import com.bitworks.rtb.model.constant.{ConnectionType, DeviceType}
-
 /** Information pertaining to the device through which the user is interacting.
   *
   * Device information includes its hardware, platform, location, and carrier data.
   * The device can refer to a mobile handset, a desktop computer, set top box, or other digital device.
+  *
+  * Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   *
   * @param ua Browser user agent string.
   * @param geo Location of the device assumed to be the user’s current location.
@@ -47,7 +52,7 @@ case class Device (
     lmt: Option[Int],
     ip: Option[String],
     ipv6: Option[String],
-    devicetype: Option[DeviceType.Value],
+    devicetype: Option[Int],
     make: Option[String],
     model: Option[String],
     os: Option[String],
@@ -61,7 +66,7 @@ case class Device (
     flashver: Option[String],
     language: Option[String],
     carrier: Option[String],
-    connectiontype: Option[ConnectionType.Value],
+    connectiontype: Option[Int],
     ifa: Option[String],
     didsha1: Option[String],
     didmd5: Option[String],

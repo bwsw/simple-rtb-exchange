@@ -1,17 +1,23 @@
 package com.bitworks.rtb.model.request.builder
 
-import com.bitworks.rtb.model.constant.{ConnectionType, DeviceType}
 import com.bitworks.rtb.model.request.Device
 import org.scalatest.{FlatSpec, Matchers}
 
+/** Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  */
 class DeviceBuilderTest extends FlatSpec with Matchers{
 
   "DeviceBuilder" should "build Device correctly" in {
     val device = Device(Some("ua"), Some(GeoBuilder().build), Some(1), Some(2),
-      Some("ip"), Some("ipv6"), Some(DeviceType.pc), Some("make"),
+      Some("ip"), Some("ipv6"), Some(8), Some("make"),
       Some("model"), Some("os"), Some("osv"), Some("hwv"), Some(3),
       Some(4), Some(5), Some(6), Some(7), Some("flashver"),
-      Some("language"), Some("carrier"), Some(ConnectionType.wifi), Some("ifa"),
+      Some("language"), Some("carrier"), Some(9), Some("ifa"),
       Some("didsha1"), Some("didmd5"), Some("dpidsha1"), Some("dpidmd5"),
       Some("macsha1"), Some("macmd5"), Some("ext"))
 
@@ -22,7 +28,7 @@ class DeviceBuilderTest extends FlatSpec with Matchers{
       .withLmt(2)
       .withIp("ip")
       .withIpv6("ipv6")
-      .withDevicetype(DeviceType.pc)
+      .withDevicetype(8)
       .withMake("make")
       .withModel("model")
       .withOs("os")
@@ -36,7 +42,7 @@ class DeviceBuilderTest extends FlatSpec with Matchers{
       .withFlashver("flashver")
       .withLanguage("language")
       .withCarrier("carrier")
-      .withConnectiontype(ConnectionType.wifi)
+      .withConnectiontype(9)
       .withIfa("ifa")
       .withDidsha1("didsha1")
       .withDidmd5("didmd5")

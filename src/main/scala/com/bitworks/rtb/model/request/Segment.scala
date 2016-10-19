@@ -6,6 +6,13 @@ package com.bitworks.rtb.model.request
   * a given data provider. The specific segment names and value options
   * must be published by the exchange a priori to its bidders.
   *
+  * Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  *
   * @param id ID of the data segment specific to the data provider.
   * @param name Name of the data segment specific to the data provider.
   * @param value String representation of the data segment value.

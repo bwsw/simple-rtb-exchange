@@ -1,7 +1,5 @@
 package com.bitworks.rtb.model.request
 
-import com.bitworks.rtb.model.constant.LocationType
-
 /** Various methods for specifying a geographic location.
   *
   * When subordinate to a Device object, it indicates the location of the device which
@@ -12,6 +10,13 @@ import com.bitworks.rtb.model.constant.LocationType
   * The lat/lon  attributes should only be passed if they conform to the accuracy
   * depicted in the type attribute. For example, the centroid of a geographic
   * region such as postal code should not be passed.
+  *
+  * Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   *
   * @param lat Latitude from -90.0 to +90.0, where negative is south.
   * @param lon Longitude from -180.0 to +180.0, where negative is west.
@@ -28,7 +33,7 @@ import com.bitworks.rtb.model.constant.LocationType
 case class Geo(
     lat: Option[Float],
     lon: Option[Float],
-    `type`: Option[LocationType.Value],
+    `type`: Option[Int],
     country: Option[String],
     region: Option[String],
     regionfips104: Option[String],

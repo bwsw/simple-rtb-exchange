@@ -3,6 +3,13 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.{Data, Regs, Segment}
 import org.scalatest.{FlatSpec, Matchers}
 
+/** Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  */
 class CommonBuilderTest extends FlatSpec with Matchers{
 
   "RegsBuilder" should "build Regs correctly" in {

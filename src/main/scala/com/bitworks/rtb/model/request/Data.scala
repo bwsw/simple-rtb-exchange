@@ -9,6 +9,13 @@ package com.bitworks.rtb.model.request
   * The specific data providers in use should be published by the exchange a
   * priori to its bidders.
   *
+  * Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.  *
+  *
   * @param id Exchange-specific ID for the data provider.
   * @param name Exchange-specific name for the data provider
   * @param segment Segment objects that contain the actual data values

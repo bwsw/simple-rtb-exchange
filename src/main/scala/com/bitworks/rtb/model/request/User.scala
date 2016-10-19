@@ -6,6 +6,13 @@ package com.bitworks.rtb.model.request
   * privacy policies. However, this user ID must be stable long enough to serve
   * reasonably as the basis for frequency capping and retargeting.
   *
+  * Created on: 10/19/2016
+  *
+  * @author Ilchenko Egor
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
+  *
   * @param id Exchange-specific ID for the user. At least one of id or buyerid is recommended.
   * @param buyerid Buyer-specific ID for the user as mapped by the exchange for the buyer.
   * @param yob Year of birth as a 4-digit integer.
