@@ -1,7 +1,8 @@
 package com.bitworks.rtb.model.constant
 
 /** Lists the options for video bid response protocols that could be supported
-  *  by an exchange.
+  * by an exchange.
+  * See List 5.8 in OpenRTB API Specification Version 2.3.
   */
 object VideoBidResponseProtocols extends Enumeration {
   val Vast1 = Value(1)
