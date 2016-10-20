@@ -6,10 +6,16 @@ package com.bitworks.rtb.request
   * @param name          app name
   * @param bundle        application bundle or package name
   * @param domain        domain of the app
-  * @param storeUrl      app store URL for an installed app
+  * @param storeUrl      app store URL for an installed app; for QAG 1.5 compliance
   * @param cat           IAB content categories of the app
+  *                      See List 5.1 Content Categories in
+  *                      OpenRTB API Specification Version 2.3 for details.
   * @param sectionCat    IAB content categories that describe the current section of the app
+  *                      See List 5.1 Content Categories in
+  *                      OpenRTB API Specification Version 2.3 for details.
   * @param pageCat       IAB content categories that describe the current page or view of the app
+  *                      See List 5.1 Content Categories in
+  *                      OpenRTB API Specification Version 2.3 for details.
   * @param ver           application version
   * @param privacyPolicy indicates if the app has a privacy policy
   * @param paid          indicates if the app is a paid version

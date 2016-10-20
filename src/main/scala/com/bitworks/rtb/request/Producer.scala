@@ -5,6 +5,8 @@ package com.bitworks.rtb.request
   * @param id     content producer or originator ID
   * @param name   content producer or originator name
   * @param cat    IAB content categories that describe the content producer
+  *               See List 5.1 Content Categories in
+  *               OpenRTB API Specification Version 2.3 for details.
   * @param domain highest level domain of the content producer
   * @param ext    placeholder for exchange-specific extensions to OpenRTB
   *

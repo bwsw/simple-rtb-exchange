@@ -10,11 +10,19 @@ package com.bitworks.rtb.request
   * @param producer           details about the content Producer
   * @param url                URL of the content, for buy-side contextualization or review
   * @param cat                IAB content categories that describe the content producer
+  *                           See List 5.1 Content Categories in
+  *                           OpenRTB API Specification Version 2.3 for details.
   * @param videoQuality       video quality per IAB’s classification
+  *                           See List 5.11 Video Quality in
+  *                           OpenRTB API Specification Version 2.3 for details.
   * @param context            type of content
+  *                           See List 5.14 Content Context in
+  *                           OpenRTB API Specification Version 2.3 for details.
   * @param contentRating      content rating
   * @param userRating         user rating of the content
   * @param qagMediaRating     media rating per QAG guidelines
+  *                           See List 5.15 QAG Media Ratings in
+  *                           OpenRTB API Specification Version 2.3 for details.
   * @param keyWords           comma separated list of keywords describing the content
   * @param liveStream         true if content is live
   * @param sourceRelationship 0 = indirect, 1 = direct

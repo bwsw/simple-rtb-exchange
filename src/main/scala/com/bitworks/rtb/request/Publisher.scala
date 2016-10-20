@@ -5,6 +5,8 @@ package com.bitworks.rtb.request
   * @param id     exchange-specific publisher ID
   * @param name   publisher name
   * @param cat    IAB content categories that describe the publisher
+  *               See List 5.1 Content Categories in
+  *               OpenRTB API Specification Version 2.3 for details.
   * @param domain highest level domain of the publisher
   * @param ext    placeholder for exchange-specific extensions to OpenRTB
   *

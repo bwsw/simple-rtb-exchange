@@ -6,8 +6,14 @@ package com.bitworks.rtb.request
   * @param name          site name
   * @param domain        domain of the site
   * @param cat           IAB content categories of the site
+  *                      See List 5.1 Content Categories in
+  *                      OpenRTB API Specification Version 2.3 for details.
   * @param sectionCat    IAB content categories that describe the current section of the site
+  *                      See List 5.1 Content Categories in
+  *                      OpenRTB API Specification Version 2.3 for details.
   * @param pageCat       IAB content categories that describe the current page or view of the site
+  *                      See List 5.1 Content Categories in
+  *                      OpenRTB API Specification Version 2.3 for details.
   * @param page          URL of the page where the impression will be shown
   * @param ref           referrer URL that caused navigation to the current page
   * @param search        search string that caused navigation to the current page
