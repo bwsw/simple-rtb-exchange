@@ -1,9 +1,9 @@
-package com.bitworks.rtb.request.builder
+package com.bitworks.rtb.model.request.builder
 
-import com.bitworks.rtb.request.{Site, Content, Publisher}
+import com.bitworks.rtb.model.request.{Content, Publisher, Site}
 import org.scalatest.FunSuite
 
-/** Test for [[com.bitworks.rtb.request.builder.SiteBuilder]]
+/** Test for [[com.bitworks.rtb.model.request.builder.SiteBuilder]]
   *
   * Created on: 10/19/2016
   *

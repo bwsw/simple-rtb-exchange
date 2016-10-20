@@ -1,8 +1,8 @@
-package com.bitworks.rtb.request.builder
+package com.bitworks.rtb.model.request.builder
 
-import com.bitworks.rtb.request.{Content, Producer}
+import com.bitworks.rtb.model.request.{Content, Producer}
 
-/** Builder for [[com.bitworks.rtb.request.Content]]
+/** Builder for [[com.bitworks.rtb.model.request.Content]]
   *
   * Created on: 10/20/2016
   *

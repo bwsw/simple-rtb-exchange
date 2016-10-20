@@ -1,4 +1,4 @@
-package com.bitworks.rtb.request
+package com.bitworks.rtb.model.request
 
 /** Describes the publisher of the media in which the ad will be displayed.
   *

@@ -1,8 +1,8 @@
-package com.bitworks.rtb.request.builder
+package com.bitworks.rtb.model.request.builder
 
-import com.bitworks.rtb.request.{App, Content, Publisher}
+import com.bitworks.rtb.model.request.{App, Content, Publisher}
 
-/** Builder for [[com.bitworks.rtb.request.App]]
+/** Builder for [[com.bitworks.rtb.model.request.App]]
   *
   * Created on: 10/19/2016
   *

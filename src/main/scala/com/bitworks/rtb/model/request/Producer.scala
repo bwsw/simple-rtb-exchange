@@ -1,4 +1,4 @@
-package com.bitworks.rtb.request
+package com.bitworks.rtb.model.request
 
 /** Defines the producer of the content in which the ad will be shown.
   *

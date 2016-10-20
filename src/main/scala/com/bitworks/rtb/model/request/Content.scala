@@ -1,4 +1,4 @@
-package com.bitworks.rtb.request
+package com.bitworks.rtb.model.request
 
 /** Describes the content in which the impression will appear
   *
@@ -32,7 +32,6 @@ package com.bitworks.rtb.request
   * @param ext                placeholder for exchange-specific extensions to OpenRTB
   *
   * Created on: 10/17/2016
-  *
   * @author Tomskih Pavel
   * @version %I%
   *
