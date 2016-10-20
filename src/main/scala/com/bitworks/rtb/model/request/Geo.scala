@@ -1,34 +1,21 @@
 package com.bitworks.rtb.model.request
 
-/** Various methods for specifying a geographic location.
+/**
+  * A geographic location: the location of the [[com.bitworks.rtb.model.request.Device Device]] or
+  * the location of the user's home base [[com.bitworks.rtb.model.request.User User]].
   *
-  * When subordinate to a Device object, it indicates the location of the device which
-  * can also be interpreted as the user’s current location. When subordinate to a
-  * User object, it indicates the location of the user’s home base
-  * (i.e., not necessarily their current location).
-  *
-  * The lat/lon  attributes should only be passed if they conform to the accuracy
-  * depicted in the type attribute. For example, the centroid of a geographic
-  * region such as postal code should not be passed.
-  *
-  * Created on: 10/19/2016
-  *
-  * @author Ilchenko Egor
-  * @version %I%
-  *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
-  *
-  * @param lat Latitude from -90.0 to +90.0, where negative is south.
-  * @param lon Longitude from -180.0 to +180.0, where negative is west.
-  * @param `type` Source of location data; recommended when passing lat/lon.
-  * @param country Country code using ISO-3166-1-alpha-3.
-  * @param region Region code using ISO-3166-2; 2-letter state code if USA.
-  * @param regionfips104 Region of a country using FIPS 10-4 notation.
-  * @param metro Google metro code; similar to but not exactly Nielsen DMAs.
-  * @param city City using United Nations Code for Trade & Transport Locations.
-  * @param zip Zip or postal code.
-  * @param utcoffset Local time as the number +/- of minutes from UTC.
-  * @param ext Placeholder for exchange-specific extensions to OpenRTB.
+  * @param lat           latitude from -90.0 to +90.0, where negative is south
+  * @param lon           longitude from -180.0 to +180.0, where negative is west
+  * @param `type`        source of location data; recommended when passing lat/lon
+  * @param country       country code using ISO-3166-1-alpha-3
+  * @param region        region code using ISO-3166-2; 2-letter state code if USA
+  * @param regionFips104 region of a country using FIPS 10-4 notation
+  * @param metro         Google metro code; similar to but not exactly Nielsen DMAs
+  * @param city          city using United Nations Code for Trade & Transport Locations
+  * @param zip           zip or postal code
+  * @param utcOffset     local time as the number +/- of minutes from UTC
+  * @param ext           placeholder for exchange-specific extensions to OpenRTB
+  * @author Egor Ilchenko
   */
 case class Geo(
     lat: Option[Float],
@@ -36,9 +23,9 @@ case class Geo(
     `type`: Option[Int],
     country: Option[String],
     region: Option[String],
-    regionfips104: Option[String],
+    regionFips104: Option[String],
     metro: Option[String],
     city: Option[String],
     zip: Option[String],
-    utcoffset: Option[Int],
+    utcOffset: Option[Int],
     ext: Option[Any])

@@ -21,8 +21,8 @@ class AppBuilder private {
   private var sectionCat: Option[Seq[String]] = None
   private var pageCat: Option[Seq[String]] = None
   private var ver: Option[String] = None
-  private var privacyPolicy: Option[Boolean] = None
-  private var paid: Option[Boolean] = None
+  private var privacyPolicy: Option[Int] = None
+  private var paid: Option[Int] = None
   private var publisher: Option[Publisher] = None
   private var content: Option[Content] = None
   private var keyWords: Option[String] = None
@@ -73,13 +73,13 @@ class AppBuilder private {
     this
   }
 
-  def isPrivacyPolicy(b: Boolean) = {
-    privacyPolicy = Some(b)
+  def isPrivacyPolicy(i: Int) = {
+    privacyPolicy = Some(i)
     this
   }
 
-  def isPaid(b: Boolean) = {
-    paid = Some(b)
+  def isPaid(i: Int) = {
+    paid = Some(i)
     this
   }
 

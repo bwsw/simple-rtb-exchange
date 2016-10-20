@@ -26,7 +26,7 @@ class ContentBuilder {
   private var userRating: Option[String] = None
   private var qagMediaRating: Option[Int] = None
   private var keyWords: Option[String] = None
-  private var liveStream: Option[Boolean] = None
+  private var liveStream: Option[Int] = None
   private var sourceRelationship: Option[Int] = None
   private var len: Option[Int] = None
   private var language: Option[String] = None
@@ -103,8 +103,8 @@ class ContentBuilder {
     this
   }
 
-  def isLiveStream(a: Boolean) = {
-    liveStream = Some(a)
+  def isLiveStream(i: Int) = {
+    liveStream = Some(i)
     this
   }
 

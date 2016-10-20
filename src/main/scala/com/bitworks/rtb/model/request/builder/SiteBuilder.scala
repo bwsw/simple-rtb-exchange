@@ -21,8 +21,8 @@ class SiteBuilder private {
   private var page: Option[String] = None
   private var ref: Option[String] = None
   private var search: Option[String] = None
-  private var mobile: Option[Boolean] = None
-  private var privacyPolicy: Option[Boolean] = None
+  private var mobile: Option[Int] = None
+  private var privacyPolicy: Option[Int] = None
   private var publisher: Option[Publisher] = None
   private var content: Option[Content] = None
   private var keyWords: Option[String] = None
@@ -73,13 +73,13 @@ class SiteBuilder private {
     this
   }
 
-  def isPrivacyPolicy(b: Boolean) = {
-    privacyPolicy = Some(b)
+  def isPrivacyPolicy(i: Int) = {
+    privacyPolicy = Some(i)
     this
   }
 
-  def isMobile(b: Boolean) = {
-    mobile = Some(b)
+  def isMobile(i: Int) = {
+    mobile = Some(i)
     this
   }
 
