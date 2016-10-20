@@ -1,6 +1,6 @@
 package com.bitworks.rtb.parser
 
-import org.json4s.JsonInput
+import org.json4s.JsonAST.JObject
 
 /** Interface for parsers.
   *
@@ -12,5 +12,5 @@ import org.json4s.JsonInput
   *          All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 trait Parser {
-  def parse(in: JsonInput)
+  def parse(in: JObject)
 }
