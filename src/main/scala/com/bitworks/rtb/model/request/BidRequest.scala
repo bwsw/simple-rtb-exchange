@@ -20,12 +20,8 @@ package com.bitworks.rtb.model.request
   * @param badv    block list of advertisers by their domains
   * @param regs    specifies any industry, legal, or governmental regulations
   * @param ext     placeholder for exchange-specific extensions to OpenRTB
-  *
-  * Created on: 10/20/2016
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 case class BidRequest(
     id: String,

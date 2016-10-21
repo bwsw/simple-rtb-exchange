@@ -6,13 +6,8 @@ import com.bitworks.rtb.model.request.native.{Asset, NativeMarkup}
   * Builder for [[com.bitworks.rtb.model.request.native.NativeMarkup]].
   *
   * @param assets is required for [[com.bitworks.rtb.model.request.native.NativeMarkup]]
-  *
-  * Created on: 10/19/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class NativeMarkupBuilder private (assets: Seq[Asset]) {
   private var ver: Option[String] = Some("1")

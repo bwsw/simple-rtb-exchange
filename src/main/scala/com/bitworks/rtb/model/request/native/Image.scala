@@ -10,13 +10,8 @@ package com.bitworks.rtb.model.request.native
   * @param hmin   minimum requested height of the image in pixels
   * @param mimes  whitelist of content MIME types supported
   * @param ext    a placeholder for exchange-specific extensions to OpenRTB
-  *
-  * Created on: 10/18/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 case class Image(
     `type`: Option[Int],

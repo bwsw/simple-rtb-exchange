@@ -6,12 +6,8 @@ import org.scalatest.{FlatSpec, Matchers}
 /**
   * Test for [[com.bitworks.rtb.model.request.native.builder.ImageBuilder]]
   *
-  * Created on: 10/19/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class ImageBuilderTest extends FlatSpec with Matchers {
 

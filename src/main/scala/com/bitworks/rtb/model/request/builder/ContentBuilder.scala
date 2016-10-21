@@ -5,12 +5,8 @@ import com.bitworks.rtb.model.request.{Content, Producer}
 /**
   * Builder for [[com.bitworks.rtb.model.request.Content]]
   *
-  * Created on: 10/20/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class ContentBuilder private {
   private var id: Option[String] = None

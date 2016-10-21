@@ -5,12 +5,8 @@ import com.bitworks.rtb.model.request.{App, Content, Publisher}
 /**
   * Builder for [[com.bitworks.rtb.model.request.App]]
   *
-  * Created on: 10/19/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class AppBuilder private {
   private var id: Option[String] = None

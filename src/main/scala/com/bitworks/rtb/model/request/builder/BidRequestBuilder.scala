@@ -5,12 +5,8 @@ import com.bitworks.rtb.model.request._
 /**
   * Builder for [[com.bitworks.rtb.model.request.BidRequest]]
   *
-  * Created on: 10/20/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
   private var site: Option[Site] = None

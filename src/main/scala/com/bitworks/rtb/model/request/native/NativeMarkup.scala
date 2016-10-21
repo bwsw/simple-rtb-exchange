@@ -10,13 +10,8 @@ package com.bitworks.rtb.model.request.native
   * @param seq      ad number
   * @param assets   an array of Asset Objects
   * @param ext      a placeholder for exchange-specific extensions to OpenRTB
-  *
-  * Created on: 10/19/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 case class NativeMarkup(
     ver: Option[String],

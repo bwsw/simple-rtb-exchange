@@ -5,12 +5,8 @@ import com.bitworks.rtb.model.request.native.Video
 /**
   * Builder for [[com.bitworks.rtb.model.request.native.Video]]
   *
-  * Created on: 10/19/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class VideoBuilder private {
   private var mimes: Option[Seq[String]] = None

@@ -6,13 +6,8 @@ import com.bitworks.rtb.model.request.native._
   * Builder for [[com.bitworks.rtb.model.request.native.Asset]].
   *
   * @param id is required for [[com.bitworks.rtb.model.request.native.Asset]]
-  *
-  * Created on: 10/19/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class AssetBuilder private (id: Int) {
   private var required: Option[Int] = Some(0)

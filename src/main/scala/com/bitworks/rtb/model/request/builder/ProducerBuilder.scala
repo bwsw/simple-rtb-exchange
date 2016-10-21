@@ -5,12 +5,8 @@ import com.bitworks.rtb.model.request.Producer
 /**
   * Builder for [[com.bitworks.rtb.model.request.Producer]]
   *
-  * Created on: 10/17/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class ProducerBuilder private {
   private var id: Option[String] = None

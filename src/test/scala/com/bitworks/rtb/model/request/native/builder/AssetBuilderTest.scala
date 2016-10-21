@@ -6,12 +6,8 @@ import org.scalatest.{FlatSpec, Matchers}
 /**
   * Test for [[com.bitworks.rtb.model.request.native.builder.AssetBuilder]]
   *
-  * Created on: 10/19/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class AssetBuilderTest extends FlatSpec with Matchers {
 

@@ -6,12 +6,8 @@ import org.scalatest.{FlatSpec, Matchers}
 /**
   * Test for [[com.bitworks.rtb.model.request.builder.BidRequestBuilder]]
   *
-  * Created on: 10/20/2016
+  * @author Pavel Tomskikh
   *
-  * @author Pavel Tomskih
-  * @version %I%
-  *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class BidRequestBuilderTest extends FlatSpec with Matchers {
 

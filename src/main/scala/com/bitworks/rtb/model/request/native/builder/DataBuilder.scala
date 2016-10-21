@@ -6,13 +6,8 @@ import com.bitworks.rtb.model.request.native.Data
   * Builder for [[com.bitworks.rtb.model.request.native.Data]].
   * 
   * @param type is required for [[com.bitworks.rtb.model.request.native.Data]]
-  *
-  * Created on: 10/19/2016
-  *
   * @author Pavel Tomskikh
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class DataBuilder private (`type`: Int) {
   private var len: Option[Int] = None
