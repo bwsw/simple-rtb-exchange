@@ -2,14 +2,11 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{Data, Segment}
 
-/** Builder for Data model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Data]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class DataBuilder private {
   private var id: Option[String] = None
@@ -41,7 +38,12 @@ class DataBuilder private {
   def build = Data(id, name, segment, ext)
 }
 
-/** Builder for Data model  */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Data]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object DataBuilder {
   def apply() = new DataBuilder
 }

@@ -2,14 +2,11 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.Regs
 
-/** Builder for Regs model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Regs]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class RegsBuilder private {
   private var coppa: Int = 0
@@ -29,7 +26,12 @@ class RegsBuilder private {
   def build = Regs(coppa, ext)
 }
 
-/** Builder for Regs model  */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Regs]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object RegsBuilder {
   def apply() = new RegsBuilder()
 }

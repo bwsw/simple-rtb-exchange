@@ -3,12 +3,11 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Deal
 import org.scalatest.{FlatSpec, Matchers}
 
-/** Created on: 10/19/2016
+/**
+  * Test for [[com.bitworks.rtb.model.request.Deal]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class DealBuilderTest extends FlatSpec with Matchers{
 
@@ -17,13 +16,21 @@ class DealBuilderTest extends FlatSpec with Matchers{
       Some(Seq("wadomain")), Some("string"))
 
     val buildedDeal = DealBuilder("id")
-        .withBidfloor("1")
-        .withBidfloorcur("EUR")
+        .withBidFloor("1")
+        .withBidFloorCur("EUR")
         .withAt(1)
         .withWseat(Seq("wseat"))
         .withWadomain(Seq("wadomain"))
         .withExt("string")
         .build
+
+    buildedDeal shouldBe deal
+  }
+
+  it should "build Deal with default values" in {
+    val deal = Deal("id", BigDecimal("0"), "USD", None, None, None, None)
+
+    val buildedDeal = DealBuilder("id").build
 
     buildedDeal shouldBe deal
   }

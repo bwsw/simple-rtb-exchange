@@ -3,12 +3,11 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Banner
 import org.scalatest.{FlatSpec, Matchers}
 
-/** Created on: 10/19/2016
+/**
+  * Test for [[com.bitworks.rtb.model.request.Banner]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class BannerBuilderTest extends FlatSpec with Matchers{
 
@@ -29,7 +28,7 @@ class BannerBuilderTest extends FlatSpec with Matchers{
       .withBattr(Seq(8))
       .withPos(9)
       .withMimes(Seq("mime"))
-      .withTopframe(10)
+      .withTopFrame(10)
       .withExpdir(Seq(11))
       .withApi(Seq(12))
       .withExt("string")

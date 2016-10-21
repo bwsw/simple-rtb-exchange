@@ -2,14 +2,10 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.Banner
 
-/** Builder for Banner model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Banner]]
   *
   * @author Egor Ilchenko
-  * @version %I%
-  *
-  *          All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   *
   */
 class BannerBuilder private {
@@ -24,7 +20,7 @@ class BannerBuilder private {
   private var battr: Option[Seq[Int]] = None
   private var pos: Option[Int] = None
   private var mimes: Option[Seq[String]] = None
-  private var topframe: Option[Int] = None
+  private var topFrame: Option[Int] = None
   private var expdir: Option[Seq[Int]] = None
   private var api: Option[Seq[Int]] = None
   private var ext: Option[Any] = None
@@ -84,8 +80,8 @@ class BannerBuilder private {
     this
   }
 
-  def withTopframe(i: Int) = {
-    topframe = Some(i)
+  def withTopFrame(i: Int) = {
+    topFrame = Some(i)
     this
   }
 
@@ -105,11 +101,16 @@ class BannerBuilder private {
   }
 
   /** Returns Banner */
-  def build = Banner(w, h, wmax, hmax, wmin, hmin, id, btype, battr, pos, mimes, topframe,
+  def build = Banner(w, h, wmax, hmax, wmin, hmin, id, btype, battr, pos, mimes, topFrame,
     expdir, api, ext)
 }
 
-/** Builder for Banner model  */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Banner]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object BannerBuilder {
   def apply(): BannerBuilder = new BannerBuilder
 }

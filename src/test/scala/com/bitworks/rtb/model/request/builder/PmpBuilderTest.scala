@@ -3,12 +3,11 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Pmp
 import org.scalatest.{FlatSpec, Matchers}
 
-/** Created on: 10/19/2016
+/**
+  * Test for [[com.bitworks.rtb.model.request.Pmp]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class PmpBuilderTest extends FlatSpec with Matchers{
 

@@ -3,12 +3,11 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Geo
 import org.scalatest.{FlatSpec, Matchers}
 
-/** Created on: 10/19/2016
+/**
+  * Test for [[com.bitworks.rtb.model.request.Geo]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class GeoBuilderTest extends FlatSpec with Matchers{
 
@@ -23,11 +22,11 @@ class GeoBuilderTest extends FlatSpec with Matchers{
       .withType(1)
       .withCountry("country")
       .withRegion("region")
-      .withRegionfips104("regionFips")
+      .withRegionFips104("regionFips")
       .withMetro("metro")
       .withCity("city")
       .withZip("zip")
-      .withUtcoffset(14)
+      .withUtcOffset(14)
       .withExt("string")
       .build
 

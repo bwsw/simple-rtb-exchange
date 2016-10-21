@@ -2,14 +2,11 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{Device, Geo}
 
-/** Builder for Device model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Device]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class DeviceBuilder private {
   private var ua: Option[String] = None
@@ -18,7 +15,7 @@ class DeviceBuilder private {
   private var lmt: Option[Int] = None
   private var ip: Option[String] = None
   private var ipv6: Option[String] = None
-  private var devicetype: Option[Int] = None
+  private var deviceType: Option[Int] = None
   private var make: Option[String] = None
   private var model: Option[String] = None
   private var os: Option[String] = None
@@ -27,12 +24,12 @@ class DeviceBuilder private {
   private var h: Option[Int] = None
   private var w: Option[Int] = None
   private var ppi: Option[Int] = None
-  private var pxratio: Option[Double] = None
+  private var pxRatio: Option[Double] = None
   private var js: Option[Int] = None
-  private var flashver: Option[String] = None
+  private var flashVer: Option[String] = None
   private var language: Option[String] = None
   private var carrier: Option[String] = None
-  private var connectiontype: Option[Int] = None
+  private var connectionType: Option[Int] = None
   private var ifa: Option[String] = None
   private var didsha1: Option[String] = None
   private var didmd5: Option[String] = None
@@ -72,8 +69,8 @@ class DeviceBuilder private {
     this
   }
 
-  def withDevicetype(i: Int) = {
-    devicetype = Some(i)
+  def withDeviceType(i: Int) = {
+    deviceType = Some(i)
     this
   }
 
@@ -117,8 +114,8 @@ class DeviceBuilder private {
     this
   }
 
-  def withPxratio(d: Double) = {
-    pxratio = Some(d)
+  def withPxRatio(d: Double) = {
+    pxRatio = Some(d)
     this
   }
 
@@ -127,8 +124,8 @@ class DeviceBuilder private {
     this
   }
 
-  def withFlashver(s: String) = {
-    flashver = Some(s)
+  def withFlashVer(s: String) = {
+    flashVer = Some(s)
     this
   }
 
@@ -142,8 +139,8 @@ class DeviceBuilder private {
     this
   }
 
-  def withConnectiontype(i: Int) = {
-    connectiontype = Some(i)
+  def withConnectionType(i: Int) = {
+    connectionType = Some(i)
     this
   }
 
@@ -188,13 +185,18 @@ class DeviceBuilder private {
   }
 
   /** Returns Device */
-  def build = Device(ua, geo, dnt, lmt, ip, ipv6, devicetype, make,
-    model, os, osv, hwv, h, w, ppi, pxratio, js, flashver, language,
-    carrier, connectiontype, ifa, didsha1, didmd5, dpidsha1, dpidmd5,
+  def build = Device(ua, geo, dnt, lmt, ip, ipv6, deviceType, make,
+    model, os, osv, hwv, h, w, ppi, pxRatio, js, flashVer, language,
+    carrier, connectionType, ifa, didsha1, didmd5, dpidsha1, dpidmd5,
     macsha1, macmd5, ext)
 }
 
-/** Builder for Device model  */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Device]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object DeviceBuilder {
   def apply() = new DeviceBuilder
 }

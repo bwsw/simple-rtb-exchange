@@ -2,31 +2,27 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{Banner, Deal}
 
-/** Builder for Deal model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Deal]]
   *
   * @author Egor Ilchenko
-  * @version %I%
-  *
-  *          All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   *
   */
 class DealBuilder private (id: String) {
-  private var bidfloor: BigDecimal = 0
-  private var bidfloorcur: String = "USD"
+  private var bidFloor: BigDecimal = 0
+  private var bidFloorCur: String = "USD"
   private var at: Option[Int] = None
   private var wseat: Option[Seq[String]] = None
   private var wadomain: Option[Seq[String]] = None
   private var ext: Option[Any] = None
 
-  def withBidfloor(s: String) = {
-    bidfloor = BigDecimal(s)
+  def withBidFloor(s: String) = {
+    bidFloor = BigDecimal(s)
     this
   }
 
-  def withBidfloorcur(s: String) = {
-    bidfloorcur = s
+  def withBidFloorCur(s: String) = {
+    bidFloorCur = s
     this
   }
 
@@ -51,10 +47,15 @@ class DealBuilder private (id: String) {
   }
 
   /** Returns Deal */
-  def build = Deal(id, bidfloor, bidfloorcur, at, wseat, wadomain, ext)
+  def build = Deal(id, bidFloor, bidFloorCur, at, wseat, wadomain, ext)
 }
 
-/** Builder for Deal model */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Deal]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object DealBuilder{
   def apply(id: String): DealBuilder = new DealBuilder(id)
 }

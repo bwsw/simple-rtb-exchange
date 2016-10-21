@@ -2,14 +2,11 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.Geo
 
-/** Builder for Geo model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Geo]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class GeoBuilder private {
   private var lat: Option[Float] = None
@@ -17,11 +14,11 @@ class GeoBuilder private {
   private var `type`: Option[Int] = None
   private var country: Option[String] = None
   private var region: Option[String] = None
-  private var regionfips104: Option[String] = None
+  private var regionFips104: Option[String] = None
   private var metro: Option[String] = None
   private var city: Option[String] = None
   private var zip: Option[String] = None
-  private var utcoffset: Option[Int] = None
+  private var utcOffset: Option[Int] = None
   private var ext: Option[Any] = None
 
   def withLat(d: Float) = {
@@ -49,8 +46,8 @@ class GeoBuilder private {
     this
   }
 
-  def withRegionfips104(s: String) = {
-    regionfips104 = Some(s)
+  def withRegionFips104(s: String) = {
+    regionFips104 = Some(s)
     this
   }
 
@@ -69,8 +66,8 @@ class GeoBuilder private {
     this
   }
 
-  def withUtcoffset(i: Int) = {
-    utcoffset = Some(i)
+  def withUtcOffset(i: Int) = {
+    utcOffset = Some(i)
     this
   }
 
@@ -80,11 +77,16 @@ class GeoBuilder private {
   }
 
   /** Returns Geo */
-  def build = Geo(lat, lon, `type`, country, region, regionfips104, metro, city, zip, utcoffset,
+  def build = Geo(lat, lon, `type`, country, region, regionFips104, metro, city, zip, utcOffset,
     ext)
 }
 
-/** Builder for Geo model  */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Geo]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object GeoBuilder {
   def apply() = new GeoBuilder
 }

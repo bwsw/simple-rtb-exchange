@@ -2,27 +2,24 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request._
 
-/** Builder for Imp model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Imp]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  *          All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class ImpBuilder private(id: String) {
   private var banner: Option[Banner] = None
   private var video: Option[Video] = None
   private var native: Option[Native] = None
-  private var displaymanager: Option[String] = None
-  private var displaymanagerver: Option[String] = None
+  private var displayManager: Option[String] = None
+  private var displayManagerVer: Option[String] = None
   private var instl: Int = 0
-  private var tagid: Option[String] = None
-  private var bidfloor: BigDecimal = BigDecimal("0")
-  private var bidfloorcur: String = "USD"
+  private var tagId: Option[String] = None
+  private var bidFloor: BigDecimal = BigDecimal("0")
+  private var bidFloorCur: String = "USD"
   private var secure: Option[Int] = None
-  private var iframebuster: Option[Seq[String]] = None
+  private var iframeBuster: Option[Seq[String]] = None
   private var pmp: Option[Pmp] = None
   private var ext: Option[Any] = None
 
@@ -41,13 +38,13 @@ class ImpBuilder private(id: String) {
     this
   }
 
-  def withDisplaymanager(s: String) = {
-    displaymanager = Some(s)
+  def withDisplayManager(s: String) = {
+    displayManager = Some(s)
     this
   }
 
-  def withDisplaymanagerver(s: String) = {
-    displaymanagerver = Some(s)
+  def withDisplayManagerVer(s: String) = {
+    displayManagerVer = Some(s)
     this
   }
 
@@ -56,18 +53,18 @@ class ImpBuilder private(id: String) {
     this
   }
 
-  def withTagid(s: String) = {
-    tagid = Some(s)
+  def withTagId(s: String) = {
+    tagId = Some(s)
     this
   }
 
-  def withBidfloor(b: BigDecimal) = {
-    bidfloor = b
+  def withBidFloor(b: BigDecimal) = {
+    bidFloor = b
     this
   }
 
-  def withBidfloorcur(s: String) = {
-    bidfloorcur = s
+  def withBidFloorCur(s: String) = {
+    bidFloorCur = s
     this
   }
 
@@ -76,8 +73,8 @@ class ImpBuilder private(id: String) {
     this
   }
 
-  def withIframebuster(s: Seq[String]) = {
-    iframebuster = Some(s)
+  def withIframeBuster(s: Seq[String]) = {
+    iframeBuster = Some(s)
     this
   }
 
@@ -92,11 +89,16 @@ class ImpBuilder private(id: String) {
   }
 
   /** Returns Imp */
-  def build = Imp(id, banner, video, native, displaymanager, displaymanagerver, instl, tagid,
-    bidfloor, bidfloorcur, secure, iframebuster, pmp, ext)
+  def build = Imp(id, banner, video, native, displayManager, displayManagerVer, instl, tagId,
+    bidFloor, bidFloorCur, secure, iframeBuster, pmp, ext)
 }
 
-/** Builder for Imp model */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Imp]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object ImpBuilder{
   def apply(id: String): ImpBuilder = new ImpBuilder(id)
 }

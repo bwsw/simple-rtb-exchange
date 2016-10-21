@@ -3,12 +3,11 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Device
 import org.scalatest.{FlatSpec, Matchers}
 
-/** Created on: 10/19/2016
+/**
+  * Test for [[com.bitworks.rtb.model.request.Device]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class DeviceBuilderTest extends FlatSpec with Matchers{
 
@@ -28,7 +27,7 @@ class DeviceBuilderTest extends FlatSpec with Matchers{
       .withLmt(2)
       .withIp("ip")
       .withIpv6("ipv6")
-      .withDevicetype(8)
+      .withDeviceType(8)
       .withMake("make")
       .withModel("model")
       .withOs("os")
@@ -37,12 +36,12 @@ class DeviceBuilderTest extends FlatSpec with Matchers{
       .withH(3)
       .withW(4)
       .withPpi(5)
-      .withPxratio(6)
+      .withPxRatio(6)
       .withJs(7)
-      .withFlashver("flashver")
+      .withFlashVer("flashver")
       .withLanguage("language")
       .withCarrier("carrier")
-      .withConnectiontype(9)
+      .withConnectionType(9)
       .withIfa("ifa")
       .withDidsha1("didsha1")
       .withDidmd5("didmd5")

@@ -2,22 +2,19 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{Data, Geo, User}
 
-/** Builder for User model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.User]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class UserBuilder private {
   private var id: Option[String] = None
-  private var buyerid: Option[String] = None
+  private var buyerId: Option[String] = None
   private var yob: Option[Int] = None
   private var gender: Option[String] = None
   private var keywords: Option[String] = None
-  private var customdata: Option[String] = None
+  private var customData: Option[String] = None
   private var geo: Option[Geo] = None
   private var data: Option[Seq[Data]] = None
   private var ext: Option[Any] = None
@@ -27,8 +24,8 @@ class UserBuilder private {
     this
   }
 
-  def withBuyerid(s: String) = {
-    buyerid = Some(s)
+  def withBuyerId(s: String) = {
+    buyerId = Some(s)
     this
   }
 
@@ -47,8 +44,8 @@ class UserBuilder private {
     this
   }
 
-  def withCustomdata(s: String) = {
-    customdata = Some(s)
+  def withCustomData(s: String) = {
+    customData = Some(s)
     this
   }
 
@@ -68,10 +65,15 @@ class UserBuilder private {
   }
 
   /** Returns User */
-  def build = User(id, buyerid, yob, gender, keywords, customdata, geo, data, ext)
+  def build = User(id, buyerId, yob, gender, keywords, customData, geo, data, ext)
 }
 
-/** Builder for User model  */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.User]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object UserBuilder {
   def apply() = new UserBuilder
 }

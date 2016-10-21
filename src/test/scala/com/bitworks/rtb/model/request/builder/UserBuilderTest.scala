@@ -3,12 +3,11 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.User
 import org.scalatest.{FlatSpec, Matchers}
 
-/** Created on: 10/19/2016
+/**
+  * Test for [[com.bitworks.rtb.model.request.User]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class UserBuilderTest extends FlatSpec with Matchers{
 
@@ -19,11 +18,11 @@ class UserBuilderTest extends FlatSpec with Matchers{
 
     val buildedUser = UserBuilder()
         .withId("id")
-        .withBuyerid("buyerid")
+        .withBuyerId("buyerid")
         .withYob(2016)
         .withGender("gender")
         .withKeywords("keywords")
-        .withCustomdata("customdata")
+        .withCustomData("customdata")
         .withGeo(GeoBuilder().build)
         .withData(Seq.empty)
         .withExt("ext")

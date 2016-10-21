@@ -2,14 +2,11 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.Segment
 
-/** Builder for Segment model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Segment]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class SegmentBuilder private {
   private var id: Option[String] = None
@@ -41,7 +38,12 @@ class SegmentBuilder private {
   def build = Segment(id, name, value, ext)
 }
 
-/** Builder for Segment model  */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Segment]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object SegmentBuilder {
   def apply() = new SegmentBuilder
 }

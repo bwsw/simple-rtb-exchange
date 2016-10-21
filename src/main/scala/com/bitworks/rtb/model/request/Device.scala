@@ -12,7 +12,7 @@ package com.bitworks.rtb.model.request
   *                       unrestricted, 1 = tracking must be limited per commercial guidelines
   * @param ip             IPv4 address closest to device
   * @param ipv6           IP address closest to device as IPv6
-  * @param devicetype     the general type of device
+  * @param deviceType     the general type of device
   * @param make           device make
   * @param model          device model
   * @param os             device operating system
@@ -44,7 +44,7 @@ case class Device(
     lmt: Option[Int],
     ip: Option[String],
     ipv6: Option[String],
-    devicetype: Option[Int],
+    deviceType: Option[Int],
     make: Option[String],
     model: Option[String],
     os: Option[String],

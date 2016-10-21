@@ -3,12 +3,11 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Imp
 import org.scalatest.{FlatSpec, Matchers}
 
-/** Created on: 10/19/2016
+/**
+  * Test for [[com.bitworks.rtb.model.request.Imp]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class ImpBuilderTest extends FlatSpec with Matchers{
 
@@ -22,19 +21,29 @@ class ImpBuilderTest extends FlatSpec with Matchers{
         .withBanner(BannerBuilder().build)
         .withVideo(VideoBuilder(Seq("mime")).build)
         .withNative(NativeBuilder("request").build)
-        .withDisplaymanager("displaymanager")
-        .withDisplaymanagerver("displaymanagerver")
+        .withDisplayManager("displaymanager")
+        .withDisplayManagerVer("displaymanagerver")
         .withInstl(1)
-        .withTagid("tagid")
-        .withBidfloor(BigDecimal("2"))
-        .withBidfloorcur("EUR")
+        .withTagId("tagid")
+        .withBidFloor(BigDecimal("2"))
+        .withBidFloorCur("EUR")
         .withSecure(2)
-        .withIframebuster(Seq("iframebuster"))
+        .withIframeBuster(Seq("iframebuster"))
         .withPmp(PmpBuilder().build)
         .withExt("ext")
         .build
 
     buildedImp shouldBe imp
+  }
+
+  it should "build Imp with default values" in {
+    val imp = Imp("id", None, None, None, None, None, 0, None,
+        BigDecimal("0"), "USD", None, None, None, None)
+
+    val buildedImp = ImpBuilder("id").build
+
+    buildedImp shouldBe imp
+
   }
 
 }

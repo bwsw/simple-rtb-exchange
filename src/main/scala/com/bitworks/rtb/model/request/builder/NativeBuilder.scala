@@ -2,14 +2,11 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.Native
 
-/** Builder for Native model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Native]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  *          All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class NativeBuilder private (request: String) {
   private var ver: Option[String] = None
@@ -41,7 +38,12 @@ class NativeBuilder private (request: String) {
   def build = Native(request, ver, api, battr, ext)
 }
 
-/** Builder for Native model */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Native]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object NativeBuilder{
   def apply(request: String): NativeBuilder = new NativeBuilder(request)
 }

@@ -2,46 +2,42 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{Banner, Video}
 
-/** Builder for Video model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Video]]
   *
   * @author Egor Ilchenko
-  * @version %I%
-  *
-  *          All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   *
   */
 class VideoBuilder private(mimes: Seq[String]) {
-  private var minduration: Option[Int] = None
-  private var maxduration: Option[Int] = None
+  private var minDuration: Option[Int] = None
+  private var maxDuration: Option[Int] = None
   private var protocol: Option[Int] = None
   private var protocols: Option[Seq[Int]] = None
   private var w: Option[Int] = None
   private var h: Option[Int] = None
-  private var startdelay: Option[Int] = None
+  private var startDelay: Option[Int] = None
   private var linearity: Option[Int] = None
   private var sequence: Option[Int] = None
   private var battr: Option[Seq[Int]] = None
-  private var maxextended: Option[Int] = None
-  private var minbitrate: Option[Int] = None
-  private var maxbitrate: Option[Int] = None
-  private var boxingallowed: Int = 1
-  private var playbackmethod: Option[Seq[Int]] = None
+  private var maxExtended: Option[Int] = None
+  private var minBitrate: Option[Int] = None
+  private var maxBitrate: Option[Int] = None
+  private var boxingAllowed: Int = 1
+  private var playbackMethod: Option[Seq[Int]] = None
   private var delivery: Option[Seq[Int]] = None
   private var pos: Option[Int] = None
-  private var companionad: Option[Seq[Banner]] = None
+  private var companionAd: Option[Seq[Banner]] = None
   private var api: Option[Seq[Int]] = None
-  private var companiontype: Option[Seq[Int]] = None
+  private var companionType: Option[Seq[Int]] = None
   private var ext: Option[Any] = None
 
-  def withMinduration(i: Int) = {
-    minduration = Some(i)
+  def withMinDuration(i: Int) = {
+    minDuration = Some(i)
     this
   }
 
-  def withMaxduration(i: Int) = {
-    maxduration = Some(i)
+  def withMaxDuration(i: Int) = {
+    maxDuration = Some(i)
     this
   }
 
@@ -65,8 +61,8 @@ class VideoBuilder private(mimes: Seq[String]) {
     this
   }
 
-  def withStartdelay(i: Int) = {
-    startdelay = Some(i)
+  def withStartDelay(i: Int) = {
+    startDelay = Some(i)
     this
   }
 
@@ -85,28 +81,28 @@ class VideoBuilder private(mimes: Seq[String]) {
     this
   }
 
-  def withMaxextended(i: Int) = {
-    maxextended = Some(i)
+  def withMaxExtended(i: Int) = {
+    maxExtended = Some(i)
     this
   }
 
-  def withMinbitrate(i: Int) = {
-    minbitrate = Some(i)
+  def withMinBitrate(i: Int) = {
+    minBitrate = Some(i)
     this
   }
 
-  def withMaxbitrate(i: Int) = {
-    maxbitrate = Some(i)
+  def withMaxBitrate(i: Int) = {
+    maxBitrate = Some(i)
     this
   }
 
-  def withBoxingallowed(i: Int) = {
-    boxingallowed = i
+  def withBoxingAllowed(i: Int) = {
+    boxingAllowed = i
     this
   }
 
-  def withPlaybackmethod(s: Seq[Int]) = {
-    playbackmethod = Some(s)
+  def withPlaybackMethod(s: Seq[Int]) = {
+    playbackMethod = Some(s)
     this
   }
 
@@ -120,8 +116,8 @@ class VideoBuilder private(mimes: Seq[String]) {
     this
   }
 
-  def withCompanionad(s: Seq[Banner]) = {
-    companionad = Some(s)
+  def withCompanionAd(s: Seq[Banner]) = {
+    companionAd = Some(s)
     this
   }
 
@@ -130,8 +126,8 @@ class VideoBuilder private(mimes: Seq[String]) {
     this
   }
 
-  def withCompaniontype(s: Seq[Int]) = {
-    companiontype = Some(s)
+  def withCompanionType(s: Seq[Int]) = {
+    companionType = Some(s)
     this
   }
 
@@ -141,12 +137,17 @@ class VideoBuilder private(mimes: Seq[String]) {
   }
 
   /** Returns Video */
-  def build = Video(mimes, minduration, maxduration, protocol, protocols, w, h, startdelay,
-    linearity, sequence, battr, maxextended, minbitrate, maxbitrate, boxingallowed,
-    playbackmethod, delivery, pos, companionad, api, companiontype, ext)
+  def build = Video(mimes, minDuration, maxDuration, protocol, protocols, w, h, startDelay,
+    linearity, sequence, battr, maxExtended, minBitrate, maxBitrate, boxingAllowed,
+    playbackMethod, delivery, pos, companionAd, api, companionType, ext)
 }
 
-/** Builder for Video model */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Video]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object VideoBuilder {
   def apply(mimes: Seq[String]): VideoBuilder = new VideoBuilder(mimes)
 }

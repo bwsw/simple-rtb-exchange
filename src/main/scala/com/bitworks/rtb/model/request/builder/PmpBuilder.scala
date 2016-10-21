@@ -2,22 +2,19 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{Deal, Pmp}
 
-/** Builder for Pmp model
-  *
-  * Created on: 10/19/2016
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Pmp]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class PmpBuilder private {
-  private var private_auction: Option[Int] = None
+  private var privateAuction: Option[Int] = None
   private var deals: Option[Seq[Deal]] = None
   private var ext: Option[Any] = None
 
   def withPrivateAuction(i: Int) = {
-    private_auction = Some(i)
+    privateAuction = Some(i)
     this
   }
 
@@ -32,10 +29,15 @@ class PmpBuilder private {
   }
 
   /** Returns Pmp */
-  def build = Pmp(private_auction, deals, ext)
+  def build = Pmp(privateAuction, deals, ext)
 }
 
-/** Builder for Pmp model */
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Pmp]]
+  *
+  * @author Egor Ilchenko
+  *
+  */
 object PmpBuilder {
   def apply(): PmpBuilder = new PmpBuilder
 }

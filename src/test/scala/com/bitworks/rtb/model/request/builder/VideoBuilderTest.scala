@@ -3,12 +3,11 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Video
 import org.scalatest.{FlatSpec, Matchers}
 
-/** Created on: 10/19/2016
+/**
+  * Test for [[com.bitworks.rtb.model.request.Video]]
   *
   * @author Egor Ilchenko
-  * @version %I%
   *
-  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 class VideoBuilderTest extends FlatSpec with Matchers{
 
@@ -19,28 +18,37 @@ class VideoBuilderTest extends FlatSpec with Matchers{
       Some(Seq(19)), Some("string"))
 
     val buildedVideo = VideoBuilder(Seq("mime"))
-      .withMinduration(1)
-      .withMaxduration(2)
+      .withMinDuration(1)
+      .withMaxDuration(2)
       .withProtocol(3)
       .withProtocols(Seq(4))
       .withW(5)
       .withH(6)
-      .withStartdelay(7)
+      .withStartDelay(7)
       .withLinearity(8)
       .withSequence(9)
       .withBattr(Seq(10))
-      .withMaxextended(11)
-      .withMinbitrate(12)
-      .withMaxbitrate(13)
-      .withBoxingallowed(14)
-      .withPlaybackmethod(Seq(15))
+      .withMaxExtended(11)
+      .withMinBitrate(12)
+      .withMaxBitrate(13)
+      .withBoxingAllowed(14)
+      .withPlaybackMethod(Seq(15))
       .withDelivery(Seq(16))
       .withPos(17)
-      .withCompanionad(Seq.empty)
+      .withCompanionAd(Seq.empty)
       .withApi(Seq(18))
-      .withCompaniontype(Seq(19))
+      .withCompanionType(Seq(19))
       .withExt("string")
       .build
+
+    buildedVideo shouldBe video
+  }
+
+  it should "build Video with default values" in {
+    val video = Video(Seq("mime"), None, None, None, None, None, None, None, None, None, None,
+      None, None, None, 1, None, None, None, None, None, None, None)
+
+    val buildedVideo = VideoBuilder(Seq("mime")).build
 
     buildedVideo shouldBe video
   }
