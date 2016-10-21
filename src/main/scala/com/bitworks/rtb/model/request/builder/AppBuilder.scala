@@ -2,11 +2,12 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{App, Content, Publisher}
 
-/** Builder for [[com.bitworks.rtb.model.request.App]]
+/**
+  * Builder for [[com.bitworks.rtb.model.request.App]]
   *
   * Created on: 10/19/2016
   *
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
@@ -73,12 +74,12 @@ class AppBuilder private {
     this
   }
 
-  def isPrivacyPolicy(i: Int) = {
+  def withPrivacyPolicy(i: Int) = {
     privacyPolicy = Some(i)
     this
   }
 
-  def isPaid(i: Int) = {
+  def withPaid(i: Int) = {
     paid = Some(i)
     this
   }
@@ -119,7 +120,6 @@ class AppBuilder private {
     content,
     keyWords,
     ext)
-
 }
 
 object AppBuilder {

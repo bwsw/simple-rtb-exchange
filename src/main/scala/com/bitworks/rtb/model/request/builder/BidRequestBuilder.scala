@@ -2,11 +2,12 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request._
 
-/** Builder for [[com.bitworks.rtb.model.request.BidRequest]]
+/**
+  * Builder for [[com.bitworks.rtb.model.request.BidRequest]]
   *
   * Created on: 10/20/2016
   *
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
@@ -19,16 +20,16 @@ class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
   private var test: Option[Int] = Some(0)
   private var at: Option[Int] = Some(2)
   private var tMax: Option[Int] = None
-  private var wSeat: Option[Seq[String]] = None
+  private var wseat: Option[Seq[String]] = None
   private var allImps: Option[Int] = Some(0)
   private var cur: Option[Seq[String]] = None
-  private var bCat: Option[Seq[String]] = None
+  private var bcat: Option[Seq[String]] = None
   private var badv: Option[Seq[String]] = None
   private var regs: Option[Regs] = None
   private var ext: Option[Any] = None
 
-  def withSite(a: Site) = {
-    site = Some(a)
+  def withSite(s: Site) = {
+    site = Some(s)
     this
   }
 
@@ -37,58 +38,58 @@ class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
     this
   }
 
-  def withDevice(a: Device) = {
-    device = Some(a)
+  def withDevice(d: Device) = {
+    device = Some(d)
     this
   }
 
-  def withUser(a: User) = {
-    user = Some(a)
+  def withUser(u: User) = {
+    user = Some(u)
     this
   }
 
-  def withTest(a: Int) = {
-    test = Some(a)
+  def withTest(i: Int) = {
+    test = Some(i)
     this
   }
 
-  def withAt(a: Int) = {
-    at = Some(a)
+  def withAt(i: Int) = {
+    at = Some(i)
     this
   }
 
-  def withTMax(a: Int) = {
-    tMax = Some(a)
+  def withTmax(i: Int) = {
+    tMax = Some(i)
     this
   }
 
-  def withWSeat(a: Seq[String]) = {
-    wSeat = Some(a)
+  def withWseat(s: Seq[String]) = {
+    wseat = Some(s)
     this
   }
 
-  def withAllImps(a: Int) = {
-    allImps = Some(a)
+  def withAllImps(i: Int) = {
+    allImps = Some(i)
     this
   }
 
-  def withCur(a: Seq[String]) = {
-    cur = Some(a)
+  def withCur(s: Seq[String]) = {
+    cur = Some(s)
     this
   }
 
-  def withBCat(a: Seq[String]) = {
-    bCat = Some(a)
+  def withBcat(s: Seq[String]) = {
+    bcat = Some(s)
     this
   }
 
-  def withBadv(a: Seq[String]) = {
-    badv = Some(a)
+  def withBadv(s: Seq[String]) = {
+    badv = Some(s)
     this
   }
 
-  def withRegs(a: Regs) = {
-    regs = Some(a)
+  def withRegs(r: Regs) = {
+    regs = Some(r)
     this
   }
 
@@ -107,10 +108,10 @@ class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
     test,
     at,
     tMax,
-    wSeat,
+    wseat,
     allImps,
     cur,
-    bCat,
+    bcat,
     badv,
     regs,
     ext)

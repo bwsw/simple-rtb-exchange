@@ -1,7 +1,7 @@
 package com.bitworks.rtb.model.request
 
 /**
-  * A website in which the ad will be shown.
+  * Information about website in which the ad will be shown.
   *
   * @param id            exchange-specific site ID
   * @param name          site name
@@ -18,7 +18,13 @@ package com.bitworks.rtb.model.request
   * @param content       details about the [[com.bitworks.rtb.model.request.Content Content]]
   * @param keywords      comma separated list of keywords about the site
   * @param ext           placeholder for exchange-specific extensions to OpenRTB
-  * @author Pavel Tomskih
+  *
+  * Created on: 10/17/2016
+  *
+  * @author Pavel Tomskikh
+  * @version %I%
+  *
+  * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
 case class Site(
     id: Option[String],

@@ -2,16 +2,17 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{Content, Producer}
 
-/** Builder for [[com.bitworks.rtb.model.request.Content]]
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Content]]
   *
   * Created on: 10/20/2016
   *
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
   */
-class ContentBuilder {
+class ContentBuilder private {
   private var id: Option[String] = None
   private var episode: Option[Int] = None
   private var title: Option[String] = None
@@ -30,101 +31,101 @@ class ContentBuilder {
   private var sourceRelationship: Option[Int] = None
   private var len: Option[Int] = None
   private var language: Option[String] = None
-  private var embeddable: Option[Boolean] = None
+  private var embeddable: Option[Int] = None
   private var ext: Option[Any] = None
 
-  def withId(a: String) = {
-    id = Some(a)
+  def withId(s: String) = {
+    id = Some(s)
     this
   }
 
-  def withEpisode(a: Int) = {
-    episode = Some(a)
+  def withEpisode(i: Int) = {
+    episode = Some(i)
     this
   }
 
-  def withTitle(a: String) = {
-    title = Some(a)
+  def withTitle(s: String) = {
+    title = Some(s)
     this
   }
 
-  def withSeries(a: String) = {
-    series = Some(a)
+  def withSeries(s: String) = {
+    series = Some(s)
     this
   }
 
-  def withSeason(a: String) = {
-    season = Some(a)
+  def withSeason(s: String) = {
+    season = Some(s)
     this
   }
 
-  def withProducer(a: Producer) = {
-    producer = Some(a)
+  def withProducer(p: Producer) = {
+    producer = Some(p)
     this
   }
 
-  def withUrl(a: String) = {
-    url = Some(a)
+  def withUrl(s: String) = {
+    url = Some(s)
     this
   }
 
-  def withCat(a: Seq[String]) = {
-    cat = Some(a)
+  def withCat(s: Seq[String]) = {
+    cat = Some(s)
     this
   }
 
-  def withVideoQuality(a: Int) = {
-    videoQuality = Some(a)
+  def withVideoQuality(i: Int) = {
+    videoQuality = Some(i)
     this
   }
 
-  def withContext(a: Int) = {
-    context = Some(a)
+  def withContext(i: Int) = {
+    context = Some(i)
     this
   }
 
-  def withContentRating(a: String) = {
-    contentRating = Some(a)
+  def withContentRating(s: String) = {
+    contentRating = Some(s)
     this
   }
 
-  def withUserRating(a: String) = {
-    userRating = Some(a)
+  def withUserRating(s: String) = {
+    userRating = Some(s)
     this
   }
 
-  def withQagMediaRating(a: Int) = {
-    qagMediaRating = Some(a)
+  def withQagMediaRating(i: Int) = {
+    qagMediaRating = Some(i)
     this
   }
 
-  def withKeyWords(a: String) = {
-    keyWords = Some(a)
+  def withKeyWords(s: String) = {
+    keyWords = Some(s)
     this
   }
 
-  def isLiveStream(i: Int) = {
+  def withLiveStream(i: Int) = {
     liveStream = Some(i)
     this
   }
 
-  def withSourceRelationship(a: Int) = {
-    sourceRelationship = Some(a)
+  def withSourceRelationship(i: Int) = {
+    sourceRelationship = Some(i)
     this
   }
 
-  def withLen(a: Int) = {
-    len = Some(a)
+  def withLen(i: Int) = {
+    len = Some(i)
     this
   }
 
-  def withLanguage(a: String) = {
-    language = Some(a)
+  def withLanguage(s: String) = {
+    language = Some(s)
     this
   }
 
-  def withEmbeddable(a: Boolean) = {
-    embeddable = Some(a)
+  def withEmbeddable(i: Int) = {
+    embeddable = Some(i)
     this
   }
 
@@ -132,6 +133,7 @@ class ContentBuilder {
     ext = Some(a)
     this
   }
+
 
   def build = Content(
     id,

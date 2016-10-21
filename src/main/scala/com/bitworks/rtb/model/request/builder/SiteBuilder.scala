@@ -2,11 +2,12 @@ package com.bitworks.rtb.model.request.builder
 
 import com.bitworks.rtb.model.request.{Content, Publisher, Site}
 
-/** Builder for [[com.bitworks.rtb.model.request.Site]]
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Site]]
   *
   * Created on: 10/19/2016
   *
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
@@ -73,13 +74,13 @@ class SiteBuilder private {
     this
   }
 
-  def isPrivacyPolicy(i: Int) = {
-    privacyPolicy = Some(i)
+  def withMobile(i: Int) = {
+    mobile = Some(i)
     this
   }
 
-  def isMobile(i: Int) = {
-    mobile = Some(i)
+  def withPrivacyPolicy(i: Int) = {
+    privacyPolicy = Some(i)
     this
   }
 
@@ -102,6 +103,7 @@ class SiteBuilder private {
     ext = Some(a)
     this
   }
+
 
   def build = Site(
     id,
