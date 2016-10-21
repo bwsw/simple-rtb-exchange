@@ -6,7 +6,7 @@ import com.bitworks.rtb.model.request.Publisher
   *
   * Created on: 10/17/2016
   *
-  * @author Tomskih Pavel
+  * @author Pavel Tomskih
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.

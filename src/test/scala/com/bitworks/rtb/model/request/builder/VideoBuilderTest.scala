@@ -5,7 +5,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 /** Created on: 10/19/2016
   *
-  * @author Ilchenko Egor
+  * @author Egor Ilchenko
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
@@ -15,7 +15,7 @@ class VideoBuilderTest extends FlatSpec with Matchers{
   "VideoBuilder" should "build Video correctly" in {
     val video = Video(Seq("mime"), Some(1), Some(2), Some(3), Some(Seq(4)), Some(5),
       Some(6), Some(7), Some(8), Some(9), Some(Seq(10)), Some(11), Some(12), Some(13),
-      Some(14), Some(Seq(15)), Some(Seq(16)), Some(17), Some(Seq.empty), Some(Seq(18)),
+      14, Some(Seq(15)), Some(Seq(16)), Some(17), Some(Seq.empty), Some(Seq(18)),
       Some(Seq(19)), Some("string"))
 
     val buildedVideo = VideoBuilder(Seq("mime"))

@@ -7,7 +7,7 @@ import org.scalatest.FunSuite
   *
   * Created on: 10/19/2016
   *
-  * @author Tomskih Pavel
+  * @author Pavel Tomskih
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
@@ -38,8 +38,8 @@ class AppBuilderSuite extends FunSuite {
         .withSectionCat(Seq("IAB3-4"))
         .withPageCat(Seq("IAB2-7"))
         .withVer("1.4.2")
-        .isPrivacyPolicy(true)
-        .isPaid(false)
+        .isPrivacyPolicy(1)
+        .isPaid(0)
         .withPublisher(p)
         .withContent(c)
         .withKeyWords("kw1,kw2")
@@ -54,8 +54,8 @@ class AppBuilderSuite extends FunSuite {
         Some(Seq("IAB3-4")),
         Some(Seq("IAB2-7")),
         Some("1.4.2"),
-        Some(true),
-        Some(false),
+        Some(1),
+        Some(0),
         Some(p),
         Some(c),
         Some("kw1,kw2"),

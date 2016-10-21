@@ -6,7 +6,7 @@ import com.bitworks.rtb.model.request.Geo
   *
   * Created on: 10/19/2016
   *
-  * @author Ilchenko Egor
+  * @author Egor Ilchenko
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.

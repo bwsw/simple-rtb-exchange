@@ -7,7 +7,7 @@ import org.scalatest.FunSuite
   *
   * Created on: 10/19/2016
   *
-  * @author Tomskih Pavel
+  * @author Pavel Tomskih
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
@@ -69,8 +69,8 @@ class SiteBuilderSuite extends FunSuite {
         .withPage("pg22")
         .withRef("from.com")
         .withSearch("site")
-        .isMobile(false)
-        .isPrivacyPolicy(true)
+        .isMobile(0)
+        .isPrivacyPolicy(1)
         .withPublisher(p)
         .withContent(c)
         .withKeyWords("kw1,kw2")
@@ -85,8 +85,8 @@ class SiteBuilderSuite extends FunSuite {
         Some("pg22"),
         Some("from.com"),
         Some("site"),
-        Some(false),
-        Some(true),
+        Some(0),
+        Some(1),
         Some(p),
         Some(c),
         Some("kw1,kw2"),

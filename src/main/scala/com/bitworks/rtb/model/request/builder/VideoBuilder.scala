@@ -6,7 +6,7 @@ import com.bitworks.rtb.model.request.{Banner, Video}
   *
   * Created on: 10/19/2016
   *
-  * @author Ilchenko Egor
+  * @author Egor Ilchenko
   * @version %I%
   *
   *          All Rights Reserved (c) 2016 Bitworks Software, Ltd.
@@ -26,7 +26,7 @@ class VideoBuilder private(mimes: Seq[String]) {
   private var maxextended: Option[Int] = None
   private var minbitrate: Option[Int] = None
   private var maxbitrate: Option[Int] = None
-  private var boxingallowed: Option[Int] = None
+  private var boxingallowed: Int = 1
   private var playbackmethod: Option[Seq[Int]] = None
   private var delivery: Option[Seq[Int]] = None
   private var pos: Option[Int] = None
@@ -101,7 +101,7 @@ class VideoBuilder private(mimes: Seq[String]) {
   }
 
   def withBoxingallowed(i: Int) = {
-    boxingallowed = Some(i)
+    boxingallowed = i
     this
   }
 

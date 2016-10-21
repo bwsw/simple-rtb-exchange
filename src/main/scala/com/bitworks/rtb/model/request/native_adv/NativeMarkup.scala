@@ -4,7 +4,7 @@ package com.bitworks.rtb.model.request.native_adv
   *
   * Created on: 10/19/2016
   *
-  * @author Tomskih Pavel
+  * @author Pavel Tomskih
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.

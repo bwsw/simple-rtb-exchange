@@ -7,7 +7,7 @@ import org.scalatest.FunSuite
   *
   * Created on: 10/19/2016
   *
-  * @author Tomskih Pavel
+  * @author Pavel Tomskih
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.
@@ -59,7 +59,7 @@ class ContentBuilderSuite extends FunSuite {
         .withUserRating("middle")
         .withQagMediaRating(2)
         .withKeyWords("kw1,kw2")
-        .isLiveStream(true)
+        .isLiveStream(1)
         .withSourceRelationship(1)
         .withLen(30)
         .withLanguage("ru")
@@ -81,7 +81,7 @@ class ContentBuilderSuite extends FunSuite {
           Some("middle"),
           Some(2),
           Some("kw1,kw2"),
-          Some(true),
+          Some(1),
           Some(1),
           Some(30),
           Some("ru"),
