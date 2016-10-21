@@ -17,7 +17,7 @@ package com.bitworks.rtb.model.request
   *                the impressions available in context to support road-blocking
   * @param cur     allowed currencies for bids on this bid request using ISO-4217 alpha codes
   * @param bcat    blocked advertiser categories using the IAB content categories
-  * @param badv    bock list of advertisers by their domains
+  * @param badv    block list of advertisers by their domains
   * @param regs    specifies any industry, legal, or governmental regulations
   * @param ext     placeholder for exchange-specific extensions to OpenRTB
   *
