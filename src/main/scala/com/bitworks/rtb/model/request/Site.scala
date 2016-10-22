@@ -18,7 +18,7 @@ package com.bitworks.rtb.model.request
   * @param content       details about the [[com.bitworks.rtb.model.request.Content Content]]
   * @param keywords      comma separated list of keywords about the site
   * @param ext           placeholder for exchange-specific extensions to OpenRTB
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   */
 case class Site(
     id: Option[String],

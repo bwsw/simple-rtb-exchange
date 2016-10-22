@@ -4,7 +4,7 @@ package com.bitworks.rtb.parser
   *
   * Created on: 10/20/2016
   *
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   * @version %I%
   *
   * All Rights Reserved (c) 2016 Bitworks Software, Ltd.

@@ -21,7 +21,7 @@ package com.bitworks.rtb.model.request
   *                      the app
   * @param keywords      comma separated list of keywords about the app
   * @param ext           placeholder for exchange-specific extensions to OpenRTB
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   */
 case class App(
     id: Option[String],

@@ -31,7 +31,7 @@ package com.bitworks.rtb.model.request
   * @param regs    a [[com.bitworks.rtb.model.request.Regs Regs]] object that specifies any
   *                industry, legal, or governmental regulations in force for this request
   * @param ext     placeholder for exchange-specific extensions to OpenRTB
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   */
 case class BidRequest(
     id: String,

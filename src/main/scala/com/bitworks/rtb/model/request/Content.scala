@@ -26,7 +26,7 @@ package com.bitworks.rtb.model.request
   * @param language           content language using ISO-639-1-alpha-2
   * @param embeddable         indicator whether the content is embeddable, where 0 = no, 1 = yes
   * @param ext                placeholder for exchange-specific extensions to OpenRTB
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   */
 case class Content(
     id: Option[String],

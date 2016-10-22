@@ -8,7 +8,7 @@ package com.bitworks.rtb.model.request
   * @param cat    IAB content categories that describe the content producer
   * @param domain highest level domain of the content producer
   * @param ext    placeholder for exchange-specific extensions to OpenRTB
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   */
 case class Producer(
     id: Option[String],

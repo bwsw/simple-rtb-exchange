@@ -8,7 +8,7 @@ package com.bitworks.rtb.model.request
   * @param cat    IAB content categories that describe the publisher
   * @param domain highest level domain of the publisher
   * @param ext    placeholder for exchange-specific extensions to OpenRTB
-  * @author Pavel Tomskih
+  * @author Pavel Tomskikh
   */
 case class Publisher(
     id: Option[String],
