@@ -1,7 +1,7 @@
 package com.bitworks.rtb.model.request
 
 /**
-  * Information about non-browser application in which the ad will be shown.
+  * A non-browser application in which the ad will be shown.
   *
   * @param id            exchange-specific app ID
   * @param name          app name
@@ -21,8 +21,7 @@ package com.bitworks.rtb.model.request
   *                      the app
   * @param keywords      comma separated list of keywords about the app
   * @param ext           placeholder for exchange-specific extensions to OpenRTB
-  * @author Pavel Tomskikh
-  *
+  * @author Pavel Tomskih
   */
 case class App(
     id: Option[String],
