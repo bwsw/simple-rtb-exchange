@@ -1,0 +1,7 @@
+This is the documentation for the Bitworks RTB Exchange.
+
+== Package structure ==
+The [[com.bitworks.rtb]] package contains ready to use RTB Exchange application.
+
+Notable packages include:
+  - [[com.bitworks.rtb.model `com.bitworks.rtb.model`]] and its sub-packages contain bid request and response objects
