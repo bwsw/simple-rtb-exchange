@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.{Content, Producer}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Content]]
+  * Builder for [[com.bitworks.rtb.model.request.Content Content]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class ContentBuilder private {
   private var id: Option[String] = None
@@ -22,7 +21,7 @@ class ContentBuilder private {
   private var contentRating: Option[String] = None
   private var userRating: Option[String] = None
   private var qagMediaRating: Option[Int] = None
-  private var keyWords: Option[String] = None
+  private var keywords: Option[String] = None
   private var liveStream: Option[Int] = None
   private var sourceRelationship: Option[Int] = None
   private var len: Option[Int] = None
@@ -95,8 +94,8 @@ class ContentBuilder private {
     this
   }
 
-  def withKeyWords(s: String) = {
-    keyWords = Some(s)
+  def withKeywords(s: String) = {
+    keywords = Some(s)
     this
   }
 
@@ -145,7 +144,7 @@ class ContentBuilder private {
     contentRating,
     userRating,
     qagMediaRating,
-    keyWords,
+    keywords,
     liveStream,
     sourceRelationship,
     len,
@@ -154,6 +153,11 @@ class ContentBuilder private {
     ext)
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Content Content]].
+  *
+  * @author Pavel Tomskikh
+  */
 object ContentBuilder {
   def apply() = new ContentBuilder
 }

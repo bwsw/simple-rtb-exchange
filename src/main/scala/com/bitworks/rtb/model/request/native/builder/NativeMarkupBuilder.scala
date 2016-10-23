@@ -3,22 +3,22 @@ package com.bitworks.rtb.model.request.native.builder
 import com.bitworks.rtb.model.request.native.{Asset, NativeMarkup}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.native.NativeMarkup]].
+  * Builder for [[com.bitworks.rtb.model.request.native.NativeMarkup NativeMarkup]].
   *
-  * @param assets is required for [[com.bitworks.rtb.model.request.native.NativeMarkup]]
+  * @param assets value of assets in
+  *               [[com.bitworks.rtb.model.request.native.NativeMarkup NativeMarkup]] object
   * @author Pavel Tomskikh
-  *
   */
-class NativeMarkupBuilder private (assets: Seq[Asset]) {
-  private var ver: Option[String] = Some("1")
+class NativeMarkupBuilder private(assets: Seq[Asset]) {
+  private var ver: String = NativeMarkupBuilder.Ver
   private var layout: Option[Int] = None
   private var adUnit: Option[Int] = None
-  private var plcmtCnt: Option[Int] = Some(1)
-  private var seq: Option[Int] = Some(0)
+  private var plcmtCnt: Int = NativeMarkupBuilder.plcmtCnt
+  private var seq: Int = NativeMarkupBuilder.Seq
   private var ext: Option[Any] = None
 
   def withVer(s: String) = {
-    ver = Some(s)
+    ver = s
     this
   }
 
@@ -33,12 +33,12 @@ class NativeMarkupBuilder private (assets: Seq[Asset]) {
   }
 
   def withPlcmtCnt(i: Int) = {
-    plcmtCnt = Some(i)
+    plcmtCnt = i
     this
   }
 
   def withSeq(i: Int) = {
-    seq = Some(i)
+    seq = i
     this
   }
 
@@ -50,6 +50,15 @@ class NativeMarkupBuilder private (assets: Seq[Asset]) {
   def build = NativeMarkup(ver, layout, adUnit, plcmtCnt, seq, assets, ext)
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.request.native.NativeMarkup NativeMarkup]].
+  *
+  * @author Pavel Tomskikh
+  */
 object NativeMarkupBuilder {
+  val Ver = "1"
+  val plcmtCnt = 1
+  val Seq = 0
+
   def apply(assets: Seq[Asset]) = new NativeMarkupBuilder(assets)
 }

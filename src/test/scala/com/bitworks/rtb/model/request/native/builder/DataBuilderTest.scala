@@ -4,27 +4,28 @@ import com.bitworks.rtb.model.request.native.Data
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.native.builder.DataBuilder]]
+  * Test for [[com.bitworks.rtb.model.request.native.builder.DataBuilder DataBuilder]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class DataBuilderTest extends FlatSpec with Matchers {
 
-  "DataBuilder" should "build Data with default parameters correctly" in {
+  "DataBuilder" should "build Data with default values correctly" in {
     val data = Data(3, None, None)
-    val buildedData = DataBuilder(3).build
+    val builtData = DataBuilder(data.`type`).build
 
-    buildedData shouldBe data
+    builtData shouldBe data
   }
 
-  it should "build Data with optional parameters correctly" in {
+  it should "build Data correctly" in {
     val data = Data(2, Some(32), Some("ext"))
-    val buildedData = DataBuilder(2)
-        .withLen(32)
-        .withExt("ext")
-        .build
 
-    buildedData shouldBe data
+    var builder = DataBuilder(data.`type`)
+    data.len.foreach(len => builder = builder.withLen(len))
+    data.ext.foreach(ext => builder = builder.withExt(ext))
+
+    val builtData = builder.build
+
+    builtData shouldBe data
   }
 }

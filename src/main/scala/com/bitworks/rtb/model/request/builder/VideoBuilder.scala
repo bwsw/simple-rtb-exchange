@@ -3,10 +3,10 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.{Banner, Video}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Video]]
+  * Builder for [[com.bitworks.rtb.model.request.Video Video]].
   *
+  * @param mimes value of mimes in [[com.bitworks.rtb.model.request.Video Video]] object
   * @author Egor Ilchenko
-  *
   */
 class VideoBuilder private(mimes: Seq[String]) {
   private var minDuration: Option[Int] = None
@@ -22,7 +22,7 @@ class VideoBuilder private(mimes: Seq[String]) {
   private var maxExtended: Option[Int] = None
   private var minBitrate: Option[Int] = None
   private var maxBitrate: Option[Int] = None
-  private var boxingAllowed: Int = 1
+  private var boxingAllowed: Int = VideoBuilder.BoxingAllowed
   private var playbackMethod: Option[Seq[Int]] = None
   private var delivery: Option[Seq[Int]] = None
   private var pos: Option[Int] = None
@@ -143,11 +143,12 @@ class VideoBuilder private(mimes: Seq[String]) {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Video]]
+  * Builder for [[com.bitworks.rtb.model.request.Video Video]].
   *
   * @author Egor Ilchenko
-  *
   */
 object VideoBuilder {
+  val BoxingAllowed = 1
+  
   def apply(mimes: Seq[String]): VideoBuilder = new VideoBuilder(mimes)
 }

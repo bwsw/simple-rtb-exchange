@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.{Device, Geo}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Device]]
+  * Builder for [[com.bitworks.rtb.model.request.Device Device]].
   *
   * @author Egor Ilchenko
-  *
   */
 class DeviceBuilder private {
   private var ua: Option[String] = None
@@ -192,10 +191,9 @@ class DeviceBuilder private {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Device]]
+  * Builder for [[com.bitworks.rtb.model.request.Device Device]].
   *
   * @author Egor Ilchenko
-  *
   */
 object DeviceBuilder {
   def apply() = new DeviceBuilder

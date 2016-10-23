@@ -27,7 +27,7 @@ package com.bitworks.rtb.model.request
   * @param cur     array of allowed currencies for bids on this bid request using ISO-4217 alpha
   *                codes
   * @param bcat    blocked advertiser categories using the IAB content categories
-  * @param badv    bock list of advertisers by their domains
+  * @param badv    block list of advertisers by their domains
   * @param regs    a [[com.bitworks.rtb.model.request.Regs Regs]] object that specifies any
   *                industry, legal, or governmental regulations in force for this request
   * @param ext     placeholder for exchange-specific extensions to OpenRTB
@@ -40,11 +40,11 @@ case class BidRequest(
     app: Option[App],
     device: Option[Device],
     user: Option[User],
-    test: Option[Int],
-    at: Option[Int],
+    test: Int,
+    at: Int,
     tmax: Option[Int],
     wseat: Option[Seq[String]],
-    allImps: Option[Int],
+    allImps: Int,
     cur: Option[Seq[String]],
     bcat: Option[Seq[String]],
     badv: Option[Seq[String]],

@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.{App, Content, Publisher}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.App]]
+  * Builder for [[com.bitworks.rtb.model.request.App App]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class AppBuilder private {
   private var id: Option[String] = None
@@ -22,7 +21,7 @@ class AppBuilder private {
   private var paid: Option[Int] = None
   private var publisher: Option[Publisher] = None
   private var content: Option[Content] = None
-  private var keyWords: Option[String] = None
+  private var keywords: Option[String] = None
   private var ext: Option[Any] = None
 
   def withId(s: String) = {
@@ -90,8 +89,8 @@ class AppBuilder private {
     this
   }
 
-  def withKeyWords(s: String) = {
-    keyWords = Some(s)
+  def withKeywords(s: String) = {
+    keywords = Some(s)
     this
   }
 
@@ -114,10 +113,15 @@ class AppBuilder private {
     paid,
     publisher,
     content,
-    keyWords,
+    keywords,
     ext)
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.request.App App]].
+  *
+  * @author Pavel Tomskikh
+  */
 object AppBuilder {
   def apply() = new AppBuilder
 }

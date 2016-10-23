@@ -4,49 +4,51 @@ import com.bitworks.rtb.model.request.native.{Asset, NativeMarkup}
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.native.builder.NativeMarkupBuilder]]
+  * Test for
+  * [[com.bitworks.rtb.model.request.native.builder.NativeMarkupBuilder NativeMarkupBuilder]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class NativeMarkupBuilderTest extends FlatSpec with Matchers {
 
   val assets = Seq(
-    Asset(31, Some(1), None, None, None, None, None),
-    Asset(22, Some(0), None, None, None, None, None))
+    Asset(31, 1, None, None, None, None, None),
+    Asset(22, 0, None, None, None, None, None))
 
-  "NativeMarkupBuilder" should "build NativeMarkup with default parameters correctly" in {
+  "NativeMarkupBuilder" should "build NativeMarkup with default values correctly" in {
     val nativeMarkup = NativeMarkup(
-      Some("1"),
+      NativeMarkupBuilder.Ver,
       None,
       None,
-      Some(1),
-      Some(0),
+      NativeMarkupBuilder.plcmtCnt,
+      NativeMarkupBuilder.Seq,
       assets,
       None)
-    val buildedNativeMarkup = NativeMarkupBuilder(assets).build
+    val builtNativeMarkup = NativeMarkupBuilder(nativeMarkup.assets).build
 
-    buildedNativeMarkup shouldBe nativeMarkup
+    builtNativeMarkup shouldBe nativeMarkup
   }
 
-  it should "build NativeMarkup with optional parameters correctly" in {
+  it should "build NativeMarkup correctly" in {
     val nativeMarkup = NativeMarkup(
-      Some("2.7"),
+      "2.7",
       Some(3),
       Some(2),
-      Some(5),
-      Some(2),
+      5,
+      2,
       assets,
       Some("ext"))
-    val buildedNativeMarkup = NativeMarkupBuilder(assets)
-        .withVer("2.7")
-        .withLayout(3)
-        .withAdUnit(2)
-        .withPlcmtCnt(5)
-        .withSeq(2)
-        .withExt("ext")
-        .build
 
-    buildedNativeMarkup shouldBe nativeMarkup
+    var builder = NativeMarkupBuilder(nativeMarkup.assets)
+        .withVer(nativeMarkup.ver)
+        .withPlcmtCnt(nativeMarkup.plcmtCnt)
+        .withSeq(nativeMarkup.seq)
+    nativeMarkup.layout.foreach(layout => builder = builder.withLayout(layout))
+    nativeMarkup.adUnit.foreach(adUnit => builder = builder.withAdUnit(adUnit))
+    nativeMarkup.ext.foreach(ext => builder = builder.withExt(ext))
+
+    val builtNativeMarkup = builder.build
+
+    builtNativeMarkup shouldBe nativeMarkup
   }
 }

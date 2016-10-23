@@ -4,24 +4,26 @@ import com.bitworks.rtb.model.request.native.Title
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.native.builder.TitleBuilder]]
+  * Test for [[com.bitworks.rtb.model.request.native.builder.TitleBuilder TitleBuilder]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class TitleBuilderTest extends FlatSpec with Matchers {
 
-  "TitleBuilder" should "build Title with default parameters correctly" in {
-    val title = Title(123, None)
-    val buildedTitle = TitleBuilder(123).build
+  "TitleBuilder" should "build Title with default values correctly" in {
+    val builtTitle = TitleBuilder(123).build
 
-    buildedTitle shouldBe title
+    builtTitle.ext shouldBe None
   }
 
-  it should "build Title with optional parameters correctly" in {
+  it should "build Title correctly" in {
     val title = Title(123, Some("ext"))
-    val buildedTitle = TitleBuilder(123).withExt("ext").build
 
-    buildedTitle shouldBe title
+    var builder = TitleBuilder(title.len)
+    title.ext.foreach(ext => builder = builder.withExt(ext))
+
+    val builtTitle = builder.build
+
+    builtTitle shouldBe title
   }
 }

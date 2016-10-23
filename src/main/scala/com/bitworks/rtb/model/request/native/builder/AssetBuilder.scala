@@ -3,14 +3,13 @@ package com.bitworks.rtb.model.request.native.builder
 import com.bitworks.rtb.model.request.native._
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.native.Asset]].
+  * Builder for [[com.bitworks.rtb.model.request.native.Asset Asset]] object.
   *
-  * @param id is required for [[com.bitworks.rtb.model.request.native.Asset]]
+  * @param id value of id in [[com.bitworks.rtb.model.request.native.Asset Asset]] object
   * @author Pavel Tomskikh
-  *
   */
 class AssetBuilder private (id: Int) {
-  private var required: Option[Int] = Some(0)
+  private var required: Int = AssetBuilder.Required
   private var title: Option[Title] = None
   private var img: Option[Image] = None
   private var video: Option[Video] = None
@@ -18,7 +17,7 @@ class AssetBuilder private (id: Int) {
   private var ext: Option[Any] = None
 
   def withRequired(i: Int) = {
-    required = Some(i)
+    required = i
     this
   }
 
@@ -50,6 +49,13 @@ class AssetBuilder private (id: Int) {
   def build = Asset(id, required, title, img, video, data, ext)
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.request.native.Asset Asset]] object.
+  *
+  * @author Pavel Tomskikh
+  */
 object AssetBuilder {
+  val Required = 0
+
   def apply(id: Int) = new AssetBuilder(id)
 }

@@ -3,21 +3,22 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request._
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.BidRequest]]
+  * Builder for [[com.bitworks.rtb.model.request.BidRequest BidRequest]].
   *
+  * @param id  value of id in [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object
+  * @param imp value of imp in [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object
   * @author Pavel Tomskikh
-  *
   */
-class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
+class BidRequestBuilder private(id: String, imp: Seq[Imp]) {
   private var site: Option[Site] = None
   private var app: Option[App] = None
   private var device: Option[Device] = None
   private var user: Option[User] = None
-  private var test: Option[Int] = Some(0)
-  private var at: Option[Int] = Some(2)
-  private var tMax: Option[Int] = None
+  private var test: Int = BidRequestBuilder.Test
+  private var at: Int = BidRequestBuilder.At
+  private var tmax: Option[Int] = None
   private var wseat: Option[Seq[String]] = None
-  private var allImps: Option[Int] = Some(0)
+  private var allImps: Int = BidRequestBuilder.AllImps
   private var cur: Option[Seq[String]] = None
   private var bcat: Option[Seq[String]] = None
   private var badv: Option[Seq[String]] = None
@@ -45,17 +46,17 @@ class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
   }
 
   def withTest(i: Int) = {
-    test = Some(i)
+    test = i
     this
   }
 
   def withAt(i: Int) = {
-    at = Some(i)
+    at = i
     this
   }
 
   def withTmax(i: Int) = {
-    tMax = Some(i)
+    tmax = Some(i)
     this
   }
 
@@ -65,7 +66,7 @@ class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
   }
 
   def withAllImps(i: Int) = {
-    allImps = Some(i)
+    allImps = i
     this
   }
 
@@ -94,7 +95,7 @@ class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
     this
   }
 
-  def build = BidRequest(    
+  def build = BidRequest(
     id,
     imp,
     site,
@@ -103,7 +104,7 @@ class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
     user,
     test,
     at,
-    tMax,
+    tmax,
     wseat,
     allImps,
     cur,
@@ -113,6 +114,15 @@ class BidRequestBuilder private (id: String, imp: Seq[Imp]) {
     ext)
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.request.BidRequest BidRequest]].
+  *
+  * @author Pavel Tomskikh
+  */
 object BidRequestBuilder {
+  val Test = 0
+  val At = 2
+  val AllImps = 0
+
   def apply(id: String, imp: Seq[Imp]) = new BidRequestBuilder(id, imp)
 }

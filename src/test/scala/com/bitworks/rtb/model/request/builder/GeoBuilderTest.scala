@@ -4,10 +4,9 @@ import com.bitworks.rtb.model.request.Geo
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.Geo]]
+  * Test for [[com.bitworks.rtb.model.request.builder.GeoBuilder GeoBuilder]].
   *
   * @author Egor Ilchenko
-  *
   */
 class GeoBuilderTest extends FlatSpec with Matchers{
 
@@ -16,7 +15,7 @@ class GeoBuilderTest extends FlatSpec with Matchers{
       Some("country"), Some("region"), Some("regionFips"), Some("metro"),
       Some("city"), Some("zip"), Some(14), Some("string"))
 
-    val buildedGeo = GeoBuilder()
+    val builtGeo = GeoBuilder()
       .withLat(42.42.toFloat)
       .withLon(24.24.toFloat)
       .withType(1)
@@ -30,7 +29,7 @@ class GeoBuilderTest extends FlatSpec with Matchers{
       .withExt("string")
       .build
 
-    buildedGeo shouldBe geo
+    builtGeo shouldBe geo
   }
 
 }

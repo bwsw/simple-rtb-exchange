@@ -3,10 +3,10 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request._
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Imp]]
+  * Builder for [[com.bitworks.rtb.model.request.Imp Imp]].
   *
+  * @param id value of id in [[com.bitworks.rtb.model.request.Imp Imp]] object
   * @author Egor Ilchenko
-  *
   */
 class ImpBuilder private(id: String) {
   private var banner: Option[Banner] = None
@@ -14,10 +14,10 @@ class ImpBuilder private(id: String) {
   private var native: Option[Native] = None
   private var displayManager: Option[String] = None
   private var displayManagerVer: Option[String] = None
-  private var instl: Int = 0
+  private var instl: Int = ImpBuilder.Instl
   private var tagId: Option[String] = None
-  private var bidFloor: BigDecimal = BigDecimal("0")
-  private var bidFloorCur: String = "USD"
+  private var bidFloor: BigDecimal = ImpBuilder.BidFloor
+  private var bidFloorCur: String = ImpBuilder.BidFloorCur
   private var secure: Option[Int] = None
   private var iframeBuster: Option[Seq[String]] = None
   private var pmp: Option[Pmp] = None
@@ -94,11 +94,14 @@ class ImpBuilder private(id: String) {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Imp]]
+  * Builder for [[com.bitworks.rtb.model.request.Imp Imp]].
   *
   * @author Egor Ilchenko
-  *
   */
-object ImpBuilder{
+object ImpBuilder {
+  val Instl = 0
+  val BidFloor = BigDecimal(0)
+  val BidFloorCur = "USD"
+
   def apply(id: String): ImpBuilder = new ImpBuilder(id)
 }

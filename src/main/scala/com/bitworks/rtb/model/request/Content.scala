@@ -8,8 +8,8 @@ package com.bitworks.rtb.model.request
   * @param title              content title
   * @param series             content series
   * @param season             content season (typically for video content)
-  * @param producer           details about the content [[com.bitworks.rtb.model.request.Producer
-  *                           Producer]]
+  * @param producer           details about the content
+  *                           [[com.bitworks.rtb.model.request.Producer Producer]]
   * @param url                URL of the content, for buy-side contextualization or review
   * @param cat                IAB content categories that describe the content producer
   * @param videoQuality       video quality per IAB’s classification

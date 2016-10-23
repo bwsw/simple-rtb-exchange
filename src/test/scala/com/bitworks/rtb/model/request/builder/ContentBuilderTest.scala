@@ -4,22 +4,21 @@ import com.bitworks.rtb.model.request.{Content, Producer}
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.builder.ContentBuilder]]
+  * Test for [[com.bitworks.rtb.model.request.builder.ContentBuilder ContentBuilder]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class ContentBuilderTest extends FlatSpec with Matchers {
 
-  "ContentBuilder" should "build Content with default parameters correctly" in {
+  "ContentBuilder" should "build Content with default values correctly" in {
     val content = Content(None, None, None, None, None, None, None, None,
       None, None, None, None, None, None, None, None, None, None, None, None)
-    val buildedContent = ContentBuilder().build
+    val builtContent = ContentBuilder().build
 
-    buildedContent shouldBe content
+    builtContent shouldBe content
   }
 
-  it should "build Content with optional parameters correctly" in {
+  it should "build Content correctly" in {
     val producer = Producer(None, None, None, None, None)
     val content = Content(
       Some("123"),
@@ -42,7 +41,7 @@ class ContentBuilderTest extends FlatSpec with Matchers {
       Some("ru"),
       Some(0),
       Some("ext"))
-    val buildedContent = ContentBuilder()
+    val builtContent = ContentBuilder()
         .withId("123")
         .withEpisode(5)
         .withTitle("title")
@@ -56,7 +55,7 @@ class ContentBuilderTest extends FlatSpec with Matchers {
         .withContentRating("MPAA")
         .withUserRating("middle")
         .withQagMediaRating(2)
-        .withKeyWords("kw1,kw2")
+        .withKeywords("kw1,kw2")
         .withLiveStream(1)
         .withSourceRelationship(1)
         .withLen(30)
@@ -65,7 +64,7 @@ class ContentBuilderTest extends FlatSpec with Matchers {
         .withExt("ext")
         .build
 
-    buildedContent shouldBe content
+    builtContent shouldBe content
   }
 
 }

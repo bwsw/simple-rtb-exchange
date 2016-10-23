@@ -4,28 +4,27 @@ import com.bitworks.rtb.model.request.Producer
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.builder.ProducerBuilder]]
+  * Test for [[com.bitworks.rtb.model.request.builder.ProducerBuilder ProducerBuilder]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class ProducerBuilderTest extends FlatSpec with Matchers {
 
-  "ProducerBuilder" should "build Producer with default parameters correctly" in {
+  "ProducerBuilder" should "build Producer with default values correctly" in {
     val producer = Producer(None, None, None, None, None)
-    val buildedProducer = ProducerBuilder().build
+    val builtProducer = ProducerBuilder().build
 
-    buildedProducer shouldBe producer
+    builtProducer shouldBe producer
   }
 
-  it should "build Producer with optional parameters correctly" in {
+  it should "build Producer correctly" in {
     val producer = Producer(
       Some("123"),
       Some("prod"),
       Some(Seq("IAB1-2")),
       Some("prod.com"),
       Some("ext"))
-    val buildedProducer = ProducerBuilder()
+    val builtProducer = ProducerBuilder()
         .withId("123")
         .withName("prod")
         .withCat(Seq("IAB1-2"))
@@ -33,7 +32,7 @@ class ProducerBuilderTest extends FlatSpec with Matchers {
         .withExt("ext")
         .build
 
-    buildedProducer shouldBe producer
+    builtProducer shouldBe producer
   }
 
 }

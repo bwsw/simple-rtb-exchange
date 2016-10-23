@@ -4,10 +4,9 @@ import com.bitworks.rtb.model.request.Banner
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.Banner]]
+  * Test for [[com.bitworks.rtb.model.request.builder.BannerBuilder BannerBuilder]].
   *
   * @author Egor Ilchenko
-  *
   */
 class BannerBuilderTest extends FlatSpec with Matchers{
 
@@ -16,7 +15,7 @@ class BannerBuilderTest extends FlatSpec with Matchers{
       Some("id"), Some(Seq(7)), Some(Seq(8)), Some(9), Some(Seq("mime")),
       Some(10), Some(Seq(11)), Some(Seq(12)), Some("string"))
 
-    val buildedBanner = BannerBuilder()
+    val builtBanner = BannerBuilder()
       .withW(1)
       .withH(2)
       .withWmax(3)
@@ -34,7 +33,7 @@ class BannerBuilderTest extends FlatSpec with Matchers{
       .withExt("string")
       .build
 
-    buildedBanner shouldBe banner
+    builtBanner shouldBe banner
   }
 
 }

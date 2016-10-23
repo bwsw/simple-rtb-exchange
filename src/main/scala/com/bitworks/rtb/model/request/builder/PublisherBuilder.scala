@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Publisher
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Publisher]]
+  * Builder for [[com.bitworks.rtb.model.request.Publisher Publisher]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class PublisherBuilder private {
   private var id: Option[String] = None
@@ -43,6 +42,11 @@ class PublisherBuilder private {
   def build = Publisher(id, name, cat, domain, ext)
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Publisher Publisher]].
+  *
+  * @author Pavel Tomskikh
+  */
 object PublisherBuilder {
   def apply() = new PublisherBuilder
 }

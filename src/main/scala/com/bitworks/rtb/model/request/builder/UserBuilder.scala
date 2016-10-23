@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.{Data, Geo, User}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.User]]
+  * Builder for [[com.bitworks.rtb.model.request.User User]].
   *
   * @author Egor Ilchenko
-  *
   */
 class UserBuilder private {
   private var id: Option[String] = None
@@ -69,10 +68,9 @@ class UserBuilder private {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.User]]
+  * Builder for [[com.bitworks.rtb.model.request.User User]].
   *
   * @author Egor Ilchenko
-  *
   */
 object UserBuilder {
   def apply() = new UserBuilder

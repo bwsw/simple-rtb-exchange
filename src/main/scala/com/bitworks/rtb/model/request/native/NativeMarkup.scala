@@ -8,16 +8,15 @@ package com.bitworks.rtb.model.request.native
   * @param adUnit   the Ad unit ID of the native ad unit
   * @param plcmtCnt the number of identical placements in this Layout
   * @param seq      ad number
-  * @param assets   an array of Asset Objects
+  * @param assets   an array of [[com.bitworks.rtb.model.request.native.Asset Asset]] objects
   * @param ext      a placeholder for exchange-specific extensions to OpenRTB
   * @author Pavel Tomskikh
-  *
   */
 case class NativeMarkup(
-    ver: Option[String],
+    ver: String,
     layout: Option[Int],
     adUnit: Option[Int],
-    plcmtCnt: Option[Int],
-    seq: Option[Int],
+    plcmtCnt: Int,
+    seq: Int,
     assets: Seq[Asset],
     ext: Option[Any])

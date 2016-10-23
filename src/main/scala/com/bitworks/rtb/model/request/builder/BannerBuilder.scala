@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Banner
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Banner]]
+  * Builder for [[com.bitworks.rtb.model.request.Banner Banner]].
   *
   * @author Egor Ilchenko
-  *
   */
 class BannerBuilder private {
   private var w: Option[Int] = None
@@ -106,7 +105,7 @@ class BannerBuilder private {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Banner]]
+  * Builder for [[com.bitworks.rtb.model.request.Banner Banner]].
   *
   * @author Egor Ilchenko
   *

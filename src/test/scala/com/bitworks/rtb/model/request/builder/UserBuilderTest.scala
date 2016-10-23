@@ -4,7 +4,7 @@ import com.bitworks.rtb.model.request.User
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.User]]
+  * Test for [[com.bitworks.rtb.model.request.builder.UserBuilder UserBuilder]].
   *
   * @author Egor Ilchenko
   *
@@ -16,7 +16,7 @@ class UserBuilderTest extends FlatSpec with Matchers{
       Some("gender"), Some("keywords"), Some("customdata"),
       Some(GeoBuilder().build), Some(Seq.empty), Some("ext"))
 
-    val buildedUser = UserBuilder()
+    val builtUser = UserBuilder()
         .withId("id")
         .withBuyerId("buyerid")
         .withYob(2016)
@@ -28,7 +28,7 @@ class UserBuilderTest extends FlatSpec with Matchers{
         .withExt("ext")
         .build
 
-    buildedUser shouldBe user
+    builtUser shouldBe user
   }
 
 }

@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.{Data, Segment}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Data]]
+  * Builder for [[com.bitworks.rtb.model.request.Data Data]].
   *
   * @author Egor Ilchenko
-  *
   */
 class DataBuilder private {
   private var id: Option[String] = None
@@ -39,10 +38,9 @@ class DataBuilder private {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Data]]
+  * Builder for [[com.bitworks.rtb.model.request.Data Data]].
   *
   * @author Egor Ilchenko
-  *
   */
 object DataBuilder {
   def apply() = new DataBuilder

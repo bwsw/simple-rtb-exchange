@@ -21,7 +21,7 @@ package com.bitworks.rtb.model.request
   * @param h              physical height of the screen in pixels
   * @param w              physical width of the screen in pixels
   * @param ppi            screen size as pixels per linear inch
-  * @param pxratio        the ratio of physical pixels to device independent pixels
+  * @param pxRatio        the ratio of physical pixels to device independent pixels
   * @param js             support for JavaScript, where 0 = no, 1 = yes
   * @param flashVer       version of Flash supported by the browser
   * @param language       browser language using ISO-639-1-alpha-2
@@ -53,7 +53,7 @@ case class Device(
     h: Option[Int],
     w: Option[Int],
     ppi: Option[Int],
-    pxratio: Option[Double],
+    pxRatio: Option[Double],
     js: Option[Int],
     flashVer: Option[String],
     language: Option[String],

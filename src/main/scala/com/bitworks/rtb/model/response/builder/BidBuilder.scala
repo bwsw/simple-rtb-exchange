@@ -3,14 +3,12 @@ package com.bitworks.rtb.model.response.builder
 import com.bitworks.rtb.model.response.Bid
 
 /**
-  * Builder for [[com.bitworks.rtb.model.response.Bid]]
+  * Builder for [[com.bitworks.rtb.model.response.Bid Bid]].
   *
   * @author Egor Ilchenko
-  *
   */
-class BidBuilder private(id: String, impid: String, price: String) {
-  private val priceDecimal = BigDecimal(price)
-  private var adid: Option[String] = None
+class BidBuilder private(id: String, impId: String, price: BigDecimal) {
+  private var adId: Option[String] = None
   private var nurl: Option[String] = None
   private var adm: Option[String] = None
   private var adomain: Option[Seq[String]] = None
@@ -25,8 +23,8 @@ class BidBuilder private(id: String, impid: String, price: String) {
   private var w: Option[Int] = None
   private var ext: Option[Any] = None
 
-  def withAdid(s: String) = {
-    adid = Some(s)
+  def withAdId(s: String) = {
+    adId = Some(s)
     this
   }
 
@@ -96,16 +94,16 @@ class BidBuilder private(id: String, impid: String, price: String) {
   }
 
   /** Returns Bid */
-  def build = Bid(id, impid, priceDecimal, adid, nurl, adm, adomain, bundle,
-    iurl, cid, crid, cat, attr, dealId, h, w, ext)
+  def build = Bid(id, impId, price, adId, nurl, adm, adomain, bundle, iurl, cid, crid, cat, attr,
+    dealId, h, w, ext)
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.response.Bid]]
+  * Builder for [[com.bitworks.rtb.model.response.Bid Bid]].
   *
   * @author Egor Ilchenko
-  *
   */
 object BidBuilder {
-  def apply(id: String, impid: String, price: String): BidBuilder = new BidBuilder(id, impid, price)
+  def apply(id: String, impid: String, price: BigDecimal): BidBuilder = new BidBuilder(id, impid,
+    price)
 }

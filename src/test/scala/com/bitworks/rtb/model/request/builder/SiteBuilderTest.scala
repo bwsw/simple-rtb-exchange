@@ -4,22 +4,22 @@ import com.bitworks.rtb.model.request.{Site, Content, Publisher}
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.builder.SiteBuilder]]
+  * Test for [[com.bitworks.rtb.model.request.builder.SiteBuilder SiteBuilder]].
   *
   * @author Pavel Tomskikh
   *
   */
 class SiteBuilderTest extends FlatSpec with Matchers {
 
-  "SiteBuilder" should "build Site with default parameters correctly" in {
+  "SiteBuilder" should "build Site with default values correctly" in {
     val site = Site(None, None, None, None, None, None, None, None,
       None, None, None, None, None, None, None)
-    val buildedSite = SiteBuilder().build
+    val builtSite = SiteBuilder().build
 
-    buildedSite shouldBe site
+    builtSite shouldBe site
   }
 
-  it should "build Site with optional parameters correctly" in {
+  it should "build Site correctly" in {
     val publisher = Publisher(None, None, None, None, None)
     val content = Content(None, None, None, None, None, None, None, None,
       None, None, None, None, None, None, None, None, None, None, None, None)
@@ -39,7 +39,7 @@ class SiteBuilderTest extends FlatSpec with Matchers {
       Some(content),
       Some("kw1,kw2"),
       Some("ext"))
-    val buildedSite = SiteBuilder()
+    val builtSite = SiteBuilder()
         .withId("123")
         .withName("prod")
         .withDomain("site.com")
@@ -53,11 +53,11 @@ class SiteBuilderTest extends FlatSpec with Matchers {
         .withPrivacyPolicy(1)
         .withPublisher(publisher)
         .withContent(content)
-        .withKeyWords("kw1,kw2")
+        .withKeywords("kw1,kw2")
         .withExt("ext")
         .build
 
-    buildedSite shouldBe site
+    builtSite shouldBe site
   }
 
 }

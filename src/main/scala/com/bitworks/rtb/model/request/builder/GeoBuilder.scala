@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Geo
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Geo]]
+  * Builder for [[com.bitworks.rtb.model.request.Geo Geo]].
   *
   * @author Egor Ilchenko
-  *
   */
 class GeoBuilder private {
   private var lat: Option[Float] = None
@@ -82,10 +81,9 @@ class GeoBuilder private {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Geo]]
+  * Builder for [[com.bitworks.rtb.model.request.Geo Geo]].
   *
   * @author Egor Ilchenko
-  *
   */
 object GeoBuilder {
   def apply() = new GeoBuilder

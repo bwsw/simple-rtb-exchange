@@ -4,35 +4,29 @@ import com.bitworks.rtb.model.request.native.Video
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.native.builder.VideoBuilder]]
+  * Test for [[com.bitworks.rtb.model.request.native.builder.VideoBuilder VideoBuilder]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class VideoBuilderTest extends FlatSpec with Matchers {
 
-  "VideoBuilder" should "build Video with default parameters correctly" in {
-    val video = Video(None, None, None, None, None)
-    val buildedVideo = VideoBuilder().build
+  "VideoBuilder" should "build Video with default values correctly" in {
+    val video = Video(Seq("image/jpg"), 10, 30, Seq(1, 4), None)
 
-    buildedVideo shouldBe video
+    var builder = VideoBuilder(video.mimes, video.minDuration, video.maxDuration, video.protocols)
+    val builtVideo = builder.build
+
+    builtVideo shouldBe video
   }
 
-  it should "build Video with optional parameters correctly" in {
-    val video = Video(
-      Some(Seq("image/jpg")),
-      Some(10),
-      Some(30),
-      Some(Seq(1, 4)),
-      Some("ext"))
-    val buildedVideo = VideoBuilder()
-        .withMimes(Seq("image/jpg"))
-        .withMinDuration(10)
-        .withMaxDuration(30)
-        .withProtocols(Seq(1, 4))
-        .withExt("ext")
-        .build
+  it should "build Video correctly" in {
+    val video = Video(Seq("image/jpg"), 10, 30, Seq(1, 4), Some("ext"))
 
-    buildedVideo shouldBe video
+    var builder = VideoBuilder(video.mimes, video.minDuration, video.maxDuration, video.protocols)
+    video.ext.foreach(ext => builder = builder.withExt(ext))
+
+    val builtVideo = builder.build
+
+    builtVideo shouldBe video
   }
 }

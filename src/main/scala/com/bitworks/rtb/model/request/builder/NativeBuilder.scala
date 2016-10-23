@@ -3,12 +3,12 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Native
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Native]]
+  * Builder for [[com.bitworks.rtb.model.request.Native Native]].
   *
+  * @param request value of [[com.bitworks.rtb.model.request.Native Native]] request in object
   * @author Egor Ilchenko
-  *
   */
-class NativeBuilder private (request: String) {
+class NativeBuilder private(request: String) {
   private var ver: Option[String] = None
   private var api: Option[Seq[Int]] = None
   private var battr: Option[Seq[Int]] = None
@@ -39,11 +39,10 @@ class NativeBuilder private (request: String) {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Native]]
+  * Builder for [[com.bitworks.rtb.model.request.Native Native]].
   *
   * @author Egor Ilchenko
-  *
   */
-object NativeBuilder{
+object NativeBuilder {
   def apply(request: String): NativeBuilder = new NativeBuilder(request)
 }

@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.{Deal, Pmp}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Pmp]]
+  * Builder for [[com.bitworks.rtb.model.request.Pmp Pmp]].
   *
   * @author Egor Ilchenko
-  *
   */
 class PmpBuilder private {
   private var privateAuction: Option[Int] = None
@@ -33,10 +32,9 @@ class PmpBuilder private {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Pmp]]
+  * Builder for [[com.bitworks.rtb.model.request.Pmp Pmp]].
   *
   * @author Egor Ilchenko
-  *
   */
 object PmpBuilder {
   def apply(): PmpBuilder = new PmpBuilder

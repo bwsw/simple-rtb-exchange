@@ -8,4 +8,4 @@ package com.bitworks.rtb.model.request
   * @param ext   placeholder for exchange-specific extensions to OpenRTB
   * @author Egor Ilchenko
   */
-case class Regs(coppa: Int, ext: Option[Any])
+case class Regs(coppa: Option[Int], ext: Option[Any])

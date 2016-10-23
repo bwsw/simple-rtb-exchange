@@ -7,7 +7,6 @@ package com.bitworks.rtb.model.request.native
   * @param len    maximum length of the text in the element’s response
   * @param ext    a placeholder for exchange-specific extensions to OpenRTB
   * @author Pavel Tomskikh
-  *
   */
 case class Data(
     `type`: Int,

@@ -4,7 +4,7 @@ import com.bitworks.rtb.model.request.Deal
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.Deal]]
+  * Test for [[com.bitworks.rtb.model.request.builder.DealBuilder DealBuilder]].
   *
   * @author Egor Ilchenko
   *
@@ -15,8 +15,8 @@ class DealBuilderTest extends FlatSpec with Matchers{
     val deal = Deal("id", BigDecimal(1), "EUR", Some(1), Some(Seq("wseat")),
       Some(Seq("wadomain")), Some("string"))
 
-    val buildedDeal = DealBuilder("id")
-        .withBidFloor("1")
+    val builtDeal = DealBuilder("id")
+        .withBidFloor(BigDecimal(1))
         .withBidFloorCur("EUR")
         .withAt(1)
         .withWseat(Seq("wseat"))
@@ -24,15 +24,15 @@ class DealBuilderTest extends FlatSpec with Matchers{
         .withExt("string")
         .build
 
-    buildedDeal shouldBe deal
+    builtDeal shouldBe deal
   }
 
   it should "build Deal with default values" in {
     val deal = Deal("id", BigDecimal("0"), "USD", None, None, None, None)
 
-    val buildedDeal = DealBuilder("id").build
+    val builtDeal = DealBuilder("id").build
 
-    buildedDeal shouldBe deal
+    builtDeal shouldBe deal
   }
 
 }

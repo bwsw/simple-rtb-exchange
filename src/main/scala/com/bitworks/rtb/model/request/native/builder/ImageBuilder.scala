@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.native.builder
 import com.bitworks.rtb.model.request.native.Image
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.native.Image]]
+  * Builder for [[com.bitworks.rtb.model.request.native.Image Image]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class ImageBuilder private {
   private var `type`: Option[Int] = None
@@ -55,6 +54,11 @@ class ImageBuilder private {
   def build = Image(`type`, w, wmin, h, hmin, mimes, ext)
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.request.native.Image Image]].
+  *
+  * @author Pavel Tomskikh
+  */
 object ImageBuilder {
   def apply() = new ImageBuilder
 }

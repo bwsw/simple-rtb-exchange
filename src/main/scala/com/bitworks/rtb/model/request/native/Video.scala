@@ -9,11 +9,10 @@ package com.bitworks.rtb.model.request.native
   * @param protocols   video protocols the publisher can accept in the bid response
   * @param ext         a placeholder for exchange-specific extensions to OpenRTB
   * @author Pavel Tomskikh
-  *
   */
 case class Video(
-    mimes: Option[Seq[String]],
-    minDuration: Option[Int],
-    maxDuration: Option[Int],
-    protocols: Option[Seq[Int]],
+    mimes: Seq[String],
+    minDuration: Int,
+    maxDuration: Int,
+    protocols: Seq[Int],
     ext: Option[Any])

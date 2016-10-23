@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Segment
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Segment]]
+  * Builder for [[com.bitworks.rtb.model.request.Segment Segment]].
   *
   * @author Egor Ilchenko
-  *
   */
 class SegmentBuilder private {
   private var id: Option[String] = None
@@ -39,10 +38,9 @@ class SegmentBuilder private {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Segment]]
+  * Builder for [[com.bitworks.rtb.model.request.Segment Segment]].
   *
   * @author Egor Ilchenko
-  *
   */
 object SegmentBuilder {
   def apply() = new SegmentBuilder

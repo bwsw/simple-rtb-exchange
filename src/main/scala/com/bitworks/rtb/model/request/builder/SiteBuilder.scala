@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.{Content, Publisher, Site}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Site]]
+  * Builder for [[com.bitworks.rtb.model.request.Site Site]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class SiteBuilder private {
   private var id: Option[String] = None
@@ -22,7 +21,7 @@ class SiteBuilder private {
   private var privacyPolicy: Option[Int] = None
   private var publisher: Option[Publisher] = None
   private var content: Option[Content] = None
-  private var keyWords: Option[String] = None
+  private var keywords: Option[String] = None
   private var ext: Option[Any] = None
 
   def withId(s: String) = {
@@ -90,8 +89,8 @@ class SiteBuilder private {
     this
   }
 
-  def withKeyWords(s: String) = {
-    keyWords = Some(s)
+  def withKeywords(s: String) = {
+    keywords = Some(s)
     this
   }
 
@@ -115,11 +114,16 @@ class SiteBuilder private {
     privacyPolicy,
     publisher,
     content,
-    keyWords,
+    keywords,
     ext)
 
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Site Site]].
+  *
+  * @author Pavel Tomskikh
+  */
 object SiteBuilder {
   def apply() = new SiteBuilder
 }

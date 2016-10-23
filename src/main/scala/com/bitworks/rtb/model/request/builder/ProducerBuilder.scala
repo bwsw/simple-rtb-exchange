@@ -3,10 +3,9 @@ package com.bitworks.rtb.model.request.builder
 import com.bitworks.rtb.model.request.Producer
 
 /**
-  * Builder for [[com.bitworks.rtb.model.request.Producer]]
+  * Builder for [[com.bitworks.rtb.model.request.Producer Producer]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class ProducerBuilder private {
   private var id: Option[String] = None
@@ -43,6 +42,11 @@ class ProducerBuilder private {
   def build = Producer(id, name, cat, domain, ext)
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.request.Producer Producer]].
+  *
+  * @author Pavel Tomskikh
+  */
 object ProducerBuilder {
   def apply() = new ProducerBuilder
 }

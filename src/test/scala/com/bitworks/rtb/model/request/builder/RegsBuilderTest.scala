@@ -4,7 +4,7 @@ import com.bitworks.rtb.model.request.Regs
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.Regs]]
+  * Test for [[com.bitworks.rtb.model.request.builder.RegsBuilder RegsBuilder]].
   *
   * @author Egor Ilchenko
   *
@@ -12,14 +12,14 @@ import org.scalatest.{FlatSpec, Matchers}
 class RegsBuilderTest extends FlatSpec with Matchers{
 
   "RegsBuilder" should "build Regs correctly" in {
-    val regs = Regs(42, Some("ext"))
+    val regs = Regs(Some(42), Some("ext"))
 
-    val buildedRegs = RegsBuilder()
+    val builtRegs = RegsBuilder()
         .withCoppa(42)
         .withExt("ext")
         .build
 
-    buildedRegs shouldBe regs
+    builtRegs shouldBe regs
   }
 
 }

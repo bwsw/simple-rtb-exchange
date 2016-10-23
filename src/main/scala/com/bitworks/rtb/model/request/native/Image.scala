@@ -11,7 +11,6 @@ package com.bitworks.rtb.model.request.native
   * @param mimes  whitelist of content MIME types supported
   * @param ext    a placeholder for exchange-specific extensions to OpenRTB
   * @author Pavel Tomskikh
-  *
   */
 case class Image(
     `type`: Option[Int],

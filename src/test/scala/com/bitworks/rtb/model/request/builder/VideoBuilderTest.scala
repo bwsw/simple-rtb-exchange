@@ -4,7 +4,7 @@ import com.bitworks.rtb.model.request.Video
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.Video]]
+  * Test for [[com.bitworks.rtb.model.request.builder.VideoBuilder VideoBuilder]].
   *
   * @author Egor Ilchenko
   *
@@ -17,7 +17,7 @@ class VideoBuilderTest extends FlatSpec with Matchers{
       14, Some(Seq(15)), Some(Seq(16)), Some(17), Some(Seq.empty), Some(Seq(18)),
       Some(Seq(19)), Some("string"))
 
-    val buildedVideo = VideoBuilder(Seq("mime"))
+    val builtVideo = VideoBuilder(Seq("mime"))
       .withMinDuration(1)
       .withMaxDuration(2)
       .withProtocol(3)
@@ -41,16 +41,16 @@ class VideoBuilderTest extends FlatSpec with Matchers{
       .withExt("string")
       .build
 
-    buildedVideo shouldBe video
+    builtVideo shouldBe video
   }
 
   it should "build Video with default values" in {
     val video = Video(Seq("mime"), None, None, None, None, None, None, None, None, None, None,
       None, None, None, 1, None, None, None, None, None, None, None)
 
-    val buildedVideo = VideoBuilder(Seq("mime")).build
+    val builtVideo = VideoBuilder(Seq("mime")).build
 
-    buildedVideo shouldBe video
+    builtVideo shouldBe video
   }
 
 }

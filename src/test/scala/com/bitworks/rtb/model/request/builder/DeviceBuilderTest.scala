@@ -4,7 +4,7 @@ import com.bitworks.rtb.model.request.Device
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.Device]]
+  * Test for [[com.bitworks.rtb.model.request.builder.DeviceBuilder DeviceBuilder]].
   *
   * @author Egor Ilchenko
   *
@@ -20,7 +20,7 @@ class DeviceBuilderTest extends FlatSpec with Matchers{
       Some("didsha1"), Some("didmd5"), Some("dpidsha1"), Some("dpidmd5"),
       Some("macsha1"), Some("macmd5"), Some("ext"))
 
-    val buildedDevice = DeviceBuilder()
+    val builtDevice = DeviceBuilder()
       .withUa("ua")
       .withGeo(GeoBuilder().build)
       .withDnt(1)
@@ -52,7 +52,7 @@ class DeviceBuilderTest extends FlatSpec with Matchers{
       .withExt("ext")
       .build
 
-    buildedDevice shouldBe device
+    builtDevice shouldBe device
   }
 
 }

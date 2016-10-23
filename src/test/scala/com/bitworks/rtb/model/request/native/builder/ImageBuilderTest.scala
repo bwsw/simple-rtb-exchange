@@ -4,21 +4,20 @@ import com.bitworks.rtb.model.request.native.Image
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.request.native.builder.ImageBuilder]]
+  * Test for [[com.bitworks.rtb.model.request.native.builder.ImageBuilder ImageBuilder]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class ImageBuilderTest extends FlatSpec with Matchers {
 
-  "ImageBuilder" should "build Image with default parameters correctly" in {
+  "ImageBuilder" should "build Image with default values correctly" in {
     val image = Image(None, None, None, None, None, None, None)
-    val buildedImage = ImageBuilder().build
+    val builtImage = ImageBuilder().build
 
-    buildedImage shouldBe image
+    builtImage shouldBe image
   }
 
-  it should "build Image with optional parameters correctly" in {
+  it should "build Image correctly" in {
     val image = Image(
       Some(1),
       Some(100),
@@ -27,17 +26,19 @@ class ImageBuilderTest extends FlatSpec with Matchers {
       Some(20),
       Some(Seq("image/jpg")),
       Some("ext"))
-    val buildedImage = ImageBuilder()
-        .withType(1)
-        .withW(100)
-        .withWmin(50)
-        .withH(80)
-        .withHmin(20)
-        .withMimes(Seq("image/jpg"))
-        .withExt("ext")
-        .build
 
-    buildedImage shouldBe image
+    var builder = ImageBuilder()
+    image.`type`.foreach(`type` => builder = builder.withType(`type`))
+    image.w.foreach(w => builder = builder.withW(w))
+    image.wmin.foreach(wmin => builder = builder.withWmin(wmin))
+    image.h.foreach(h => builder = builder.withH(h))
+    image.hmin.foreach(hmin => builder = builder.withHmin(hmin))
+    image.mimes.foreach(mimes => builder = builder.withMimes(mimes))
+    image.ext.foreach(ext => builder = builder.withExt(ext))
+
+    val builtImage = builder.build
+
+    builtImage shouldBe image
   }
 
 }
