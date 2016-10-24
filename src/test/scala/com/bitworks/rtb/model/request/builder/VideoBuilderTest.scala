@@ -79,7 +79,7 @@ class VideoBuilderTest extends FlatSpec with Matchers {
       None,
       None,
       None,
-      1,
+      VideoBuilder.BoxingAllowed,
       None,
       None,
       None,

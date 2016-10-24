@@ -23,4 +23,12 @@ class PmpBuilderTest extends FlatSpec with Matchers {
     builtPmp shouldBe pmp
   }
 
+  it should "build Pmp with default values correctly" in {
+    val pmp = Pmp(None, None, None)
+
+    val builtPmp = PmpBuilder().build
+
+    builtPmp shouldBe pmp
+  }
+
 }
