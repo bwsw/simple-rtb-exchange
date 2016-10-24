@@ -7,46 +7,86 @@ import org.scalatest.{FlatSpec, Matchers}
   * Test for [[com.bitworks.rtb.model.request.builder.VideoBuilder VideoBuilder]].
   *
   * @author Egor Ilchenko
-  *
   */
-class VideoBuilderTest extends FlatSpec with Matchers{
+class VideoBuilderTest extends FlatSpec with Matchers {
 
   "VideoBuilder" should "build Video correctly" in {
-    val video = Video(Seq("mime"), Some(1), Some(2), Some(3), Some(Seq(4)), Some(5),
-      Some(6), Some(7), Some(8), Some(9), Some(Seq(10)), Some(11), Some(12), Some(13),
-      14, Some(Seq(15)), Some(Seq(16)), Some(17), Some(Seq.empty), Some(Seq(18)),
-      Some(Seq(19)), Some("string"))
+    val video = Video(
+      Seq("mime"),
+      Some(1),
+      Some(2),
+      Some(3),
+      Some(Seq(4)),
+      Some(5),
+      Some(6),
+      Some(7),
+      Some(8),
+      Some(9),
+      Some(Seq(10)),
+      Some(11),
+      Some(12),
+      Some(13),
+      14,
+      Some(Seq(15)),
+      Some(Seq(16)),
+      Some(17),
+      Some(Seq.empty),
+      Some(Seq(18)),
+      Some(Seq(19)),
+      Some("string"))
 
-    val builtVideo = VideoBuilder(Seq("mime"))
-      .withMinDuration(1)
-      .withMaxDuration(2)
-      .withProtocol(3)
-      .withProtocols(Seq(4))
-      .withW(5)
-      .withH(6)
-      .withStartDelay(7)
-      .withLinearity(8)
-      .withSequence(9)
-      .withBattr(Seq(10))
-      .withMaxExtended(11)
-      .withMinBitrate(12)
-      .withMaxBitrate(13)
-      .withBoxingAllowed(14)
-      .withPlaybackMethod(Seq(15))
-      .withDelivery(Seq(16))
-      .withPos(17)
-      .withCompanionAd(Seq.empty)
-      .withApi(Seq(18))
-      .withCompanionType(Seq(19))
-      .withExt("string")
-      .build
+    val builder = VideoBuilder(video.mimes)
+      .withBoxingAllowed(video.boxingAllowed)
+    video.minDuration.foreach(minDuration => builder.withMinDuration(minDuration))
+    video.maxDuration.foreach(maxDuration => builder.withMaxDuration(maxDuration))
+    video.protocol.foreach(protocol => builder.withProtocol(protocol))
+    video.protocols.foreach(protocols => builder.withProtocols(protocols))
+    video.w.foreach(w => builder.withW(w))
+    video.h.foreach(h => builder.withH(h))
+    video.startDelay.foreach(startDelay => builder.withStartDelay(startDelay))
+    video.linearity.foreach(linearity => builder.withLinearity(linearity))
+    video.sequence.foreach(sequence => builder.withSequence(sequence))
+    video.battr.foreach(battr => builder.withBattr(battr))
+    video.maxExtended.foreach(maxExtended => builder.withMaxExtended(maxExtended))
+    video.minBitrate.foreach(minBitrate => builder.withMinBitrate(minBitrate))
+    video.maxBitrate.foreach(maxBitrate => builder.withMaxBitrate(maxBitrate))
+    video.playbackMethod.foreach(playbackMethod => builder.withPlaybackMethod(playbackMethod))
+    video.delivery.foreach(delivery => builder.withDelivery(delivery))
+    video.pos.foreach(pos => builder.withPos(pos))
+    video.companionAd.foreach(companionAd => builder.withCompanionAd(companionAd))
+    video.api.foreach(api => builder.withApi(api))
+    video.companionType.foreach(companionType => builder.withCompanionType(companionType))
+    video.ext.foreach(ext => builder.withExt(ext))
+
+    val builtVideo = builder.build
 
     builtVideo shouldBe video
   }
 
-  it should "build Video with default values" in {
-    val video = Video(Seq("mime"), None, None, None, None, None, None, None, None, None, None,
-      None, None, None, 1, None, None, None, None, None, None, None)
+  it should "build Video with default values correctly" in {
+    val video = Video(
+      Seq("mime"),
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      1,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
 
     val builtVideo = VideoBuilder(Seq("mime")).build
 
