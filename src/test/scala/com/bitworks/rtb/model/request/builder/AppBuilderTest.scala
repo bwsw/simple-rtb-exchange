@@ -11,8 +11,23 @@ import org.scalatest.{FlatSpec, Matchers}
 class AppBuilderTest extends FlatSpec with Matchers {
 
   "AppBuilder" should "build App with default values correctly" in {
-    val app = App(None, None, None, None, None, None, None, None,
-      None, None, None, None, None, None, None)
+    val app =
+      App(
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None)
     val builtApp = AppBuilder().build
 
     builtApp shouldBe app
@@ -20,8 +35,28 @@ class AppBuilderTest extends FlatSpec with Matchers {
 
   it should "build App correctly" in {
     val publisher = Publisher(None, None, None, None, None)
-    val content = Content(None, None, None, None, None, None, None, None,
-      None, None, None, None, None, None, None, None, None, None, None, None)
+    val content =
+      Content(
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None)
     val app = App(
       Some("123"),
       Some("prod"),
@@ -38,25 +73,26 @@ class AppBuilderTest extends FlatSpec with Matchers {
       Some(content),
       Some("kw1,kw2"),
       Some("ext"))
-    val builtApp = AppBuilder()
-        .withId("123")
-        .withName("prod")
-        .withBundle("bundle")
-        .withDomain("app.com")
-        .withStoreUrl("app.com/app")
-        .withCat(Seq("IAB1-2"))
-        .withSectionCat(Seq("IAB3-4"))
-        .withPageCat(Seq("IAB2-7"))
-        .withVer("1.4.2")
-        .withPrivacyPolicy(1)
-        .withPaid(0)
-        .withPublisher(publisher)
-        .withContent(content)
-        .withKeywords("kw1,kw2")
-        .withExt("ext")
-        .build
+
+    var builder = AppBuilder()
+    app.id.foreach(id => builder = builder.withId(id))
+    app.name.foreach(name => builder = builder.withName(name))
+    app.bundle.foreach(bundle => builder = builder.withBundle(bundle))
+    app.domain.foreach(domain => builder = builder.withDomain(domain))
+    app.storeUrl.foreach(storeUrl => builder = builder.withStoreUrl(storeUrl))
+    app.cat.foreach(cat => builder = builder.withCat(cat))
+    app.sectionCat.foreach(sectionCat => builder = builder.withSectionCat(sectionCat))
+    app.pageCat.foreach(pageCat => builder = builder.withPageCat(pageCat))
+    app.ver.foreach(ver => builder = builder.withVer(ver))
+    app.privacyPolicy.foreach(privacyPolicy => builder = builder.withPrivacyPolicy(privacyPolicy))
+    app.paid.foreach(paid => builder = builder.withPaid(paid))
+    app.publisher.foreach(publisher => builder = builder.withPublisher(publisher))
+    app.content.foreach(content => builder = builder.withContent(content))
+    app.keywords.foreach(keywords => builder = builder.withKeywords(keywords))
+    app.ext.foreach(ext => builder = builder.withExt(ext))
+
+    val builtApp = builder.build
 
     builtApp shouldBe app
   }
-
 }

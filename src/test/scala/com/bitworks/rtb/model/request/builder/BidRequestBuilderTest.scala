@@ -10,16 +10,98 @@ import org.scalatest.{FlatSpec, Matchers}
   */
 class BidRequestBuilderTest extends FlatSpec with Matchers {
 
-  val imp = Seq(Imp("id", None, None, None, None, None, 0, None,
-    BigDecimal("0"), "USD", None, None, None, None))
-  val site = Site(None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None)
-  val app = App(None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None)
-  val device = Device(None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None)
-  val user = User(None, None, None, None, None, None, None, None, None)
+  val imp = Seq(
+    Imp(
+      "id",
+      None,
+      None,
+      None,
+      None,
+      None,
+      0,
+      None,
+      BigDecimal("0"),
+      "USD",
+      None,
+      None,
+      None,
+      None))
+  val site =
+    Site(
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
+  val app =
+    App(
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
+  val device =
+    Device(
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
+  val user =
+    User(
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
   val regs = Regs(None, None)
 
   "BidRequestBuilder" should "build BidRequest with default values correctly" in {
@@ -61,7 +143,10 @@ class BidRequestBuilderTest extends FlatSpec with Matchers {
     bidRequest.badv.foreach(badv => builder = builder.withBadv(badv))
     bidRequest.regs.foreach(regs => builder = builder.withRegs(regs))
     bidRequest.ext.foreach(ext => builder = builder.withExt(ext))
-    builder = builder.withTest(bidRequest.test).withAt(bidRequest.at).withAllImps(bidRequest.allImps)
+    builder = builder
+      .withTest(bidRequest.test)
+      .withAt(bidRequest.at)
+      .withAllImps(bidRequest.allImps)
 
     val builtBidRequest = builder.build
 

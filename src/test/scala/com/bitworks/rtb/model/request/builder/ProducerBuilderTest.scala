@@ -24,15 +24,16 @@ class ProducerBuilderTest extends FlatSpec with Matchers {
       Some(Seq("IAB1-2")),
       Some("prod.com"),
       Some("ext"))
-    val builtProducer = ProducerBuilder()
-        .withId("123")
-        .withName("prod")
-        .withCat(Seq("IAB1-2"))
-        .withDomain("prod.com")
-        .withExt("ext")
-        .build
+
+    var builder = ProducerBuilder()
+    producer.id.foreach(id => builder = builder.withId(id))
+    producer.name.foreach(name => builder = builder.withName(name))
+    producer.cat.foreach(cat => builder = builder.withCat(cat))
+    producer.domain.foreach(domain => builder = builder.withDomain(domain))
+    producer.ext.foreach(ext => builder = builder.withExt(ext))
+
+    val builtProducer = builder.build
 
     builtProducer shouldBe producer
   }
-
 }

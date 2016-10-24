@@ -7,7 +7,6 @@ import org.scalatest.{FlatSpec, Matchers}
   * Test for [[com.bitworks.rtb.model.request.builder.PublisherBuilder PublisherBuilder]].
   *
   * @author Pavel Tomskikh
-  *
   */
 class PublisherBuilderTest extends FlatSpec with Matchers {
 
@@ -25,15 +24,16 @@ class PublisherBuilderTest extends FlatSpec with Matchers {
       Some(Seq("IAB1-2")),
       Some("pub.com"),
       Some("ext"))
-    val builtPublisher = PublisherBuilder()
-        .withId("123")
-        .withName("pub")
-        .withCat(Seq("IAB1-2"))
-        .withDomain("pub.com")
-        .withExt("ext")
-        .build
+
+    var builder = PublisherBuilder()
+    publisher.id.foreach(id => builder = builder.withId(id))
+    publisher.name.foreach(name => builder = builder.withName(name))
+    publisher.cat.foreach(cat => builder = builder.withCat(cat))
+    publisher.domain.foreach(domain => builder = builder.withDomain(domain))
+    publisher.ext.foreach(ext => builder = builder.withExt(ext))
+
+    val builtPublisher = builder.build
 
     builtPublisher shouldBe publisher
   }
-
 }
