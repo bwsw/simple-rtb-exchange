@@ -29,4 +29,17 @@ class NativeBuilderTest extends FlatSpec with Matchers {
     builtNative shouldBe native
   }
 
+  it should "build Native with default values correctly" in {
+    val native = Native(
+      "request",
+      None,
+      None,
+      None,
+      None)
+
+    val builtNative = NativeBuilder(native.request).build
+
+    builtNative shouldBe native
+  }
+
 }

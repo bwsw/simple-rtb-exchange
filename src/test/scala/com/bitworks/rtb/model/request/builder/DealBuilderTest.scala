@@ -36,8 +36,8 @@ class DealBuilderTest extends FlatSpec with Matchers {
   it should "build Deal with default values correctly" in {
     val deal = Deal(
       "id",
-      BigDecimal("0"),
-      "USD",
+      DealBuilder.BidFloor,
+      DealBuilder.BidFloorCur,
       None,
       None,
       None,
