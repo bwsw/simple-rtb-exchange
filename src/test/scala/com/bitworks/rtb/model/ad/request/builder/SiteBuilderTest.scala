@@ -5,7 +5,7 @@ import com.bitworks.rtb.model.request.builder.ContentBuilder
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.ad.request.Site Site]].
+  * Test for [[com.bitworks.rtb.model.ad.request.builder.SiteBuilder SiteBuilder]].
   *
   * @author Egor Ilchenko
   */
@@ -13,7 +13,7 @@ class SiteBuilderTest extends FlatSpec with Matchers {
 
   "SiteBuilder" should "build Site correctly" in {
     val site = Site(
-      Some("id"),
+      1001,
       Some(Seq("sectioncat")),
       Some(Seq("pagecat")),
       Some("page"),
@@ -22,10 +22,9 @@ class SiteBuilderTest extends FlatSpec with Matchers {
       Some(1),
       Some(ContentBuilder().build))
 
-    val builder = SiteBuilder()
-    site.id.foreach(id => builder.withId(id))
-    site.sectioncat.foreach(sectioncat => builder.withSectioncat(sectioncat))
-    site.pagecat.foreach(pagecat => builder.withPagecat(pagecat))
+    val builder = SiteBuilder(site.id)
+    site.sectionCat.foreach(sectionCat => builder.withSectionCat(sectionCat))
+    site.pageCat.foreach(pageCat => builder.withPageCat(pageCat))
     site.page.foreach(page => builder.withPage(page))
     site.ref.foreach(ref => builder.withRef(ref))
     site.search.foreach(search => builder.withSearch(search))
@@ -39,7 +38,7 @@ class SiteBuilderTest extends FlatSpec with Matchers {
 
   it should "build Site with default values correctly" in {
     val site = Site(
-      None,
+      1001,
       None,
       None,
       None,
@@ -48,7 +47,7 @@ class SiteBuilderTest extends FlatSpec with Matchers {
       None,
       None)
 
-    val builtSite = SiteBuilder().build
+    val builtSite = SiteBuilder(site.id).build
 
     builtSite shouldBe site
   }

@@ -5,7 +5,7 @@ import com.bitworks.rtb.model.request.builder.ContentBuilder
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.ad.request.App App]].
+  * Test for [[com.bitworks.rtb.model.ad.request.builder.AppBuilder AppBuilder]].
   *
   * @author Egor Ilchenko
   */
@@ -13,15 +13,14 @@ class AppBuilderTest extends FlatSpec with Matchers {
 
   "AppBuilder" should "build App correctly" in {
     val app = App(
-      Some("id"),
+      1001,
       Some(Seq("section")),
       Some(Seq("page")),
       Some(ContentBuilder().build))
 
-    val builder = AppBuilder()
-    app.id.foreach(id => builder.withId(id))
-    app.sectioncat.foreach(sectioncat => builder.withSectioncat(sectioncat))
-    app.pagecat.foreach(pagecat => builder.withPagecat(pagecat))
+    val builder = AppBuilder(app.id)
+    app.sectionCat.foreach(sectionCat => builder.withSectionCat(sectionCat))
+    app.pageCat.foreach(pageCat => builder.withPageCat(pageCat))
     app.content.foreach(content => builder.withContent(content))
 
     val builtApp = builder.build
@@ -31,12 +30,12 @@ class AppBuilderTest extends FlatSpec with Matchers {
 
   it should "build App with default values correctly" in {
     val app = App(
-      None,
+      1001,
       None,
       None,
       None)
 
-    val builtApp = AppBuilder().build
+    val builtApp = AppBuilder(1001).build
 
     builtApp shouldBe app
   }

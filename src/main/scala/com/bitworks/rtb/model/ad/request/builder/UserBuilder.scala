@@ -4,7 +4,7 @@ import com.bitworks.rtb.model.ad.request.User
 import com.bitworks.rtb.model.request.Geo
 
 /**
-  * Builder for [[com.bitworks.rtb.model.ad.request.User User]]
+  * Builder for [[com.bitworks.rtb.model.ad.request.User User]].
   *
   * @author Egor Ilchenko
   */
@@ -45,7 +45,7 @@ class UserBuilder {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.ad.request.User User]]
+  * Builder for [[com.bitworks.rtb.model.ad.request.User User]].
   *
   * @author Egor Ilchenko
   */

@@ -5,7 +5,7 @@ import com.bitworks.rtb.model.request.builder.GeoBuilder
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.model.ad.request.User User]].
+  * Test for [[com.bitworks.rtb.model.ad.request.builder.UserBuilder UserBuilder]].
   *
   * @author Egor Ilchenko
   */
@@ -27,10 +27,21 @@ class UserBuilderTest extends FlatSpec with Matchers {
     user.geo.foreach(geo => builder.withGeo(geo))
 
     val builtUser = builder.build
+
+    builtUser shouldBe user
   }
 
   it should "build User with default values correctly" in {
+    val user = User(
+      None,
+      None,
+      None,
+      None,
+      None)
 
+    val builtUser = UserBuilder().build
+
+    builtUser shouldBe user
   }
 
 }

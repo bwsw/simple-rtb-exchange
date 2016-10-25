@@ -4,15 +4,17 @@ import com.bitworks.rtb.model.ad.request._
 import com.bitworks.rtb.model.request.{Device, Regs}
 
 /**
-  * Builder for [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
+  * Builder for [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]].
   *
+  * @param imp value of imp in [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
   * @author Egor Ilchenko
   */
-class AdRequestBuilder(imp: Seq[AdRequestImp], device: Device) {
+class AdRequestBuilder(imp: Seq[Imp]) {
   private var site: Option[Site] = None
   private var app: Option[App] = None
+  private var device: Option[Device] = None
   private var user: Option[User] = None
-  private var test: Option[Int] = None
+  private var test: Int = AdRequestBuilder.Test
   private var tmax: Option[Int] = None
   private var regs: Option[Regs] = None
 
@@ -26,13 +28,18 @@ class AdRequestBuilder(imp: Seq[AdRequestImp], device: Device) {
     this
   }
 
+  def withDevice(d: Device) = {
+    device = Some(d)
+    this
+  }
+
   def withUser(u: User) = {
     user = Some(u)
     this
   }
 
   def withTest(i: Int) = {
-    test = Some(i)
+    test = i
     this
   }
 
@@ -51,10 +58,12 @@ class AdRequestBuilder(imp: Seq[AdRequestImp], device: Device) {
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
+  * Builder for [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]].
   *
   * @author Egor Ilchenko
   */
 object AdRequestBuilder {
-  def apply(imp: Seq[AdRequestImp], device: Device) = new AdRequestBuilder(imp, device)
+  val Test = 0
+
+  def apply(imp: Seq[Imp]) = new AdRequestBuilder(imp)
 }

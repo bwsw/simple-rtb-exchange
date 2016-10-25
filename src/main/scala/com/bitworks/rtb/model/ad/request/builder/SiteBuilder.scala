@@ -4,32 +4,27 @@ import com.bitworks.rtb.model.ad.request.Site
 import com.bitworks.rtb.model.request.Content
 
 /**
-  * Builder for [[com.bitworks.rtb.model.ad.request.Site Site]]
+  * Builder for [[com.bitworks.rtb.model.ad.request.Site Site]].
   *
+  * @param id value of id in [[com.bitworks.rtb.model.ad.request.Site Site]]
   * @author Egor Ilchenko
   */
-class SiteBuilder {
-  private var id: Option[String] = None
-  private var sectioncat: Option[Seq[String]] = None
-  private var pagecat: Option[Seq[String]] = None
+class SiteBuilder(id: Int) {
+  private var sectionCat: Option[Seq[String]] = None
+  private var pageCat: Option[Seq[String]] = None
   private var page: Option[String] = None
   private var ref: Option[String] = None
   private var search: Option[String] = None
   private var mobile: Option[Int] = None
   private var content: Option[Content] = None
 
-  def withId(s: String) = {
-    id = Some(s)
+  def withSectionCat(s: Seq[String]) = {
+    sectionCat = Some(s)
     this
   }
 
-  def withSectioncat(s: Seq[String]) = {
-    sectioncat = Some(s)
-    this
-  }
-
-  def withPagecat(s: Seq[String]) = {
-    pagecat = Some(s)
+  def withPageCat(s: Seq[String]) = {
+    pageCat = Some(s)
     this
   }
 
@@ -58,16 +53,15 @@ class SiteBuilder {
     this
   }
 
-
   /** Returns [[com.bitworks.rtb.model.ad.request.Site Site]] */
-  def build = Site(id, sectioncat, pagecat, page, ref, search, mobile, content)
+  def build = Site(id, sectionCat, pageCat, page, ref, search, mobile, content)
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.ad.request.Site Site]]
+  * Builder for [[com.bitworks.rtb.model.ad.request.Site Site]].
   *
   * @author Egor Ilchenko
   */
 object SiteBuilder {
-  def apply() = new SiteBuilder
+  def apply(id: Int) = new SiteBuilder(id)
 }

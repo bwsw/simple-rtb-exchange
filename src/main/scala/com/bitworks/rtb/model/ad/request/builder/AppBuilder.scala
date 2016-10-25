@@ -4,28 +4,23 @@ import com.bitworks.rtb.model.ad.request.App
 import com.bitworks.rtb.model.request.Content
 
 /**
-  * Builder for [[com.bitworks.rtb.model.ad.request.App App]]
+  * Builder for [[com.bitworks.rtb.model.ad.request.App App]].
   *
+  * @param id value of id in [[com.bitworks.rtb.model.ad.request.App App]]
   * @author Egor Ilchenko
   */
-class AppBuilder {
-  private var id: Option[String] = None
-  private var sectioncat: Option[Seq[String]] = None
-  private var pagecat: Option[Seq[String]] = None
+class AppBuilder(id: Int) {
+  private var sectionCat: Option[Seq[String]] = None
+  private var pageCat: Option[Seq[String]] = None
   private var content: Option[Content] = None
 
-  def withId(s: String) = {
-    id = Some(s)
+  def withSectionCat(s: Seq[String]) = {
+    sectionCat = Some(s)
     this
   }
 
-  def withSectioncat(s: Seq[String]) = {
-    sectioncat = Some(s)
-    this
-  }
-
-  def withPagecat(s: Seq[String]) = {
-    pagecat = Some(s)
+  def withPageCat(s: Seq[String]) = {
+    pageCat = Some(s)
     this
   }
 
@@ -35,14 +30,14 @@ class AppBuilder {
   }
 
   /** Returns [[com.bitworks.rtb.model.ad.request.App App]] */
-  def build = App(id, sectioncat, pagecat, content)
+  def build = App(id, sectionCat, pageCat, content)
 }
 
 /**
-  * Builder for [[com.bitworks.rtb.model.ad.request.App App]]
+  * Builder for [[com.bitworks.rtb.model.ad.request.App App]].
   *
   * @author Egor Ilchenko
   */
 object AppBuilder {
-  def apply() = new AppBuilder
+  def apply(id: Int) = new AppBuilder(id)
 }
