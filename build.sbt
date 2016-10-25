@@ -10,5 +10,5 @@ scalacOptions in (Compile,doc) ++= Seq("-doc-root-content", "rootdoc.txt")
 
 libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
-  "org.json4s" %% "json4s-jackson" % "3.4.2"
+  "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.4"
 )
