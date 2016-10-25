@@ -1,6 +1,6 @@
 package com.bitworks.rtb.model.ad.response.builder
 
-import com.bitworks.rtb.model.ad.response.{AdResponse, AdResponseImp, Error}
+import com.bitworks.rtb.model.ad.response.{AdResponse, Imp, Error}
 
 /**
   * Builder for [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
@@ -9,11 +9,11 @@ import com.bitworks.rtb.model.ad.response.{AdResponse, AdResponseImp, Error}
   * @author Pavel Tomskikh
   */
 class AdResponseBuilder private(id: String) {
-  var imp: Option[AdResponseImp] = None
+  var imp: Option[Seq[Imp]] = None
   var error: Option[Error] = None
 
-  def withImp(a: AdResponseImp) = {
-    imp = Some(a)
+  def withImp(s: Seq[Imp]) = {
+    imp = Some(s)
     this
   }
 
@@ -25,6 +25,11 @@ class AdResponseBuilder private(id: String) {
   def build = AdResponse(id, imp, error)
 }
 
+/**
+  * Builder for [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
+  *
+  * @author Pavel Tomskikh
+  */
 object AdResponseBuilder {
   def apply(id: String) = new AdResponseBuilder(id)
 }

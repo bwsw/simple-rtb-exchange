@@ -11,9 +11,9 @@ import org.scalatest.{FlatSpec, Matchers}
 class AdResponseBuilderTest extends FlatSpec with Matchers {
 
   "AdResponseBuilder" should "build AdResponse correctly" in {
-    val imp = AdResponseImp("123", "admarkup", 1)
+    val imp = Imp("123", "admarkup", 1)
     val error = Error(33, "some error")
-    val adResponse = AdResponse("123", Some(imp), Some(error))
+    val adResponse = AdResponse("123", Some(Seq(imp)), Some(error))
 
     var builder = AdResponseBuilder(adResponse.id)
     adResponse.imp.foreach(imp => builder = builder.withImp(imp))
