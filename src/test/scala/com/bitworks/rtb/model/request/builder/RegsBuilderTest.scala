@@ -22,4 +22,12 @@ class RegsBuilderTest extends FlatSpec with Matchers {
     builtRegs shouldBe regs
   }
 
+  it should "build Regs with default values correctly" in {
+    val regs = Regs(None, None)
+
+    val builtRegs = RegsBuilder().build
+
+    builtRegs shouldBe regs
+  }
+
 }

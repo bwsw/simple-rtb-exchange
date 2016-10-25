@@ -12,8 +12,8 @@ class GeoBuilderTest extends FlatSpec with Matchers {
 
   "GeoBuilder" should "build Geo correctly" in {
     val geo = Geo(
-      Some(42.42.toFloat),
-      Some(24.24.toFloat),
+      Some(42.42f),
+      Some(24.24f),
       Some(1),
       Some("country"),
       Some("region"),
@@ -38,6 +38,25 @@ class GeoBuilderTest extends FlatSpec with Matchers {
     geo.ext.foreach(ext => builder.withExt(ext))
 
     val builtGeo = builder.build
+
+    builtGeo shouldBe geo
+  }
+
+  it should "build Geo with default values correctly" in {
+    val geo = Geo(
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
+
+    val builtGeo = GeoBuilder().build
 
     builtGeo shouldBe geo
   }

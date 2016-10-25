@@ -50,4 +50,27 @@ class BannerBuilderTest extends FlatSpec with Matchers {
     builtBanner shouldBe banner
   }
 
+  it should "build Banner with default values correctly" in {
+    val banner = Banner(
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
+
+    val builtBanner = BannerBuilder().build
+
+    builtBanner shouldBe banner
+  }
+
 }

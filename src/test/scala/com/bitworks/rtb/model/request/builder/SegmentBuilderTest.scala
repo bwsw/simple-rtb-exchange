@@ -24,4 +24,12 @@ class SegmentBuilderTest extends FlatSpec with Matchers {
     builtSegment shouldBe segment
   }
 
+  it should "build Segment with default values correctly" in {
+    val segment = Segment(None, None, None, None)
+
+    val builtSegment = SegmentBuilder().build
+
+    builtSegment shouldBe segment
+  }
+
 }

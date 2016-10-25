@@ -78,4 +78,41 @@ class DeviceBuilderTest extends FlatSpec with Matchers {
     builtDevice shouldBe device
   }
 
+  "DeviceBuilder" should "build Device with default values correctly" in {
+    val device = Device(
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
+
+    val builtDevice = DeviceBuilder().build
+
+    builtDevice shouldBe device
+  }
+
 }

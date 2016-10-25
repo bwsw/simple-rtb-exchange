@@ -38,4 +38,21 @@ class UserBuilderTest extends FlatSpec with Matchers {
     builtUser shouldBe user
   }
 
+  it should "build User with default values correctly" in {
+    val user = User(
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
+
+    val builtUser = UserBuilder().build
+
+    builtUser shouldBe user
+  }
+
 }
