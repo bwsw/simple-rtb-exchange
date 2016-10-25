@@ -7,9 +7,9 @@ import com.bitworks.rtb.model.response.native.Video
   *
   * @author Egor Ilchenko
   */
-class VideoBuilder(vasttag: String) {
+class VideoBuilder(vastTag: String) {
     /** Returns Video */
-  def build = Video(vasttag)
+  def build = Video(vastTag)
 }
 
 /**
@@ -18,5 +18,5 @@ class VideoBuilder(vasttag: String) {
   * @author Egor Ilchenko
   */
 object VideoBuilder {
-  def apply(vasttag: String) = new VideoBuilder(vasttag)
+  def apply(vastTag: String) = new VideoBuilder(vastTag)
 }

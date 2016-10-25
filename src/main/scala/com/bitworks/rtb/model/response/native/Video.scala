@@ -1,10 +1,10 @@
 package com.bitworks.rtb.model.response.native
 
 /**
-  * Corresponds to the Video Object in the request, yet containing
+  * Information about video elements supported in the Native Ad, yet containing
   * a value of a conforming VAST tag as a value.
   *
-  * @param vasttag VAST xml
+  * @param vastTag VAST xml
   * @author Egor Ilchenko
   */
-case class Video(vasttag: String)
+case class Video(vastTag: String)

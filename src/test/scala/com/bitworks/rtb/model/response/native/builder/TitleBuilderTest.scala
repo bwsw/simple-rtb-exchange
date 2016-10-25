@@ -21,4 +21,12 @@ class TitleBuilderTest extends FlatSpec with Matchers {
     builtTitle shouldBe title
   }
 
+  it should "build Title with default values correctly" in {
+    val title = Title("text", None)
+
+    val builtTitle = TitleBuilder(title.text).build
+
+    builtTitle shouldBe title
+  }
+
 }

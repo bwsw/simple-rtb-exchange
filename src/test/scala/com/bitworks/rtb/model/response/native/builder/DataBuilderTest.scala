@@ -22,5 +22,13 @@ class DataBuilderTest extends FlatSpec with Matchers {
     builtData shouldBe data
   }
 
+  it should "build Data with default values correctly" in {
+    val data = Data(None, "value", None)
+
+    val builtData = DataBuilder(data.value).build
+
+    builtData shouldBe data
+  }
+
 
 }

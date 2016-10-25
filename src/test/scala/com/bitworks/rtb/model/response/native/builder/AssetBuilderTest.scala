@@ -38,7 +38,7 @@ class AssetBuilderTest extends FlatSpec with Matchers {
   it should "build Asset with default values correctly" in {
     val asset = Asset(
       "id",
-      0,
+      AssetBuilder.Required,
       None,
       None,
       None,

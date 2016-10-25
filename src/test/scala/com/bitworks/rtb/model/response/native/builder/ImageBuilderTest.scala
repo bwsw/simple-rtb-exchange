@@ -23,5 +23,13 @@ class ImageBuilderTest extends FlatSpec with Matchers {
     builtImage shouldBe image
   }
 
+  it should "build Image with default values correctly" in {
+    val image = Image("url", None, None, None)
+
+    val builtImage = ImageBuilder(image.url).build
+
+    builtImage shouldBe image
+  }
+
 
 }

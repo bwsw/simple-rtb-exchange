@@ -13,9 +13,9 @@ class VideoBuilderTest extends FlatSpec with Matchers {
   "VideoBuilder" should "build Video correctly" in {
     val video = Video("vasttag")
 
-    val builtVideo = VideoBuilder(video.vasttag).build
+    val builtVideo = VideoBuilder(video.vastTag).build
 
     builtVideo shouldBe video
   }
-  
+
 }

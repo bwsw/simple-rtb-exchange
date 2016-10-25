@@ -8,12 +8,12 @@ import com.bitworks.rtb.model.response.native.Link
   * @author Egor Ilchenko
   */
 class LinkBuilder(url: String) {
-  private var clicktrackers: Option[Seq[String]] = None
+  private var clickTrackers: Option[Seq[String]] = None
   private var fallback: Option[String] = None
   private var ext: Option[Any] = None
 
-  def withClicktrackers(s: Seq[String]) = {
-    clicktrackers = Some(s)
+  def withClickTrackers(s: Seq[String]) = {
+    clickTrackers = Some(s)
     this
   }
 
@@ -28,7 +28,7 @@ class LinkBuilder(url: String) {
   }
 
   /** Returns Link */
-  def build = Link(url, clicktrackers, fallback, ext)
+  def build = Link(url, clickTrackers, fallback, ext)
 }
 
 /**

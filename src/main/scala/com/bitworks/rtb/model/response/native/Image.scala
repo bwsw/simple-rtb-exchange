@@ -1,7 +1,7 @@
 package com.bitworks.rtb.model.response.native
 
 /**
-  * Corresponds to the Image Object in the request.
+  * Information about image elements of the Native ad.
   * The Image object to be used for all image elements of the Native ad
   * such as Icons, Main Image, etc.
   *
@@ -12,7 +12,7 @@ package com.bitworks.rtb.model.response.native
   * @author Egor Ilchenko
   */
 case class Image(
-  url: String,
-  w: Option[Int],
-  h: Option[Int],
-  ext: Option[Any])
+    url: String,
+    w: Option[Int],
+    h: Option[Int],
+    ext: Option[Any])

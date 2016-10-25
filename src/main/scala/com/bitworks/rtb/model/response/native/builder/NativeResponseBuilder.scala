@@ -9,8 +9,8 @@ import com.bitworks.rtb.model.response.native._
   */
 class NativeResponseBuilder(assets: Seq[Asset], link: Link) {
   private var ver: Int = NativeResponseBuilder.Ver
-  private var imptrackers: Option[Seq[String]] = None
-  private var jstracker: Option[String] = None
+  private var impTrackers: Option[Seq[String]] = None
+  private var jsTracker: Option[String] = None
   private var ext: Option[Any] = None
 
   def withVer(i: Int) = {
@@ -18,13 +18,13 @@ class NativeResponseBuilder(assets: Seq[Asset], link: Link) {
     this
   }
 
-  def withImptrackers(s: Seq[String]) = {
-    imptrackers = Some(s)
+  def withImpTrackers(s: Seq[String]) = {
+    impTrackers = Some(s)
     this
   }
 
-  def withJstracker(s: String) = {
-    jstracker = Some(s)
+  def withJsTracker(s: String) = {
+    jsTracker = Some(s)
     this
   }
 
@@ -34,7 +34,7 @@ class NativeResponseBuilder(assets: Seq[Asset], link: Link) {
   }
 
   /** Returns NativeResponse */
-  def build = NativeResponse(ver, assets, link, imptrackers, jstracker, ext)
+  def build = NativeResponse(ver, assets, link, impTrackers, jsTracker, ext)
 }
 
 /**

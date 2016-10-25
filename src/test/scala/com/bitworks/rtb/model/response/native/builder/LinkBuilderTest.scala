@@ -18,11 +18,23 @@ class LinkBuilderTest extends FlatSpec with Matchers {
       Some("string"))
 
     val builder = LinkBuilder(link.url)
-    link.clicktrackers.foreach(clcktrck => builder.withClicktrackers(clcktrck))
+    link.clickTrackers.foreach(clcktrck => builder.withClickTrackers(clcktrck))
     link.fallback.foreach(fallback => builder.withFallback(fallback))
     link.ext.foreach(ext => builder.withExt(ext))
 
     val builtLink = builder.build
+
+    builtLink shouldBe link
+  }
+
+  it should "build Link with default values correctly" in {
+    val link = Link(
+      "url",
+      None,
+      None,
+      None)
+
+    val builtLink = LinkBuilder(link.url).build
 
     builtLink shouldBe link
   }

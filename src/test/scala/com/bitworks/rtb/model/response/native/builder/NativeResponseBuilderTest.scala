@@ -21,8 +21,8 @@ class NativeResponseBuilderTest extends FlatSpec with Matchers {
 
     val builder = NativeResponseBuilder(nativeResponse.assets, nativeResponse.link)
       .withVer(nativeResponse.ver)
-    nativeResponse.imptrackers.foreach(imptrackers => builder.withImptrackers(imptrackers))
-    nativeResponse.jstracker.foreach(jstracker => builder.withJstracker(jstracker))
+    nativeResponse.impTrackers.foreach(imptrackers => builder.withImpTrackers(imptrackers))
+    nativeResponse.jsTracker.foreach(jstracker => builder.withJsTracker(jstracker))
     nativeResponse.ext.foreach(ext => builder.withExt(ext))
 
     val builtNativeResponse = builder.build
@@ -32,7 +32,7 @@ class NativeResponseBuilderTest extends FlatSpec with Matchers {
 
   it should "build NativeResponse with default values correctly" in {
     val nativeResponse = NativeResponse(
-      1,
+      NativeResponseBuilder.Ver,
       Seq(AssetBuilder("id").build),
       LinkBuilder("url").build,
       None,
