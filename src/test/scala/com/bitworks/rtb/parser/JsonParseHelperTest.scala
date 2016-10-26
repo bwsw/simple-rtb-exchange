@@ -2,27 +2,29 @@ package com.bitworks.rtb.parser
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
 
 /**
   * Test for [[com.bitworks.rtb.parser.JsonParseHelper JsonParseHelper]].
   *
   * @author Egor Ilchenko
   */
-class JsonParseHelperTest extends FlatSpec with Matchers{
+class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest {
+
+  val helper = new Object with JsonParseHelper
+  val mapper = new ObjectMapper
 
   "JsonParseHelper" should "throw exception when \"throwNotRecognized\" called" in {
-    val helper = new Object with JsonParseHelper
-
-    an [DataValidationException] should be thrownBy
-      helper.throwNotRecognized("name", "name", JsonNodeType.BOOLEAN)
+    an[DataValidationException] should be thrownBy
+        helper.throwNotRecognized("name", "name", JsonNodeType.BOOLEAN)
   }
 
   it should "return node child when \"getChild\" called" in {
-    val helper = new Object with JsonParseHelper
-    val mapper = new ObjectMapper
     val rootNode = mapper.createObjectNode
-    val childNodeInfo = new {val name = "name"; val value = "value"}
+    val childNodeInfo = new {
+      val name = "name"
+      val value = "value"
+    }
     rootNode.put(childNodeInfo.name, childNodeInfo.value)
 
     val childNode = helper.JsonNodeExtensions(rootNode).getChild(childNodeInfo.name)
@@ -31,8 +33,6 @@ class JsonParseHelperTest extends FlatSpec with Matchers{
   }
 
   it should "return empty Seq when \"asSeqUsing\" called on empty array node" in {
-    val helper = new Object with JsonParseHelper
-    val mapper = new ObjectMapper
     val arrayNode = mapper.createArrayNode
 
     val emptySeq = helper.JsonNodeExtensions(arrayNode).asSeqUsing(_.toString)
@@ -41,8 +41,6 @@ class JsonParseHelperTest extends FlatSpec with Matchers{
   }
 
   it should "return Seq using projection function when \"asSeqUsing\" called on non empty node" in {
-    val helper = new Object with JsonParseHelper
-    val mapper = new ObjectMapper
     val arrayNode = mapper.createArrayNode
 
     val expectedSeq = Seq(true, false, true)
@@ -56,8 +54,6 @@ class JsonParseHelperTest extends FlatSpec with Matchers{
   }
 
   it should "return string Seq  when \"asStringSeq\" called on non empty node" in {
-    val helper = new Object with JsonParseHelper
-    val mapper = new ObjectMapper
     val arrayNode = mapper.createArrayNode
 
     val expectedSeq = Seq("string1", "string2", "string3")
@@ -71,8 +67,6 @@ class JsonParseHelperTest extends FlatSpec with Matchers{
   }
 
   it should "return int Seq when \"asIntSeq\" called on non empty node" in {
-    val helper = new Object with JsonParseHelper
-    val mapper = new ObjectMapper
     val arrayNode = mapper.createArrayNode
 
     val expectedSeq = Seq(1, 2, 3)
@@ -86,8 +80,6 @@ class JsonParseHelperTest extends FlatSpec with Matchers{
   }
 
   it should "return fields when \"getFields\" called" in {
-    val helper = new Object with JsonParseHelper
-    val mapper = new ObjectMapper
     val parentNode = mapper.createObjectNode
 
     val fields = Seq(
@@ -101,19 +93,17 @@ class JsonParseHelperTest extends FlatSpec with Matchers{
     }
 
     val parsedFields = helper.JsonNodeExtensions(parentNode)
-      .getFields
-      .map{
-        case (n, JsonNodeType.STRING, v)  => (n, JsonNodeType.STRING, v.asText)
-        case (n, JsonNodeType.NUMBER, v)  => (n, JsonNodeType.NUMBER, v.asInt)
-        case _ => fail
-      }
+        .getFields
+        .map {
+          case (n, JsonNodeType.STRING, v) => (n, JsonNodeType.STRING, v.asText)
+          case (n, JsonNodeType.NUMBER, v) => (n, JsonNodeType.NUMBER, v.asInt)
+          case _ => fail
+        }
 
     parsedFields shouldBe fields
   }
 
   it should "return fields without ignored when \"getFieldsWithoutIgnored\" called" in {
-    val helper = new Object with JsonParseHelper
-    val mapper = new ObjectMapper
     val parentNode = mapper.createObjectNode
 
     val fields = Seq(
@@ -130,12 +120,12 @@ class JsonParseHelperTest extends FlatSpec with Matchers{
     parentNode.put(ignoredFieldName, "value")
 
     val parsedFields = helper.JsonNodeExtensions(parentNode)
-      .getFieldsWithoutIgnored(Seq(ignoredFieldName))
-      .map{
-        case (n, JsonNodeType.STRING, v)  => (n, JsonNodeType.STRING, v.asText)
-        case (n, JsonNodeType.NUMBER, v)  => (n, JsonNodeType.NUMBER, v.asInt)
-        case _ => fail
-      }
+        .getFieldsWithoutIgnored(Seq(ignoredFieldName))
+        .map {
+          case (n, JsonNodeType.STRING, v) => (n, JsonNodeType.STRING, v.asText)
+          case (n, JsonNodeType.NUMBER, v) => (n, JsonNodeType.NUMBER, v.asInt)
+          case _ => fail
+        }
 
     parsedFields shouldBe fields
   }
@@ -148,5 +138,47 @@ class JsonParseHelperTest extends FlatSpec with Matchers{
 
     an [DataValidationException] should be thrownBy
       helper.JsonNodeExtensions(objectNode).asSeqUsing(_.asBoolean)
+  }
+
+  it should "return int when \"getInt\" called on int node" in {
+    val intNode = mapper.createObjectNode
+    val intVal = 3
+    val nodeName = "id"
+    intNode.put(nodeName, intVal)
+
+    val parsedInt = helper.JsonNodeExtensions(intNode.get(nodeName))
+        .getInt
+
+    parsedInt shouldBe intVal
+  }
+
+  it should "throw exception when \"getInt\" called on nonint node" in {
+    val intNode = mapper.createObjectNode
+    val nodeName = "id"
+    intNode.put(nodeName, "str")
+
+    an[IllegalArgumentException] should be thrownBy
+        helper.JsonNodeExtensions(intNode.get(nodeName)).getInt
+  }
+
+  it should "return string when \"getString\" called on string node" in {
+    val stringNode = mapper.createObjectNode
+    val stringVal = "str"
+    val nodeName = "id"
+    stringNode.put(nodeName, stringVal)
+
+    val parsedString = helper.JsonNodeExtensions(stringNode.get(nodeName))
+        .getString
+
+    parsedString shouldBe stringVal
+  }
+
+  it should "throw exception when \"getInt\" called on nonstring node" in {
+    val stringNode = mapper.createObjectNode
+    val nodeName = "id"
+    stringNode.put(nodeName, 11)
+
+    an[IllegalArgumentException] should be thrownBy
+        helper.JsonNodeExtensions(stringNode.get(nodeName)).getString
   }
 }

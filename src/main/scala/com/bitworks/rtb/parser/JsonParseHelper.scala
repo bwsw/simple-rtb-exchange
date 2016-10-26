@@ -90,6 +90,26 @@ trait JsonParseHelper {
         case _ => throw new DataValidationException("node must be of array type")
       }
     }
+
+    /**
+      * Returns node value as int.
+      *
+      * @throws IllegalArgumentException if node is not an int
+      */
+    def getInt = {
+      require(node.isInt, "node must be an integer")
+      node.asInt
+    }
+
+    /**
+      * Returns node value as string.
+      *
+      * @throws IllegalArgumentException if node is not an string
+      */
+    def getString = {
+      require(node.isTextual, "node must be a string")
+      node.asText
+    }
   }
 
 }
