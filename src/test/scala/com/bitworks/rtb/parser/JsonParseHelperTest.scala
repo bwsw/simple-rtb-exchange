@@ -139,4 +139,14 @@ class JsonParseHelperTest extends FlatSpec with Matchers{
 
     parsedFields shouldBe fields
   }
+
+  it should "throw exception when \"asSeqUsing\" called on non array node" in {
+    val helper = new Object with JsonParseHelper
+    val mapper = new ObjectMapper
+
+    val objectNode = mapper.createObjectNode
+
+    an [DataValidationException] should be thrownBy
+      helper.JsonNodeExtensions(objectNode).asSeqUsing(_.asBoolean)
+  }
 }
