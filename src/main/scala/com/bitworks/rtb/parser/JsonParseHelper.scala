@@ -85,11 +85,30 @@ trait JsonParseHelper {
       * @throws IllegalArgumentException if node not an array
       */
     def asSeqUsing[T](f: JsonNode => T): Seq[T] = {
-      require(node.isArray, "node must be of array type")
       node match {
         case arrayNode: ArrayNode => arrayNode.elements().asScala.map(f).toSeq
         case _ => throw new DataValidationException("not an array")
       }
+    }
+
+    /**
+      * Returns node value as int.
+      *
+      * @throws IllegalArgumentException if node is not an int
+      */
+    def getInt = {
+      require(node.isInt, "node must be an integer")
+      node.asInt
+    }
+
+    /**
+      * Returns node value as string.
+      *
+      * @throws IllegalArgumentException if node is not an string
+      */
+    def getString = {
+      require(node.isTextual, "node must be a string")
+      node.asText
     }
   }
 
