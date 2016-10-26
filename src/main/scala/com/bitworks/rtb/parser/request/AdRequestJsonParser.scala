@@ -4,9 +4,7 @@ import com.bitworks.rtb.model._
 import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.parser.JsonParseHelper
-import com.fasterxml.jackson.databind.node.JsonNodeType
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 /**
   * Json parser for [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]].
@@ -17,276 +15,288 @@ class AdRequestJsonParser extends AdRequestParser with JsonParseHelper {
 
   override def parseInternal(s: String): AdRequest = {
     val mapper = new ObjectMapper()
-    mapper.registerModule(DefaultScalaModule)
     val rootNode = mapper.readValue(s, classOf[JsonNode])
 
     getAdRequest(rootNode)
   }
 
   private def getProducer(node: JsonNode) = {
+    require(node.isObject, "producer node must be an object")
     val builder = ProducerBuilder()
 
     node.getFields.foreach {
-      case ("id", JsonNodeType.STRING, v) => builder.withId(v.asText)
-      case ("name", JsonNodeType.STRING, v) => builder.withName(v.asText)
-      case ("cat", JsonNodeType.ARRAY, v) => builder.withCat(v.asStringSeq)
-      case ("domain", JsonNodeType.STRING, v) => builder.withDomain(v.asText)
-      case ("ext", _, _) => //nothing
-      case (n, t, _) => throwNotRecognized("producer", n, t)
+      case ("id", v) => builder.withId(v.getString)
+      case ("name", v) => builder.withName(v.getString)
+      case ("cat", v) => builder.withCat(v.getStringSeq)
+      case ("domain", v) => builder.withDomain(v.getString)
+      case ("ext", _) => //nothing
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getGeo(node: JsonNode) = {
+    require(node.isObject, "geo node must be an object")
     val builder = GeoBuilder()
 
     node.getFields.foreach {
-      case ("lat", JsonNodeType.NUMBER, v) => builder.withLat(v.asDouble.toFloat)
-      case ("lon", JsonNodeType.NUMBER, v) => builder.withLon(v.asDouble.toFloat)
-      case ("type", JsonNodeType.NUMBER, v) => builder.withType(v.asInt)
-      case ("country", JsonNodeType.STRING, v) => builder.withCountry(v.asText)
-      case ("region", JsonNodeType.STRING, v) => builder.withRegion(v.asText)
-      case ("regionfips104", JsonNodeType.STRING, v) => builder.withRegionFips104(v.asText)
-      case ("metro", JsonNodeType.STRING, v) => builder.withMetro(v.asText)
-      case ("city", JsonNodeType.STRING, v) => builder.withCity(v.asText)
-      case ("zip", JsonNodeType.STRING, v) => builder.withZip(v.asText)
-      case ("utcoffset", JsonNodeType.NUMBER, v) => builder.withUtcOffset(v.asInt)
-      case ("ext", _, _) => //nothing
-      case (n, t, _) => throwNotRecognized("geo", n, t)
+      case ("lat", v) => builder.withLat(v.getFloat)
+      case ("lon", v) => builder.withLon(v.getFloat)
+      case ("type", v) => builder.withType(v.getInt)
+      case ("country", v) => builder.withCountry(v.getString)
+      case ("region", v) => builder.withRegion(v.getString)
+      case ("regionfips104", v) => builder.withRegionFips104(v.getString)
+      case ("metro", v) => builder.withMetro(v.getString)
+      case ("city", v) => builder.withCity(v.getString)
+      case ("zip", v) => builder.withZip(v.getString)
+      case ("utcoffset", v) => builder.withUtcOffset(v.getInt)
+      case ("ext", _) => //nothing
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getAdRequest(node: JsonNode) = {
-    val imps = node.getChild("imp").asSeqUsing(getImp)
+    require(node.isObject, "adRequest node must be an object")
+    val imps = node.getChild("imp").getSeqUsing(getImp)
     val builder = ad.request.builder.AdRequestBuilder(imps)
 
     node.getFieldsWithoutIgnored(Seq("imp")).foreach {
-      case ("device", JsonNodeType.OBJECT, v) => builder.withDevice(getDevice(v))
-      case ("site", JsonNodeType.OBJECT, v) => builder.withSite(getSite(v))
-      case ("app", JsonNodeType.OBJECT, v) => builder.withApp(getApp(v))
-      case ("user", JsonNodeType.OBJECT, v) => builder.withUser(getUser(v))
-      case ("test", JsonNodeType.NUMBER, v) => builder.withTest(v.asInt)
-      case ("tmax", JsonNodeType.NUMBER, v) => builder.withTmax(v.asInt)
-      case ("regs", JsonNodeType.OBJECT, v) => builder.withRegs(getRegs(v))
-      case ("ext", _, _) =>
-      case (n, t, _) => throwNotRecognized("adRequest", n, t)
+      case ("device", v) => builder.withDevice(getDevice(v))
+      case ("site", v) => builder.withSite(getSite(v))
+      case ("app", v) => builder.withApp(getApp(v))
+      case ("user", v) => builder.withUser(getUser(v))
+      case ("test", v) => builder.withTest(v.getInt)
+      case ("tmax", v) => builder.withTmax(v.getInt)
+      case ("regs", v) => builder.withRegs(getRegs(v))
+      case ("ext", _) => //nothing
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getImp(node: JsonNode) = {
-    val id = node.getChild("id").asText
+    require(node.isObject, "imp node must be an object")
+    val id = node.getChild("id").getString
     val builder = ad.request.builder.ImpBuilder(id)
 
     node.getFieldsWithoutIgnored(Seq("id")).foreach {
-      case ("banner", JsonNodeType.OBJECT, v) => builder.withBanner(getBanner(v))
-      case ("video", JsonNodeType.OBJECT, v) => builder.withVideo(getVideo(v))
-      case ("native", JsonNodeType.OBJECT, v) => builder.withNative(getNative(v))
-      case (n, t, _) => throwNotRecognized("imp", n, t)
+      case ("banner", v) => builder.withBanner(getBanner(v))
+      case ("video", v) => builder.withVideo(getVideo(v))
+      case ("native", v) => builder.withNative(getNative(v))
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getNative(node: JsonNode) = {
-    val request = node.getChild("request").asText
+    require(node.isObject, "native node must be an object")
+    val request = node.getChild("request").getString
     val builder = NativeBuilder(request)
 
     node.getFieldsWithoutIgnored(Seq("request")).foreach {
-      case ("ver", JsonNodeType.STRING, v) => builder.withVer(v.asText)
-      case ("api", JsonNodeType.ARRAY, v) => builder.withApi(v.asIntSeq)
-      case ("battr", JsonNodeType.ARRAY, v) => builder.withBattr(v.asIntSeq)
-      case ("ext", _, _) => //nothing
-      case (n, t, _) => throwNotRecognized("native", n, t)
+      case ("ver", v) => builder.withVer(v.getString)
+      case ("api", v) => builder.withApi(v.getIntSeq)
+      case ("battr", v) => builder.withBattr(v.getIntSeq)
+      case ("ext", _) => //nothing
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getVideo(node: JsonNode) = {
-    val mimes = node.getChild("mimes").asStringSeq
+    require(node.isObject, "video node must be an object")
+    val mimes = node.getChild("mimes").getStringSeq
     val builder = VideoBuilder(mimes)
 
     node.getFieldsWithoutIgnored(Seq("mimes")).foreach {
-      case ("minduration", JsonNodeType.NUMBER, v) => builder.withMinDuration(v.asInt)
-      case ("maxduration", JsonNodeType.NUMBER, v) => builder.withMaxDuration(v.asInt)
-      case ("protocol", JsonNodeType.NUMBER, v) => builder.withProtocol(v.asInt)
-      case ("protocols", JsonNodeType.ARRAY, v) => builder.withProtocols(v.asIntSeq)
-      case ("w", JsonNodeType.NUMBER, v) => builder.withW(v.asInt)
-      case ("h", JsonNodeType.NUMBER, v) => builder.withH(v.asInt)
-      case ("startdelay", JsonNodeType.NUMBER, v) => builder.withStartDelay(v.asInt)
-      case ("linearity", JsonNodeType.NUMBER, v) => builder.withLinearity(v.asInt)
-      case ("sequence", JsonNodeType.NUMBER, v) => builder.withSequence(v.asInt)
-      case ("battr", JsonNodeType.ARRAY, v) => builder.withBattr(v.asIntSeq)
-      case ("maxextended", JsonNodeType.NUMBER, v) => builder.withMaxExtended(v.asInt)
-      case ("minbitrate", JsonNodeType.NUMBER, v) => builder.withMinBitrate(v.asInt)
-      case ("maxbitrate", JsonNodeType.NUMBER, v) => builder.withMaxBitrate(v.asInt)
-      case ("boxingallowed", JsonNodeType.NUMBER, v) => builder.withBoxingAllowed(v.asInt)
-      case ("playbackmethod", JsonNodeType.ARRAY, v) => builder.withPlaybackMethod(v.asIntSeq)
-      case ("delivery", JsonNodeType.ARRAY, v) => builder.withDelivery(v.asIntSeq)
-      case ("pos", JsonNodeType.NUMBER, v) => builder.withPos(v.asInt)
-      case ("companionad", JsonNodeType.ARRAY, v) => builder.withCompanionAd(v.asSeqUsing(getBanner))
-      case ("api", JsonNodeType.ARRAY, v) => builder.withApi(v.asIntSeq)
-      case ("companiontype", JsonNodeType.ARRAY, v) => builder.withCompanionType(v.asIntSeq)
-      case ("ext", _, _) => //nothing
-      case (n, t, _) => throwNotRecognized("video", n, t)
+      case ("minduration", v) => builder.withMinDuration(v.getInt)
+      case ("maxduration", v) => builder.withMaxDuration(v.getInt)
+      case ("protocol", v) => builder.withProtocol(v.getInt)
+      case ("protocols", v) => builder.withProtocols(v.getIntSeq)
+      case ("w", v) => builder.withW(v.getInt)
+      case ("h", v) => builder.withH(v.getInt)
+      case ("startdelay", v) => builder.withStartDelay(v.getInt)
+      case ("linearity", v) => builder.withLinearity(v.getInt)
+      case ("sequence", v) => builder.withSequence(v.getInt)
+      case ("battr", v) => builder.withBattr(v.getIntSeq)
+      case ("maxextended", v) => builder.withMaxExtended(v.getInt)
+      case ("minbitrate", v) => builder.withMinBitrate(v.getInt)
+      case ("maxbitrate", v) => builder.withMaxBitrate(v.getInt)
+      case ("boxingallowed", v) => builder.withBoxingAllowed(v.getInt)
+      case ("playbackmethod", v) => builder.withPlaybackMethod(v.getIntSeq)
+      case ("delivery", v) => builder.withDelivery(v.getIntSeq)
+      case ("pos", v) => builder.withPos(v.getInt)
+      case ("companionad", v) => builder.withCompanionAd(v.getSeqUsing(getBanner))
+      case ("api", v) => builder.withApi(v.getIntSeq)
+      case ("companiontype", v) => builder.withCompanionType(v.getIntSeq)
+      case ("ext", _) => //nothing
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getBanner(node: JsonNode) = {
+    require(node.isObject, "banner node must be an object")
     val builder = BannerBuilder()
 
     node.getFields.foreach {
-      case ("w", JsonNodeType.NUMBER, v) => builder.withW(v.asInt)
-      case ("h", JsonNodeType.NUMBER, v) => builder.withH(v.asInt)
-      case ("wmax", JsonNodeType.NUMBER, v) => builder.withWmax(v.asInt)
-      case ("hmax", JsonNodeType.NUMBER, v) => builder.withHmax(v.asInt)
-      case ("wmin", JsonNodeType.NUMBER, v) => builder.withWmin(v.asInt)
-      case ("hmin", JsonNodeType.NUMBER, v) => builder.withHmin(v.asInt)
-      case ("id", JsonNodeType.STRING, v) => builder.withId(v.asText)
-      case ("btype", JsonNodeType.ARRAY, v) => builder.withBtype(v.asIntSeq)
-      case ("battr", JsonNodeType.ARRAY, v) => builder.withBattr(v.asIntSeq)
-      case ("pos", JsonNodeType.NUMBER, v) => builder.withPos(v.asInt)
-      case ("mimes", JsonNodeType.ARRAY, v) => builder.withMimes(v.asStringSeq)
-      case ("topframe", JsonNodeType.NUMBER, v) => builder.withTopFrame(v.asInt)
-      case ("expdir", JsonNodeType.ARRAY, v) => builder.withExpdir(v.asIntSeq)
-      case ("api", JsonNodeType.ARRAY, v) => builder.withApi(v.asIntSeq)
-      case ("ext", _, _) => //nothing
-      case (n, t, _) => throwNotRecognized("banner", n, t)
+      case ("w", v) => builder.withW(v.getInt)
+      case ("h", v) => builder.withH(v.getInt)
+      case ("wmax", v) => builder.withWmax(v.getInt)
+      case ("hmax", v) => builder.withHmax(v.getInt)
+      case ("wmin", v) => builder.withWmin(v.getInt)
+      case ("hmin", v) => builder.withHmin(v.getInt)
+      case ("id", v) => builder.withId(v.getString)
+      case ("btype", v) => builder.withBtype(v.getIntSeq)
+      case ("battr", v) => builder.withBattr(v.getIntSeq)
+      case ("pos", v) => builder.withPos(v.getInt)
+      case ("mimes", v) => builder.withMimes(v.getStringSeq)
+      case ("topframe", v) => builder.withTopFrame(v.getInt)
+      case ("expdir", v) => builder.withExpdir(v.getIntSeq)
+      case ("api", v) => builder.withApi(v.getIntSeq)
+      case ("ext", _) => //nothing
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getSite(node: JsonNode) = {
-    val id = node.getChild("id").asInt
+    require(node.isObject, "site node must be an object")
+    val id = node.getChild("id").getInt
     val builder = ad.request.builder.SiteBuilder(id)
 
     node.getFieldsWithoutIgnored(Seq("id")).foreach {
-      case ("sectioncat", JsonNodeType.ARRAY, v) => builder.withSectionCat(v.asStringSeq)
-      case ("pagecat", JsonNodeType.ARRAY, v) => builder.withPageCat(v.asStringSeq)
-      case ("page", JsonNodeType.STRING, v) => builder.withPage(v.asText)
-      case ("ref", JsonNodeType.STRING, v) => builder.withRef(v.asText)
-      case ("search", JsonNodeType.STRING, v) => builder.withSearch(v.asText)
-      case ("mobile", JsonNodeType.NUMBER, v) => builder.withMobile(v.asInt)
-      case ("content", JsonNodeType.OBJECT, v) => builder.withContent(getContent(v))
-      case (n, t, _) => throwNotRecognized("site", n, t)
+      case ("sectioncat", v) => builder.withSectionCat(v.getStringSeq)
+      case ("pagecat", v) => builder.withPageCat(v.getStringSeq)
+      case ("page", v) => builder.withPage(v.getString)
+      case ("ref", v) => builder.withRef(v.getString)
+      case ("search", v) => builder.withSearch(v.getString)
+      case ("mobile", v) => builder.withMobile(v.getInt)
+      case ("content", v) => builder.withContent(getContent(v))
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getContent(node: JsonNode) = {
+    require(node.isObject, "content node must be an object")
     val builder = ContentBuilder()
 
     node.getFields.foreach {
-      case ("id", JsonNodeType.STRING, v) => builder.withId(v.asText)
-      case ("episode", JsonNodeType.NUMBER, v) => builder.withEpisode(v.asInt)
-      case ("title", JsonNodeType.STRING, v) => builder.withTitle(v.asText)
-      case ("series", JsonNodeType.STRING, v) => builder.withSeries(v.asText)
-      case ("season", JsonNodeType.STRING, v) => builder.withSeason(v.asText)
-      case ("producer", JsonNodeType.OBJECT, v) => builder.withProducer(getProducer(v))
-      case ("url", JsonNodeType.STRING, v) => builder.withUrl(v.asText)
-      case ("cat", JsonNodeType.ARRAY, v) => builder.withCat(v.asStringSeq)
-      case ("videoquality", JsonNodeType.NUMBER, v) => builder.withVideoQuality(v.asInt)
-      case ("context", JsonNodeType.NUMBER, v) => builder.withContext(v.asInt)
-      case ("contentrating", JsonNodeType.STRING, v) => builder.withContentRating(v.asText)
-      case ("userrating", JsonNodeType.STRING, v) => builder.withUserRating(v.asText)
-      case ("qagmediarating", JsonNodeType.NUMBER, v) => builder.withQagMediaRating(v.asInt)
-      case ("keywords", JsonNodeType.STRING, v) => builder.withKeywords(v.asText)
-      case ("livestream", JsonNodeType.NUMBER, v) => builder.withLiveStream(v.asInt)
-      case ("sourcerelationship", JsonNodeType.NUMBER, v) => builder.withSourceRelationship(v.asInt)
-      case ("len", JsonNodeType.NUMBER, v) => builder.withLen(v.asInt)
-      case ("language", JsonNodeType.STRING, v) => builder.withLanguage(v.asText)
-      case ("embeddable", JsonNodeType.NUMBER, v) => builder.withEmbeddable(v.asInt)
-      case ("ext", _, _) => //nothing
-      case (n, t, _) => throwNotRecognized("content", n, t)
+      case ("id", v) => builder.withId(v.getString)
+      case ("episode", v) => builder.withEpisode(v.getInt)
+      case ("title", v) => builder.withTitle(v.getString)
+      case ("series", v) => builder.withSeries(v.getString)
+      case ("season", v) => builder.withSeason(v.getString)
+      case ("producer", v) => builder.withProducer(getProducer(v))
+      case ("url", v) => builder.withUrl(v.getString)
+      case ("cat", v) => builder.withCat(v.getStringSeq)
+      case ("videoquality", v) => builder.withVideoQuality(v.getInt)
+      case ("context", v) => builder.withContext(v.getInt)
+      case ("contentrating", v) => builder.withContentRating(v.getString)
+      case ("userrating", v) => builder.withUserRating(v.getString)
+      case ("qagmediarating", v) => builder.withQagMediaRating(v.getInt)
+      case ("keywords", v) => builder.withKeywords(v.getString)
+      case ("livestream", v) => builder.withLiveStream(v.getInt)
+      case ("sourcerelationship", v) => builder.withSourceRelationship(v.getInt)
+      case ("len", v) => builder.withLen(v.getInt)
+      case ("language", v) => builder.withLanguage(v.getString)
+      case ("embeddable", v) => builder.withEmbeddable(v.getInt)
+      case ("ext", _) => //nothing
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getApp(node: JsonNode) = {
-    val id = node.getChild("id").asInt
+    require(node.isObject, "app node must be an object")
+    val id = node.getChild("id").getInt
     val builder = ad.request.builder.AppBuilder(id)
 
     node.getFieldsWithoutIgnored(Seq("id")).foreach {
-      case ("sectioncat", JsonNodeType.ARRAY, v) => builder.withSectionCat(v.asStringSeq)
-      case ("pagecat", JsonNodeType.ARRAY, v) => builder.withPageCat(v.asStringSeq)
-      case ("content", JsonNodeType.OBJECT, v) => builder.withContent(getContent(v))
-      case (n, t, _) => throwNotRecognized("app", n, t)
+      case ("sectioncat", v) => builder.withSectionCat(v.getStringSeq)
+      case ("pagecat", v) => builder.withPageCat(v.getStringSeq)
+      case ("content", v) => builder.withContent(getContent(v))
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getUser(node: JsonNode) = {
+    require(node.isObject, "user node must be an object")
     val builder = ad.request.builder.UserBuilder()
 
     node.getFields.foreach {
-      case ("id", JsonNodeType.STRING, v) => builder.withId(v.asText)
-      case ("yob", JsonNodeType.NUMBER, v) => builder.withYob(v.asInt)
-      case ("gender", JsonNodeType.STRING, v) => builder.withGender(v.asText)
-      case ("keywords", JsonNodeType.STRING, v) => builder.withKeywords(v.asText)
-      case ("geo", JsonNodeType.OBJECT, v) => builder.withGeo(getGeo(v))
-      case (n, t, _) => throwNotRecognized("user", n, t)
+      case ("id", v) => builder.withId(v.getString)
+      case ("yob", v) => builder.withYob(v.getInt)
+      case ("gender", v) => builder.withGender(v.getString)
+      case ("keywords", v) => builder.withKeywords(v.getString)
+      case ("geo", v) => builder.withGeo(getGeo(v))
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getRegs(node: JsonNode) = {
+    require(node.isObject, "regs node must be an object")
     val builder = RegsBuilder()
 
     node.getFields.foreach {
-      case ("coppa", JsonNodeType.NUMBER, v) => builder.withCoppa(v.asInt)
-      case ("ext", _, _) => //nothing
-      case (n, t, _) => throwNotRecognized("regs", n, t)
+      case ("coppa", v) => builder.withCoppa(v.getInt)
+      case ("ext", _) => //nothing
+      case _ => //nothing
     }
 
     builder.build
   }
 
   private def getDevice(node: JsonNode) = {
+    require(node.isObject, "device node must be an object")
     val builder = DeviceBuilder()
 
     node.getFields.foreach {
-      case ("ua", JsonNodeType.STRING, v) => builder.withUa(v.asText)
-      case ("geo", JsonNodeType.OBJECT, v) => builder.withGeo(getGeo(v))
-      case ("dnt", JsonNodeType.NUMBER, v) => builder.withDnt(v.asInt)
-      case ("lmt", JsonNodeType.NUMBER, v) => builder.withLmt(v.asInt)
-      case ("ip", JsonNodeType.STRING, v) => builder.withIp(v.asText)
-      case ("ipv6", JsonNodeType.STRING, v) => builder.withIpv6(v.asText)
-      case ("devicetype", JsonNodeType.NUMBER, v) => builder.withDeviceType(v.asInt)
-      case ("make", JsonNodeType.STRING, v) => builder.withMake(v.asText)
-      case ("model", JsonNodeType.STRING, v) => builder.withModel(v.asText)
-      case ("os", JsonNodeType.STRING, v) => builder.withOs(v.asText)
-      case ("osv", JsonNodeType.STRING, v) => builder.withOsv(v.asText)
-      case ("hwv", JsonNodeType.STRING, v) => builder.withHwv(v.asText)
-      case ("h", JsonNodeType.NUMBER, v) => builder.withH(v.asInt)
-      case ("w", JsonNodeType.NUMBER, v) => builder.withW(v.asInt)
-      case ("ppi", JsonNodeType.NUMBER, v) => builder.withPpi(v.asInt)
-      case ("pxratio", JsonNodeType.NUMBER, v) => builder.withPxRatio(v.asDouble)
-      case ("js", JsonNodeType.NUMBER, v) => builder.withJs(v.asInt)
-      case ("flashver", JsonNodeType.STRING, v) => builder.withFlashVer(v.asText)
-      case ("language", JsonNodeType.STRING, v) => builder.withLanguage(v.asText)
-      case ("carrier", JsonNodeType.STRING, v) => builder.withCarrier(v.asText)
-      case ("connectiontype", JsonNodeType.NUMBER, v) => builder.withConnectionType(v.asInt)
-      case ("ifa", JsonNodeType.STRING, v) => builder.withIfa(v.asText)
-      case ("didsha1", JsonNodeType.STRING, v) => builder.withDidsha1(v.asText)
-      case ("didmd5", JsonNodeType.STRING, v) => builder.withDidmd5(v.asText)
-      case ("dpidsha1", JsonNodeType.STRING, v) => builder.withDpidsha1(v.asText)
-      case ("dpidmd5", JsonNodeType.STRING, v) => builder.withDpidmd5(v.asText)
-      case ("macsha1", JsonNodeType.STRING, v) => builder.withMacsha1(v.asText)
-      case ("macmd5", JsonNodeType.STRING, v) => builder.withMacmd5(v.asText)
-      case ("ext", _, _) => //nothing
-      case (n, t, _) => throwNotRecognized("device", n, t)
+      case ("ua", v) => builder.withUa(v.getString)
+      case ("geo", v) => builder.withGeo(getGeo(v))
+      case ("dnt", v) => builder.withDnt(v.getInt)
+      case ("lmt", v) => builder.withLmt(v.getInt)
+      case ("ip", v) => builder.withIp(v.getString)
+      case ("ipv6", v) => builder.withIpv6(v.getString)
+      case ("devicetype", v) => builder.withDeviceType(v.getInt)
+      case ("make", v) => builder.withMake(v.getString)
+      case ("model", v) => builder.withModel(v.getString)
+      case ("os", v) => builder.withOs(v.getString)
+      case ("osv", v) => builder.withOsv(v.getString)
+      case ("hwv", v) => builder.withHwv(v.getString)
+      case ("h", v) => builder.withH(v.getInt)
+      case ("w", v) => builder.withW(v.getInt)
+      case ("ppi", v) => builder.withPpi(v.getInt)
+      case ("pxratio", v) => builder.withPxRatio(v.getDouble)
+      case ("js", v) => builder.withJs(v.getInt)
+      case ("flashver", v) => builder.withFlashVer(v.getString)
+      case ("language", v) => builder.withLanguage(v.getString)
+      case ("carrier", v) => builder.withCarrier(v.getString)
+      case ("connectiontype", v) => builder.withConnectionType(v.getInt)
+      case ("ifa", v) => builder.withIfa(v.getString)
+      case ("didsha1", v) => builder.withDidsha1(v.getString)
+      case ("didmd5", v) => builder.withDidmd5(v.getString)
+      case ("dpidsha1", v) => builder.withDpidsha1(v.getString)
+      case ("dpidmd5", v) => builder.withDpidmd5(v.getString)
+      case ("macsha1", v) => builder.withMacsha1(v.getString)
+      case ("macmd5", v) => builder.withMacmd5(v.getString)
+      case ("ext", _) => //nothing
+      case _ => //nothing
     }
 
     builder.build

@@ -30,7 +30,6 @@ trait AdRequestParser {
     * exception catching.
     *
     * @param s input string
-    * @throws com.bitworks.rtb.parser.DataValidationException in case of invalid JSON
     */
   protected def parseInternal(s: String): AdRequest
 }

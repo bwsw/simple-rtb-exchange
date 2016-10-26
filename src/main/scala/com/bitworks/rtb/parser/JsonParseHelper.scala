@@ -1,7 +1,7 @@
 package com.bitworks.rtb.parser
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.{ArrayNode, JsonNodeType}
+import com.fasterxml.jackson.databind.node.ArrayNode
 
 import scala.collection.JavaConverters._
 
@@ -12,19 +12,6 @@ import scala.collection.JavaConverters._
   * @author Egor Ilchenko
   */
 trait JsonParseHelper {
-
-  /**
-    * Throws [[com.bitworks.rtb.parser.DataValidationException DataValidationException]] for
-    * unrecognized field.
-    *
-    * @param nodeName  node name, containing unrecognized field
-    * @param fieldName unrecognized field name
-    * @param fieldType unrecognized field type
-    */
-  def throwNotRecognized(nodeName: String, fieldName: String, fieldType: JsonNodeType) = {
-    throw new DataValidationException(
-      s"""unrecognized field "$fieldName" with type "$fieldType" on "$nodeName" node""")
-  }
 
   /**
     * JsonNode extension methods.
@@ -60,7 +47,7 @@ trait JsonParseHelper {
       .fields()
       .asScala
       .filterNot(elem => ignoredFields.contains(elem.getKey))
-      .map(field => (field.getKey, field.getValue.getNodeType, field.getValue))
+      .map(field => (field.getKey, field.getValue))
       .toList
 
     /**
@@ -68,14 +55,14 @@ trait JsonParseHelper {
       *
       * @throws IllegalArgumentException if node not an array
       */
-    def asStringSeq = asSeqUsing(n => n.asText)
+    def getStringSeq = getSeqUsing(n => n.getString)
 
     /**
       * Returns node value as Seq[Int].
       *
       * @throws IllegalArgumentException if node not an array
       */
-    def asIntSeq = asSeqUsing(n => n.asInt)
+    def getIntSeq = getSeqUsing(n => n.getInt)
 
     /**
       * Returns node value as Seq[T].
@@ -84,10 +71,10 @@ trait JsonParseHelper {
       * @tparam T type of the returning array
       * @throws IllegalArgumentException if node not an array
       */
-    def asSeqUsing[T](f: JsonNode => T): Seq[T] = {
+    def getSeqUsing[T](f: JsonNode => T): Seq[T] = {
       node match {
         case arrayNode: ArrayNode => arrayNode.elements().asScala.map(f).toSeq
-        case _ => throw new DataValidationException("node must be of array type")
+        case _ => throw new DataValidationException("node must be an array")
       }
     }
 
@@ -110,6 +97,27 @@ trait JsonParseHelper {
       require(node.isTextual, "node must be a string")
       node.asText
     }
+
+    /**
+      * Returns node value as double.
+      *
+      * @throws IllegalArgumentException if node is not an double
+      */
+    def getDouble = {
+      require(node.isNumber, "node must be a number")
+      node.asDouble
+    }
+
+    /**
+      * Returns node value as float.
+      *
+      * @throws IllegalArgumentException if node is not an float
+      */
+    def getFloat = {
+      require(node.isNumber, "node must be a number")
+      node.floatValue
+    }
+
   }
 
 }
