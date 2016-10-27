@@ -134,4 +134,12 @@ class JsonWriteHelperTest extends FlatSpec with Matchers {
     value shouldBe expectedValue
   }
 
+  it should """throw exception when "putOption" called with unsupported type"""" in {
+    val node = helper.createObject
+
+    an [UnsupportedOperationException] shouldBe thrownBy {
+      helper.JsonNodeWriteExtensions(node).putOption("someTuple", Some((1, 2)))
+    }
+  }
+
 }
