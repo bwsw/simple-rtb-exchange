@@ -1,0 +1,56 @@
+@startuml
+
+title RTB request proccessing
+
+note left of User
+    Request, Response are
+    serialized objects.
+    RequestModel, ResponseModel
+    are just objects
+end note
+
+User->App: AdRequest
+activate App
+
+App -> Parser: AdRequest
+activate Parser
+App <-- Parser: AdReqestModel
+deactivate Parser
+
+App -> Factory: AdRequestModel
+activate Factory
+App <-- Factory: BidRequestModel
+deactivate Factory
+
+App -> Writer: BidRequestModel
+activate Writer
+App <-- Writer: BidRequest
+deactivate Writer
+
+App -> Bidders: BidRequest
+App <-- Bidders: BidResponse
+
+App -> App: Auction
+
+App -> Parser: BidResponse
+activate Parser
+App <-- Parser: BidResponseModel
+deactivate Parser
+
+App -> Factory: BidResponseModel
+activate Factory
+App <-- Factory: AdResponseModel
+deactivate Factory
+
+App -> Writer: AdResponseModel
+activate Writer
+App <-- Writer: AdResponse
+deactivate Writer
+
+
+App --> User: AdResponse
+deactivate App
+
+
+
+@enduml
