@@ -1,4 +1,4 @@
-package com.bitworks.rtb.writer.request
+package com.bitworks.rtb.writer
 
 import com.bitworks.rtb.model.request.BidRequest
 

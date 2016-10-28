@@ -1,11 +1,12 @@
-package com.bitworks.rtb.writer.request
+package com.bitworks.rtb.writer
 
+import com.bitworks.rtb.writer.BidRequestJsonWriter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.writer.request.BidRequestJsonWriter BidRequestJsonWriter]]
+  * Test for [[BidRequestJsonWriter BidRequestJsonWriter]]
   *
   * @author Pavel Tomskikh
   */

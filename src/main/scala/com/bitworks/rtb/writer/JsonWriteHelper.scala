@@ -34,21 +34,21 @@ trait JsonWriteHelper {
       * @param value value of the field
       * @return this node (to allow chaining)
       */
-    def putIntArray(name: String, value: Option[Iterable[Int]]) =
-      putObjectArray(name, value, (i: Int) => node.numberNode(i))
+    def putOptionIntArray(name: String, value: Option[Iterable[Int]]) =
+    putOptionArray(name, value, (i: Int) => node.numberNode(i))
 
     /**
-      * Sets value of a fields to specified string array. If value is None, does nothing.
+      * Sets option value of a fields to specified string array. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
       * @return this node (to allow chaining)
       */
-    def putStringArray(name: String, value: Option[Iterable[String]]) =
-      putObjectArray(name, value, (s: String) => node.textNode(s))
+    def putOptionStringArray(name: String, value: Option[Iterable[String]]) =
+    putOptionArray(name, value, (s: String) => node.textNode(s))
 
     /**
-      * Sets value of a fields to specified T array. If value is None, does nothing.
+      * Sets option value of a fields to specified T array. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -56,10 +56,43 @@ trait JsonWriteHelper {
       * @tparam T type of source array
       * @return this node (to allow chaining)
       */
-    def putObjectArray[T](name: String, value: Option[Iterable[T]], f: T => JsonNode) = {
-      value.foreach(v => {
-        node.putArray(name).addAll(v.map(f).asJavaCollection)
-      })
+    def putOptionArray[T](name: String, value: Option[Iterable[T]], f: T => JsonNode) = {
+      value.foreach(v =>
+        node.putArray(name).addAll(v.map(f).asJavaCollection))
+      node
+    }
+
+    /**
+      * Sets value of a fields to specified int array.
+      *
+      * @param name  name of the field
+      * @param value value of the field
+      * @return this node (to allow chaining)
+      */
+    def putIntArray(name: String, value: Iterable[Int]) =
+    putObjectArray(name, value, (i: Int) => node.numberNode(i))
+
+    /**
+      * Sets value of a fields to specified string array.
+      *
+      * @param name  name of the field
+      * @param value value of the field
+      * @return this node (to allow chaining)
+      */
+    def putStringArray(name: String, value: Iterable[String]) =
+    putObjectArray(name, value, (s: String) => node.textNode(s))
+
+    /**
+      * Sets value of a fields to specified T array.
+      *
+      * @param name  name of the field
+      * @param value value of the field
+      * @param f     function returning JsonNode from T
+      * @tparam T type of source array
+      * @return this node (to allow chaining)
+      */
+    def putObjectArray[T](name: String, value: Iterable[T], f: (T) => JsonNode) = {
+      node.putArray(name).addAll(value.map(f).asJavaCollection)
       node
     }
 
@@ -72,29 +105,28 @@ trait JsonWriteHelper {
       * @tparam T type of value
       * @return this node (to allow chaining)
       */
-    def putOption[T](name: String, value: Option[T], f: T => ObjectNode) = {
-      value.foreach(v => {
-        node.set(name, f(v))
-      })
+    def putOption[T](name: String, value: Option[T], f: (T) => ObjectNode) = {
+      value.foreach(v => node.set(name, f(v)))
       node
     }
 
-    /**
-      * Sets value of a field to specified Option[T]. If value is None, does nothing.
-      *
-      * @param name  name of the field
-      * @param value value of the field
-      * @tparam T type of value
-      * @return this node (to allow chaining)
-      */
-    def putOption[T](name: String, value: Option[T]) = {
-      value.foreach {
-        case v: String => node.put(name, v)
-        case v: Int => node.put(name, v)
-        case v: Float => node.put(name, v)
-        case v: Double => node.put(name, v)
-        case _ => throw new UnsupportedOperationException
-      }
+    def putOptionInt(name: String, value: Option[Int]) = {
+      value.foreach(v => node.put(name, v))
+      node
+    }
+
+    def putOptionFloat(name: String, value: Option[Float]) = {
+      value.foreach(v => node.put(name, v))
+      node
+    }
+
+    def putOptionDouble(name: String, value: Option[Double]) = {
+      value.foreach(v => node.put(name, v))
+      node
+    }
+
+    def putOptionString(name: String, value: Option[String]) = {
+      value.foreach(v => node.put(name, v))
       node
     }
   }
