@@ -1,15 +1,15 @@
-package com.bitworks.rtb.writer.response
+package com.bitworks.rtb.writer
 
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error, Imp}
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
 
 /**
-  * Test for [[com.bitworks.rtb.writer.response.AdResponseJsonWriter AdResponseJsonWriter]].
+  * Test for [[com.bitworks.rtb.writer.AdResponseJsonWriter AdResponseJsonWriter]].
   *
   * @author Egor Ilchenko
   */
-class AdResponseJsonWriterTest extends FlatSpec with Matchers with OneInstancePerTest {
+class AdResponseJsonWriterTest extends FlatSpec with Matchers {
 
   val mapper = new ObjectMapper
   val writer = new AdResponseJsonWriter
@@ -20,11 +20,11 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers with OneInstancePe
     val adResponse = AdResponse("id", Some(imps), Some(error))
 
     val json = writer.write(adResponse)
-    val path = getClass.getResource("/com.bitworks.rtb.writer.response/adresponse.json").getPath
+    val path = getClass.getResource("/com/bitworks/rtb/writer/adresponse.json").getPath
     val expectedJson = (io.Source fromFile path).mkString
 
-    val jsonNode = mapper.readValue(json, classOf[JsonNode])
-    val expectedJsonNode = mapper.readValue(expectedJson, classOf[JsonNode])
+    val jsonNode = mapper.readTree(json)
+    val expectedJsonNode = mapper.readTree(expectedJson)
 
     jsonNode shouldBe expectedJsonNode
   }
@@ -35,8 +35,8 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers with OneInstancePe
     val json = writer.write(adResponse)
     val expectedJson = """{"id":"id"}"""
 
-    val jsonNode = mapper.readValue(json, classOf[JsonNode])
-    val expectedJsonNode = mapper.readValue(expectedJson, classOf[JsonNode])
+    val jsonNode = mapper.readTree(json)
+    val expectedJsonNode = mapper.readTree(expectedJson)
 
     jsonNode shouldBe expectedJsonNode
   }
