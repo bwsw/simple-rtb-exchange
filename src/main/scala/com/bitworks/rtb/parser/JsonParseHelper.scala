@@ -19,7 +19,7 @@ trait JsonParseHelper {
     * @param node [[com.fasterxml.jackson.databind.JsonNode node]] object
     * @author Egor Ilchenko
     */
-  implicit class JsonNodeExtensions(node: JsonNode) {
+  implicit class ExtJsonNode(node: JsonNode) {
 
     /**
       * Returns child node with specified name.
@@ -28,41 +28,24 @@ trait JsonParseHelper {
       * @throws IllegalArgumentException when parent or child node not found
       */
     def getChild(name: String): JsonNode = {
-      require(node != null, "parent node must be not null")
-      require(!node.isMissingNode, "missing parent node")
       val childNode = node.path(name)
       require(!childNode.isMissingNode, s"missing node $name")
       childNode
     }
 
-    /** Returns all fields of the node.  */
-    def getFields = getFieldsWithoutIgnored(Seq.empty)
-
-    /**
-      * Returns all fields of the node, excluding ignored fields.
-      *
-      * @param ignoredFields ignored fields
-      */
-    def getFieldsWithoutIgnored(ignoredFields: Seq[String]) = node
-      .fields()
-      .asScala
-      .filterNot(elem => ignoredFields.contains(elem.getKey))
-      .map(field => (field.getKey, field.getValue))
-      .toList
-
     /**
       * Returns node value as Seq[String].
       *
-      * @throws IllegalArgumentException if node not an array
+      * @throws IllegalArgumentException if node not an string array
       */
-    def getStringSeq = getSeqUsing(n => n.getString)
+    def getStringSeq = getSeq(n => n.getString)
 
     /**
       * Returns node value as Seq[Int].
       *
-      * @throws IllegalArgumentException if node not an array
+      * @throws IllegalArgumentException if node not an int array
       */
-    def getIntSeq = getSeqUsing(n => n.getInt)
+    def getIntSeq = getSeq(n => n.getInt)
 
     /**
       * Returns node value as Seq[T].
@@ -71,7 +54,7 @@ trait JsonParseHelper {
       * @tparam T type of the returning array
       * @throws IllegalArgumentException if node not an array
       */
-    def getSeqUsing[T](f: JsonNode => T): Seq[T] = {
+    def getSeq[T](f: JsonNode => T): Seq[T] = {
       node match {
         case arrayNode: ArrayNode => arrayNode.elements().asScala.map(f).toSeq
         case _ => throw new DataValidationException("node must be an array")
@@ -105,7 +88,7 @@ trait JsonParseHelper {
       */
     def getDouble = {
       require(node.isNumber, "node must be a number")
-      node.asDouble
+      node.doubleValue
     }
 
     /**

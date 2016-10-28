@@ -1,7 +1,6 @@
 package com.bitworks.rtb.parser
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.JsonNodeType
 import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
 
 /**
@@ -22,7 +21,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     }
     rootNode.put(childNodeInfo.name, childNodeInfo.value)
 
-    val childNode = helper.JsonNodeExtensions(rootNode).getChild(childNodeInfo.name)
+    val childNode = helper.ExtJsonNode(rootNode).getChild(childNodeInfo.name)
 
     childNode.asText shouldBe childNodeInfo.value
   }
@@ -30,7 +29,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
   it should "return empty Seq when \"asSeqUsing\" called on empty array node" in {
     val arrayNode = mapper.createArrayNode
 
-    val emptySeq = helper.JsonNodeExtensions(arrayNode).getSeqUsing(_.toString)
+    val emptySeq = helper.ExtJsonNode(arrayNode).getSeq(_.toString)
 
     emptySeq shouldBe empty
   }
@@ -43,7 +42,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     arrayNode.add(expectedSeq(1))
     arrayNode.add(expectedSeq(2))
 
-    val parsedSeq = helper.JsonNodeExtensions(arrayNode).getSeqUsing(_.asBoolean)
+    val parsedSeq = helper.ExtJsonNode(arrayNode).getSeq(_.asBoolean)
 
     parsedSeq shouldBe expectedSeq
   }
@@ -56,7 +55,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     arrayNode.add(expectedSeq(1))
     arrayNode.add(expectedSeq(2))
 
-    val parsedSeq = helper.JsonNodeExtensions(arrayNode).getStringSeq
+    val parsedSeq = helper.ExtJsonNode(arrayNode).getStringSeq
 
     parsedSeq shouldBe expectedSeq
   }
@@ -69,67 +68,16 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     arrayNode.add(expectedSeq(1))
     arrayNode.add(expectedSeq(2))
 
-    val parsedSeq = helper.JsonNodeExtensions(arrayNode).getIntSeq
+    val parsedSeq = helper.ExtJsonNode(arrayNode).getIntSeq
 
     parsedSeq shouldBe expectedSeq
-  }
-
-  it should "return fields when \"getFields\" called" in {
-    val parentNode = mapper.createObjectNode
-
-    val fields = Seq(
-      ("one", 1),
-      ("two", "somestr"))
-
-    fields.foreach {
-      case (n, s: String) => parentNode.put(n, s)
-      case (n, i: Int) => parentNode.put(n, i)
-      case _ => fail
-    }
-
-    val parsedFields = helper.JsonNodeExtensions(parentNode)
-        .getFields
-        .map {
-          case (n, v) if v.isTextual => (n, helper.JsonNodeExtensions(v).getString)
-          case (n, v) if v.isInt => (n, helper.JsonNodeExtensions(v).getInt)
-          case _ => fail
-        }
-
-    parsedFields shouldBe fields
-  }
-
-  it should "return fields without ignored when \"getFieldsWithoutIgnored\" called" in {
-    val parentNode = mapper.createObjectNode
-
-    val fields = Seq(
-      ("one", 1),
-      ("two", "somestr"))
-
-    fields.foreach {
-      case (n, s: String) => parentNode.put(n, s)
-      case (n, i: Int) => parentNode.put(n, i)
-      case _ => fail
-    }
-
-    val ignoredFieldName = "name"
-    parentNode.put(ignoredFieldName, "value")
-
-    val parsedFields = helper.JsonNodeExtensions(parentNode)
-        .getFieldsWithoutIgnored(Seq(ignoredFieldName))
-        .map {
-          case (n, v) if v.isTextual => (n, helper.JsonNodeExtensions(v).getString)
-          case (n, v) if v.isInt => (n, helper.JsonNodeExtensions(v).getInt)
-          case _ => fail
-        }
-
-    parsedFields shouldBe fields
   }
 
   it should "throw exception when \"asSeqUsing\" called on non array node" in {
     val objectNode = mapper.createObjectNode
 
-    an [DataValidationException] should be thrownBy
-      helper.JsonNodeExtensions(objectNode).getSeqUsing(_.asBoolean)
+    an[DataValidationException] should be thrownBy
+        helper.ExtJsonNode(objectNode).getSeq(_.asBoolean)
   }
 
   it should "return int when \"getInt\" called on int node" in {
@@ -138,7 +86,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     val nodeName = "id"
     intNode.put(nodeName, intVal)
 
-    val parsedInt = helper.JsonNodeExtensions(intNode.get(nodeName))
+    val parsedInt = helper.ExtJsonNode(intNode.get(nodeName))
         .getInt
 
     parsedInt shouldBe intVal
@@ -150,7 +98,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     intNode.put(nodeName, "str")
 
     an[IllegalArgumentException] should be thrownBy
-        helper.JsonNodeExtensions(intNode.get(nodeName)).getInt
+        helper.ExtJsonNode(intNode.get(nodeName)).getInt
   }
 
   it should "return string when \"getString\" called on string node" in {
@@ -159,7 +107,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     val nodeName = "id"
     stringNode.put(nodeName, stringVal)
 
-    val parsedString = helper.JsonNodeExtensions(stringNode.get(nodeName))
+    val parsedString = helper.ExtJsonNode(stringNode.get(nodeName))
         .getString
 
     parsedString shouldBe stringVal
@@ -171,7 +119,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     stringNode.put(nodeName, 11)
 
     an[IllegalArgumentException] should be thrownBy
-        helper.JsonNodeExtensions(stringNode.get(nodeName)).getString
+        helper.ExtJsonNode(stringNode.get(nodeName)).getString
   }
 
   it should "return double when \"getDouble\" called on numeric node" in {
@@ -180,8 +128,8 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     val nodeName = "id"
     doubleNode.put(nodeName, doubleVal)
 
-    val parsedDouble = helper.JsonNodeExtensions(doubleNode.get(nodeName))
-      .getDouble
+    val parsedDouble = helper.ExtJsonNode(doubleNode.get(nodeName))
+        .getDouble
 
     parsedDouble shouldBe doubleVal
   }
@@ -193,7 +141,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     doubleNode.put(nodeName, "str")
 
     an[IllegalArgumentException] should be thrownBy
-      helper.JsonNodeExtensions(doubleNode.get(nodeName)).getDouble
+        helper.ExtJsonNode(doubleNode.get(nodeName)).getDouble
   }
 
   it should "return float when \"getFloat\" called on numeric node" in {
@@ -202,8 +150,8 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     val nodeName = "id"
     floatNode.put(nodeName, floatVal)
 
-    val parsedFloat = helper.JsonNodeExtensions(floatNode.get(nodeName))
-      .getDouble
+    val parsedFloat = helper.ExtJsonNode(floatNode.get(nodeName))
+        .getDouble
 
     parsedFloat shouldBe floatVal
   }
@@ -215,6 +163,6 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     floatNode.put(nodeName, "str")
 
     an[IllegalArgumentException] should be thrownBy
-      helper.JsonNodeExtensions(floatNode.get(nodeName)).getFloat
+        helper.ExtJsonNode(floatNode.get(nodeName)).getFloat
   }
 }

@@ -1,41 +1,40 @@
-package com.bitworks.rtb.parser.request
+package com.bitworks.rtb.parser
 
 import com.bitworks.rtb.model._
 import com.bitworks.rtb.model.request._
-import com.bitworks.rtb.parser.DataValidationException
 import org.scalatest.{FlatSpec, Matchers}
 
 
 /**
-  * Test for [[com.bitworks.rtb.parser.request.AdRequestJsonParser AdRequestJsonParser]].
+  * Test for [[com.bitworks.rtb.parser.AdRequestJsonParser AdRequestJsonParser]].
   *
   * @author Egor Ilchenko
   */
-class AdRequestJsonParserTest extends FlatSpec with Matchers{
+class AdRequestJsonParserTest extends FlatSpec with Matchers {
 
   "AdRequestJsonParser" should "throw exception if JSON syntax is incorrect" in {
-    val incorrectJson = "incorrectJson"
+    val incorrectJson = "incorrectJson".getBytes
     val parser = new AdRequestJsonParser
 
-    an [DataValidationException] should be thrownBy parser.parse(incorrectJson)
+    an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
   }
 
   it should "throw exception if datatype in JSON doesn`t match model datatype" in {
-    val incorrectJson = """{"imp": "wrong", "device":"wrong too"}"""
+    val incorrectJson = """{"imp": "wrong", "device":"wrong too"}""".getBytes
     val parser = new AdRequestJsonParser
 
-    an [DataValidationException] should be thrownBy parser.parse(incorrectJson)
+    an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
   }
 
   it should "throw exception if required fields are missing" in {
-    val incorrectJson = """{"someobj":"someval"}"""
+    val incorrectJson = """{"someobj":"someval"}""".getBytes
     val parser = new AdRequestJsonParser
 
-    an [DataValidationException] should be thrownBy parser.parse(incorrectJson)
+    an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
   }
 
   it should "correctly parse json with not all fields specified" in {
-    val json = """{ "imp": [] }"""
+    val json = """{ "imp": [] }""".getBytes
     val parser = new AdRequestJsonParser
 
     val expectedModel = ad.request.AdRequest(
@@ -57,8 +56,8 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers{
     val expectedModel = getAdRequestModel
     val parser = new AdRequestJsonParser
 
-    val path = getClass.getResource("/com.bitworks.rtb.parser.request/adrequest.json").getPath
-    val json = (io.Source fromFile path).mkString
+    val path = getClass.getResource("/com/bitworks/rtb/parser/adrequest.json").getPath
+    val json = io.Source.fromFile(path).mkString.getBytes
 
     val parsedModel = parser.parse(json)
 
