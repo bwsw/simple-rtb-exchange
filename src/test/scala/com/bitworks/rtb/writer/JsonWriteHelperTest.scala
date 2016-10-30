@@ -5,7 +5,6 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.JavaConverters._
 
-
 /**
   * Test for [[com.bitworks.rtb.writer.JsonWriteHelper JsonWriteHelper]].
   *

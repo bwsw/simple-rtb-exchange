@@ -28,7 +28,7 @@ trait JsonWriteHelper {
   implicit class ExtJsonNode(node: ObjectNode) {
 
     /**
-      * Sets value of a fields to specified int array. If value is None, does nothing.
+      * Sets value of a field to the specified int array. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -38,7 +38,7 @@ trait JsonWriteHelper {
       putOptionArray(name, value, (i: Int) => node.numberNode(i))
 
     /**
-      * Sets option value of a fields to specified string array. If value is None, does nothing.
+      * Sets option value of a field to the specified string array. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -48,7 +48,7 @@ trait JsonWriteHelper {
       putOptionArray(name, value, (s: String) => node.textNode(s))
 
     /**
-      * Sets option value of a fields to specified T array. If value is None, does nothing.
+      * Sets option value of a field to the specified T array. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -63,7 +63,7 @@ trait JsonWriteHelper {
     }
 
     /**
-      * Sets value of a fields to specified int array.
+      * Sets value of a field to the specified int array.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -73,7 +73,7 @@ trait JsonWriteHelper {
       putObjectArray(name, value, (i: Int) => node.numberNode(i))
 
     /**
-      * Sets value of a fields to specified string array.
+      * Sets value of a field to the specified string array.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -83,7 +83,7 @@ trait JsonWriteHelper {
       putObjectArray(name, value, (s: String) => node.textNode(s))
 
     /**
-      * Sets value of a fields to specified T array.
+      * Sets value of a field to the specified T array.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -97,7 +97,7 @@ trait JsonWriteHelper {
     }
 
     /**
-      * Sets value of a field to specified Option[T]. If value is None, does nothing.
+      * Sets value of a field to the specified Option[T]. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -111,7 +111,7 @@ trait JsonWriteHelper {
     }
 
     /**
-      * Sets value of a field to specified int. If value is None, does nothing.
+      * Sets value of a field to the specified int. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -123,7 +123,7 @@ trait JsonWriteHelper {
     }
 
     /**
-      * Sets value of a field to specified float. If value is None, does nothing.
+      * Sets value of a field to the specified float. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -135,7 +135,7 @@ trait JsonWriteHelper {
     }
 
     /**
-      * Sets value of a field to specified double. If value is None, does nothing.
+      * Sets value of a field to the specified double. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -147,7 +147,7 @@ trait JsonWriteHelper {
     }
 
     /**
-      * Sets value of a field to specified string. If value is None, does nothing.
+      * Sets value of a field to the specified string. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
