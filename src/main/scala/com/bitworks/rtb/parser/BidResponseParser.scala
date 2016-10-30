@@ -3,21 +3,21 @@ package com.bitworks.rtb.parser
 import com.bitworks.rtb.model.response.BidResponse
 
 /**
-  * Interface for [[com.bitworks.rtb.model.response.BidResponse BidResponse]] parsers.
+  * Parser for [[com.bitworks.rtb.model.response.BidResponse BidResponse]] parsers.
   *
   * @author Pavel Tomskikh
   */
 trait BidResponseParser {
 
   /**
-    * Returns parsed string to [[com.bitworks.rtb.model.response.BidResponse BidResponse]] object.
+    * Returns parsed [[com.bitworks.rtb.model.response.BidResponse BidResponse]] object.
     *
-    * @param s parsing string
-    * @throws DataValidationException in case of invalid JSON
+    * @param bytes input bytes
+    * @throws DataValidationException in case of invalid byte representation
     */
-  def parse(s: String): BidResponse = {
+  def parse(bytes: Array[Byte]): BidResponse = {
     try {
-      parseInternal(s)
+      parseInternal(bytes)
     }
     catch {
       case e: DataValidationException => throw e
@@ -26,10 +26,10 @@ trait BidResponseParser {
   }
 
   /**
-    * Returns parsed string to [[com.bitworks.rtb.model.response.BidResponse BidResponse]] object
-    * without exception catching.
+    * Returns parsed  [[com.bitworks.rtb.model.response.BidResponse BidResponse]] object without
+    * exception catching.
     *
-    * @param s parsing string
+    * @param bytes input bytes
     */
-  protected def parseInternal(s: String): BidResponse
+  protected def parseInternal(bytes: Array[Byte]): BidResponse
 }

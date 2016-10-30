@@ -1,33 +1,62 @@
 package com.bitworks.rtb.parser
 
+import com.bitworks.rtb.model.response.builder.BidResponseBuilder
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.io.Source
 
 /**
-  * Test for [[BidResponseJsonParser BidResponseJsonParser]].
+  * Test for [[com.bitworks.rtb.parser.BidResponseJsonParser BidResponseJsonParser]].
   *
   * @author Pavel Tomskikh
   */
 class BidResponseJsonParserTest extends FlatSpec with Matchers {
 
+  val parser = new BidResponseJsonParser()
+
   "BidResponseJsonParser" should "throw exception if JSON format is incorrect" in {
-    val ircorrectString = "not JSON"
+    val json = "not JSON".getBytes
     an[DataValidationException] should be thrownBy
-        BidResponseJsonParser.parse(ircorrectString)
+        parser.parse(json)
   }
 
   it should "thrown exception if datatype in JSON is wrong" in {
-    val ircorrectString = """{ "id":"123", "seatbid":"notseatbid"} """
+    val json = """{ "id":"123", "seatbid":"notseatbid"} """.getBytes()
     an[DataValidationException] should be thrownBy
-        BidResponseJsonParser.parse(ircorrectString)
+        parser.parse(json)
   }
 
   it should "throw exception if required fields are missing" in {
-    val ircorrectString = """{ "id":"123" } """
+    val json = """{ "id":"123" } """.getBytes
     an[DataValidationException] should be thrownBy
-        BidResponseJsonParser.parse(ircorrectString)
+        parser.parse(json)
+  }
+
+  it should "correctly parse JSON without optional fields" in {
+    val json = """{ "id":"123", "seatbid":[] }""".getBytes
+
+    val expectedBidResponse = BidResponse(
+      "123",
+      Seq.empty,
+      None,
+      BidResponseBuilder.Cur,
+      None,
+      None,
+      None)
+
+    val parsedBidResponse = parser.parse(json)
+
+    parsedBidResponse shouldBe expectedBidResponse
+  }
+
+  it should "correctly parse JSON" in {
+    val expectedBidResponse = getCorrectBidResponse
+    val path = getClass.getResource("bidResponse.json").getPath
+    val json = Source.fromFile(path).mkString.getBytes()
+    val parsedBidResponse = parser.parse(json)
+
+    parsedBidResponse shouldBe expectedBidResponse
   }
 
   private def getCorrectBidResponse = {
@@ -108,14 +137,5 @@ class BidResponseJsonParserTest extends FlatSpec with Matchers {
     )
 
     bidResponse
-  }
-
-  it should "correctly parse JSON" in {
-    val expectedBidResponse = getCorrectBidResponse
-    val path = getClass.getResource("/com/bitworks/rtb/parser/bidResponseExample.json").getPath
-    val json = Source.fromFile(path).mkString
-    val parsedBidResponse = BidResponseJsonParser.parse(json)
-
-    parsedBidResponse shouldBe expectedBidResponse
   }
 }

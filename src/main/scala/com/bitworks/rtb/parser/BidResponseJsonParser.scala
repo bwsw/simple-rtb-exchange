@@ -11,17 +11,17 @@ import scala.collection.JavaConverters._
   *
   * @author Pavel Tomskikh
   */
-object BidResponseJsonParser extends BidResponseParser with JsonParseHelper {
+class BidResponseJsonParser extends BidResponseParser with JsonParseHelper {
 
   /**
     * Returns parsed JSON string to [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     * object without exception catching.
     *
-    * @param s parsing string
+    * @param bytes input bytes
     */
-  override def parseInternal(s: String): BidResponse = {
+  override def parseInternal(bytes: Array[Byte]): BidResponse = {
     val mapper = new ObjectMapper
-    val rootNode = mapper.readValue(s, classOf[JsonNode])
+    val rootNode = mapper.readTree(bytes)
 
     getBidResponse(rootNode)
   }
@@ -63,8 +63,7 @@ object BidResponseJsonParser extends BidResponseParser with JsonParseHelper {
     val id = node.getChild("id").getString
     val impId = node.getChild("impid").getString
     val priceNode = node.getChild("price")
-    if (!priceNode.isNumber)
-      throw new IllegalArgumentException
+    require(priceNode.isNumber, "node must be a decimal")
     val price = priceNode.decimalValue
     val builder = BidBuilder(id, impId, price)
 
