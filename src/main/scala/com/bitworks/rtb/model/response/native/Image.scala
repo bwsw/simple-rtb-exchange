@@ -1,9 +1,8 @@
 package com.bitworks.rtb.model.response.native
 
 /**
-  * Information about image elements of the Native ad.
-  * The Image object to be used for all image elements of the Native ad
-  * such as Icons, Main Image, etc.
+  * Information about image elements of the Native ad. The Image object to be used for all image
+  * elements of the Native ad such as Icons, Main Image, etc.
   *
   * @param url URL of the image asset
   * @param w   width of the image in pixels
