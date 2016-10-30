@@ -9,15 +9,14 @@ import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 
 import scala.collection.JavaConverters._
 
-
 /**
   * Json parser for [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]].
   *
   * @author Egor Ilchenko
   */
-class AdRequestJsonParser extends AdRequestParser with JsonParseHelper {
+class JsonParser extends Parser with JsonParseHelper {
 
-  override def parseInternal(bytes: Array[Byte]): AdRequest = {
+  override def parseAdRequestInternal(bytes: Array[Byte]): AdRequest = {
     val mapper = new ObjectMapper()
     val rootNode = mapper.readTree(bytes)
 

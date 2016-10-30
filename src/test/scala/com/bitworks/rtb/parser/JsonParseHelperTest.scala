@@ -26,7 +26,14 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     childNode.asText shouldBe childNodeInfo.value
   }
 
-  it should "return empty Seq when \"asSeqUsing\" called on empty array node" in {
+  it should "throw exception when \"getChild\" called for nonexistent node" in {
+    val rootNode = mapper.createObjectNode
+
+    an[IllegalArgumentException] should be thrownBy
+        helper.ExtJsonNode(rootNode).getChild("some")
+  }
+
+  it should "return empty Seq when \"getSeq\" called on empty array node" in {
     val arrayNode = mapper.createArrayNode
 
     val emptySeq = helper.ExtJsonNode(arrayNode).getSeq(_.toString)
@@ -34,50 +41,58 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     emptySeq shouldBe empty
   }
 
-  it should "return Seq using projection function when \"asSeqUsing\" called on non empty node" in {
+  it should "return Seq using projection function when \"getSeq\" called on non empty node" in {
     val arrayNode = mapper.createArrayNode
 
     val expectedSeq = Seq(true, false, true)
-    arrayNode.add(expectedSeq(0))
-    arrayNode.add(expectedSeq(1))
-    arrayNode.add(expectedSeq(2))
+    expectedSeq.foreach(arrayNode.add)
 
     val parsedSeq = helper.ExtJsonNode(arrayNode).getSeq(_.asBoolean)
 
     parsedSeq shouldBe expectedSeq
   }
 
-  it should "return string Seq  when \"asStringSeq\" called on non empty node" in {
+  it should "throw exception when \"getSeq\" called on non array node" in {
+    val objectNode = mapper.createObjectNode
+
+    an[IllegalArgumentException] should be thrownBy
+        helper.ExtJsonNode(objectNode).getSeq(_.asBoolean)
+  }
+
+  it should "return string Seq  when \"getStringSeq\" called on non empty node" in {
     val arrayNode = mapper.createArrayNode
 
     val expectedSeq = Seq("string1", "string2", "string3")
-    arrayNode.add(expectedSeq(0))
-    arrayNode.add(expectedSeq(1))
-    arrayNode.add(expectedSeq(2))
+    expectedSeq.foreach(arrayNode.add)
 
     val parsedSeq = helper.ExtJsonNode(arrayNode).getStringSeq
 
     parsedSeq shouldBe expectedSeq
   }
 
-  it should "return int Seq when \"asIntSeq\" called on non empty node" in {
+  it should "throw exception when \"getStringSeq\" called on non array node" in {
+    val objectNode = mapper.createObjectNode
+
+    an[IllegalArgumentException] should be thrownBy
+        helper.ExtJsonNode(objectNode).getStringSeq
+  }
+
+  it should "return int Seq when \"getIntSeq\" called on non empty node" in {
     val arrayNode = mapper.createArrayNode
 
     val expectedSeq = Seq(1, 2, 3)
-    arrayNode.add(expectedSeq(0))
-    arrayNode.add(expectedSeq(1))
-    arrayNode.add(expectedSeq(2))
+    expectedSeq.foreach(arrayNode.add)
 
     val parsedSeq = helper.ExtJsonNode(arrayNode).getIntSeq
 
     parsedSeq shouldBe expectedSeq
   }
 
-  it should "throw exception when \"asSeqUsing\" called on non array node" in {
+  it should "throw exception when \"getIntSeq\" called on non array node" in {
     val objectNode = mapper.createObjectNode
 
-    an[DataValidationException] should be thrownBy
-        helper.ExtJsonNode(objectNode).getSeq(_.asBoolean)
+    an[IllegalArgumentException] should be thrownBy
+        helper.ExtJsonNode(objectNode).getIntSeq
   }
 
   it should "return int when \"getInt\" called on int node" in {
@@ -134,7 +149,6 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     parsedDouble shouldBe doubleVal
   }
 
-
   it should "throw exception when \"getDouble\" called on non numeric node" in {
     val doubleNode = mapper.createObjectNode
     val nodeName = "id"
@@ -155,7 +169,6 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
 
     parsedFloat shouldBe floatVal
   }
-
 
   it should "throw exception when \"getFloat\" called on non numeric node" in {
     val floatNode = mapper.createObjectNode

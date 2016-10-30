@@ -1,10 +1,8 @@
 package com.bitworks.rtb.parser
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
 
 import scala.collection.JavaConverters._
-
 
 /**
   * Helper for JSON parsing.
@@ -25,7 +23,7 @@ trait JsonParseHelper {
       * Returns child node with specified name.
       *
       * @param name name of the node to get
-      * @throws IllegalArgumentException when parent or child node not found
+      * @throws IllegalArgumentException when child node is not found
       */
     def getChild(name: String): JsonNode = {
       val childNode = node.path(name)
@@ -36,35 +34,33 @@ trait JsonParseHelper {
     /**
       * Returns node value as Seq[String].
       *
-      * @throws IllegalArgumentException if node not an string array
+      * @throws IllegalArgumentException if node is not a string array
       */
     def getStringSeq = getSeq(n => n.getString)
 
     /**
       * Returns node value as Seq[Int].
       *
-      * @throws IllegalArgumentException if node not an int array
+      * @throws IllegalArgumentException if node is not an int array
       */
     def getIntSeq = getSeq(n => n.getInt)
 
     /**
       * Returns node value as Seq[T].
       *
-      * @param f function returns resulting array element
+      * @param f function to transform array elements
       * @tparam T type of the returning array
-      * @throws IllegalArgumentException if node not an array
+      * @throws IllegalArgumentException if node is not an array
       */
     def getSeq[T](f: JsonNode => T): Seq[T] = {
-      node match {
-        case arrayNode: ArrayNode => arrayNode.elements().asScala.map(f).toSeq
-        case _ => throw new DataValidationException("node must be an array")
-      }
+      require(node.isArray, "node must be an array")
+      node.elements().asScala.map(f).toSeq
     }
 
     /**
       * Returns node value as int.
       *
-      * @throws IllegalArgumentException if node is not an int
+      * @throws IllegalArgumentException if node is is not an int
       */
     def getInt = {
       require(node.isInt, "node must be an integer")
@@ -74,7 +70,7 @@ trait JsonParseHelper {
     /**
       * Returns node value as string.
       *
-      * @throws IllegalArgumentException if node is not an string
+      * @throws IllegalArgumentException if node is not a string
       */
     def getString = {
       require(node.isTextual, "node must be a string")
@@ -94,13 +90,11 @@ trait JsonParseHelper {
     /**
       * Returns node value as float.
       *
-      * @throws IllegalArgumentException if node is not an float
+      * @throws IllegalArgumentException if node is not a float
       */
     def getFloat = {
       require(node.isNumber, "node must be a number")
       node.floatValue
     }
-
   }
-
 }

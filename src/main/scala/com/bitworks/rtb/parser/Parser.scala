@@ -7,16 +7,16 @@ import com.bitworks.rtb.model.ad.request.AdRequest
   *
   * @author Egor Ilchenko
   */
-trait AdRequestParser {
+trait Parser {
   /**
     * Returns parsed [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]].
     *
     * @param bytes input bytes
-    * @throws DataValidationException in case of invalid JSON
+    * @throws DataValidationException in case of invalid byte representation
     */
-  def parse(bytes: Array[Byte]): AdRequest = {
+  def parseAdRequest(bytes: Array[Byte]): AdRequest = {
     try {
-      parseInternal(bytes)
+      parseAdRequestInternal(bytes)
     }
     catch {
       case e: DataValidationException => throw e
@@ -30,5 +30,5 @@ trait AdRequestParser {
     *
     * @param bytes input bytes
     */
-  protected def parseInternal(bytes: Array[Byte]): AdRequest
+  protected def parseAdRequestInternal(bytes: Array[Byte]): AdRequest
 }

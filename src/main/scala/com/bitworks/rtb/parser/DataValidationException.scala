@@ -1,11 +1,10 @@
 package com.bitworks.rtb.parser
 
 /**
-  * Can be thrown when validate fails.
+  * An exception that indicates about incorrectness of data.
   *
   * @author Pavel Tomskikh
   */
-
 class DataValidationException(
     message: String = null,
     cause: Throwable = null)
