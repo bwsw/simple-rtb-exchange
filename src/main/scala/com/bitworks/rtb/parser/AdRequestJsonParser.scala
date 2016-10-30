@@ -14,9 +14,9 @@ import scala.collection.JavaConverters._
   *
   * @author Egor Ilchenko
   */
-class JsonParser extends Parser with JsonParseHelper {
+class AdRequestJsonParser extends AdRequestParser with JsonParseHelper {
 
-  override def parseAdRequestInternal(bytes: Array[Byte]): AdRequest = {
+  override def parseInternal(bytes: Array[Byte]): AdRequest = {
     val mapper = new ObjectMapper()
     val rootNode = mapper.readTree(bytes)
 
