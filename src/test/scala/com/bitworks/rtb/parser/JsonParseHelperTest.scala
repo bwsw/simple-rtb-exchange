@@ -101,8 +101,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     val nodeName = "id"
     intNode.put(nodeName, intVal)
 
-    val parsedInt = helper.ExtJsonNode(intNode.get(nodeName))
-        .getInt
+    val parsedInt = helper.ExtJsonNode(intNode.get(nodeName)).getInt
 
     parsedInt shouldBe intVal
   }
@@ -122,8 +121,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     val nodeName = "id"
     stringNode.put(nodeName, stringVal)
 
-    val parsedString = helper.ExtJsonNode(stringNode.get(nodeName))
-        .getString
+    val parsedString = helper.ExtJsonNode(stringNode.get(nodeName)).getString
 
     parsedString shouldBe stringVal
   }
@@ -143,8 +141,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     val nodeName = "id"
     doubleNode.put(nodeName, doubleVal)
 
-    val parsedDouble = helper.ExtJsonNode(doubleNode.get(nodeName))
-        .getDouble
+    val parsedDouble = helper.ExtJsonNode(doubleNode.get(nodeName)).getDouble
 
     parsedDouble shouldBe doubleVal
   }
@@ -164,8 +161,7 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
     val nodeName = "id"
     floatNode.put(nodeName, floatVal)
 
-    val parsedFloat = helper.ExtJsonNode(floatNode.get(nodeName))
-        .getDouble
+    val parsedFloat = helper.ExtJsonNode(floatNode.get(nodeName)).getDouble
 
     parsedFloat shouldBe floatVal
   }
