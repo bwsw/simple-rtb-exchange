@@ -5,6 +5,8 @@ import com.bitworks.rtb.model.response.builder._
 import com.bitworks.rtb.parser.JsonParseHelper
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 
+import scala.collection.JavaConverters._
+
 /**
   * JSON parser for [[com.bitworks.rtb.model.response.BidResponse BidResponse]].
   *
@@ -29,32 +31,30 @@ object BidResponseJsonParser extends BidResponseParser with JsonParseHelper {
     require(node.isObject, "node must be object")
 
     val id = node.getChild("id").getString
-    val seatBid = node.getChild("seatbid").getSeqUsing(getSeatBid)
+    val seatBid = node.getChild("seatbid").getSeq(getSeatBid)
     val builder = BidResponseBuilder(id, seatBid)
 
-    node.getFields.par.foreach {
-      case ("bidid", v) => builder.withBidId(v.getString)
-      case ("cur", v) => builder.withCur(v.getString)
-      case ("customdata", v) => builder.withCustomData(v.getString)
-      case ("nbr", v) => builder.withNbr(v.getInt)
-      case ("ext", _) =>
+    node.fields().asScala.foreach(e => e.getKey match {
+      case "bidid" => builder.withBidId(e.getValue.getString)
+      case "cur" => builder.withCur(e.getValue.getString)
+      case "customdata" => builder.withCustomData(e.getValue.getString)
+      case "nbr" => builder.withNbr(e.getValue.getInt)
       case _ =>
-    }
+    })
     builder.build
   }
 
   private def getSeatBid(node: JsonNode): SeatBid = {
     require(node.isObject, "node must be object")
 
-    val bid = node.getChild("bid").getSeqUsing(getBid)
+    val bid = node.getChild("bid").getSeq(getBid)
     val builder = SeatBidBuilder(bid)
 
-    node.getFields.par.foreach {
-      case ("seat", v) => builder.withSeat(v.getString)
-      case ("group", v) => builder.withGroup(v.getInt)
-      case ("ext", _) =>
+    node.fields().asScala.foreach(e => e.getKey match {
+      case "seat" => builder.withSeat(e.getValue.getString)
+      case "group" => builder.withGroup(e.getValue.getInt)
       case _ =>
-    }
+    })
     builder.build
   }
 
@@ -69,23 +69,22 @@ object BidResponseJsonParser extends BidResponseParser with JsonParseHelper {
     val price = priceNode.decimalValue
     val builder = BidBuilder(id, impId, price)
 
-    node.getFields.par.foreach {
-      case ("adid", v) => builder.withAdId(v.getString)
-      case ("nurl", v) => builder.withNurl(v.getString)
-      case ("adm", v) => builder.withAdm(v.getString)
-      case ("adomain", v) => builder.withAdomain(v.getStringSeq)
-      case ("bundle", v) => builder.withBundle(v.getString)
-      case ("iurl", v) => builder.withIurl(v.getString)
-      case ("cid", v) => builder.withCid(v.getString)
-      case ("crid", v) => builder.withCrid(v.getString)
-      case ("cat", v) => builder.withCat(v.getStringSeq)
-      case ("attr", v) => builder.withAttr(v.getIntSeq.toSet)
-      case ("dealid", v) => builder.withDealId(v.getString)
-      case ("h", v) => builder.withH(v.getInt)
-      case ("w", v) => builder.withW(v.getInt)
-      case ("ext", _) =>
+    node.fields().asScala.foreach(e => e.getKey match {
+      case "adid" => builder.withAdId(e.getValue.getString)
+      case "nurl" => builder.withNurl(e.getValue.getString)
+      case "adm" => builder.withAdm(e.getValue.getString)
+      case "adomain" => builder.withAdomain(e.getValue.getStringSeq)
+      case "bundle" => builder.withBundle(e.getValue.getString)
+      case "iurl" => builder.withIurl(e.getValue.getString)
+      case "cid" => builder.withCid(e.getValue.getString)
+      case "crid" => builder.withCrid(e.getValue.getString)
+      case "cat" => builder.withCat(e.getValue.getStringSeq)
+      case "attr" => builder.withAttr(e.getValue.getIntSeq.toSet)
+      case "dealid" => builder.withDealId(e.getValue.getString)
+      case "h" => builder.withH(e.getValue.getInt)
+      case "w" => builder.withW(e.getValue.getInt)
       case _ =>
-    }
+    })
     builder.build
   }
 }
