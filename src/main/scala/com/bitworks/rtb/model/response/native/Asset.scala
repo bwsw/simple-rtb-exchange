@@ -16,7 +16,7 @@ package com.bitworks.rtb.model.response.native
   * @author Egor Ilchenko
   */
 case class Asset(
-    id: String,
+    id: Int,
     required: Int,
     title: Option[Title],
     img: Option[Image],

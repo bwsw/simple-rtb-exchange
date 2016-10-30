@@ -7,7 +7,7 @@ import com.bitworks.rtb.model.response.native._
   *
   * @author Egor Ilchenko
   */
-class AssetBuilder(id: String) {
+class AssetBuilder(id: Int) {
   private var required: Int = AssetBuilder.Required
   private var title: Option[Title] = None
   private var img: Option[Image] = None
@@ -63,5 +63,5 @@ class AssetBuilder(id: String) {
 object AssetBuilder {
   val Required = 0
 
-  def apply(id: String) = new AssetBuilder(id)
+  def apply(id: Int) = new AssetBuilder(id)
 }

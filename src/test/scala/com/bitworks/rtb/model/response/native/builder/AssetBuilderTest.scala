@@ -12,7 +12,7 @@ class AssetBuilderTest extends FlatSpec with Matchers {
 
   "AssetBuilder" should "build Asset correctly" in {
     val asset = Asset(
-      "id",
+      1,
       2,
       Some(TitleBuilder("123").build),
       Some(ImageBuilder("url").build),
@@ -37,7 +37,7 @@ class AssetBuilderTest extends FlatSpec with Matchers {
 
   it should "build Asset with default values correctly" in {
     val asset = Asset(
-      "id",
+      2,
       AssetBuilder.Required,
       None,
       None,

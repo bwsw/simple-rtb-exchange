@@ -13,7 +13,7 @@ class NativeResponseBuilderTest extends FlatSpec with Matchers {
   "NativeResponseBuilder" should "build NativeResponse correctly" in {
     val nativeResponse = NativeResponse(
       1,
-      Seq(AssetBuilder("id").build),
+      Seq(AssetBuilder(1).build),
       LinkBuilder("url").build,
       Some(Seq("tracker")),
       Some("jstracker"),
@@ -33,7 +33,7 @@ class NativeResponseBuilderTest extends FlatSpec with Matchers {
   it should "build NativeResponse with default values correctly" in {
     val nativeResponse = NativeResponse(
       NativeResponseBuilder.Ver,
-      Seq(AssetBuilder("id").build),
+      Seq(AssetBuilder(1).build),
       LinkBuilder("url").build,
       None,
       None,
