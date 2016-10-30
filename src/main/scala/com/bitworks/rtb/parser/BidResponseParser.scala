@@ -1,7 +1,6 @@
-package com.bitworks.rtb.parser.response
+package com.bitworks.rtb.parser
 
 import com.bitworks.rtb.model.response.BidResponse
-import com.bitworks.rtb.parser.DataValidationException
 
 /**
   * Interface for [[com.bitworks.rtb.model.response.BidResponse BidResponse]] parsers.

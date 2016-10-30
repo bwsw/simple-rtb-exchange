@@ -1,8 +1,7 @@
-package com.bitworks.rtb.parser.response
+package com.bitworks.rtb.parser
 
 import com.bitworks.rtb.model.response._
 import com.bitworks.rtb.model.response.builder._
-import com.bitworks.rtb.parser.JsonParseHelper
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 
 import scala.collection.JavaConverters._

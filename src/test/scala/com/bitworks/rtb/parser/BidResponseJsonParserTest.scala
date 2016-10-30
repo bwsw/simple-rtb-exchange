@@ -1,13 +1,12 @@
-package com.bitworks.rtb.parser.response
+package com.bitworks.rtb.parser
 
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
-import com.bitworks.rtb.parser.DataValidationException
-import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.io.Source
 
 /**
-  * Test for [[com.bitworks.rtb.parser.response.BidResponseJsonParser BidResponseJsonParser]].
+  * Test for [[BidResponseJsonParser BidResponseJsonParser]].
   *
   * @author Pavel Tomskikh
   */
@@ -113,7 +112,7 @@ class BidResponseJsonParserTest extends FlatSpec with Matchers {
 
   it should "correctly parse JSON" in {
     val expectedBidResponse = getCorrectBidResponse
-    val path = getClass.getResource("/com/bitworks/rtb/parser/response/bidResponseExample.json").getPath
+    val path = getClass.getResource("/com/bitworks/rtb/parser/bidResponseExample.json").getPath
     val json = Source.fromFile(path).mkString
     val parsedBidResponse = BidResponseJsonParser.parse(json)
 
