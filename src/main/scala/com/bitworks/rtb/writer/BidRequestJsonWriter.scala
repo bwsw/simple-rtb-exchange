@@ -8,15 +8,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode
   *
   * @author Pavel Tomskikh
   */
-object BidRequestJsonWriter extends BidRequestWriter with JsonWriteHelper {
+class BidRequestJsonWriter extends BidRequestWriter with JsonWriteHelper {
 
-  /**
-    * Returns JSON string, which represent [[com.bitworks.rtb.model.request.BidRequest BidRequest]].
-    *
-    * @param b input [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object
-    */
-  def write(b: BidRequest): String =
-  writeBidRequest(b).toString
+  def write(bidRequest: BidRequest): Array[Byte] = {
+    val rootNode = writeBidRequest(bidRequest)
+    mapper.writeValueAsBytes(rootNode)
+  }
 
   private def writeBidRequest(bidRequest: BidRequest): ObjectNode = {
     createObject
@@ -255,10 +252,9 @@ object BidRequestJsonWriter extends BidRequestWriter with JsonWriteHelper {
   private def writeRegs(regs: Regs): ObjectNode =
     createObject.putOptionInt("coppa", regs.coppa)
 
-
   private def writePmp(pmp: Pmp): ObjectNode = {
     createObject
-        .putOptionInt("privateauction", pmp.privateAuction)
+        .putOptionInt("private_auction", pmp.privateAuction)
         .putOptionArray("deals", pmp.deals, writeDeal)
   }
 

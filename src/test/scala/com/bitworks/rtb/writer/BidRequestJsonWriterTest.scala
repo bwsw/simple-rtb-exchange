@@ -1,26 +1,40 @@
 package com.bitworks.rtb.writer
 
-import com.bitworks.rtb.writer.BidRequestJsonWriter
+import com.bitworks.rtb.model.request.Imp
+import com.bitworks.rtb.model.request.builder.{BidRequestBuilder, ImpBuilder}
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[BidRequestJsonWriter BidRequestJsonWriter]]
+  * Test for [[com.bitworks.rtb.writer.BidRequestJsonWriter BidRequestJsonWriter]]
   *
   * @author Pavel Tomskikh
   */
 class BidRequestJsonWriterTest extends FlatSpec with Matchers {
 
   val mapper = new ObjectMapper
+  val writer = new BidRequestJsonWriter
 
-  "BidRequestJsonWriter" should "generate JSON string for BidRequest object correctly" in {
-    new BidRequestExample {
-      val expected = mapper.readValue(bidRequestJson, classOf[ObjectNode])
-      val writedString = BidRequestJsonWriter.write(bidRequest)
-      val writedJson = mapper.readValue(writedString, classOf[ObjectNode])
+  "BidRequestJsonWriter" should "write JSON correctly" in {
+    val path = getClass.getResource("bidrequest_with_option.json").getPath
+    val expectedJson = (io.Source fromFile path).mkString
+    val expectedJsonNode = mapper.readTree(expectedJson)
+    val writedJson = writer.write(BidRequestWithOption.bidRequest)
+    val writedJsonNode = mapper.readTree(writedJson)
 
-      writedJson shouldBe expected
-    }
+    writedJsonNode shouldBe expectedJsonNode
+  }
+
+  it should "write JSON without optional fields correctly" in {
+    val path = getClass.getResource("bidrequest_without_option.json").getPath
+    val expectedJson = (io.Source fromFile path).mkString
+    val expectedJsonNode = mapper.readTree(expectedJson)
+
+    val imp = ImpBuilder("id").build
+    val bidRequest = BidRequestBuilder("req", Seq(imp)).build
+    val writedJson = writer.write(bidRequest)
+    val writedJsonNode = mapper.readTree(writedJson)
+
+    writedJsonNode shouldBe expectedJsonNode
   }
 }

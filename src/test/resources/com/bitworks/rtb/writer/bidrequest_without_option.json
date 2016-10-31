@@ -1,0 +1,14 @@
+{
+  "id": "req",
+  "imp": [
+    {
+      "id": "id",
+      "instl": 0,
+      "bidfloor": 0,
+      "bidfloorcur": "USD"
+    }
+  ],
+  "test": 0,
+  "at": 2,
+  "allimps": 0
+}
