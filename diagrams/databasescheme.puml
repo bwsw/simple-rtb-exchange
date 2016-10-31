@@ -46,6 +46,7 @@ aggregation(iab_category, iab_category, parent_id)
 
 table(site) {
     primary_key(id): int
+    foreign_key(publisher_id): int
     name: string
     privacy_policy: int
     keyword: string
@@ -54,6 +55,7 @@ table(site) {
     app_store_url: string
     app_ver: string
 }
+composition(publisher, site, publisher_id)
 
 table(site_iab_category) {
     primary_key(id): int
