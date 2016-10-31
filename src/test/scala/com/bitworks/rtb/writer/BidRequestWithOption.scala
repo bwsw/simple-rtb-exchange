@@ -3,7 +3,7 @@ package com.bitworks.rtb.writer
 import com.bitworks.rtb.model.request._
 
 /**
-  * Example [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object and JSON for it.
+  * Example [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object.
   *
   * @author Pavel Tomskikh
   */
