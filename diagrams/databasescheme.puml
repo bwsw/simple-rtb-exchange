@@ -10,6 +10,12 @@ hide circle
 
 title Database scheme
 
+legend left
+    Each entity table has columns:
+    *tsversion: long
+    *deleted: int
+endlegend
+
 table(publisher) {
     primary_key(id): int
     name: string
