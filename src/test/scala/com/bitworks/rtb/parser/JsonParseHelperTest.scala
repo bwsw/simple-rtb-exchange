@@ -14,16 +14,15 @@ class JsonParseHelperTest extends FlatSpec with Matchers with OneInstancePerTest
   val mapper = new ObjectMapper
 
   "JsonParseHelper" should "return node child when \"getChild\" called" in {
+    val childName = "name"
+    val childValue = "value"
+
     val rootNode = mapper.createObjectNode
-    val childNodeInfo = new {
-      val name = "name"
-      val value = "value"
-    }
-    rootNode.put(childNodeInfo.name, childNodeInfo.value)
+    rootNode.put(childName, childValue)
 
-    val childNode = helper.ExtJsonNode(rootNode).getChild(childNodeInfo.name)
+    val childNode = helper.ExtJsonNode(rootNode).getChild(childName)
 
-    childNode.asText shouldBe childNodeInfo.value
+    childNode.asText shouldBe childValue
   }
 
   it should "throw exception when \"getChild\" called for nonexistent node" in {
