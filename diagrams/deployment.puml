@@ -1,0 +1,55 @@
+@startuml
+
+node "API Host" {
+
+    node APIImage [
+        <<image>>
+        <b>API</b>
+    ]
+
+    node PostgressImage [
+        <<image>>
+        <b>Postgress</b>
+    ]
+
+    APIImage -left- PostgressImage
+}
+
+node "UI Host" {
+
+    node UIImage [
+        <<image>>
+        <b>UI</b>
+    ]
+
+    UIImage -- APIImage
+}
+
+node "Redis Host" {
+    node RedisImage [
+        <<image>>
+        <b>Redis</b>
+    ]
+}
+
+node "RTB Host" {
+
+    node RtbExchangeImage [
+        <<image>>
+        <b>RtbExchangeImage</b>
+    ]
+
+    node DBFillerImage [
+        <<image>>
+        <b>DBFiller</b>
+    ]
+}
+
+
+PostgressImage -left- DBFillerImage
+DBFillerImage -left- RedisImage
+
+RedisImage -- RtbExchangeImage
+
+
+@enduml
