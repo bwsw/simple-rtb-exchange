@@ -25,30 +25,30 @@ trait JsonWriteHelper {
     * @param node [[com.fasterxml.jackson.databind.node.ObjectNode ObjectNode]] object
     * @author Egor Ilchenko
     */
-  implicit class JsonNodeWriteExtensions(node: ObjectNode) {
+  implicit class ExtJsonNode(node: ObjectNode) {
 
     /**
-      * Sets value of a fields to specified int array. If value is None, does nothing.
+      * Sets value of a field to the specified int array. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
       * @return this node (to allow chaining)
       */
     def putOptionIntArray(name: String, value: Option[Iterable[Int]]) =
-    putOptionArray(name, value, (i: Int) => node.numberNode(i))
+      putOptionArray(name, value, (i: Int) => node.numberNode(i))
 
     /**
-      * Sets option value of a fields to specified string array. If value is None, does nothing.
+      * Sets option value of a field to the specified string array. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
       * @return this node (to allow chaining)
       */
     def putOptionStringArray(name: String, value: Option[Iterable[String]]) =
-    putOptionArray(name, value, (s: String) => node.textNode(s))
+      putOptionArray(name, value, (s: String) => node.textNode(s))
 
     /**
-      * Sets option value of a fields to specified T array. If value is None, does nothing.
+      * Sets option value of a field to the specified T array. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -63,27 +63,27 @@ trait JsonWriteHelper {
     }
 
     /**
-      * Sets value of a fields to specified int array.
+      * Sets value of a field to the specified int array.
       *
       * @param name  name of the field
       * @param value value of the field
       * @return this node (to allow chaining)
       */
     def putIntArray(name: String, value: Iterable[Int]) =
-    putObjectArray(name, value, (i: Int) => node.numberNode(i))
+      putObjectArray(name, value, (i: Int) => node.numberNode(i))
 
     /**
-      * Sets value of a fields to specified string array.
+      * Sets value of a field to the specified string array.
       *
       * @param name  name of the field
       * @param value value of the field
       * @return this node (to allow chaining)
       */
     def putStringArray(name: String, value: Iterable[String]) =
-    putObjectArray(name, value, (s: String) => node.textNode(s))
+      putObjectArray(name, value, (s: String) => node.textNode(s))
 
     /**
-      * Sets value of a fields to specified T array.
+      * Sets value of a field to the specified T array.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -97,7 +97,7 @@ trait JsonWriteHelper {
     }
 
     /**
-      * Sets value of a field to specified Option[T]. If value is None, does nothing.
+      * Sets value of a field to the specified Option[T]. If value is None, does nothing.
       *
       * @param name  name of the field
       * @param value value of the field
@@ -110,21 +110,49 @@ trait JsonWriteHelper {
       node
     }
 
+    /**
+      * Sets value of a field to the specified int. If value is None, does nothing.
+      *
+      * @param name  name of the field
+      * @param value value of the field
+      * @return this node (to allow chaining)
+      */
     def putOptionInt(name: String, value: Option[Int]) = {
       value.foreach(v => node.put(name, v))
       node
     }
 
+    /**
+      * Sets value of a field to the specified float. If value is None, does nothing.
+      *
+      * @param name  name of the field
+      * @param value value of the field
+      * @return this node (to allow chaining)
+      */
     def putOptionFloat(name: String, value: Option[Float]) = {
       value.foreach(v => node.put(name, v))
       node
     }
 
+    /**
+      * Sets value of a field to the specified double. If value is None, does nothing.
+      *
+      * @param name  name of the field
+      * @param value value of the field
+      * @return this node (to allow chaining)
+      */
     def putOptionDouble(name: String, value: Option[Double]) = {
       value.foreach(v => node.put(name, v))
       node
     }
 
+    /**
+      * Sets value of a field to the specified string. If value is None, does nothing.
+      *
+      * @param name  name of the field
+      * @param value value of the field
+      * @return this node (to allow chaining)
+      */
     def putOptionString(name: String, value: Option[String]) = {
       value.foreach(v => node.put(name, v))
       node
