@@ -29,7 +29,7 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers {
     jsonNode shouldBe expectedJsonNode
   }
 
-  it should "write json without required fields" in {
+  it should "write json without optional fields correctly" in {
     val adResponse = AdResponse("id", None, None)
 
     val json = writer.write(adResponse)
