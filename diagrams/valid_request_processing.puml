@@ -1,0 +1,84 @@
+@startuml
+
+title Valid RTB request processing
+
+participant Publisher
+participant Exchange
+participant Factory
+participant Parser
+participant Validator
+participant Writer
+participant BidActor
+participant WinBidActor
+participant Bidder
+
+Publisher -> Exchange: HTTP request
+activate Exchange
+
+Exchange -> Parser: HTTP request
+activate Parser
+Exchange <-- Parser: AdRequest
+deactivate Parser
+Exchange -> Factory: AdRequest
+activate Factory
+Exchange <-- Factory: BidRequest
+deactivate Factory
+
+Exchange ->> BidActor: BidRequest
+activate BidActor
+
+BidActor -> Writer: BidRequest
+activate Writer
+Writer --> BidActor: HTTP request
+deactivate Writer
+
+BidActor -> Bidder: HTTP request
+activate Bidder
+BidActor <-- Bidder: HTTP response
+deactivate Bidder
+
+BidActor -> Parser: HTTP response
+activate Parser
+BidActor <-- Parser: BidResponse
+deactivate Parser
+
+BidActor -> Validator: BidResponse
+activate Validator
+BidActor <-- Validator: true/false
+deactivate Validator
+opt BidResponse is valid
+    Exchange <<- BidActor: BidResponse
+end
+deactivate BidActor
+
+Exchange -> Exchange: Auction
+
+alt Win Bidder is found
+    Exchange -> WinBidActor: Win Notice
+    activate WinBidActor
+    WinBidActor -> Bidder: HTTP request
+    activate Bidder
+    WinBidActor <-- Bidder: HTTP response
+    deactivate Bidder
+    Exchange <-- WinBidActor: Ad url/markup (if it is not in BidResponse)
+    deactivate WinBidActor
+
+    Exchange -> Factory: BidResponse
+    activate Factory
+    Exchange <-- Factory: AdResponse
+    deactivate Factory
+else Win Bidder is not found
+    Exchange -> Factory: Error
+    activate Factory
+    Exchange <-- Factory: AdResponse
+    deactivate Factory
+end
+Exchange -> Writer: AdResponse
+activate Writer
+Exchange <-- Writer: HTTP response
+deactivate Writer
+
+Exchange --> Publisher: HTTP response
+deactivate Exchange
+
+@enduml
