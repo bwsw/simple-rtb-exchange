@@ -8,7 +8,7 @@ hide methods
 hide stereotypes
 hide circle
 
-title Database scheme
+title Database schema
 
 legend left
     Each entity table has columns:
