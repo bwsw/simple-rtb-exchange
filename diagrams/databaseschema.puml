@@ -1,101 +1,123 @@
 @startuml
 !define table(x) class x
-!define primary_key(x) <u>x</u>
+
+!define req(x) <b>x</b>
+
+!define primary_key(x) req(<u>x</u>)
 !define foreign_key(x) //x//
-!define composition(a,b,c) a *--b:c
+!define pf_key(x) primary_key(foreign_key(x))
+
+!define composition(a,b,c) a *--b
 !define aggregation(a,b,c) a o--b:c
+
+!definelong metaInfo 
+req(tsversion): long
+req(deleted): boolean
+!enddefinelong
+
 hide methods
-hide stereotypes
 hide circle
 
 title Database schema
 
 legend left
-    Each entity table has columns:
-    *tsversion: long
-    *deleted: int
+    Legend
+    *req(required)
+    *primary_key(primary key)
+    *foreign_key(foreign key)
+    *pf_key(both primary and foreign key)
 endlegend
 
 table(publisher) {
     primary_key(id): int
-    name: string
-    domain: string
+    req(name): string
+    req(domain): string
+    metaInfo
 }
 
 table(blocked_advertiser) {
     primary_key(id): int
-    foreign_key(publisher_id): int
-    domain: string
+    req(foreign_key(publisher_id)): int
+    req(domain): string
 }
 composition(publisher, blocked_advertiser, publisher_id)
 
 table(blocked_category) {
-    primary_key(id): int
-    foreign_key(publisher_id): int
-    foreign_key(iab_category_id): int
+    pf_key(publisher_id): int
+    pf_key(iab_category_id): int
 }
 composition(iab_category, blocked_category, iab_category_id)
 composition(publisher, blocked_category, publisher_id)
 
 table(iab_category) {
     primary_key(id): int
-    category: string
-    foreign_key(parent_id): int null
+    req(iab_id): string
+    req(name): string
+    foreign_key(parent_id): int
+    metaInfo
 }
 aggregation(iab_category, iab_category, parent_id)
 
 table(site) {
     primary_key(id): int
-    foreign_key(publisher_id): int
-    name: string
-    privacy_policy: int
+    req(foreign_key(publisher_id)): int
+    req(name): string
+    req(type): int
+    req(status): int
+    req(privacy_policy): int
+    req(test): bool
+    domain: string
     keyword: string
-    is_app: int
     app_bundle: string
     app_store_url: string
     app_ver: string
+    metaInfo
 }
 composition(publisher, site, publisher_id)
+note top of site
+    req(domain) is required if type is Site
+
+    req(app_bundle), req(app_store_url),
+    req(app_ver) are required if type is App
+
+----
+    req(type):
+        1 - Site
+        2 - App
+    req(status):
+        0 - inactive
+        1 - active
+    req(privacy_policy):
+        0 - hasn`t privacy policy
+        1 - has privacy policy
+end note
 
 table(site_iab_category) {
-    primary_key(id): int
-    foreign_key(site_id): int
-    foreign_key(iab_category_id): int
+    pf_key(site_id): int
+    pf_key(iab_category_id): int
 }
 composition(site, site_iab_category, site_id)
 composition(iab_category, site_iab_category, iab_category_id)
 
 table(display_manager) {
     primary_key(id): int
-    name: string
-    ver: string
+    req(name): string
+    req(ver): string
+    metaInfo
 }
 
 table(site_display_manager) {
-    primary_key(id): int
-    foreign_key(site_id): int
-    foreign_key(display_manager_id): int
+    pf_key(site_id): int
+    pf_key(display_manager_id): int
 }
 composition(site, site_display_manager, site_id)
 composition(display_manager, site_display_manager, display_manager_id)
 
-table(segment) {
-    primary_key(id): int
-    foreign_key(data_provider_id): int
-    name: string
-    value: string
-}
-composition(data_provider, segment, data_provider_id)
-
-table(data_provider) {
-    primary_key(id): int
-    name: string
-}
-
 table(bidder) {
     primary_key(id): int
-    name: string
-    domain: string
+    req(name): string
+    req(endpoint): string
+    metaInfo
 }
 
 @enduml
