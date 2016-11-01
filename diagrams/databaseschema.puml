@@ -49,6 +49,13 @@ table(blocked_category) {
 composition(iab_category, blocked_category, iab_category_id)
 composition(publisher, blocked_category, publisher_id)
 
+table(publisher_category) {
+    pf_key(publisher_id): int
+    pf_key(iab_category_id): int
+}
+composition(iab_category, publisher_category, iab_category_id)
+composition(publisher, publisher_category, publisher_id)
+
 table(iab_category) {
     primary_key(id): int
     req(iab_id): string
@@ -92,12 +99,12 @@ note top of site
         1 - has privacy policy
 end note
 
-table(site_iab_category) {
+table(site_category) {
     pf_key(site_id): int
     pf_key(iab_category_id): int
 }
-composition(site, site_iab_category, site_id)
-composition(iab_category, site_iab_category, iab_category_id)
+composition(site, site_category, site_id)
+composition(iab_category, site_category, iab_category_id)
 
 table(display_manager) {
     primary_key(id): int
