@@ -10,13 +10,15 @@ import com.bitworks.rtb.model.db.BaseEntity
 case class SiteEntity(
     ID: Int,
     tsVersion: Long,
-    deleted: Int,
+    deleted: Boolean,
     publisherId: Int,
     name: String,
-    domain: String,
+    `type`: Int,
+    status: Int,
     privacyPolicy: Int,
-    keyword: String,
-    isApp: Int,
-    appBundle: String,
-    appStoreUrl: String,
-    appVer: String) extends BaseEntity with EntityMetaInfo
+    test: Boolean,
+    domain: Option[String],
+    keyword: Option[String],
+    appBundle: Option[String],
+    appStoreUrl: Option[String],
+    appVer: Option[String]) extends BaseEntity with EntityMetaInfo

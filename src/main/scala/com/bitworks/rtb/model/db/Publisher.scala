@@ -3,7 +3,7 @@ package com.bitworks.rtb.model.db
 /**
   * Publisher of the media in which the ad will be displayed.
   *
-  * @param ID                database id
+  * @param ID                database ID
   * @param name              publisher name
   * @param categories        IAB content categories that describe the publisher
   * @param domain            domain of the publisher
@@ -16,9 +16,9 @@ package com.bitworks.rtb.model.db
 case class Publisher(
     ID: Int,
     name: String,
-    categories: Seq[String],
+    categories: Seq[IABCategory],
     domain: String,
     blockedDomains: Seq[String],
-    blockedCategories: Seq[String],
+    blockedCategories: Seq[IABCategory],
     sites: Seq[Site],
     apps: Seq[App]) extends BaseEntity

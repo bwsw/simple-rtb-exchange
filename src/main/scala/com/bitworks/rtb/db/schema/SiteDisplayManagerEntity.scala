@@ -8,6 +8,5 @@ import com.bitworks.rtb.model.db.BaseEntity
   * @author Egor Ilchenko
   */
 case class SiteDisplayManagerEntity(
-    ID: Int,
     siteId: Int,
-    displayManagerId: Int) extends BaseEntity
+    displayManagerId: Int)

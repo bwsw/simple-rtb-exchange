@@ -10,6 +10,7 @@ import com.bitworks.rtb.model.db.BaseEntity
 case class IABCategoryEntity(
     ID: Int,
     tsVersion: Long,
-    deleted: Int,
-    category: String,
-    parentId: Int) extends BaseEntity with EntityMetaInfo
+    deleted: Boolean,
+    iabID: String,
+    name: String,
+    parentId: Option[Int]) extends BaseEntity with EntityMetaInfo

@@ -10,7 +10,7 @@ import com.bitworks.rtb.model.db.BaseEntity
 case class BidderEntity(
     ID: Int,
     tsVersion: Long,
-    deleted: Int,
+    deleted: Boolean,
     name: String,
-    domain: String) extends BaseEntity with EntityMetaInfo
+    endpoint: String) extends BaseEntity with EntityMetaInfo
 

@@ -8,6 +8,5 @@ import com.bitworks.rtb.model.db.BaseEntity
   * @author Egor Ilchenko
   */
 case class BlockedCategory(
-    ID: Int,
     publisherId: Int,
-    iabCategoryId: Int) extends BaseEntity
+    iabCategoryId: Int)

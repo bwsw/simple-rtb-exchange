@@ -7,5 +7,5 @@ package com.bitworks.rtb.db.schema
   */
 trait EntityMetaInfo {
   val tsVersion: Long
-  val deleted: Int
+  val deleted: Boolean
 }

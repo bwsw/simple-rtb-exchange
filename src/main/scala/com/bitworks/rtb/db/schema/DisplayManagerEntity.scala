@@ -10,6 +10,6 @@ import com.bitworks.rtb.model.db.BaseEntity
 case class DisplayManagerEntity(
     ID: Int,
     tsVersion: Long,
-    deleted: Int,
+    deleted: Boolean,
     name: String,
     ver: String) extends BaseEntity with EntityMetaInfo
