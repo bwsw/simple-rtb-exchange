@@ -3,8 +3,8 @@
 
 !define req(x) <b>x</b>
 
-!define primary_key(x) req(<u>x</u>)
-!define foreign_key(x) //x//
+!define primary_key(x) req([PK] x)
+!define foreign_key(x) **[FK]** x
 !define pf_key(x) primary_key(foreign_key(x))
 
 !define composition(a,b,c) a *--b
@@ -19,14 +19,6 @@ hide methods
 hide circle
 
 title Database schema
-
-legend left
-    Legend
-    *req(required)
-    *primary_key(primary key)
-    *foreign_key(foreign key)
-    *pf_key(both primary and foreign key)
-endlegend
 
 table(publisher) {
     primary_key(id): int
@@ -60,8 +52,8 @@ table(iab_category) {
     primary_key(id): int
     req(iab_id): string
     req(name): string
-    foreign_key(parent_id): int
     metaInfo
+    foreign_key(parent_id): int
 }
 aggregation(iab_category, iab_category, parent_id)
 
@@ -73,12 +65,12 @@ table(site) {
     req(status): int
     req(privacy_policy): int
     req(test): bool
+    metaInfo
     domain: string
     keyword: string
     app_bundle: string
     app_store_url: string
     app_ver: string
-    metaInfo
 }
 composition(publisher, site, publisher_id)
 note top of site
@@ -95,7 +87,7 @@ note top of site
         0 - inactive
         1 - active
     req(privacy_policy):
-        0 - hasn`t privacy policy
+        0 - doesn`t has privacy policy
         1 - has privacy policy
 end note
 
