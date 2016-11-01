@@ -1,0 +1,49 @@
+@startuml
+
+title Valid RTB request processing (part 3/3)
+
+participant Publisher
+participant Exchange
+participant Factory
+participant Parser
+participant Validator
+participant Writer
+participant BidActor
+participant WinBidActor
+participant Bidder
+
+activate Exchange
+Exchange -> Exchange: Auction
+
+alt Win Bidder is found
+    Exchange -> WinBidActor: Win Notice
+    activate WinBidActor
+    WinBidActor -> Bidder: HTTP request
+    activate Bidder
+    opt Got HTTP response
+        WinBidActor <-- Bidder: HTTP response
+        deactivate Bidder
+        Exchange <-- WinBidActor: Ad url/markup (if it is not in BidResponse)
+        deactivate WinBidActor
+
+        Exchange -> Factory: BidResponse
+        activate Factory
+        Exchange <-- Factory: AdResponse
+        deactivate Factory
+    end
+
+else Win Bidder is not found
+    Exchange -> Factory: Error
+    activate Factory
+    Exchange <-- Factory: AdResponse
+    deactivate Factory
+end
+
+Exchange -> Writer: AdResponse
+activate Writer
+Exchange <-- Writer: HTTP response
+deactivate Writer
+Exchange --> Publisher: HTTP response
+deactivate Exchange
+
+@enduml

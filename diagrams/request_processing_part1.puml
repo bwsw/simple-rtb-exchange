@@ -1,0 +1,68 @@
+@startuml
+
+title RTB request processing (part 1/3)
+
+participant Publisher
+participant Exchange
+participant Factory
+participant Parser
+participant Validator
+participant Writer
+participant BidActor
+participant WinBidActor
+participant Bidder
+
+Publisher -> Exchange: HTTP request
+activate Exchange
+
+Exchange -> Parser: HTTP request
+activate Parser
+
+alt HTTP request not parsed to AdRequest
+    Exchange <-- Parser: Parsing fail
+    deactivate Parser
+
+    Exchange -> Factory: Error
+    activate Factory
+    Exchange <-- Factory: AdResponse
+    deactivate Factory
+
+    Exchange -> Writer: AdResponse
+    activate Writer
+    Exchange <-- Writer: HTTP response
+    deactivate Writer
+    Exchange --> Publisher: HTTP response
+
+    activate Parser
+else HTTP request parsed to AdRequest
+    Exchange <-- Parser: AdRequest
+    deactivate Parser
+    Exchange -> Factory: AdRequest
+    activate Factory
+
+    alt BidRequest not created from AdRequest
+        Exchange <-- Factory: Factoring fail
+        deactivate Factory
+
+        Exchange -> Factory: Error
+        activate Factory
+        Exchange <-- Factory: AdResponse
+        deactivate Factory
+
+        Exchange -> Writer: AdResponse
+        activate Writer
+        Exchange <-- Writer: HTTP response
+        deactivate Writer
+        Exchange --> Publisher: HTTP response
+
+        activate Factory
+    else BidRequest created from AdRequest
+        Exchange <-- Factory: BidRequest
+        deactivate Factory
+
+        Exchange ->> BidActor: BidRequest
+        activate BidActor
+    end
+end
+
+@enduml
