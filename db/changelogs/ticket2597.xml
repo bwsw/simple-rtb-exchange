@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="iab_category"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="iab_category">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="iab_id" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="tsversion"
+                    type="bigint"
+                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="deleted" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="parent_id" type="integer">
+                <constraints nullable="true"
+                             foreignKeyName="parent_id"
+                             referencedTableName="iab_category"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="iab_category"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="publisher"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="publisher">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="domain" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="tsversion"
+                    type="bigint"
+                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="deleted" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="publisher"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="bidder"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="bidder">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="endpoint" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="tsversion"
+                    type="bigint"
+                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="deleted" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="bidder"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="display_manager"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="display_manager">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ver" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="tsversion"
+                    type="bigint"
+                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="deleted" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="display_manager"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="blocked_category"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="blocked_category">
+            <column name="publisher_id" type="integer">
+                <constraints primaryKey="true"
+                             foreignKeyName="publisher_id"
+                             referencedTableName="publisher"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="iab_category_id" type="integer">
+                <constraints primaryKey="true"
+                             foreignKeyName="iab_category_id"
+                             referencedTableName="iab_category"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="blocked_category"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="6" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="publisher_category"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="publisher_category">
+            <column name="publisher_id" type="integer">
+                <constraints primaryKey="true"
+                             foreignKeyName="publisher_id"
+                             referencedTableName="publisher"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="iab_category_id" type="integer">
+                <constraints primaryKey="true"
+                             foreignKeyName="iab_category_id"
+                             referencedTableName="iab_category"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="publisher_category"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="7" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="blocked_advertiser"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="blocked_advertiser">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="publisher_id" type="integer">
+                <constraints nullable="false"
+                             foreignKeyName="publisher_id"
+                             referencedTableName="publisher"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="domain" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="blocked_advertiser"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="8" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="site"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="site">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="publisher_id" type="integer">
+                <constraints nullable="false"
+                             foreignKeyName="publisher_id"
+                             referencedTableName="publisher"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="type" type="integer">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="integer">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="privacy_policy" type="integer">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="test" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="tsversion"
+                    type="bigint"
+                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="deleted" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="domain" type="text"/>
+
+            <column name="keyword" type="text"/>
+
+            <column name="app_bundle" type="text"/>
+
+            <column name="app_store_url" type="text"/>
+
+            <column name="app_ver" type="text"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="site"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="9" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="site_category"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="site_category">
+            <column name="site_id" type="integer">
+                <constraints primaryKey="true"
+                             foreignKeyName="site_id"
+                             referencedTableName="site"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="iab_category_id" type="integer">
+                <constraints primaryKey="true"
+                             foreignKeyName="iab_category_id"
+                             referencedTableName="iab_category"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="site_category"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="10" author="Pavel Tomskikh">
+        <preConditions>
+            <not>
+                <tableExists tableName="site_display_manager"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="site_display_manager">
+            <column name="site_id" type="integer">
+                <constraints primaryKey="true"
+                             foreignKeyName="site_id"
+                             referencedTableName="site"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="display_manager_id" type="integer">
+                <constraints primaryKey="true"
+                             foreignKeyName="display_manager_id"
+                             referencedTableName="iab_category"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="site_display_manager"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
