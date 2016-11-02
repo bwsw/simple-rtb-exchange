@@ -1,0 +1,123 @@
+@startuml
+!define table(x) class x
+
+!define req(x) <b>x</b>
+
+!define primary_key(x) req([PK] x)
+!define foreign_key(x) **[FK]** x
+!define pf_key(x) primary_key(foreign_key(x))
+
+!define composition(a,b,c) a *--b
+!define aggregation(a,b,c) a o--b:c
+
+!definelong metaInfo 
+req(tsversion): long
+req(deleted): boolean
+!enddefinelong
+
+hide methods
+hide circle
+
+title Database schema
+
+table(publisher) {
+    primary_key(id): int
+    req(name): string
+    req(domain): string
+    metaInfo
+}
+
+table(blocked_advertiser) {
+    primary_key(id): int
+    req(foreign_key(publisher_id)): int
+    req(domain): string
+}
+composition(publisher, blocked_advertiser, publisher_id)
+
+table(blocked_category) {
+    pf_key(publisher_id): int
+    pf_key(iab_category_id): int
+}
+composition(iab_category, blocked_category, iab_category_id)
+composition(publisher, blocked_category, publisher_id)
+
+table(publisher_category) {
+    pf_key(publisher_id): int
+    pf_key(iab_category_id): int
+}
+composition(iab_category, publisher_category, iab_category_id)
+composition(publisher, publisher_category, publisher_id)
+
+table(iab_category) {
+    primary_key(id): int
+    req(iab_id): string
+    req(name): string
+    metaInfo
+    foreign_key(parent_id): int
+}
+aggregation(iab_category, iab_category, parent_id)
+
+table(site) {
+    primary_key(id): int
+    req(foreign_key(publisher_id)): int
+    req(name): string
+    req(type): int
+    req(status): int
+    req(privacy_policy): int
+    req(test): bool
+    metaInfo
+    domain: string
+    keyword: string
+    app_bundle: string
+    app_store_url: string
+    app_ver: string
+}
+composition(publisher, site, publisher_id)
+note top of site
+    req(domain) is required if type is Site
+
+    req(app_bundle),
+    req(app_store_url),
+    req(app_ver) are required if type is App
+
+----
+    req(type):
+        1 - Site
+        2 - App
+    req(status):
+        0 - inactive
+        1 - active
+    req(privacy_policy):
+        0 - doesn't have privacy policy
+        1 - has privacy policy
+end note
+
+table(site_category) {
+    pf_key(site_id): int
+    pf_key(iab_category_id): int
+}
+composition(site, site_category, site_id)
+composition(iab_category, site_category, iab_category_id)
+
+table(display_manager) {
+    primary_key(id): int
+    req(name): string
+    req(ver): string
+    metaInfo
+}
+
+table(site_display_manager) {
+    pf_key(site_id): int
+    pf_key(display_manager_id): int
+}
+composition(site, site_display_manager, site_id)
+composition(display_manager, site_display_manager, display_manager_id)
+
+table(bidder) {
+    primary_key(id): int
+    req(name): string
+    req(endpoint): string
+    metaInfo
+}
+
+@enduml
