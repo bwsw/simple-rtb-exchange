@@ -6,13 +6,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="11" author="Pavel Tomskikh">
+    <changeSet id="1" author="Pavel Tomskikh">
         <preConditions>
             <tableExists tableName="iab_category"/>
         </preConditions>
 
         <loadData tableName="iab_category" file="changelogs/ticket2598/iab_primary.csv">
-            <column name="id" type="numeric"/>
             <column name="iab_id" type="string"/>
             <column name="name" type="string"/>
         </loadData>
@@ -22,7 +21,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="12" author="Pavel Tomskikh">
+    <changeSet id="2" author="Pavel Tomskikh">
         <preConditions>
             <tableExists tableName="iab_category"/>
         </preConditions>
@@ -35,7 +34,7 @@
 
         <rollback>
             <delete tableName="iab_category">
-                <where>id > 26</where>
+                <where>iab_id LIKE 'IAB%-%'</where>
             </delete>
         </rollback>
     </changeSet>
