@@ -11,7 +11,7 @@
             <tableExists tableName="iab_category"/>
         </preConditions>
 
-        <loadData tableName="iab_category" file="changelogs/ticket2598/iab_primary.csv">
+        <loadData tableName="iab_category" file="resources/ticket2598/iab_primary.csv">
             <column name="iab_id" type="string"/>
             <column name="name" type="string"/>
         </loadData>
@@ -26,7 +26,7 @@
             <tableExists tableName="iab_category"/>
         </preConditions>
 
-        <loadData tableName="iab_category" file="changelogs/ticket2598/iab_secondary.csv">
+        <loadData tableName="iab_category" file="resources/ticket2598/iab_secondary.csv">
             <column name="iab_id" type="string"/>
             <column name="name" type="string"/>
             <column name="parent_id" type="numeric"/>
