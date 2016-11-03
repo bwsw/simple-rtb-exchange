@@ -8,3 +8,5 @@ Notable packages include:
   and response objects
   - [[com.bitworks.rtb.parser `com.bitworks.rtb.parser`]] contains utilities to create ad/bid
   request and response objects from different representations (e.g. JSON)
+  - [[com.bitworks.rtb.writer `com.bitworks.rtb.writer`]] contains utilities to create different
+  representations (e.g. JSON) for ad/bid request and response objects

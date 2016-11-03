@@ -76,7 +76,8 @@ composition(publisher, site, publisher_id)
 note top of site
     req(domain) is required if type is Site
 
-    req(app_bundle), req(app_store_url),
+    req(app_bundle),
+    req(app_store_url),
     req(app_ver) are required if type is App
 
 ----
@@ -87,7 +88,7 @@ note top of site
         0 - inactive
         1 - active
     req(privacy_policy):
-        0 - doesn`t has privacy policy
+        0 - doesn't have privacy policy
         1 - has privacy policy
 end note
 
