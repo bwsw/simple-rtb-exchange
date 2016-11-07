@@ -7,7 +7,7 @@ class BaseEntity << (T,#AAFFAA)>> {
 }
 class App {
     +name: String
-    +privacyPolicy: Boolean
+    +privacyPolicy: Int
     +test: Boolean
     +domain: String[0..1]
     +keyword: String[0..1]
