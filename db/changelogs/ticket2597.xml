@@ -6,7 +6,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="1" author="Pavel Tomskikh">
+    <changeSet id="iab_category" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="iab_category"/>
@@ -28,7 +28,7 @@
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -49,7 +49,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="2" author="Pavel Tomskikh">
+    <changeSet id="publisher" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="publisher"/>
@@ -71,7 +71,7 @@
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -85,7 +85,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="3" author="Pavel Tomskikh">
+    <changeSet id="bidder" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="bidder"/>
@@ -107,7 +107,7 @@
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -121,7 +121,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="4" author="Pavel Tomskikh">
+    <changeSet id="display_manager" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="display_manager"/>
@@ -143,7 +143,7 @@
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -157,14 +157,14 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="5" author="Pavel Tomskikh">
+    <changeSet id="publisher_blocked_category" author="Pavel Tomskikh">
         <preConditions>
             <not>
-                <tableExists tableName="blocked_category"/>
+                <tableExists tableName="publisher_blocked_category"/>
             </not>
         </preConditions>
 
-        <createTable tableName="blocked_category">
+        <createTable tableName="publisher_blocked_category">
             <column name="publisher_id" type="integer">
                 <constraints primaryKey="true"
                              foreignKeyName="publisher_id"
@@ -181,11 +181,11 @@
         </createTable>
 
         <rollback>
-            <dropTable tableName="blocked_category"/>
+            <dropTable tableName="publisher_blocked_category"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="6" author="Pavel Tomskikh">
+    <changeSet id="publisher_category" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="publisher_category"/>
@@ -213,14 +213,14 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="7" author="Pavel Tomskikh">
+    <changeSet id="publisher_blocked_advertiser" author="Pavel Tomskikh">
         <preConditions>
             <not>
-                <tableExists tableName="blocked_advertiser"/>
+                <tableExists tableName="publisher_blocked_advertiser"/>
             </not>
         </preConditions>
 
-        <createTable tableName="blocked_advertiser">
+        <createTable tableName="publisher_blocked_advertiser">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
@@ -238,11 +238,11 @@
         </createTable>
 
         <rollback>
-            <dropTable tableName="blocked_advertiser"/>
+            <dropTable tableName="publisher_blocked_advertiser"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="8" author="Pavel Tomskikh">
+    <changeSet id="site" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="site"/>
@@ -283,7 +283,7 @@
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -302,12 +302,22 @@
             <column name="app_ver" type="text"/>
         </createTable>
 
+        <sql>
+            ALTER TABLE site ADD CHECK (
+            type = 1 AND
+            domain IS NOT NULL OR
+            type = 2 AND
+            app_bundle IS NOT NULL AND
+            app_store_url IS NOT NULL AND
+            app_ver IS NOT NULL)
+        </sql>
+
         <rollback>
             <dropTable tableName="site"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="9" author="Pavel Tomskikh">
+    <changeSet id="site_category" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="site_category"/>
@@ -335,7 +345,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="10" author="Pavel Tomskikh">
+    <changeSet id="site_display_manager" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="site_display_manager"/>
@@ -353,7 +363,7 @@
             <column name="display_manager_id" type="integer">
                 <constraints primaryKey="true"
                              foreignKeyName="display_manager_id"
-                             referencedTableName="iab_category"
+                             referencedTableName="display_manager"
                              referencedColumnNames="id"/>
             </column>
         </createTable>
