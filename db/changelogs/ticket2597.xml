@@ -6,29 +6,77 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="1" author="Pavel Tomskikh">
+    <changeSet id="create_functions" author="Pavel Tomskikh">
+        <createProcedure procedureName="update_tsversion">
+            CREATE OR REPLACE FUNCTION update_tsversion() RETURNS TRIGGER AS $update_tsversion$
+            BEGIN
+            NEW.tsversion = extract(epoch from now())::bigint;
+            RETURN NEW;
+            END;
+            $update_tsversion$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <createProcedure procedureName="insert_publisher_category">
+            CREATE OR REPLACE FUNCTION insert_publisher_category()
+            RETURNS TRIGGER AS $insert_publisher_category$
+            BEGIN
+            UPDATE publisher
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = NEW.publisher_id;
+            UPDATE iab_category
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = NEW.iab_category_id;
+            RETURN NEW;
+            END;
+            $insert_publisher_category$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <createProcedure procedureName="delete_publisher_category">
+            CREATE OR REPLACE FUNCTION delete_publisher_category()
+            RETURNS TRIGGER AS $delete_publisher_category$
+            BEGIN
+            UPDATE publisher
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = OLD.publisher_id;
+            UPDATE iab_category
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = OLD.iab_category_id;
+            RETURN NEW;
+            END;
+            $delete_publisher_category$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <rollback>
+            <sql>DROP FUNCTION update_tsversion()</sql>
+            <sql>DROP FUNCTION insert_publisher_category()</sql>
+            <sql>DROP FUNCTION delete_publisher_category()</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="iab_category" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="iab_category"/>
             </not>
         </preConditions>
 
+        <!--IAB content categories-->
         <createTable tableName="iab_category">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="iab_id" type="text">
+            <column name="iab_id" type="varchar(8)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="name" type="text">
+            <column name="name" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -44,34 +92,41 @@
             </column>
         </createTable>
 
+        <sql>
+            CREATE TRIGGER iab_category_update
+            BEFORE UPDATE ON iab_category
+            FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
+        </sql>
+
         <rollback>
             <dropTable tableName="iab_category"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="2" author="Pavel Tomskikh">
+    <changeSet id="publisher" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="publisher"/>
             </not>
         </preConditions>
 
+        <!--Information about publishers-->
         <createTable tableName="publisher">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="name" type="text">
+            <column name="name" type="varchar(128)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="domain" type="text">
+            <column name="domain" type="varchar(128)">
                 <constraints nullable="false"/>
             </column>
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -79,35 +134,42 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <sql>
+            CREATE TRIGGER publisher_update
+            BEFORE UPDATE ON publisher
+            FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
+        </sql>
 
         <rollback>
             <dropTable tableName="publisher"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="3" author="Pavel Tomskikh">
+    <changeSet id="bidder" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="bidder"/>
             </not>
         </preConditions>
 
+        <!--Information about bidders-->
         <createTable tableName="bidder">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="name" type="text">
+            <column name="name" type="varchar(128)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="endpoint" type="text">
+            <column name="endpoint" type="varchar(256)">
                 <constraints nullable="false"/>
             </column>
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -115,35 +177,42 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <sql>
+            CREATE TRIGGER bidder_update
+            BEFORE UPDATE ON bidder
+            FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
+        </sql>
 
         <rollback>
             <dropTable tableName="bidder"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="4" author="Pavel Tomskikh">
+    <changeSet id="display_manager" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="display_manager"/>
             </not>
         </preConditions>
 
+        <!--Information about display managers-->
         <createTable tableName="display_manager">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="name" type="text">
+            <column name="name" type="varchar(128)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="ver" type="text">
+            <column name="ver" type="varchar(16)">
                 <constraints nullable="false"/>
             </column>
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -152,19 +221,26 @@
             </column>
         </createTable>
 
+        <sql>
+            CREATE TRIGGER display_manager_update
+            BEFORE UPDATE ON display_manager
+            FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
+        </sql>
+
         <rollback>
             <dropTable tableName="display_manager"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="5" author="Pavel Tomskikh">
+    <changeSet id="publisher_blocked_category" author="Pavel Tomskikh">
         <preConditions>
             <not>
-                <tableExists tableName="blocked_category"/>
+                <tableExists tableName="publisher_blocked_category"/>
             </not>
         </preConditions>
 
-        <createTable tableName="blocked_category">
+        <!--Consists blocked categories for publishers-->
+        <createTable tableName="publisher_blocked_category">
             <column name="publisher_id" type="integer">
                 <constraints primaryKey="true"
                              foreignKeyName="publisher_id"
@@ -180,18 +256,33 @@
             </column>
         </createTable>
 
+        <sql>
+            CREATE TRIGGER publisher_blocked_category_insert
+            AFTER INSERT OR UPDATE ON publisher_blocked_category
+            FOR EACH ROW EXECUTE PROCEDURE
+            insert_publisher_category()
+        </sql>
+
+        <sql>
+            CREATE TRIGGER publisher_blocked_category_delete
+            BEFORE UPDATE OR DELETE ON publisher_blocked_category
+            FOR EACH ROW EXECUTE PROCEDURE
+            delete_publisher_category()
+        </sql>
+
         <rollback>
-            <dropTable tableName="blocked_category"/>
+            <dropTable tableName="publisher_blocked_category"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="6" author="Pavel Tomskikh">
+    <changeSet id="publisher_category" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="publisher_category"/>
             </not>
         </preConditions>
 
+        <!--Consists publishers categories-->
         <createTable tableName="publisher_category">
             <column name="publisher_id" type="integer">
                 <constraints primaryKey="true"
@@ -208,19 +299,34 @@
             </column>
         </createTable>
 
+        <sql>
+            CREATE TRIGGER publisher_category_insert
+            AFTER INSERT OR UPDATE ON publisher_category
+            FOR EACH ROW EXECUTE PROCEDURE
+            insert_publisher_category()
+        </sql>
+
+        <sql>
+            CREATE TRIGGER publisher_category_delete
+            BEFORE UPDATE OR DELETE ON publisher_category
+            FOR EACH ROW EXECUTE PROCEDURE
+            delete_publisher_category()
+        </sql>
+
         <rollback>
             <dropTable tableName="publisher_category"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="7" author="Pavel Tomskikh">
+    <changeSet id="publisher_blocked_advertiser" author="Pavel Tomskikh">
         <preConditions>
             <not>
-                <tableExists tableName="blocked_advertiser"/>
+                <tableExists tableName="publisher_blocked_advertiser"/>
             </not>
         </preConditions>
 
-        <createTable tableName="blocked_advertiser">
+        <!--Consists blocked advertisers for publishers-->
+        <createTable tableName="publisher_blocked_advertiser">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
@@ -232,23 +338,64 @@
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="domain" type="text">
+            <column name="domain" type="varchar(128)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
+        <createProcedure procedureName="insert_publisher_blocked_advertiser">
+            CREATE OR REPLACE FUNCTION insert_publisher_blocked_advertiser()
+            RETURNS TRIGGER AS $insert_publisher_blocked_advertiser$
+            BEGIN
+            UPDATE publisher
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = NEW.publisher_id;
+            RETURN NEW;
+            END;
+            $insert_publisher_blocked_advertiser$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <createProcedure procedureName="delete_publisher_blocked_advertiser">
+            CREATE OR REPLACE FUNCTION delete_publisher_blocked_advertiser()
+            RETURNS TRIGGER AS $delete_publisher_blocked_advertiser$
+            BEGIN
+            UPDATE publisher
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = OLD.publisher_id;
+            RETURN NEW;
+            END;
+            $delete_publisher_blocked_advertiser$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <sql>
+            CREATE TRIGGER publisher_blocked_advertiser_insert
+            AFTER INSERT OR UPDATE ON publisher_blocked_advertiser
+            FOR EACH ROW EXECUTE PROCEDURE
+            insert_publisher_blocked_advertiser()
+        </sql>
+
+        <sql>
+            CREATE TRIGGER publisher_blocked_advertiser_delete
+            BEFORE UPDATE OR DELETE ON publisher_blocked_advertiser
+            FOR EACH ROW EXECUTE PROCEDURE
+            delete_publisher_blocked_advertiser()
+        </sql>
+
         <rollback>
-            <dropTable tableName="blocked_advertiser"/>
+            <dropTable tableName="publisher_blocked_advertiser"/>
+            <sql>DROP FUNCTION insert_publisher_blocked_advertiser()</sql>
+            <sql>DROP FUNCTION delete_publisher_blocked_advertiser()</sql>
         </rollback>
     </changeSet>
 
-    <changeSet id="8" author="Pavel Tomskikh">
+    <changeSet id="site" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="site"/>
             </not>
         </preConditions>
 
+        <!--Information about site or app-->
         <createTable tableName="site">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -261,7 +408,7 @@
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="name" type="text">
+            <column name="name" type="varchar(128)">
                 <constraints nullable="false"/>
             </column>
 
@@ -283,7 +430,7 @@
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from date_trunc('second', now()))">
+                    defaultValue="extract(epoch from now())::bigint">
                 <constraints nullable="false"/>
             </column>
 
@@ -291,29 +438,46 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="domain" type="text"/>
+            <column name="domain" type="varchar(128)"/>
 
-            <column name="keyword" type="text"/>
+            <column name="keyword" type="varchar(1024)"/>
 
-            <column name="app_bundle" type="text"/>
+            <column name="app_bundle" type="varchar(128)"/>
 
-            <column name="app_store_url" type="text"/>
+            <column name="app_store_url" type="varchar(256)"/>
 
-            <column name="app_ver" type="text"/>
+            <column name="app_ver" type="varchar(16)"/>
         </createTable>
+
+        <sql>
+            ALTER TABLE site ADD CHECK (
+            type = 1 AND
+            domain IS NOT NULL OR
+            type = 2 AND
+            app_bundle IS NOT NULL AND
+            app_store_url IS NOT NULL AND
+            app_ver IS NOT NULL)
+        </sql>
+
+        <sql>
+            CREATE TRIGGER site_update
+            BEFORE UPDATE ON site
+            FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
+        </sql>
 
         <rollback>
             <dropTable tableName="site"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="9" author="Pavel Tomskikh">
+    <changeSet id="site_category" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="site_category"/>
             </not>
         </preConditions>
 
+        <!--Consists site categories-->
         <createTable tableName="site_category">
             <column name="site_id" type="integer">
                 <constraints primaryKey="true"
@@ -330,18 +494,65 @@
             </column>
         </createTable>
 
+        <createProcedure procedureName="insert_site_category">
+            CREATE OR REPLACE FUNCTION insert_site_category()
+            RETURNS TRIGGER AS $insert_site_category$
+            BEGIN
+            UPDATE site
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = NEW.site_id;
+            UPDATE iab_category
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = NEW.iab_category_id;
+            RETURN NEW;
+            END;
+            $insert_site_category$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <createProcedure procedureName="delete_site_category">
+            CREATE OR REPLACE FUNCTION delete_site_category()
+            RETURNS TRIGGER AS $delete_site_category$
+            BEGIN
+            UPDATE site
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = OLD.site_id;
+            UPDATE iab_category
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = OLD.iab_category_id;
+            RETURN NEW;
+            END;
+            $delete_site_category$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <sql>
+            CREATE TRIGGER site_category_insert
+            AFTER INSERT OR UPDATE ON site_category
+            FOR EACH ROW EXECUTE PROCEDURE
+            insert_site_category()
+        </sql>
+
+        <sql>
+            CREATE TRIGGER site_category_delete
+            BEFORE UPDATE OR DELETE ON site_category
+            FOR EACH ROW EXECUTE PROCEDURE
+            delete_site_category()
+        </sql>
+
         <rollback>
             <dropTable tableName="site_category"/>
+            <sql>DROP FUNCTION insert_site_category()</sql>
+            <sql>DROP FUNCTION delete_site_category()</sql>
         </rollback>
     </changeSet>
 
-    <changeSet id="10" author="Pavel Tomskikh">
+    <changeSet id="site_display_manager" author="Pavel Tomskikh">
         <preConditions>
             <not>
                 <tableExists tableName="site_display_manager"/>
             </not>
         </preConditions>
 
+        <!--Consists site display managers-->
         <createTable tableName="site_display_manager">
             <column name="site_id" type="integer">
                 <constraints primaryKey="true"
@@ -353,13 +564,59 @@
             <column name="display_manager_id" type="integer">
                 <constraints primaryKey="true"
                              foreignKeyName="display_manager_id"
-                             referencedTableName="iab_category"
+                             referencedTableName="display_manager"
                              referencedColumnNames="id"/>
             </column>
         </createTable>
 
+        <createProcedure procedureName="insert_site_display_manager">
+            CREATE OR REPLACE FUNCTION insert_site_display_manager()
+            RETURNS TRIGGER AS $insert_site_display_manager$
+            BEGIN
+            UPDATE site
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = NEW.site_id;
+            UPDATE display_manager
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = NEW.display_manager_id;
+            RETURN NEW;
+            END;
+            $insert_site_display_manager$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <createProcedure procedureName="delete_site_display_manager">
+            CREATE OR REPLACE FUNCTION delete_site_display_manager()
+            RETURNS TRIGGER AS $delete_site_display_manager$
+            BEGIN
+            UPDATE site
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = OLD.site_id;
+            UPDATE display_manager
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = OLD.display_manager_id;
+            RETURN NEW;
+            END;
+            $delete_site_display_manager$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <sql>
+            CREATE TRIGGER site_display_manager_insert
+            AFTER INSERT OR UPDATE ON site_display_manager
+            FOR EACH ROW EXECUTE PROCEDURE
+            insert_site_display_manager()
+        </sql>
+
+        <sql>
+            CREATE TRIGGER site_display_manager_delete
+            BEFORE UPDATE OR DELETE ON site_display_manager
+            FOR EACH ROW EXECUTE PROCEDURE
+            delete_site_display_manager()
+        </sql>
+
         <rollback>
             <dropTable tableName="site_display_manager"/>
+            <sql>DROP FUNCTION insert_site_display_manager()</sql>
+            <sql>DROP FUNCTION delete_site_display_manager()</sql>
         </rollback>
     </changeSet>
 
