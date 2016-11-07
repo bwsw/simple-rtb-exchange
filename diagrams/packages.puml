@@ -1,0 +1,29 @@
+@startuml
+
+title Package diagram
+
+skinparam componentStyle uml2
+
+package com.bitworks.rtb {
+    package model {
+        [ad]
+        [db]
+        [request]
+        [response]
+        [message]
+    }
+    package service {
+        [dao]
+        [actor]
+        [parser]
+        [writer]
+    }
+    package application{
+        [rtbApplication]
+    }
+}
+
+application -> service
+service -> model
+
+@enduml
