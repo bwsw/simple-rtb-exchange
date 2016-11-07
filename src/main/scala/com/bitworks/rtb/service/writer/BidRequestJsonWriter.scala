@@ -1,4 +1,4 @@
-package com.bitworks.rtb.writer
+package com.bitworks.rtb.service.writer
 
 import com.bitworks.rtb.model.request._
 import com.fasterxml.jackson.databind.node.ObjectNode

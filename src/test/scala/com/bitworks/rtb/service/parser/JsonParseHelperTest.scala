@@ -1,10 +1,10 @@
-package com.bitworks.rtb.parser
+package com.bitworks.rtb.service.parser
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
 
 /**
-  * Test for [[com.bitworks.rtb.parser.JsonParseHelper JsonParseHelper]].
+  * Test for [[com.bitworks.rtb.service.parser.JsonParseHelper JsonParseHelper]].
   *
   * @author Egor Ilchenko
   */

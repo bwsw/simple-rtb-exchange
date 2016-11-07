@@ -1,5 +1,6 @@
-package com.bitworks.rtb.parser
+package com.bitworks.rtb.service.parser
 
+import com.bitworks.rtb.model.DataValidationException
 import com.bitworks.rtb.model.ad.request.AdRequest
 
 /**

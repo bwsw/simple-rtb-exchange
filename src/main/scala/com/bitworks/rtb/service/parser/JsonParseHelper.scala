@@ -1,4 +1,4 @@
-package com.bitworks.rtb.parser
+package com.bitworks.rtb.service.parser
 
 import com.fasterxml.jackson.databind.JsonNode
 

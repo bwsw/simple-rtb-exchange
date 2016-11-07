@@ -1,11 +1,13 @@
-package com.bitworks.rtb.writer
+package com.bitworks.rtb.service.writer
 
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error, Imp}
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.io.Source
+
 /**
-  * Test for [[com.bitworks.rtb.writer.AdResponseJsonWriter AdResponseJsonWriter]].
+  * Test for [[com.bitworks.rtb.service.writer.AdResponseJsonWriter AdResponseJsonWriter]].
   *
   * @author Egor Ilchenko
   */
@@ -21,7 +23,7 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers {
 
     val json = writer.write(adResponse)
     val path = getClass.getResource("adresponse.json").getPath
-    val expectedJson = (io.Source fromFile path).mkString
+    val expectedJson = (Source fromFile path).mkString
 
     val jsonNode = mapper.readTree(json)
     val expectedJsonNode = mapper.readTree(expectedJson)

@@ -1,11 +1,13 @@
-package com.bitworks.rtb.parser
+package com.bitworks.rtb.service.parser
 
-import com.bitworks.rtb.model._
+import com.bitworks.rtb.model.{DataValidationException, _}
 import com.bitworks.rtb.model.request._
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.io.Source
+
 /**
-  * Test for [[com.bitworks.rtb.parser.AdRequestJsonParser AdRequestJsonParser]].
+  * Test for [[com.bitworks.rtb.service.parser.AdRequestJsonParser AdRequestJsonParser]].
   *
   * @author Egor Ilchenko
   */
@@ -56,7 +58,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val parser = new AdRequestJsonParser
 
     val path = getClass.getResource("adrequest.json").getPath
-    val json = io.Source.fromFile(path).mkString.getBytes
+    val json = Source.fromFile(path).mkString.getBytes
 
     val parsedModel = parser.parse(json)
 

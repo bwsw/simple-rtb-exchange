@@ -1,4 +1,4 @@
-package com.bitworks.rtb.parser
+package com.bitworks.rtb.model
 
 /**
   * An exception that indicates about incorrectness of data.

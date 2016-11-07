@@ -1,5 +1,6 @@
-package com.bitworks.rtb.parser
+package com.bitworks.rtb.service.parser
 
+import com.bitworks.rtb.model.DataValidationException
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 import org.scalatest.{FlatSpec, Matchers}
@@ -7,7 +8,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import scala.io.Source
 
 /**
-  * Test for [[com.bitworks.rtb.parser.BidResponseJsonParser BidResponseJsonParser]].
+  * Test for [[com.bitworks.rtb.service.parser.BidResponseJsonParser BidResponseJsonParser]].
   *
   * @author Pavel Tomskikh
   */

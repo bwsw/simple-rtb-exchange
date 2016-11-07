@@ -1,4 +1,4 @@
-package com.bitworks.rtb.parser
+package com.bitworks.rtb.service.parser
 
 import com.bitworks.rtb.model.response._
 import com.bitworks.rtb.model.response.builder._

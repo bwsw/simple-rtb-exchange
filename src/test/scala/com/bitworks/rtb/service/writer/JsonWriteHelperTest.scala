@@ -1,4 +1,4 @@
-package com.bitworks.rtb.writer
+package com.bitworks.rtb.service.writer
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.scalatest.{FlatSpec, Matchers}
@@ -6,7 +6,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import scala.collection.JavaConverters._
 
 /**
-  * Test for [[com.bitworks.rtb.writer.JsonWriteHelper JsonWriteHelper]].
+  * Test for [[com.bitworks.rtb.service.writer.JsonWriteHelper JsonWriteHelper]].
   *
   * @author Egor Ilchenko
   */
