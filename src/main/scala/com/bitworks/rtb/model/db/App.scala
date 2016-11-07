@@ -3,7 +3,7 @@ package com.bitworks.rtb.model.db
 /**
   * Details of the application calling for the impression.
   *
-  * @param ID            database ID
+  * @param id            database ID
   * @param name          name of the site
   * @param status        app status
   * @param privacyPolicy is has a privacy policy
@@ -17,10 +17,10 @@ package com.bitworks.rtb.model.db
   * @author Egor Ilchenko
   */
 case class App(
-    ID: Int,
+    id: Int,
     name: String,
     status: Status.Value,
-    privacyPolicy: Boolean,
+    privacyPolicy: Int,
     test: Boolean,
     domain: Option[String],
     keyword: Option[String],

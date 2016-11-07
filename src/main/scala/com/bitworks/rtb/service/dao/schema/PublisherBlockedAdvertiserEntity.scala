@@ -1,4 +1,4 @@
-package com.bitworks.rtb.db.schema
+package com.bitworks.rtb.service.dao.schema
 
 import com.bitworks.rtb.model.db.BaseEntity
 
@@ -7,7 +7,7 @@ import com.bitworks.rtb.model.db.BaseEntity
   *
   * @author Egor Ilchenko
   */
-case class BlockedAdvertiserEntity(
-    ID: Int,
+case class PublisherBlockedAdvertiserEntity(
+    id: Int,
     publisherId: Int,
     domain: String) extends BaseEntity

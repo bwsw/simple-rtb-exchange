@@ -1,10 +1,10 @@
-package com.bitworks.rtb.db.schema
+package com.bitworks.rtb.service.dao.schema
 
 /**
   * Database site IAB category entity.
   *
   * @author Egor Ilchenko
   */
-case class SiteIABCategory(
+case class SiteCategoryEntity(
     siteId: Int,
     iabCategoryId: Int)

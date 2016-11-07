@@ -1,12 +1,10 @@
-package com.bitworks.rtb.db.schema
-
-import com.bitworks.rtb.model.db.BaseEntity
+package com.bitworks.rtb.service.dao.schema
 
 /**
   * Database blocked category entity.
   *
   * @author Egor Ilchenko
   */
-case class BlockedCategory(
+case class PublisherBlockedCategoryEntity(
     publisherId: Int,
     iabCategoryId: Int)

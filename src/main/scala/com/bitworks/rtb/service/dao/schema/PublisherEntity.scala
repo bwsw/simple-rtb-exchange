@@ -1,4 +1,4 @@
-package com.bitworks.rtb.db.schema
+package com.bitworks.rtb.service.dao.schema
 
 import com.bitworks.rtb.model.db.BaseEntity
 
@@ -8,8 +8,8 @@ import com.bitworks.rtb.model.db.BaseEntity
   * @author Egor Ilchenko
   */
 case class PublisherEntity(
-    ID: Int,
-    tsVersion: Long,
+    id: Int,
+    tsversion: Long,
     deleted: Boolean,
     name: String,
     domain: String) extends BaseEntity with EntityMetaInfo

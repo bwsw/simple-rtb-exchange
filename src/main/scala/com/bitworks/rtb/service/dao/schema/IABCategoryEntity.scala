@@ -1,4 +1,4 @@
-package com.bitworks.rtb.db.schema
+package com.bitworks.rtb.service.dao.schema
 
 import com.bitworks.rtb.model.db.BaseEntity
 
@@ -8,9 +8,9 @@ import com.bitworks.rtb.model.db.BaseEntity
   * @author Egor Ilchenko
   */
 case class IABCategoryEntity(
-    ID: Int,
-    tsVersion: Long,
+    id: Int,
+    tsversion: Long,
     deleted: Boolean,
-    iabID: String,
+    iabId: String,
     name: String,
     parentId: Option[Int]) extends BaseEntity with EntityMetaInfo

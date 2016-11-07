@@ -1,4 +1,4 @@
-package com.bitworks.rtb.db.schema
+package com.bitworks.rtb.service.dao.schema
 
 import com.bitworks.rtb.model.db.BaseEntity
 

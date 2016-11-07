@@ -6,5 +6,5 @@ package com.bitworks.rtb.model.db
   * @author Egor Ilchenko
   */
 trait BaseEntity {
-  val ID: Int
+  val id: Int
 }

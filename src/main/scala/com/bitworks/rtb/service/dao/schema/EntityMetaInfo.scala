@@ -1,4 +1,4 @@
-package com.bitworks.rtb.db.schema
+package com.bitworks.rtb.service.dao.schema
 
 /**
   * Database entity meta information.
@@ -6,6 +6,6 @@ package com.bitworks.rtb.db.schema
   * @author Egor Ilchenko
   */
 trait EntityMetaInfo {
-  val tsVersion: Long
+  val tsversion: Long
   val deleted: Boolean
 }
