@@ -51,17 +51,17 @@ alt Win Bidder is found
     activate WinBidActor
     WinBidActor -> Bidder: HTTP request
     activate Bidder
-    opt Got HTTP response
+    opt If ad url/markup not in BidResponse
         WinBidActor <-- Bidder: HTTP response
         deactivate Bidder
-        Exchange <-- WinBidActor: Ad url/markup (if it is not in BidResponse)
+        Exchange <-- WinBidActor: Ad url/markup
         deactivate WinBidActor
-        
-        Exchange -> Factory: BidResponse
-        activate Factory
-        Exchange <-- Factory: AdResponse
-        deactivate Factory
     end
+
+    Exchange -> Factory: BidResponse
+    activate Factory
+    Exchange <-- Factory: AdResponse
+    deactivate Factory
 
 else Win Bidder is not found
     Exchange -> Factory: Error

@@ -28,7 +28,7 @@ alt HTTP request parsed to AdRequest
         ref over Exchange: getting AdResponse
 
     else BidRequest not created from AdRequest
-        Exchange <-- Factory: Factoring fail
+        Exchange <-- Factory: fail
         deactivate Factory
 
         Exchange -> Factory: Error
@@ -40,7 +40,7 @@ alt HTTP request parsed to AdRequest
     end
 
 else HTTP request not parsed to AdRequest
-    Exchange <-- Parser: Parsing fail
+    Exchange <-- Parser: fail
     deactivate Parser
 
     Exchange -> Factory: Error
