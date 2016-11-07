@@ -60,6 +60,7 @@
             </not>
         </preConditions>
 
+        <!--IAB content categories-->
         <createTable tableName="iab_category">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -109,6 +110,7 @@
             </not>
         </preConditions>
 
+        <!--Information about publishers-->
         <createTable tableName="publisher">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -151,6 +153,7 @@
             </not>
         </preConditions>
 
+        <!--Information about bidders-->
         <createTable tableName="bidder">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -193,6 +196,7 @@
             </not>
         </preConditions>
 
+        <!--Information about display managers-->
         <createTable tableName="display_manager">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -235,6 +239,7 @@
             </not>
         </preConditions>
 
+        <!--Consists blocked categories for publishers-->
         <createTable tableName="publisher_blocked_category">
             <column name="publisher_id" type="integer">
                 <constraints primaryKey="true"
@@ -277,6 +282,7 @@
             </not>
         </preConditions>
 
+        <!--Consists publishers categories-->
         <createTable tableName="publisher_category">
             <column name="publisher_id" type="integer">
                 <constraints primaryKey="true"
@@ -319,6 +325,7 @@
             </not>
         </preConditions>
 
+        <!--Consists blocked advertisers for publishers-->
         <createTable tableName="publisher_blocked_advertiser">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -388,6 +395,7 @@
             </not>
         </preConditions>
 
+        <!--Information about site or app-->
         <createTable tableName="site">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -469,6 +477,7 @@
             </not>
         </preConditions>
 
+        <!--Consists site categories-->
         <createTable tableName="site_category">
             <column name="site_id" type="integer">
                 <constraints primaryKey="true"
@@ -543,6 +552,7 @@
             </not>
         </preConditions>
 
+        <!--Consists site display managers-->
         <createTable tableName="site_display_manager">
             <column name="site_id" type="integer">
                 <constraints primaryKey="true"
