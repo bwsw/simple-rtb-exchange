@@ -8,6 +8,9 @@ scalacOptions in(Compile, doc) ++= Seq("-doc-title", "Bitworks RTB Exchange")
 scalacOptions in(Compile, doc) ++= Seq("-doc-version", version.value)
 scalacOptions in(Compile, doc) ++= Seq("-doc-root-content", "rootdoc.txt")
 
+fork in Test := true
+javaOptions in Test += "-Dconfig.resource=application.test.conf"
+
 libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.4",
@@ -19,5 +22,3 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.1.7",
   "org.dbunit" % "dbunit" % "2.5.3"
 )
-
-unmanagedClasspath in Compile += baseDirectory.value / "src" / "main" / "resources"
