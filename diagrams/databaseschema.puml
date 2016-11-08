@@ -27,19 +27,19 @@ table(publisher) {
     metaInfo
 }
 
-table(blocked_advertiser) {
+table(publisher_blocked_advertiser) {
     primary_key(id): int
     req(foreign_key(publisher_id)): int
     req(domain): string
 }
-composition(publisher, blocked_advertiser, publisher_id)
+composition(publisher, publisher_blocked_advertiser, publisher_id)
 
-table(blocked_category) {
+table(publisher_blocked_category) {
     pf_key(publisher_id): int
     pf_key(iab_category_id): int
 }
-composition(iab_category, blocked_category, iab_category_id)
-composition(publisher, blocked_category, publisher_id)
+composition(iab_category, publisher_blocked_category, iab_category_id)
+composition(publisher, publisher_blocked_category, publisher_id)
 
 table(publisher_category) {
     pf_key(publisher_id): int
@@ -47,6 +47,11 @@ table(publisher_category) {
 }
 composition(iab_category, publisher_category, iab_category_id)
 composition(publisher, publisher_category, publisher_id)
+
+'layout stuff
+publisher_category -[hidden] publisher
+publisher_category -[hidden] iab_category
+
 
 table(iab_category) {
     primary_key(id): int
