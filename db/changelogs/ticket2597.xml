@@ -132,30 +132,43 @@
             </not>
         </preConditions>
 
-        <createTable tableName="iab_category">
-            <column name="id" type="integer" autoIncrement="true">
+        <createTable tableName="iab_category" remarks="IAB categories">
+            <column name="id"
+                    type="integer"
+                    autoIncrement="true"
+                    remarks="unique id">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="iab_id" type="varchar(8)">
+            <column name="iab_id"
+                    type="varchar(8)"
+                    remarks="IAB category id">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="name" type="varchar(64)">
+            <column name="name"
+                    type="varchar(64)"
+                    remarks="IAB category description">
                 <constraints nullable="false"/>
             </column>
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from now())::bigint">
+                    defaultValue="extract(epoch from now())::bigint"
+                    remarks="latest update time">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="deleted" type="boolean" defaultValue="false">
+            <column name="deleted"
+                    type="boolean"
+                    defaultValue="false"
+                    remarks="indicates if row deleted">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="parent_id" type="integer">
+            <column name="parent_id"
+                    type="integer"
+                    remarks="identify parent category">
                 <constraints nullable="true"
                              foreignKeyName="parent_id"
                              referencedTableName="iab_category"
@@ -229,26 +242,38 @@
             </not>
         </preConditions>
 
-        <createTable tableName="publisher">
-            <column name="id" type="integer" autoIncrement="true">
+        <createTable tableName="publisher"
+                     remarks="Describes publisher">
+            <column name="id"
+                    type="integer"
+                    autoIncrement="true"
+                    remarks="unique id">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="name" type="varchar(128)">
+            <column name="name"
+                    type="varchar(128)"
+                    remarks="publisher name">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="domain" type="varchar(128)">
+            <column name="domain"
+                    type="varchar(128)"
+                    remarks="publisher domain">
                 <constraints nullable="false"/>
             </column>
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from now())::bigint">
+                    defaultValue="extract(epoch from now())::bigint"
+                    remarks="latest update time">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="deleted" type="boolean" defaultValue="false">
+            <column name="deleted"
+                    type="boolean"
+                    defaultValue="false"
+                    remarks="indicates if row deleted">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -271,26 +296,38 @@
             </not>
         </preConditions>
 
-        <createTable tableName="bidder">
-            <column name="id" type="integer" autoIncrement="true">
+        <createTable tableName="bidder"
+                     remarks="Describes bidder">
+            <column name="id"
+                    type="integer"
+                    autoIncrement="true"
+                    remarks="unique id">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="name" type="varchar(128)">
+            <column name="name"
+                    type="varchar(128)"
+                    remarks="bidder name">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="endpoint" type="varchar(256)">
+            <column name="endpoint"
+                    type="varchar(256)"
+                    remarks="endpoint for BidRequest">
                 <constraints nullable="false"/>
             </column>
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from now())::bigint">
+                    defaultValue="extract(epoch from now())::bigint"
+                    remarks="latest update time">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="deleted" type="boolean" defaultValue="false">
+            <column name="deleted"
+                    type="boolean"
+                    defaultValue="false"
+                    remarks="indicates if row deleted">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -313,26 +350,38 @@
             </not>
         </preConditions>
 
-        <createTable tableName="display_manager">
-            <column name="id" type="integer" autoIncrement="true">
+        <createTable tableName="display_manager"
+                     remarks="Describes software which renders ad">
+            <column name="id"
+                    type="integer"
+                    autoIncrement="true"
+                    remarks="unique id">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="name" type="varchar(128)">
+            <column name="name"
+                    type="varchar(128)"
+                    remarks="diplay manager name">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="ver" type="varchar(16)">
+            <column name="ver"
+                    type="varchar(16)"
+                    remarks="display manager version">
                 <constraints nullable="false"/>
             </column>
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from now())::bigint">
+                    defaultValue="extract(epoch from now())::bigint"
+                    remarks="latest update time">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="deleted" type="boolean" defaultValue="false">
+            <column name="deleted"
+                    type="boolean"
+                    defaultValue="false"
+                    remarks="indicates if row deleted">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -355,15 +404,20 @@
             </not>
         </preConditions>
 
-        <createTable tableName="publisher_blocked_category">
-            <column name="publisher_id" type="integer">
+        <createTable tableName="publisher_blocked_category"
+                     remarks="IAB content categories which blocked by publisher">
+            <column name="publisher_id"
+                    type="integer"
+                    remarks="publisher">
                 <constraints primaryKey="true"
                              foreignKeyName="publisher_id"
                              referencedTableName="publisher"
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="iab_category_id" type="integer">
+            <column name="iab_category_id"
+                    type="integer"
+                    remarks="blocked category">
                 <constraints primaryKey="true"
                              foreignKeyName="iab_category_id"
                              referencedTableName="iab_category"
@@ -419,15 +473,20 @@
             </not>
         </preConditions>
 
-        <createTable tableName="publisher_category">
-            <column name="publisher_id" type="integer">
+        <createTable tableName="publisher_category"
+                     remarks="IAB content categories that describe the publisher">
+            <column name="publisher_id"
+                    type="integer"
+                    remarks="publisher">
                 <constraints primaryKey="true"
                              foreignKeyName="publisher_id"
                              referencedTableName="publisher"
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="iab_category_id" type="integer">
+            <column name="iab_category_id"
+                    type="integer"
+                    remarks="category">
                 <constraints primaryKey="true"
                              foreignKeyName="iab_category_id"
                              referencedTableName="iab_category"
@@ -483,19 +542,27 @@
             </not>
         </preConditions>
 
-        <createTable tableName="publisher_blocked_advertiser">
-            <column name="id" type="integer" autoIncrement="true">
+        <createTable tableName="publisher_blocked_advertiser"
+                     remarks="Advertisers which blocked by publisher">
+            <column name="id"
+                    type="integer"
+                    autoIncrement="true"
+                    remarks="unique id">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="publisher_id" type="integer">
+            <column name="publisher_id"
+                    type="integer"
+                    remarks="publisher">
                 <constraints nullable="false"
                              foreignKeyName="publisher_id"
                              referencedTableName="publisher"
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="domain" type="varchar(128)">
+            <column name="domain"
+                    type="varchar(128)"
+                    remarks="blocked advertiser">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -530,57 +597,87 @@
             </not>
         </preConditions>
 
-        <createTable tableName="site">
-            <column name="id" type="integer" autoIncrement="true">
+        <createTable tableName="site"
+                     remarks="Describes site or app">
+            <column name="id"
+                    type="integer"
+                    autoIncrement="true"
+                    remarks="unique id">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="publisher_id" type="integer">
+            <column name="publisher_id"
+                    type="integer"
+                    remarks="publisher associated with site/app">
                 <constraints nullable="false"
                              foreignKeyName="publisher_id"
                              referencedTableName="publisher"
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="name" type="varchar(128)">
+            <column name="name"
+                    type="varchar(128)"
+                    remarks="site/app name">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="type" type="integer">
+            <column name="type"
+                    type="integer"
+                    remarks="1 for site, 2 for app">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="status" type="integer">
+            <column name="status"
+                    type="integer"
+                    remarks="site/app status">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="privacy_policy" type="integer">
+            <column name="privacy_policy"
+                    type="integer"
+                    remarks="indicates if the site/app has privacy policy">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="test" type="boolean">
+            <column name="test"
+                    type="boolean"
+                    remarks="indicates if the site/app is in test mode">
                 <constraints nullable="false"/>
             </column>
 
             <column name="tsversion"
                     type="bigint"
-                    defaultValue="extract(epoch from now())::bigint">
+                    defaultValue="extract(epoch from now())::bigint"
+                    remarks="latest update time">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="deleted" type="boolean" defaultValue="false">
+            <column name="deleted"
+                    type="boolean"
+                    defaultValue="false"
+                    remarks="indicates if row deleted">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="domain" type="varchar(128)"/>
+            <column name="domain"
+                    type="varchar(128)"
+                    remarks="domain of the"/>
 
-            <column name="keyword" type="varchar(1024)"/>
+            <column name="keyword"
+                    type="varchar(1024)"
+                    remarks="comma separated list of keywords about the site/app"/>
 
-            <column name="app_bundle" type="varchar(128)"/>
+            <column name="app_bundle"
+                    type="varchar(128)"
+                    remarks="app bundle or package name"/>
 
-            <column name="app_store_url" type="varchar(256)"/>
+            <column name="app_store_url"
+                    type="varchar(256)"
+                    remarks="app store URL for an installed apps"/>
 
-            <column name="app_ver" type="varchar(16)"/>
+            <column name="app_ver"
+                    type="varchar(16)"
+                    remarks="app version"/>
         </createTable>
 
         <createIndex tableName="site"
@@ -629,15 +726,20 @@
             </not>
         </preConditions>
 
-        <createTable tableName="site_category">
-            <column name="site_id" type="integer">
+        <createTable tableName="site_category"
+                     remarks="IAB content categories that describe site/app">
+            <column name="site_id"
+                    type="integer"
+                    remarks="site">
                 <constraints primaryKey="true"
                              foreignKeyName="site_id"
                              referencedTableName="site"
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="iab_category_id" type="integer">
+            <column name="iab_category_id"
+                    type="integer"
+                    remarks="category">
                 <constraints primaryKey="true"
                              foreignKeyName="iab_category_id"
                              referencedTableName="iab_category"
@@ -693,15 +795,20 @@
             </not>
         </preConditions>
 
-        <createTable tableName="site_display_manager">
-            <column name="site_id" type="integer">
+        <createTable tableName="site_display_manager"
+                     remarks="Display managers associated with the site/app">
+            <column name="site_id"
+                    type="integer"
+                    remarks="site">
                 <constraints primaryKey="true"
                              foreignKeyName="site_id"
                              referencedTableName="site"
                              referencedColumnNames="id"/>
             </column>
 
-            <column name="display_manager_id" type="integer">
+            <column name="display_manager_id"
+                    type="integer"
+                    remarks="associated display manager">
                 <constraints primaryKey="true"
                              foreignKeyName="display_manager_id"
                              referencedTableName="display_manager"
