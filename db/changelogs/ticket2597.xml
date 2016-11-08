@@ -16,112 +16,8 @@
             $update_tsversion$ LANGUAGE plpgsql;
         </createProcedure>
 
-        <createProcedure procedureName="insert_publisher">
-            CREATE OR REPLACE FUNCTION insert_publisher()
-            RETURNS TRIGGER AS $insert_publisher$
-            BEGIN
-            UPDATE publisher
-            SET tsversion = extract(epoch from now())::bigint
-            WHERE id = NEW.publisher_id;
-            RETURN NEW;
-            END;
-            $insert_publisher$ LANGUAGE plpgsql;
-        </createProcedure>
-
-        <createProcedure procedureName="delete_publisher">
-            CREATE OR REPLACE FUNCTION delete_publisher()
-            RETURNS TRIGGER AS $delete_publisher$
-            BEGIN
-            UPDATE publisher
-            SET tsversion = extract(epoch from now())::bigint
-            WHERE id = OLD.publisher_id;
-            RETURN NEW;
-            END;
-            $delete_publisher$ LANGUAGE plpgsql;
-        </createProcedure>
-
-        <createProcedure procedureName="insert_iab_category">
-            CREATE OR REPLACE FUNCTION insert_iab_category()
-            RETURNS TRIGGER AS $insert_iab_category$
-            BEGIN
-            UPDATE iab_category
-            SET tsversion = extract(epoch from now())::bigint
-            WHERE id = NEW.iab_category_id;
-            RETURN NEW;
-            END;
-            $insert_iab_category$ LANGUAGE plpgsql;
-        </createProcedure>
-
-        <createProcedure procedureName="delete_iab_category">
-            CREATE OR REPLACE FUNCTION delete_iab_category()
-            RETURNS TRIGGER AS $delete_iab_category$
-            BEGIN
-            UPDATE iab_category
-            SET tsversion = extract(epoch from now())::bigint
-            WHERE id = OLD.iab_category_id;
-            RETURN NEW;
-            END;
-            $delete_iab_category$ LANGUAGE plpgsql;
-        </createProcedure>
-
-        <createProcedure procedureName="insert_site">
-            CREATE OR REPLACE FUNCTION insert_site()
-            RETURNS TRIGGER AS $insert_site$
-            BEGIN
-            UPDATE site
-            SET tsversion = extract(epoch from now())::bigint
-            WHERE id = NEW.site_id;
-            RETURN NEW;
-            END;
-            $insert_site$ LANGUAGE plpgsql;
-        </createProcedure>
-
-        <createProcedure procedureName="delete_site">
-            CREATE OR REPLACE FUNCTION delete_site()
-            RETURNS TRIGGER AS $delete_site$
-            BEGIN
-            UPDATE site
-            SET tsversion = extract(epoch from now())::bigint
-            WHERE id = OLD.site_id;
-            RETURN NEW;
-            END;
-            $delete_site$ LANGUAGE plpgsql;
-        </createProcedure>
-
-        <createProcedure procedureName="insert_display_manager">
-            CREATE OR REPLACE FUNCTION insert_display_manager()
-            RETURNS TRIGGER AS $insert_display_manager$
-            BEGIN
-            UPDATE display_manager
-            SET tsversion = extract(epoch from now())::bigint
-            WHERE id = NEW.display_manager_id;
-            RETURN NEW;
-            END;
-            $insert_display_manager$ LANGUAGE plpgsql;
-        </createProcedure>
-
-        <createProcedure procedureName="delete_display_manager">
-            CREATE OR REPLACE FUNCTION delete_display_manager()
-            RETURNS TRIGGER AS $delete_display_manager$
-            BEGIN
-            UPDATE display_manager
-            SET tsversion = extract(epoch from now())::bigint
-            WHERE id = OLD.display_manager_id;
-            RETURN NEW;
-            END;
-            $delete_display_manager$ LANGUAGE plpgsql;
-        </createProcedure>
-
         <rollback>
             <sql>DROP FUNCTION update_tsversion()</sql>
-            <sql>DROP FUNCTION insert_publisher()</sql>
-            <sql>DROP FUNCTION delete_publisher()</sql>
-            <sql>DROP FUNCTION insert_iab_category()</sql>
-            <sql>DROP FUNCTION delete_iab_category()</sql>
-            <sql>DROP FUNCTION insert_site()</sql>
-            <sql>DROP FUNCTION delete_site()</sql>
-            <sql>DROP FUNCTION insert_display_manager()</sql>
-            <sql>DROP FUNCTION delete_display_manager()</sql>
         </rollback>
     </changeSet>
 
@@ -177,61 +73,61 @@
         </createTable>
 
         <createIndex tableName="iab_category"
-                     indexName="iab_category_parent_id"
+                     indexName="iab_category_parent_id_idx"
                      unique="false">
             <column name="parent_id" type="integer"/>
         </createIndex>
 
-        <createProcedure procedureName="insert_child_iab_category">
-            CREATE OR REPLACE FUNCTION insert_child_iab_category()
-            RETURNS TRIGGER AS $insert_child_iab_category$
+        <createProcedure procedureName="update_new_parent_iab_category">
+            CREATE OR REPLACE FUNCTION update_new_parent_iab_category()
+            RETURNS TRIGGER AS $update_new_parent_iab_category$
             BEGIN
             UPDATE iab_category
             SET tsversion = extract(epoch from now())::bigint
             WHERE id = NEW.parent_id;
             RETURN NEW;
             END;
-            $insert_child_iab_category$ LANGUAGE plpgsql;
+            $update_new_parent_iab_category$ LANGUAGE plpgsql;
         </createProcedure>
 
-        <createProcedure procedureName="delete_child_iab_category">
-            CREATE OR REPLACE FUNCTION delete_child_iab_category()
-            RETURNS TRIGGER AS $delete_child_iab_category$
+        <createProcedure procedureName="update_old_parent_iab_category">
+            CREATE OR REPLACE FUNCTION update_old_parent_iab_category()
+            RETURNS TRIGGER AS $update_old_parent_iab_category$
             BEGIN
             UPDATE iab_category
             SET tsversion = extract(epoch from now())::bigint
             WHERE id = OLD.parent_id;
             RETURN NEW;
             END;
-            $delete_child_iab_category$ LANGUAGE plpgsql;
+            $update_old_parent_iab_category$ LANGUAGE plpgsql;
         </createProcedure>
 
         <sql>
-            CREATE TRIGGER iab_category_update
+            CREATE TRIGGER update_iab_category
             BEFORE UPDATE ON iab_category
             FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
         </sql>
 
         <sql>
-            CREATE TRIGGER iab_cat_ins_child
+            CREATE TRIGGER update_new_parent_iab_category
             AFTER INSERT OR UPDATE ON iab_category
             FOR EACH ROW
             WHEN (NEW.parent_id IS NOT NULL)
-            EXECUTE PROCEDURE insert_child_iab_category()
+            EXECUTE PROCEDURE update_new_parent_iab_category()
         </sql>
 
         <sql>
-            CREATE TRIGGER iab_cat_del_child
+            CREATE TRIGGER update_old_parent_iab_category
             AFTER UPDATE OR DELETE ON iab_category
             FOR EACH ROW
             WHEN (OLD.parent_id IS NOT NULL)
-            EXECUTE PROCEDURE delete_child_iab_category()
+            EXECUTE PROCEDURE update_old_parent_iab_category()
         </sql>
 
         <rollback>
             <dropTable tableName="iab_category"/>
-            <sql>DROP FUNCTION insert_child_iab_category()</sql>
-            <sql>DROP FUNCTION delete_child_iab_category()</sql>
+            <sql>DROP FUNCTION update_new_parent_iab_category()</sql>
+            <sql>DROP FUNCTION update_old_parent_iab_category()</sql>
         </rollback>
     </changeSet>
 
@@ -243,7 +139,7 @@
         </preConditions>
 
         <createTable tableName="publisher"
-                     remarks="Describes publisher">
+                     remarks="Information about publishers">
             <column name="id"
                     type="integer"
                     autoIncrement="true"
@@ -253,13 +149,13 @@
 
             <column name="name"
                     type="varchar(128)"
-                    remarks="publisher name">
+                    remarks="publisher's name">
                 <constraints nullable="false"/>
             </column>
 
             <column name="domain"
                     type="varchar(128)"
-                    remarks="publisher domain">
+                    remarks="publisher's domain">
                 <constraints nullable="false"/>
             </column>
 
@@ -279,12 +175,38 @@
         </createTable>
 
         <sql>
-            CREATE TRIGGER publisher_update
+            CREATE TRIGGER update_publisher
             BEFORE UPDATE ON publisher
             FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
         </sql>
 
+        <createProcedure procedureName="update_new_publisher_tsversion">
+            CREATE OR REPLACE FUNCTION update_new_publisher_tsversion()
+            RETURNS TRIGGER AS $update_new_publisher_tsversion$
+            BEGIN
+            UPDATE publisher
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = NEW.publisher_id;
+            RETURN NEW;
+            END;
+            $update_new_publisher_tsversion$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <createProcedure procedureName="update_old_publisher_tsversion">
+            CREATE OR REPLACE FUNCTION update_old_publisher_tsversion()
+            RETURNS TRIGGER AS $update_old_publisher_tsversion$
+            BEGIN
+            UPDATE publisher
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = OLD.publisher_id;
+            RETURN NEW;
+            END;
+            $update_old_publisher_tsversion$ LANGUAGE plpgsql;
+        </createProcedure>
+
         <rollback>
+            <sql>DROP FUNCTION update_new_publisher_tsversion()</sql>
+            <sql>DROP FUNCTION update_old_publisher_tsversion()</sql>
             <dropTable tableName="publisher"/>
         </rollback>
     </changeSet>
@@ -297,7 +219,7 @@
         </preConditions>
 
         <createTable tableName="bidder"
-                     remarks="Describes bidder">
+                     remarks="Information about bidders">
             <column name="id"
                     type="integer"
                     autoIncrement="true"
@@ -313,7 +235,7 @@
 
             <column name="endpoint"
                     type="varchar(256)"
-                    remarks="endpoint for BidRequest">
+                    remarks="endpoint for bid requests">
                 <constraints nullable="false"/>
             </column>
 
@@ -333,7 +255,7 @@
         </createTable>
 
         <sql>
-            CREATE TRIGGER bidder_update
+            CREATE TRIGGER update_bidder
             BEFORE UPDATE ON bidder
             FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
         </sql>
@@ -351,7 +273,7 @@
         </preConditions>
 
         <createTable tableName="display_manager"
-                     remarks="Describes software which renders ad">
+                     remarks="Information about software which renders ad">
             <column name="id"
                     type="integer"
                     autoIncrement="true"
@@ -387,7 +309,7 @@
         </createTable>
 
         <sql>
-            CREATE TRIGGER display_manager_update
+            CREATE TRIGGER update_display_manager
             BEFORE UPDATE ON display_manager
             FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
         </sql>
@@ -426,39 +348,27 @@
         </createTable>
 
         <createIndex tableName="publisher_blocked_category"
-                     indexName="pub_bl_cat_cat_id"
+                     indexName="publisher_blocked_category_iab_category_id_idx"
                      unique="false">
-            <column name="iab_category_id" type="integer"/>
+            <column name="iab_category_id"/>
         </createIndex>
 
         <createIndex tableName="publisher_blocked_category"
-                     indexName="pub_bl_cat_pub_id"
+                     indexName="publisher_blocked_category_publisher_id_idx"
                      unique="false">
-            <column name="publisher_id" type="integer"/>
+            <column name="publisher_id"/>
         </createIndex>
 
         <sql>
-            CREATE TRIGGER pub_bl_cat_ins_cat
+            CREATE TRIGGER update_new_publisher_publisher_blocked_category
             AFTER INSERT OR UPDATE ON publisher_blocked_category
-            FOR EACH ROW EXECUTE PROCEDURE insert_iab_category()
+            FOR EACH ROW EXECUTE PROCEDURE update_new_publisher_tsversion()
         </sql>
 
         <sql>
-            CREATE TRIGGER pub_bl_cat_del_cat
+            CREATE TRIGGER update_old_publisher_publisher_blocked_category
             AFTER UPDATE OR DELETE ON publisher_blocked_category
-            FOR EACH ROW EXECUTE PROCEDURE delete_iab_category()
-        </sql>
-
-        <sql>
-            CREATE TRIGGER pub_bl_cat_ins_pub
-            AFTER INSERT OR UPDATE ON publisher_blocked_category
-            FOR EACH ROW EXECUTE PROCEDURE insert_publisher()
-        </sql>
-
-        <sql>
-            CREATE TRIGGER pub_bl_cat_del_pub
-            AFTER UPDATE OR DELETE ON publisher_blocked_category
-            FOR EACH ROW EXECUTE PROCEDURE delete_publisher()
+            FOR EACH ROW EXECUTE PROCEDURE update_old_publisher_tsversion()
         </sql>
 
         <rollback>
@@ -495,39 +405,27 @@
         </createTable>
 
         <createIndex tableName="publisher_category"
-                     indexName="pub_cat_cat_id"
+                     indexName="publisher_category_iab_category_id_idx"
                      unique="false">
-            <column name="iab_category_id" type="integer"/>
+            <column name="iab_category_id"/>
         </createIndex>
 
         <createIndex tableName="publisher_category"
-                     indexName="pub_cat_pub_id"
+                     indexName="publisher_category_publisher_id_idx"
                      unique="false">
-            <column name="publisher_id" type="integer"/>
+            <column name="publisher_id"/>
         </createIndex>
 
         <sql>
-            CREATE TRIGGER pub_cat_ins_cat
+            CREATE TRIGGER update_new_publisher_publisher_category
             AFTER INSERT OR UPDATE ON publisher_category
-            FOR EACH ROW EXECUTE PROCEDURE insert_iab_category()
+            FOR EACH ROW EXECUTE PROCEDURE update_new_publisher_tsversion()
         </sql>
 
         <sql>
-            CREATE TRIGGER pub_cat_del_cat
+            CREATE TRIGGER update_old_publisher_publisher_category
             AFTER UPDATE OR DELETE ON publisher_category
-            FOR EACH ROW EXECUTE PROCEDURE delete_iab_category()
-        </sql>
-
-        <sql>
-            CREATE TRIGGER pub_cat_ins_pub
-            AFTER INSERT OR UPDATE ON publisher_category
-            FOR EACH ROW EXECUTE PROCEDURE insert_publisher()
-        </sql>
-
-        <sql>
-            CREATE TRIGGER pub_cat_del_pub
-            AFTER UPDATE OR DELETE ON publisher_category
-            FOR EACH ROW EXECUTE PROCEDURE delete_publisher()
+            FOR EACH ROW EXECUTE PROCEDURE update_old_publisher_tsversion()
         </sql>
 
         <rollback>
@@ -568,21 +466,28 @@
         </createTable>
 
         <createIndex tableName="publisher_blocked_advertiser"
-                     indexName="pub_bl_adv_pub_id"
+                     indexName="publisher_blocked_advertiser_publisher_id_idx"
                      unique="false">
-            <column name="publisher_id" type="integer"/>
+            <column name="publisher_id"/>
+        </createIndex>
+
+        <createIndex tableName="publisher_blocked_advertiser"
+                     indexName="publisher_blocked_advertiser_uk"
+                     unique="true">
+            <column name="publisher_id"/>
+            <column name="domain"/>
         </createIndex>
 
         <sql>
-            CREATE TRIGGER pub_bl_adv_ins_pub
+            CREATE TRIGGER update_new_publisher_publisher_blocked_advertiser
             AFTER INSERT OR UPDATE ON publisher_blocked_advertiser
-            FOR EACH ROW EXECUTE PROCEDURE insert_publisher()
+            FOR EACH ROW EXECUTE PROCEDURE update_new_publisher_tsversion()
         </sql>
 
         <sql>
-            CREATE TRIGGER pub_bl_adv_del_pub
+            CREATE TRIGGER update_old_publisher_publisher_blocked_advertiser
             AFTER UPDATE OR DELETE ON publisher_blocked_advertiser
-            FOR EACH ROW EXECUTE PROCEDURE delete_publisher()
+            FOR EACH ROW EXECUTE PROCEDURE update_old_publisher_tsversion()
         </sql>
 
         <rollback>
@@ -598,7 +503,7 @@
         </preConditions>
 
         <createTable tableName="site"
-                     remarks="Describes site or app">
+                     remarks="Information about site or app">
             <column name="id"
                     type="integer"
                     autoIncrement="true"
@@ -608,7 +513,7 @@
 
             <column name="publisher_id"
                     type="integer"
-                    remarks="publisher associated with site/app">
+                    remarks="publisher that owns site/app">
                 <constraints nullable="false"
                              foreignKeyName="publisher_id"
                              referencedTableName="publisher"
@@ -629,13 +534,13 @@
 
             <column name="status"
                     type="integer"
-                    remarks="site/app status">
+                    remarks="site/app status: 0 - inactive, 1 - active">
                 <constraints nullable="false"/>
             </column>
 
             <column name="privacy_policy"
                     type="integer"
-                    remarks="indicates if the site/app has privacy policy">
+                    remarks="indicates if the site/app has privacy policy: 0 - no privacy policy, 1 - privacy policy is specified">
                 <constraints nullable="false"/>
             </column>
 
@@ -661,7 +566,7 @@
 
             <column name="domain"
                     type="varchar(128)"
-                    remarks="domain of the"/>
+                    remarks="site/app domain"/>
 
             <column name="keyword"
                     type="varchar(1024)"
@@ -673,7 +578,7 @@
 
             <column name="app_store_url"
                     type="varchar(256)"
-                    remarks="app store URL for an installed apps"/>
+                    remarks="app store URL for an installed app"/>
 
             <column name="app_ver"
                     type="varchar(16)"
@@ -681,7 +586,7 @@
         </createTable>
 
         <createIndex tableName="site"
-                     indexName="site_publisher_id"
+                     indexName="site_publisher_id_idx"
                      unique="false">
             <column name="publisher_id" type="integer"/>
         </createIndex>
@@ -697,24 +602,58 @@
         </sql>
 
         <sql>
-            CREATE TRIGGER site_update
+            CREATE TRIGGER update_site
             BEFORE UPDATE ON site
             FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
         </sql>
 
-        <sql>
-            CREATE TRIGGER site_ins_pub
-            AFTER INSERT OR UPDATE ON site
-            FOR EACH ROW EXECUTE PROCEDURE insert_publisher()
-        </sql>
+        <createProcedure procedureName="update_new_publisher_site_tsversion">
+            CREATE OR REPLACE FUNCTION update_new_publisher_site_tsversion()
+            RETURNS TRIGGER AS $update_new_publisher_site_tsversion$
+            BEGIN
+            IF NEW.ts_version != OLD.ts_version THEN
+            UPDATE site SET ts_version = ts_version where publisher_id = NEW.id;
+            END IF;
+            RETURN NEW;
+            END;
+            $update_new_publisher_site_tsversion$ LANGUAGE plpgsql;
+        </createProcedure>
 
         <sql>
-            CREATE TRIGGER site_del_pub
-            AFTER UPDATE OR DELETE ON site
-            FOR EACH ROW EXECUTE PROCEDURE delete_publisher()
+            CREATE TRIGGER update_new_publisher_site_tsversion
+            AFTER UPDATE ON publisher
+            FOR EACH ROW EXECUTE PROCEDURE update_new_publisher_site_tsversion()
         </sql>
+
+        <createProcedure procedureName="update_new_site_tsversion">
+            CREATE OR REPLACE FUNCTION update_new_site_tsversion()
+            RETURNS TRIGGER AS $update_new_site_tsversion$
+            BEGIN
+            UPDATE site
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = NEW.site_id;
+            RETURN NEW;
+            END;
+            $update_new_site_tsversion$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <createProcedure procedureName="update_old_site_tsversion">
+            CREATE OR REPLACE FUNCTION update_old_site_tsversion()
+            RETURNS TRIGGER AS $update_old_site_tsversion$
+            BEGIN
+            UPDATE site
+            SET tsversion = extract(epoch from now())::bigint
+            WHERE id = OLD.site_id;
+            RETURN NEW;
+            END;
+            $update_old_site_tsversion$ LANGUAGE plpgsql;
+        </createProcedure>
 
         <rollback>
+            <sql>DROP TRIGGER update_new_publisher_site_tsversion ON publisher</sql>
+            <sql>DROP FUNCTION update_new_publisher_site_tsversion()</sql>
+            <sql>DROP FUNCTION update_new_site_tsversion()</sql>
+            <sql>DROP FUNCTION update_old_site_tsversion()</sql>
             <dropTable tableName="site"/>
         </rollback>
     </changeSet>
@@ -748,39 +687,27 @@
         </createTable>
 
         <createIndex tableName="site_category"
-                     indexName="site_cat_cat_id"
+                     indexName="site_category_iab_category_id_idx"
                      unique="false">
-            <column name="iab_category_id" type="integer"/>
+            <column name="iab_category_id"/>
         </createIndex>
 
         <createIndex tableName="site_category"
-                     indexName="site_cat_site_id"
+                     indexName="site_category_site_id_idx"
                      unique="false">
-            <column name="site_id" type="integer"/>
+            <column name="site_id"/>
         </createIndex>
 
         <sql>
-            CREATE TRIGGER site_cat_ins_site
+            CREATE TRIGGER update_new_site_site_category_tsversion
             AFTER INSERT OR UPDATE ON site_category
-            FOR EACH ROW EXECUTE PROCEDURE insert_site()
+            FOR EACH ROW EXECUTE PROCEDURE update_new_site_tsversion()
         </sql>
 
         <sql>
-            CREATE TRIGGER site_cat_del_site
+            CREATE TRIGGER update_old_site_site_category_tsversion
             AFTER UPDATE OR DELETE ON site_category
-            FOR EACH ROW EXECUTE PROCEDURE delete_site()
-        </sql>
-
-        <sql>
-            CREATE TRIGGER site_cat_ins_cat
-            AFTER INSERT OR UPDATE ON site_category
-            FOR EACH ROW EXECUTE PROCEDURE insert_iab_category()
-        </sql>
-
-        <sql>
-            CREATE TRIGGER site_cat_del_cat
-            AFTER UPDATE OR DELETE ON site_category
-            FOR EACH ROW EXECUTE PROCEDURE delete_iab_category()
+            FOR EACH ROW EXECUTE PROCEDURE update_old_site_tsversion()
         </sql>
 
         <rollback>
@@ -817,39 +744,27 @@
         </createTable>
 
         <createIndex tableName="site_display_manager"
-                     indexName="site_dm_dm_id"
+                     indexName="site_display_manager_display_manager_id_idx"
                      unique="false">
-            <column name="display_manager_id" type="integer"/>
+            <column name="display_manager_id"/>
         </createIndex>
 
         <createIndex tableName="site_display_manager"
-                     indexName="site_dm_site_id"
+                     indexName="site_display_manager_site_id_idx"
                      unique="false">
-            <column name="site_id" type="integer"/>
+            <column name="site_id"/>
         </createIndex>
 
         <sql>
-            CREATE TRIGGER site_dm_ins_site
+            CREATE TRIGGER update_new_site_site_display_manager_tsversion
             AFTER INSERT OR UPDATE ON site_display_manager
-            FOR EACH ROW EXECUTE PROCEDURE insert_site()
+            FOR EACH ROW EXECUTE PROCEDURE update_new_site_tsversion()
         </sql>
 
         <sql>
-            CREATE TRIGGER site_dm_del_site
+            CREATE TRIGGER update_old_site_site_display_manager_tsversion
             AFTER UPDATE OR DELETE ON site_display_manager
-            FOR EACH ROW EXECUTE PROCEDURE delete_site()
-        </sql>
-
-        <sql>
-            CREATE TRIGGER site_dm_ins_cat
-            AFTER INSERT OR UPDATE ON site_display_manager
-            FOR EACH ROW EXECUTE PROCEDURE insert_display_manager()
-        </sql>
-
-        <sql>
-            CREATE TRIGGER site_dm_del_cat
-            AFTER UPDATE OR DELETE ON site_display_manager
-            FOR EACH ROW EXECUTE PROCEDURE delete_display_manager()
+            FOR EACH ROW EXECUTE PROCEDURE update_old_site_tsversion()
         </sql>
 
         <rollback>
