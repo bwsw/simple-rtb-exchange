@@ -1,7 +1,8 @@
 package com.bitworks.rtb.service.parser
 
-import com.bitworks.rtb.model.{DataValidationException, _}
+import com.bitworks.rtb.model._
 import com.bitworks.rtb.model.request._
+import com.bitworks.rtb.service.DataValidationException
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.io.Source

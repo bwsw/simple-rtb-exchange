@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.parser
 
-import com.bitworks.rtb.model.DataValidationException
 import com.bitworks.rtb.model.response.BidResponse
+import com.bitworks.rtb.service.DataValidationException
 
 /**
   * Parser for [[com.bitworks.rtb.model.response.BidResponse BidResponse]] parsers.
