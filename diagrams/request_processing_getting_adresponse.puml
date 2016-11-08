@@ -1,0 +1,75 @@
+@startuml
+
+title RTB request processing: getting AdResponse
+
+participant Exchange
+participant Factory
+participant Parser
+participant Validator
+participant Writer
+participant BidActor
+participant WinBidActor
+participant Bidder
+
+activate Exchange
+Exchange ->> BidActor: BidRequest
+activate BidActor
+
+BidActor -> Writer: BidRequest
+activate Writer
+Writer --> BidActor: HTTP request
+deactivate Writer
+
+BidActor -> Bidder: HTTP request
+activate Bidder
+opt Got HTTP response
+    BidActor <-- Bidder: HTTP response
+    deactivate Bidder
+
+    BidActor -> Parser: HTTP response
+    activate Parser
+
+    BidActor <-- Parser: BidResponse/Parsing fail
+    deactivate Parser
+    opt HTTP response parsed to BidResponse
+        BidActor -> Validator: BidResponse
+        activate Validator
+        BidActor <-- Validator: true/false
+        deactivate Validator
+        opt BidResponse is valid
+            Exchange <<- BidActor: BidResponse
+        end
+    end
+end
+
+deactivate BidActor
+    
+Exchange -> Exchange: Auction
+
+alt Win Bidder is found
+    opt BidResponse has winurl
+        Exchange -> WinBidActor: Win Notice
+        activate WinBidActor
+        WinBidActor -> Bidder: HTTP request
+        activate Bidder
+        opt If ad url/markup not in BidResponse
+            WinBidActor <-- Bidder: HTTP response
+            deactivate Bidder
+            Exchange <-- WinBidActor: Ad url/markup
+            deactivate WinBidActor
+        end
+    end
+
+    Exchange -> Factory: BidResponse
+    activate Factory
+    Exchange <-- Factory: AdResponse
+    deactivate Factory
+
+else Win Bidder is not found
+    Exchange -> Factory: Error
+    activate Factory
+    Exchange <-- Factory: AdResponse
+    deactivate Factory
+end
+
+@enduml
