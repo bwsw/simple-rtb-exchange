@@ -10,32 +10,25 @@ database DB
 == System initialization ==
 
 DAO -> CacheUpdater: attach(this)
+DAO <-- CacheUpdater
 
 == System working ==
 
-[-> CacheUpdater: init
+[--> CacheUpdater: init
+
 activate CacheUpdater
-
-loop for all attached DAO
-    CacheUpdater -> DAO: notify(CacheInitialization)
+    CacheUpdater -> DAO: notify(InitCache)
     activate DAO
-    DAO -> DB: select
-    DAO <-- DB: all not deleted entities
-    DAO -> CacheHelper: updateCache(entities)
-    activate CacheHelper
-
-    CacheHelper -> CacheHelper: add all to cache
-    activate CacheHelper
-    deactivate CacheHelper
-
-    DAO -> DAO: update tsversion
-    activate DAO
+        DAO -> DB: select
+        DAO <-- DB: all not deleted entities
+        DAO -> CacheHelper: updateCache(entities)
+        activate CacheHelper
+            CacheHelper -> CacheHelper: add all to cache
+            CacheHelper -> CacheHelper: update tsversion
+            CacheHelper --> DAO
+        deactivate CacheHelper
+        DAO --> CacheUpdater
     deactivate DAO
-    deactivate DAO
-
-end
-
 deactivate CacheUpdater
-
 
 @enduml

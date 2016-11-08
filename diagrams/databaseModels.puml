@@ -9,8 +9,8 @@ class App {
     +name: String
     +privacyPolicy: Int
     +test: Boolean
-    +domain: String[0..1]
-    +keyword: String[0..1]
+    +domain: String
+    +keyword: String
     +bundle: String
     +storeURL: String
     +version: String
@@ -25,10 +25,10 @@ class DisplayManager {
 }
 class Site {
     +name: String
-    +privacyPolicy: Boolean
+    +privacyPolicy: Int
     +test: Boolean
     +domain: String
-    +keyword: String[0..1]
+    +keyword: String
 }
 class IABCategory {
     +iabID: String
@@ -52,8 +52,8 @@ BaseEntity <|-- IABCategory
 BaseEntity <|-- Publisher
 BaseEntity <|-- Site
 
-Publisher *-- Site
-Publisher *-- App
+Publisher <-- Site
+Publisher <-- App
 Publisher o-- IABCategory: +blockedCategories
 Publisher o-- IABCategory: +categories
 
@@ -62,6 +62,6 @@ Site --> Status
 App o-- IABCategory
 App --> Status
 
-IABCategory --o IABCategory: +parent[0..1]
+IABCategory --o IABCategory: +parent
 
 @enduml
