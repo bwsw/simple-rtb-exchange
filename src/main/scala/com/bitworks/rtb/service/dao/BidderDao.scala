@@ -1,9 +1,8 @@
-package com.bitworks.rtb.service.dao.entitydao
+package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.service.dao.schema.BidderEntity
-import com.bitworks.rtb.service.dao.{BaseDao, CacheHelper, CacheUpdater, DbContext}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{CacheMessage, InitCache, UpdateCache}
+import com.bitworks.rtb.service.dao.schema.BidderEntity
 
 /**
   * DAO for [[com.bitworks.rtb.model.db.Bidder Bidder]].
@@ -46,6 +45,6 @@ class BidderDaoImpl(
     * @return created [[com.bitworks.rtb.model.db.Bidder Bidder]]
     */
   private def createBidder(entity: BidderEntity) = {
-    Bidder(entity.id, entity.name, entity.endpoint)
+    Some(Bidder(entity.id, entity.name, entity.endpoint))
   }
 }

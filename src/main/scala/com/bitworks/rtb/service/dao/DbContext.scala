@@ -21,12 +21,12 @@ class DbContext(configPrefix: String)
       querySchema[PublisherCategoryEntity]("publisher_category")
     }
 
-    def blockedCategory = quote {
-      querySchema[PublisherBlockedCategoryEntity]("blocked_category")
+    def publisherBlockedCategory = quote {
+      querySchema[PublisherBlockedCategoryEntity]("publisher_blocked_category")
     }
 
-    def blockedAdvertiser = quote {
-      querySchema[PublisherBlockedAdvertiserEntity]("blocked_advertiser")
+    def publisherBlockedAdvertiser = quote {
+      querySchema[PublisherBlockedAdvertiserEntity]("publisher_blocked_advertiser")
     }
 
     def iabCategory = quote {

@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <iab_category id="1" iab_id="IAB1" name="parent" tsversion="1478498814" deleted="false"/>
+    <iab_category id="2" iab_id="IAB2" parent_id="1" name="iabname" tsversion="1478498814" deleted="false"/>
+    <iab_category id="3" iab_id="deleted" name="deleted" tsversion="1478498814" deleted="true"/>
+    <iab_category id="4" iab_id="fordelete" name="fordelete" tsversion="1478498814" deleted="false"/>
+
+    <publisher id="1" name="publisher" domain="domain" tsversion="1478498814" deleted="false"/>
+    <publisher id="2" name="deleted" domain="deleted" tsversion="1478498814" deleted="true"/>
+    <publisher id="3" name="fordelete" domain="fordelete" tsversion="1478498814" deleted="false"/>
+
+    <publisher_blocked_advertiser id="1" publisher_id="1" domain="blocked_domain"/>
+    <publisher_category publisher_id="1" iab_category_id="1"/>
+    <publisher_blocked_category publisher_id="1" iab_category_id="2"/>
+
+    <site id="1" publisher_id="1" name="app" type="2" status="1" privacy_policy="1" test="false" tsversion="1478498814" deleted="false" domain="app_domain" keyword="keyword" app_bundle="bundle" app_store_url="store" app_ver="ver"/>
+    <site id="2" publisher_id="1" name="deleted" type="2" status="1" privacy_policy="1" test="false" tsversion="1478498814" deleted="true" domain="app_domain" keyword="keyword" app_bundle="bundle" app_store_url="store" app_ver="ver"/>
+    <site id="3" publisher_id="1" name="fordelete" type="2" status="1" privacy_policy="1" test="false" tsversion="1478498814" deleted="false" domain="app_domain" keyword="keyword" app_bundle="bundle" app_store_url="store" app_ver="ver"/>
+    <site_category site_id="1" iab_category_id="1"/>
+
+    <site id="11" publisher_id="1" name="site" type="1" status="1" privacy_policy="1" test="false" tsversion="1478498814" deleted="false" domain="site_domain" keyword="keyword"/>
+    <site id="12" publisher_id="1" name="deleted" type="1" status="1" privacy_policy="1" test="false" tsversion="1478498814" deleted="true" domain="site_domain" keyword="keyword"/>
+    <site id="13" publisher_id="1" name="fordelete" type="1" status="1" privacy_policy="1" test="false" tsversion="1478498814" deleted="false" domain="site_domain" keyword="keyword"/>
+    <site_category site_id="11" iab_category_id="1"/>
+
+    <bidder id="1" name="bidder" endpoint="endpoint" tsversion="1478498814" deleted="false"/>
+    <bidder id="2" name="deleted" endpoint="deleted" tsversion="1478498814" deleted="true"/>
+    <bidder id="3" name="fordelete" endpoint="fordelete" tsversion="1478498814" deleted="false"/>
+
+    <display_manager id="1" name="manager" ver="ver" tsversion="1478498814" deleted="false"/>
+    <display_manager id="2" name="deleted" ver="deleted" tsversion="1478498814" deleted="true"/>
+    <display_manager id="3" name="fordelete" ver="fordelete" tsversion="1478498814" deleted="false"/>
+    <site_display_manager site_id="11" display_manager_id="1"/>
+</dataset>

@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.model.message.{CacheMessage, InitCache}
+import com.bitworks.rtb.model.message.CacheMessage
 
 /**
   * Stores DAO services and performs cache initialization and updating.

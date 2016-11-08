@@ -1,8 +1,6 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.service.dao.schema.EntityMetaInfo
 import com.bitworks.rtb.model.message.CacheMessage
-
 
 /**
   * Base DAO service.
@@ -14,7 +12,6 @@ trait BaseDao[E] {
 
   protected val updater: CacheUpdater
   protected var tsversion: Long = 0
-
 
   /**
     * Receives message and perform corresponding action
@@ -33,17 +30,11 @@ trait BaseDao[E] {
   /** Returns all entities  */
   def getAll: Seq[E]
 
-
   /**
-    * Updates stored tsversion.
+    * Returns entities by IDs list
     *
-    * @param entities entities with meta information from DB.
-    * @tparam T concrete entity type
+    * @param ids list of entities IDs
     */
-  protected def updateTsVersion[T <: EntityMetaInfo](entities: Seq[T]) = entities match {
-    case Seq() =>
-    case _ => tsversion = entities.maxBy(x => x.tsversion).tsversion
-  }
-
+  def getByIds(ids: Seq[Int]): Seq[E]
 }
 

@@ -10,31 +10,43 @@ import com.bitworks.rtb.model.db.BaseEntity
   */
 trait CacheHelper[E] extends BaseDao[E] {
 
-  protected var byIdCache: Map[Int, E] = Map.empty
-
+  private var byIdCache: Map[Int, E] = Map.empty
 
   /**
     * Updates cache using actual data from DB
     *
     * @param entities entities with meta information from DB
-    * @param f        function creates DTO from DB entity
+    * @param f        function creates some DTO from DB entity or None, if
+    *                 creation is impossible
     * @tparam T concrete entity type
     */
-  def updateCache[T <: EntityMetaInfo with BaseEntity](entities: Seq[T], f: T => E) = {
-    updateTsVersion(entities)
+  protected def updateCache[T <: EntityMetaInfo with BaseEntity](
+      entities: Seq[T],
+      f: T => Option[E]) = {
 
-    val deleted = entities
-      .filter(_.deleted)
-      .map(_.id)
-
-    val updated = entities
-      .filter(!_.deleted)
-      .map(x => x.id -> f(x))
-
-    byIdCache = byIdCache -- deleted ++ updated
+    entities.foreach { x =>
+      if (x.deleted) {
+        byIdCache = byIdCache - x.id
+      }
+      else {
+        f(x) match {
+          case Some(v) => byIdCache = byIdCache + (x.id -> v)
+          case None =>
+        }
+      }
+      tsversion = math.max(tsversion, x.tsversion)
+    }
   }
 
-  override def get(id: Int): Option[E] = byIdCache.get(id)
+  override def get(id: Int): Option[E] = {
+    byIdCache.get(id)
+  }
 
-  override def getAll: Seq[E] = byIdCache.values.toSeq
+  override def getAll: Seq[E] = {
+    byIdCache.values.toSeq
+  }
+
+  override def getByIds(ids: Seq[Int]) = {
+    byIdCache.filterKeys(ids.contains(_)).values.toSeq
+  }
 }

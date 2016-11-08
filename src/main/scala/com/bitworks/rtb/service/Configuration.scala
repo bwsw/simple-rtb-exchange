@@ -1,4 +1,4 @@
-package com.bitworks.rtb.application
+package com.bitworks.rtb.service
 
 import java.util.concurrent.TimeUnit
 
@@ -7,15 +7,15 @@ import com.typesafe.config.ConfigFactory
 import scala.concurrent.duration.FiniteDuration
 
 /**
-  * Access point to "application.conf"
+  * Access point to application configuration.
   *
   * @author Egor Ilchenko
   */
 class Configuration {
   private val conf = ConfigFactory.load()
 
-  /** Returns cache updating interval */
-  def cacheUpdateInterval = FiniteDuration(
+  /** Cache updating interval */
+  val cacheUpdateInterval = FiniteDuration(
     conf.getDuration(
       "rtb-exchange.cache-update-interval")
       .toMillis, TimeUnit.MILLISECONDS)

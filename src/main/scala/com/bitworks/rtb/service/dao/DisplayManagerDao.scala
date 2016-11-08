@@ -1,9 +1,8 @@
-package com.bitworks.rtb.service.dao.entitydao
+package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.service.dao.schema.{DisplayManagerEntity, SiteDisplayManagerEntity}
-import com.bitworks.rtb.service.dao.{BaseDao, CacheHelper, CacheUpdater, DbContext}
 import com.bitworks.rtb.model.db.DisplayManager
 import com.bitworks.rtb.model.message.{CacheMessage, InitCache, UpdateCache}
+import com.bitworks.rtb.service.dao.schema.DisplayManagerEntity
 
 /**
   * DAO for [[com.bitworks.rtb.model.db.DisplayManager DisplayManager]].
@@ -56,16 +55,14 @@ class DisplayManagerDaoImpl(
     }
   }
 
-
   /** Updates display managers by owner ID cache */
   private def updateOwnerIdCache() = {
     val siteDisplayManages = ctx.run(Schema.siteDisplayManager)
 
     byOwnerIdCache = siteDisplayManages
       .groupBy(_.siteId).map {
-      case (id, arr) => (id, arr
-        .map(x => get(x.displayManagerId).orNull)
-        .filter(_ != null))
+      case (id, managers) =>
+        (id, managers.map(x => get(x.displayManagerId).orNull).filter(_ != null))
     }
   }
 
@@ -73,10 +70,11 @@ class DisplayManagerDaoImpl(
     * Creates [[com.bitworks.rtb.model.db.DisplayManager DisplayManager]] from
     * [[com.bitworks.rtb.service.dao.schema.DisplayManagerEntity DisplayManagerEntity]]
     *
-    * @param entity [[com.bitworks.rtb.service.dao.schema.DisplayManagerEntity DisplayManagerEntity]]
+    * @param entity [[com.bitworks.rtb.service.dao.schema.DisplayManagerEntity
+    *              DisplayManagerEntity]]
     * @return created [[com.bitworks.rtb.model.db.DisplayManager DisplayManager]]
     */
   private def createDisplayManager(entity: DisplayManagerEntity) = {
-    DisplayManager(entity.id, entity.name, entity.ver)
+    Some(DisplayManager(entity.id, entity.name, entity.ver))
   }
 }
