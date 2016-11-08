@@ -5,6 +5,7 @@ package com.bitworks.rtb.model.db
   *
   * @param id            database ID
   * @param name          name of the site
+  * @param publisher     owner of the site
   * @param status        site status
   * @param privacyPolicy is has a privacy policy
   * @param test          is site in test mode
@@ -16,6 +17,7 @@ package com.bitworks.rtb.model.db
 case class Site(
     id: Int,
     name: String,
+    publisher: Publisher,
     status: Status.Value,
     privacyPolicy: Int,
     test: Boolean,

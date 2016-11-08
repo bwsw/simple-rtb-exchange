@@ -1,7 +1,7 @@
 package com.bitworks.rtb.model.message
 
 /**
-  *
+  * Start cache initialization.
   *
   * @author Egor Ilchenko
   */

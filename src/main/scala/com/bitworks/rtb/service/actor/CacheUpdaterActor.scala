@@ -10,7 +10,7 @@ import com.bitworks.rtb.model.message._
   * @author Egor Ilchenko
   */
 class CacheUpdaterActor(dbUpdater: CacheUpdater) extends Actor with ActorLogging{
-  override def receive: Receive = {
+  override def receive = {
     case InitCache =>
       log.debug("cache initializing started...")
       dbUpdater.notifyAll(InitCache)
