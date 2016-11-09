@@ -4,16 +4,16 @@ package com.bitworks.rtb.model.db
   * Details of the application calling for the impression.
   *
   * @param id               database ID
-  * @param name             name of the app
-  * @param publisherId      owner ID of the app
-  * @param status           app status
+  * @param name             name of the application
+  * @param publisherId      owner ID of the application
+  * @param status           application status
   * @param privacyPolicy    privacy policy
-  * @param test             is app in test mode
-  * @param domain           domain of the app
-  * @param keyword          comma separated list of keywords about the app
-  * @param iabCategoriesIds ids of IAB content categories of the app
-  * @param bundle           application bundle or package name
-  * @param storeUrl         application store URL for an installed app
+  * @param test             indicates if the application is in test mode
+  * @param domain           domain of the application
+  * @param keyword          comma separated list of keywords about the application
+  * @param iabCategoriesIds ids of IAB content categories of the application
+  * @param bundle           applicationlication bundle or package name
+  * @param storeUrl         application store URL for an installed application
   * @param version          application version
   * @author Egor Ilchenko
   */
