@@ -12,7 +12,6 @@ fork in Test := true
 javaOptions in Test += "-Dconfig.resource=application.test.conf"
 
 libraryDependencies ++= Seq(
-  "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.4",
   "org.postgresql" % "postgresql" % "9.4.1211",
   "io.getquill" % "quill-jdbc_2.11" % "1.0.0",
@@ -20,5 +19,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" % "akka-actor_2.11" % "2.4.12",
   "com.typesafe.akka" % "akka-slf4j_2.11" % "2.4.12",
   "ch.qos.logback" % "logback-classic" % "1.1.7",
-  "org.dbunit" % "dbunit" % "2.5.3"
+
+  "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
+  "org.dbunit" % "dbunit" % "2.5.3" % "test"
 )
