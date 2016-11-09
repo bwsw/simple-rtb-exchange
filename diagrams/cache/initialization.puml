@@ -10,17 +10,21 @@ database DB
 == System initialization ==
 
 DAO -> CacheUpdater: attach(this)
+activate CacheUpdater
 DAO <-- CacheUpdater
+deactivate CacheUpdater
 
 == System working ==
 
-[--> CacheUpdater: init
+[-> CacheUpdater: init
 
 activate CacheUpdater
     CacheUpdater -> DAO: notify(InitCache)
     activate DAO
         DAO -> DB: select
+        activate DB
         DAO <-- DB: all not deleted entities
+        deactivate DB
         DAO -> CacheHelper: updateCache(entities)
         activate CacheHelper
             CacheHelper -> CacheHelper: add all to cache
@@ -29,6 +33,7 @@ activate CacheUpdater
         deactivate CacheHelper
         DAO --> CacheUpdater
     deactivate DAO
+    [<-- CacheUpdater
 deactivate CacheUpdater
 
 @enduml
