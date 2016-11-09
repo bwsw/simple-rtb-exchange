@@ -7,6 +7,7 @@ class BaseEntity << (T,#AAFFAA)>> {
 }
 class App {
     +name: String
+    +publisherId: Int
     +privacyPolicy: Int
     +test: Boolean
     +domain: String
@@ -14,6 +15,7 @@ class App {
     +bundle: String
     +storeURL: String
     +version: String
+    +categoriesIds: Int[]
 }
 class Bidder {
     +name: String
@@ -25,19 +27,24 @@ class DisplayManager {
 }
 class Site {
     +name: String
+    +publisherId: Int
     +privacyPolicy: Int
     +test: Boolean
     +domain: String
     +keyword: String
+    +categoriesIds: Int[]
 }
 class IABCategory {
     +iabID: String
     +name: String
+    +parentId: Int
 }
 class Publisher {
     +name: String
     +domain: String
     +blockedDomains: String[]
+    +blockedCategoriesIds: Int[]
+    +categoriesIds: Int[]
 }
 
 enum Status {
@@ -52,16 +59,7 @@ BaseEntity <|-- IABCategory
 BaseEntity <|-- Publisher
 BaseEntity <|-- Site
 
-Publisher <-- Site
-Publisher <-- App
-Publisher o-- IABCategory: +blockedCategories
-Publisher o-- IABCategory: +categories
-
-Site o-- IABCategory
 Site --> Status
-App o-- IABCategory
 App --> Status
-
-IABCategory --o IABCategory: +parent
 
 @enduml

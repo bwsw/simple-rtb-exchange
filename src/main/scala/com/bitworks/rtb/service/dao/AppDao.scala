@@ -17,14 +17,10 @@ trait AppDao extends BaseDao[App] with CacheHelper[App]
   *
   * @param ctx          DB context
   * @param updater      [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
-  * @param categoryDao  [[com.bitworks.rtb.service.dao.CategoryDao CategoryDao]]
-  * @param publisherDao [[com.bitworks.rtb.service.dao.PublisherDao PublisherDao]]
   */
 class AppDaoImpl(
     ctx: DbContext,
-    val updater: CacheUpdater,
-    categoryDao: CategoryDao,
-    publisherDao: PublisherDao) extends AppDao with Logging {
+    val updater: CacheUpdater) extends AppDao with Logging {
 
   val appType = 2
 
@@ -79,21 +75,13 @@ class AppDaoImpl(
         return None
     }
 
-    val publisher = publisherDao.get(entity.publisherId) match {
-      case Some(pub) => pub
-      case None =>
-        log.error(s"app id: ${entity.id} not loaded, publisher not exist")
-        return None
-    }
-
-    val appCategories = categoryDao
-      .getByIds(ac.filter(_.siteId == entity.id).map(_.iabCategoryId))
+    val appCategories = ac.filter(_.siteId == entity.id).map(_.iabCategoryId)
 
     Some(
       App(
         entity.id,
         entity.name,
-        publisher,
+        entity.publisherId,
         status,
         entity.privacyPolicy,
         entity.test,

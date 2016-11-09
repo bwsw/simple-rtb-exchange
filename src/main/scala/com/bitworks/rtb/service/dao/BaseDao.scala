@@ -35,6 +35,6 @@ trait BaseDao[E] {
     *
     * @param ids list of entities IDs
     */
-  def getByIds(ids: Seq[Int]): Seq[E]
+  def get(ids: Seq[Int]): Seq[E]
 }
 

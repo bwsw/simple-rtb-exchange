@@ -17,14 +17,10 @@ trait SiteDao extends BaseDao[Site] with CacheHelper[Site]
   *
   * @param ctx          DB context
   * @param updater      [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
-  * @param categoryDao  [[com.bitworks.rtb.service.dao.CategoryDao CategoryDao]]
-  * @param publisherDao [[com.bitworks.rtb.service.dao.PublisherDao PublisherDao]]
   */
 class SiteDaoImpl(
     ctx: DbContext,
-    val updater: CacheUpdater,
-    categoryDao: CategoryDao,
-    publisherDao: PublisherDao) extends SiteDao with Logging {
+    val updater: CacheUpdater) extends SiteDao with Logging {
 
   import ctx._
 
@@ -69,22 +65,13 @@ class SiteDaoImpl(
         log.error(s"site id: ${entity.id} not loaded, empty domain")
         return None
     }
-    val publisher = publisherDao.get(entity.publisherId) match {
-      case Some(pub) => pub
-      case None =>
-        log.error(s"site id: ${entity.id} not loaded, publisher not exist")
-        return None
-    }
-    val siteCategories = categoryDao
-      .getByIds(
-        sc
-          .filter(_.siteId == entity.id)
-          .map(_.iabCategoryId))
+
+    val siteCategories = sc.filter(_.siteId == entity.id).map(_.iabCategoryId)
     Some(
       Site(
         entity.id,
         entity.name,
-        publisher,
+        entity.publisherId,
         status,
         entity.privacyPolicy,
         entity.test,

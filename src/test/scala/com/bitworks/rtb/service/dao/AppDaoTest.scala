@@ -34,8 +34,7 @@ class AppDaoTest extends BaseDaoTest {
 
     app shouldBe defined
     val a = app.value
-    a.publisher.id shouldBe 1
-    a.publisher.name shouldBe "publisher"
+    a.publisherId shouldBe 1
     a.name shouldBe "app"
     a.status shouldBe Status.active
     a.privacyPolicy shouldBe 1
@@ -45,7 +44,7 @@ class AppDaoTest extends BaseDaoTest {
     a.bundle shouldBe "bundle"
     a.storeUrl shouldBe "store"
     a.version shouldBe "ver"
-    a.iabCategories.map(_.iabId) should contain theSameElementsAs Seq("IAB1")
+    a.iabCategoriesIds should contain theSameElementsAs Seq(1)
   }
 
   it should "not load deleted app from DB" in {

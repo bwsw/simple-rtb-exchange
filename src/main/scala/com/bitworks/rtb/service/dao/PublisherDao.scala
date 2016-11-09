@@ -12,16 +12,14 @@ import com.bitworks.rtb.service.dao.schema._
 trait PublisherDao extends BaseDao[Publisher] with CacheHelper[Publisher]
 
 /**
-  * DAO implementation for [[com.bitworks.rtb.model.db.DisplayManager DisplayManager]].
+  * DAO implementation for [[com.bitworks.rtb.model.db.Publisher Publisher]].
   *
   * @param ctx            DB context
   * @param updater        [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
-  * @param iabCategoryDao [[com.bitworks.rtb.service.dao.CategoryDao CategoryDao]]
   */
 class PublisherDaoImpl(
     ctx: DbContext,
-    val updater: CacheUpdater,
-    iabCategoryDao: CategoryDao) extends PublisherDao {
+    val updater: CacheUpdater) extends PublisherDao {
 
   import ctx._
 
@@ -61,11 +59,9 @@ class PublisherDaoImpl(
       ba: Seq[PublisherBlockedAdvertiserEntity])(
       entity: PublisherEntity) = {
 
-    val publisherCategories = iabCategoryDao
-      .getByIds(pc.filter(_.publisherId == entity.id).map(_.iabCategoryId))
+    val publisherCategories = pc.filter(_.publisherId == entity.id).map(_.iabCategoryId)
 
-    val blockedCategories = iabCategoryDao
-      .getByIds(pbc.filter(_.publisherId == entity.id).map(_.iabCategoryId))
+    val blockedCategories = pbc.filter(_.publisherId == entity.id).map(_.iabCategoryId)
 
     val blockedDomains = ba.filter(_.publisherId == entity.id).map(_.domain)
 

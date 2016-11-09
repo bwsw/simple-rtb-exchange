@@ -46,7 +46,7 @@ trait CacheHelper[E] extends BaseDao[E] {
     byIdCache.values.toSeq
   }
 
-  override def getByIds(ids: Seq[Int]) = {
+  override def get(ids: Seq[Int]) = {
     byIdCache.filterKeys(ids.contains(_)).values.toSeq
   }
 }

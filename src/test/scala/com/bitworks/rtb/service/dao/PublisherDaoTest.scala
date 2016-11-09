@@ -35,9 +35,9 @@ class PublisherDaoTest extends BaseDaoTest {
     p.name shouldBe "publisher"
     p.domain shouldBe "domain"
 
-    p.categories.map(_.iabId) should contain theSameElementsAs Seq("IAB1")
+    p.categoriesIds should contain theSameElementsAs Seq(1)
 
-    p.blockedCategories.map(_.iabId) should contain theSameElementsAs Seq("IAB2")
+    p.blockedCategoriesIds should contain theSameElementsAs Seq(2)
 
     p.blockedDomains should contain theSameElementsAs Seq("blocked_domain")
   }

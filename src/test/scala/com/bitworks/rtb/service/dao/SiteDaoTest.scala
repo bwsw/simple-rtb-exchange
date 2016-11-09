@@ -34,15 +34,14 @@ class SiteDaoTest extends BaseDaoTest {
 
     site shouldBe defined
     val a = site.value
-    a.publisher.id shouldBe 1
-    a.publisher.name shouldBe "publisher"
+    a.publisherId shouldBe 1
     a.name shouldBe "site"
     a.status shouldBe Status.active
     a.privacyPolicy shouldBe 1
     a.test shouldBe false
     a.domain shouldBe "site_domain"
     a.keyword shouldBe Some("keyword")
-    a.iabCategories.map(_.iabId) should contain theSameElementsAs Seq("IAB1")
+    a.iabCategoriesIds should contain theSameElementsAs Seq(1)
   }
 
   it should "not load deleted site from DB" in {
