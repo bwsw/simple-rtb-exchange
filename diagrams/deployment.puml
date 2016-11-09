@@ -25,12 +25,6 @@ node "UI Host" {
     UIImage -- APIImage
 }
 
-node "Redis Host" {
-    node RedisImage [
-        <<image>>
-        <b>Redis</b>
-    ]
-}
 
 node "RTB Host" {
 
@@ -38,18 +32,7 @@ node "RTB Host" {
         <<image>>
         <b>RtbExchangeImage</b>
     ]
-
-    node DBFillerImage [
-        <<image>>
-        <b>DBFiller</b>
-    ]
 }
-
-
-PostgressImage -left- DBFillerImage
-DBFillerImage -left- RedisImage
-
-RedisImage -- RtbExchangeImage
-
+RtbExchangeImage -- PostgressImage
 
 @enduml
