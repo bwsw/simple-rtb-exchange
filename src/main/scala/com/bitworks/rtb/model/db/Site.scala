@@ -7,7 +7,7 @@ package com.bitworks.rtb.model.db
   * @param name          name of the site
   * @param publisher     owner of the site
   * @param status        site status
-  * @param privacyPolicy is has a privacy policy
+  * @param privacyPolicy privacy policy
   * @param test          is site in test mode
   * @param domain        domain of the site
   * @param keyword       comma separated list of keywords about the site

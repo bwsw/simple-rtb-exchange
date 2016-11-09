@@ -5,7 +5,7 @@ package com.bitworks.rtb.model.db
   *
   * @param id       database ID
   * @param name     name of the bidder
-  * @param endpoint domain of the bidder
+  * @param endpoint endpoint of the bidder
   * @author Egor Ilchenko
   */
 case class Bidder(
