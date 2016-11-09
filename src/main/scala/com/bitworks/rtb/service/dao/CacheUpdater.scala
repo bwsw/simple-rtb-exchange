@@ -17,7 +17,6 @@ class CacheUpdater {
     */
   def attach(dao: BaseDao[_]) = daoServices ::= dao
 
-
   /**
     * Notifies all attached DAO services
     *

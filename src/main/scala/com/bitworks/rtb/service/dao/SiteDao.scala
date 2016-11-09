@@ -18,9 +18,7 @@ trait SiteDao extends BaseDao[Site] with CacheHelper[Site]
   * @param ctx          DB context
   * @param updater      [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
   */
-class SiteDaoImpl(
-    ctx: DbContext,
-    val updater: CacheUpdater) extends SiteDao with Logging {
+class SiteDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends SiteDao with Logging {
 
   import ctx._
 

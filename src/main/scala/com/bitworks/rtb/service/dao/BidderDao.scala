@@ -17,9 +17,7 @@ trait BidderDao extends BaseDao[Bidder] with CacheHelper[Bidder]
   * @param ctx     DB context
   * @param updater [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
   */
-class BidderDaoImpl(
-    ctx: DbContext,
-    val updater: CacheUpdater) extends BidderDao {
+class BidderDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends BidderDao {
 
   import ctx._
 

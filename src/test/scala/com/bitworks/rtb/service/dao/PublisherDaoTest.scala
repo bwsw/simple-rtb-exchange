@@ -19,8 +19,6 @@ class PublisherDaoTest extends BaseDaoTest {
 
   "PublisherDao" should "load publisher by ID correctly after cache init" in {
     val publisherDao = inject[PublisherDao]
-    val categoriesDao = inject[CategoryDao]
-    categoriesDao.notify(InitCache)
 
     val notFoundPublisher = publisherDao.get(1)
     notFoundPublisher should not be defined

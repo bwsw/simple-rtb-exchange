@@ -20,10 +20,6 @@ class SiteDaoTest extends BaseDaoTest {
 
   "SiteDao" should "load site by ID correctly after cache init" in {
     val siteDao = inject[SiteDao]
-    val categoryDao = inject[CategoryDao]
-    val publisherDao = inject[PublisherDao]
-    categoryDao.notify(InitCache)
-    publisherDao.notify(InitCache)
 
     val notFoundSite = siteDao.get(11)
     notFoundSite should not be defined
@@ -56,10 +52,6 @@ class SiteDaoTest extends BaseDaoTest {
 
   it should "remove site from cache if record deleted from database" in {
     val siteDao = inject[SiteDao]
-    val categoryDao = inject[CategoryDao]
-    val publisherDao = inject[PublisherDao]
-    categoryDao.notify(InitCache)
-    publisherDao.notify(InitCache)
 
     siteDao.notify(InitCache)
     executeQuery("site-delete.xml", Update)
@@ -77,10 +69,6 @@ class SiteDaoTest extends BaseDaoTest {
 
   it should "load inserted site by ID correctly after cache update" in {
     val siteDao = inject[SiteDao]
-    val categoryDao = inject[CategoryDao]
-    val publisherDao = inject[PublisherDao]
-    categoryDao.notify(InitCache)
-    publisherDao.notify(InitCache)
 
     siteDao.notify(InitCache)
     executeQuery("site-insert.xml", Insert)

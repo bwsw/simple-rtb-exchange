@@ -17,9 +17,7 @@ trait PublisherDao extends BaseDao[Publisher] with CacheHelper[Publisher]
   * @param ctx            DB context
   * @param updater        [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
   */
-class PublisherDaoImpl(
-    ctx: DbContext,
-    val updater: CacheUpdater) extends PublisherDao {
+class PublisherDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends PublisherDao {
 
   import ctx._
 
