@@ -23,7 +23,7 @@ trait DisplayManagerDao extends BaseDao[DisplayManager] with CacheHelper[Display
   * DAO implementation for [[com.bitworks.rtb.model.db.DisplayManager DisplayManager]].
   *
   * @param ctx     DB context
-  * @param updater [[CacheUpdater CacheUpdater]]
+  * @param updater [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
   */
 class DisplayManagerDaoImpl(
     ctx: DbContext,

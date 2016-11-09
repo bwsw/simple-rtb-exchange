@@ -15,7 +15,7 @@ trait CategoryDao extends BaseDao[IABCategory] with CacheHelper[IABCategory]
   * DAO implementation for [[com.bitworks.rtb.model.db.IABCategory IABCategory]].
   *
   * @param ctx     DB context
-  * @param updater [[CacheUpdater CacheUpdater]]
+  * @param updater [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
   */
 class CategoryDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends CategoryDao {
 

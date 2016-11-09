@@ -15,7 +15,7 @@ trait BidderDao extends BaseDao[Bidder] with CacheHelper[Bidder]
   * DAO implementation for [[com.bitworks.rtb.model.db.Bidder Bidder]].
   *
   * @param ctx     DB context
-  * @param updater [[CacheUpdater CacheUpdater]]
+  * @param updater [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
   */
 class BidderDaoImpl(
     ctx: DbContext,
