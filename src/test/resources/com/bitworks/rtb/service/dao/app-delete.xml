@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <site id="3" publisher_id="1" name="fordelete" type="2" status="1" privacy_policy="1" test="false"  deleted="true" domain="app_domain" keyword="keyword" app_bundle="bundle" app_store_url="store" app_ver="ver"/>
+</dataset>

@@ -1,6 +1,6 @@
 package com.bitworks.rtb.model.request.builder
 
-import com.bitworks.rtb.model.request.{Banner, Deal}
+import com.bitworks.rtb.model.request.Deal
 
 /**
   * Builder for [[com.bitworks.rtb.model.request.Deal Deal]].

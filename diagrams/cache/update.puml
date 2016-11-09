@@ -1,0 +1,36 @@
+@startuml
+
+title: Cache updating
+
+control Scheduler
+boundary CacheUpdater
+control DAO
+control CacheHelper
+database DB
+
+Scheduler-> CacheUpdater: update
+
+activate CacheUpdater
+    CacheUpdater -> DAO: notify(UpdateCache)
+    activate DAO
+        DAO -> DB: select
+        activate DB
+        DAO <-- DB: all entities with tsversion > lasttsversion
+        deactivate DB
+        DAO -> CacheHelper: updateCache(entities)
+        activate CacheHelper
+            loop for each entity
+                CacheHelper -> CacheHelper: check for deleted and delete
+                CacheHelper -> CacheHelper: check for updated and update
+            end
+            CacheHelper -> CacheHelper: update tsversion
+            CacheHelper --> DAO
+        deactivate CacheHelper
+        DAO --> CacheUpdater
+    deactivate DAO
+    Scheduler<-- CacheUpdater
+deactivate CacheUpdater
+
+
+
+@enduml

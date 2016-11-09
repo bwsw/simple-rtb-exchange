@@ -1,0 +1,27 @@
+@startuml
+
+title Package diagram
+
+skinparam componentStyle uml2
+
+package model {
+    package ad
+    package db
+    package request
+    package response
+    package message
+}
+package service {
+    package dao
+    package actor
+    package parser
+    package writer
+    package validator
+    package factory
+}
+package application
+
+application -> service
+service -> model
+
+@enduml

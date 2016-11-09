@@ -48,7 +48,6 @@ table(publisher_category) {
 composition(iab_category, publisher_category, iab_category_id)
 composition(publisher, publisher_category, publisher_id)
 
-'layout stuff
 publisher_category -[hidden] publisher
 publisher_category -[hidden] iab_category
 
@@ -103,20 +102,6 @@ table(site_category) {
 }
 composition(site, site_category, site_id)
 composition(iab_category, site_category, iab_category_id)
-
-table(display_manager) {
-    primary_key(id): int
-    req(name): string
-    req(ver): string
-    metaInfo
-}
-
-table(site_display_manager) {
-    pf_key(site_id): int
-    pf_key(display_manager_id): int
-}
-composition(site, site_display_manager, site_id)
-composition(display_manager, site_display_manager, display_manager_id)
 
 table(bidder) {
     primary_key(id): int

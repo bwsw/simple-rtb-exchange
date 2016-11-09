@@ -1,0 +1,65 @@
+@startuml
+
+hide methods
+
+class BaseEntity << (T,#AAFFAA)>> {
+    +ID: Int
+}
+class App {
+    +name: String
+    +publisherId: Int
+    +privacyPolicy: Int
+    +test: Boolean
+    +domain: String
+    +keyword: String
+    +bundle: String
+    +storeURL: String
+    +version: String
+    +categoriesIds: Int[]
+}
+class Bidder {
+    +name: String
+    +endpoint: String
+}
+class DisplayManager {
+    +name: String
+    +ver: String
+}
+class Site {
+    +name: String
+    +publisherId: Int
+    +privacyPolicy: Int
+    +test: Boolean
+    +domain: String
+    +keyword: String
+    +categoriesIds: Int[]
+}
+class IABCategory {
+    +iabID: String
+    +name: String
+    +parentId: Int
+}
+class Publisher {
+    +name: String
+    +domain: String
+    +blockedDomains: String[]
+    +blockedCategoriesIds: Int[]
+    +categoriesIds: Int[]
+}
+
+enum Status {
+    inactive
+    active
+}
+
+BaseEntity <|-- App
+BaseEntity <|-- Bidder
+BaseEntity <|-- DisplayManager
+BaseEntity <|-- IABCategory
+BaseEntity <|-- Publisher
+BaseEntity <|-- Site
+
+Site --> Status
+App --> Status
+
+@enduml

@@ -1,6 +1,6 @@
 package com.bitworks.rtb.model.request.builder
 
-import com.bitworks.rtb.model.request.{Site, Content, Publisher}
+import com.bitworks.rtb.model.request.{Content, Publisher, Site}
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
