@@ -3,7 +3,7 @@ package com.bitworks.rtb.service.dao.schema
 import com.bitworks.rtb.model.db.BaseEntity
 
 /**
-  * Database blocked advertiser entity.
+  * Database publisher blocked advertiser entity.
   *
   * @author Egor Ilchenko
   */

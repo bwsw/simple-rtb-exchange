@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.dao.schema
 
 /**
-  * Database publisher category entity.
+  * Database publisher IAB category entity.
   *
   * @author Egor Ilchenko
   */
