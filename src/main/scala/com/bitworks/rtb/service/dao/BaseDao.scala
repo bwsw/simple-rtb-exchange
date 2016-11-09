@@ -8,7 +8,7 @@ import com.bitworks.rtb.model.message.CacheMessage
   * @author Egor Ilchenko
   */
 trait BaseDao[E] {
-  updater.attach(this)
+  updater.register(this)
 
   protected val updater: CacheUpdater
   protected var tsversion: Long = 0
