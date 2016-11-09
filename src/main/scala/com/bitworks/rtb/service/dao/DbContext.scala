@@ -37,14 +37,6 @@ class DbContext(configPrefix: String)
       querySchema[BidderEntity]("bidder")
     }
 
-    def displayManager = quote {
-      querySchema[DisplayManagerEntity]("display_manager")
-    }
-
-    def siteDisplayManager = quote {
-      querySchema[SiteDisplayManagerEntity]("site_display_manager")
-    }
-
     def site = quote {
       querySchema[SiteEntity]("site")
     }

@@ -52,7 +52,7 @@ class CategoryDaoTest extends BaseDaoTest {
     val forDeleteCategory = categoryDao.get(4)
 
     forDeleteCategory shouldBe defined
-    forDeleteCategory.value.iabId shouldBe "fordelete"
+    forDeleteCategory.value.iabId shouldBe "fordelet"
     forDeleteCategory.value.name shouldBe "fordelete"
     forDeleteCategory.value.parentId should not be defined
 

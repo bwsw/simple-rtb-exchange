@@ -33,7 +33,7 @@ class PublisherDaoImpl(
       }
       case UpdateCache => ctx.run {
         Schema.publisher
-          .filter(_.tsversion > lift(tsversion))
+          .filter(_.tsversion >= lift(tsversion))
       }
     }
     updateCache(publishers, getCreator)

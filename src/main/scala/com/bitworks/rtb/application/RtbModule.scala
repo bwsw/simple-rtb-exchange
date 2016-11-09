@@ -18,7 +18,6 @@ class RtbModule extends Module {
   bind[CategoryDao] to injected[CategoryDaoImpl]
   bind[PublisherDao] to injected[PublisherDaoImpl]
   bind[BidderDao] to injected[BidderDaoImpl]
-  bind[DisplayManagerDao] to injected[DisplayManagerDaoImpl]
   bind[AppDao] to injected[AppDaoImpl]
   bind[SiteDao] to injected[SiteDaoImpl]
 

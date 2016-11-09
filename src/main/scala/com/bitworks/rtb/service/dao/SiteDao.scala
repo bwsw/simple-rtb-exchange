@@ -40,7 +40,7 @@ class SiteDaoImpl(
       case UpdateCache => ctx.run {
         Schema.site
           .filter(_.`type` == lift(siteType))
-          .filter(_.tsversion > lift(tsversion))
+          .filter(_.tsversion >= lift(tsversion))
       }
     }
     updateCache(apps, getCreator)

@@ -3,7 +3,7 @@
     <iab_category id="1" iab_id="IAB1" name="parent" tsversion="1478498814" deleted="false"/>
     <iab_category id="2" iab_id="IAB2" parent_id="1" name="iabname" tsversion="1478498814" deleted="false"/>
     <iab_category id="3" iab_id="deleted" name="deleted" tsversion="1478498814" deleted="true"/>
-    <iab_category id="4" iab_id="fordelete" name="fordelete" tsversion="1478498814" deleted="false"/>
+    <iab_category id="4" iab_id="fordelet" name="fordelete" tsversion="1478498814" deleted="false"/>
 
     <publisher id="1" name="publisher" domain="domain" tsversion="1478498814" deleted="false"/>
     <publisher id="2" name="deleted" domain="deleted" tsversion="1478498814" deleted="true"/>
@@ -26,9 +26,4 @@
     <bidder id="1" name="bidder" endpoint="endpoint" tsversion="1478498814" deleted="false"/>
     <bidder id="2" name="deleted" endpoint="deleted" tsversion="1478498814" deleted="true"/>
     <bidder id="3" name="fordelete" endpoint="fordelete" tsversion="1478498814" deleted="false"/>
-
-    <display_manager id="1" name="manager" ver="ver" tsversion="1478498814" deleted="false"/>
-    <display_manager id="2" name="deleted" ver="deleted" tsversion="1478498814" deleted="true"/>
-    <display_manager id="3" name="fordelete" ver="fordelete" tsversion="1478498814" deleted="false"/>
-    <site_display_manager site_id="11" display_manager_id="1"/>
 </dataset>

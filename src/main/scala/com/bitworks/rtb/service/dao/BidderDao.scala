@@ -31,7 +31,7 @@ class BidderDaoImpl(
       }
       case UpdateCache => ctx.run {
         Schema.bidder
-          .filter(_.tsversion > lift(tsversion))
+          .filter(_.tsversion >= lift(tsversion))
       }
     }
     updateCache(bidders, createBidder)

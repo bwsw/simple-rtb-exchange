@@ -29,7 +29,7 @@ class CategoryDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends Categor
       }
       case UpdateCache => ctx.run {
         Schema.iabCategory
-          .filter(_.tsversion > lift(tsversion))
+          .filter(_.tsversion >= lift(tsversion))
       }
     }
     updateCache(categories, mapCategory)
