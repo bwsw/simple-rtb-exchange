@@ -20,7 +20,7 @@ class RtbModule extends Module {
   bind[BidderDao] to injected[BidderDaoImpl]
   bind[DisplayManagerDao] to injected[DisplayManagerDaoImpl]
   bind[AppDao] to injected[AppDaoImpl]
-  bind[SiteDao] to injected [SiteDaoImpl]
+  bind[SiteDao] to injected[SiteDaoImpl]
 
   bind[ActorSystem] to ActorSystem("rtb")
   bind[CacheUpdaterActor] toProvider injected[CacheUpdaterActor]

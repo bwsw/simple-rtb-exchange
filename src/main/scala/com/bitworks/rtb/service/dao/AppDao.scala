@@ -15,9 +15,9 @@ trait AppDao extends BaseDao[App] with CacheHelper[App]
 /**
   * DAO implementation for [[com.bitworks.rtb.model.db.App App]].
   *
-  * @param ctx         DB context
-  * @param updater     [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
-  * @param categoryDao [[com.bitworks.rtb.service.dao.CategoryDao CategoryDao]]
+  * @param ctx          DB context
+  * @param updater      [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
+  * @param categoryDao  [[com.bitworks.rtb.service.dao.CategoryDao CategoryDao]]
   * @param publisherDao [[com.bitworks.rtb.service.dao.PublisherDao PublisherDao]]
   */
 class AppDaoImpl(

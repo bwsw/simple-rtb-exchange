@@ -71,7 +71,7 @@ class DisplayManagerDaoImpl(
     * [[com.bitworks.rtb.service.dao.schema.DisplayManagerEntity DisplayManagerEntity]]
     *
     * @param entity [[com.bitworks.rtb.service.dao.schema.DisplayManagerEntity
-    *              DisplayManagerEntity]]
+    *               DisplayManagerEntity]]
     * @return created [[com.bitworks.rtb.model.db.DisplayManager DisplayManager]]
     */
   private def createDisplayManager(entity: DisplayManagerEntity) = {

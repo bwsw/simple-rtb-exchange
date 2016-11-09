@@ -7,6 +7,6 @@ import com.typesafe.scalalogging._
   *
   * @author Egor Ilchenko
   */
-trait Logging extends LazyLogging{
+trait Logging extends LazyLogging {
   protected lazy val log = logger
 }

@@ -9,7 +9,7 @@ import com.bitworks.rtb.service.dao.CacheUpdater
   *
   * @author Egor Ilchenko
   */
-class CacheUpdaterActor(dbUpdater: CacheUpdater) extends Actor with ActorLogging{
+class CacheUpdaterActor(dbUpdater: CacheUpdater) extends Actor with ActorLogging {
   override def receive = {
     case InitCache =>
       log.debug("cache initializing started...")
