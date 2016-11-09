@@ -1,7 +1,5 @@
 package com.bitworks.rtb.model.db
 
-import com.bitworks.rtb.service.dao.schema._
-
 /**
   * Publisher of the media in which the ad will be displayed.
   *

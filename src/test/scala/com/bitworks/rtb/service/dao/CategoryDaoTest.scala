@@ -2,8 +2,8 @@ package com.bitworks.rtb.service.dao
 
 import com.bitworks.rtb.application.RtbModule
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
-import scaldi.Injectable._
 import org.scalatest.OptionValues._
+import scaldi.Injectable._
 import scaldi.Module
 
 /**

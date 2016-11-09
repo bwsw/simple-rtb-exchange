@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.service.dao.schema.EntityMetaInfo
 import com.bitworks.rtb.model.db.BaseEntity
+import com.bitworks.rtb.service.dao.schema.EntityMetaInfo
 
 /**
   * Provides "entity by ID" cache.

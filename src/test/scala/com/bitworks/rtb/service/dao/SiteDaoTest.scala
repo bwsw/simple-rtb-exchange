@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.dao
 
 import com.bitworks.rtb.application.RtbModule
-import com.bitworks.rtb.model.db.{Site, Status}
+import com.bitworks.rtb.model.db.Status
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
 import org.scalatest.OptionValues._
 import scaldi.Injectable._

@@ -1,7 +1,5 @@
 package com.bitworks.rtb.service.dao.schema
 
-import com.bitworks.rtb.model.db.BaseEntity
-
 /**
   * Database site display manager entity.
   *

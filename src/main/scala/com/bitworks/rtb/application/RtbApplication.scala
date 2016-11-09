@@ -1,9 +1,9 @@
 package com.bitworks.rtb.application
 
 import akka.actor.ActorSystem
-import com.bitworks.rtb.service.actor.CacheUpdaterActor
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
 import com.bitworks.rtb.service.Configuration
+import com.bitworks.rtb.service.actor.CacheUpdaterActor
 import scaldi.akka.AkkaInjectable._
 
 /**

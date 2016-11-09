@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.model.db.{App, IABCategory, Status}
+import com.bitworks.rtb.model.db.{App, Status}
 import com.bitworks.rtb.model.message.{CacheMessage, InitCache, UpdateCache}
 import com.bitworks.rtb.service.Logging
 import com.bitworks.rtb.service.dao.schema.{SiteCategoryEntity, SiteEntity}

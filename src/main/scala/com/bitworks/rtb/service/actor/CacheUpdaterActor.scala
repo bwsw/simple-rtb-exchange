@@ -1,8 +1,8 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging}
-import com.bitworks.rtb.service.dao.CacheUpdater
 import com.bitworks.rtb.model.message._
+import com.bitworks.rtb.service.dao.CacheUpdater
 
 /**
   * Actor for cache updating.
