@@ -1,9 +1,12 @@
 package com.bitworks.rtb.application
 
 import akka.actor.ActorSystem
-import com.bitworks.rtb.service.Configuration
-import com.bitworks.rtb.service.actor.CacheUpdaterActor
+import com.bitworks.rtb.service.actor._
 import com.bitworks.rtb.service.dao._
+import com.bitworks.rtb.service.factory.{BidRequestFactory, BidRequestFactoryImpl}
+import com.bitworks.rtb.service.parser.{AdRequestJsonParser, AdRequestParser}
+import com.bitworks.rtb.service.writer.{AdResponseJsonWriter, AdResponseWriter}
+import com.bitworks.rtb.service.{Auction, AuctionImpl, Configuration}
 import scaldi.Module
 
 /**
@@ -25,4 +28,11 @@ class RtbModule extends Module {
   bind[CacheUpdaterActor] toProvider injected[CacheUpdaterActor]
 
   bind[Configuration] toNonLazy new Configuration
+
+  bind[AdRequestParser] toNonLazy injected[AdRequestJsonParser]
+  bind[AdResponseWriter] toNonLazy injected[AdResponseJsonWriter]
+  bind[BidRequestFactory] toNonLazy injected[BidRequestFactoryImpl]
+  bind[Auction] toNonLazy injected[AuctionImpl]
+
+  bind[RequestHandler] toNonLazy injected[RequestHandler]
 }

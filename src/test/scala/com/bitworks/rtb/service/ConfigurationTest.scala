@@ -1,6 +1,5 @@
-package com.bitworks.rtb.application
+package com.bitworks.rtb.service
 
-import com.bitworks.rtb.service.Configuration
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -22,5 +21,29 @@ class ConfigurationTest extends FlatSpec with Matchers {
     val interval = conf.cacheUpdateInterval
 
     interval shouldBe 53.minutes
+  }
+
+  it should "load interface correctly" in {
+    val expected = "smth"
+    System.setProperty("rtb-exchange.interface", expected)
+
+    ConfigFactory.invalidateCaches()
+    val conf = new Configuration
+
+    val interface = conf.interface
+
+    interface shouldBe expected
+  }
+
+  it should "load port correctly" in {
+    val expected = 213
+    System.setProperty("rtb-exchange.port", expected.toString)
+
+    ConfigFactory.invalidateCaches()
+    val conf = new Configuration
+
+    val port = conf.port
+
+    port shouldBe expected
   }
 }
