@@ -7,12 +7,12 @@ node "API Host" {
         <b>API</b>
     ]
 
-    node PostgressImage [
+    node PostgreSQLImage [
         <<image>>
-        <b>Postgress</b>
+        <b>PostgreSQL</b>
     ]
 
-    APIImage -left- PostgressImage
+    APIImage -left- PostgreSQLImage
 }
 
 node "UI Host" {
@@ -30,9 +30,9 @@ node "RTB Host" {
 
     node RtbExchangeImage [
         <<image>>
-        <b>RtbExchangeImage</b>
+        <b>RtbExchange</b>
     ]
 }
-RtbExchangeImage -- PostgressImage
+RtbExchangeImage -- PostgreSQLImage
 
 @enduml
