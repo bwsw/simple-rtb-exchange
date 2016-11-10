@@ -20,10 +20,6 @@ class AppDaoTest extends BaseDaoTest {
 
   "AppDao" should "load app by ID correctly after cache init" in {
     val appDao = inject[AppDao]
-    val categoryDao = inject[CategoryDao]
-    val publisherDao = inject[PublisherDao]
-    categoryDao.notify(InitCache)
-    publisherDao.notify(InitCache)
 
     val notFoundApp = appDao.get(1)
     notFoundApp should not be defined
@@ -59,10 +55,6 @@ class AppDaoTest extends BaseDaoTest {
 
   it should "remove app from cache if record deleted from database" in {
     val appDao = inject[AppDao]
-    val categoryDao = inject[CategoryDao]
-    val publisherDao = inject[PublisherDao]
-    categoryDao.notify(InitCache)
-    publisherDao.notify(InitCache)
 
     appDao.notify(InitCache)
     executeQuery("app-delete.xml", Update)
@@ -80,10 +72,6 @@ class AppDaoTest extends BaseDaoTest {
 
   it should "load inserted app by ID correctly after cache update" in {
     val appDao = inject[AppDao]
-    val categoryDao = inject[CategoryDao]
-    val publisherDao = inject[PublisherDao]
-    categoryDao.notify(InitCache)
-    publisherDao.notify(InitCache)
 
     appDao.notify(InitCache)
     executeQuery("app-insert.xml", Insert)

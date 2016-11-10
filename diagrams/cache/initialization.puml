@@ -9,7 +9,7 @@ database DB
 
 == System initialization ==
 
-DAO -> CacheUpdater: attach(this)
+DAO -> CacheUpdater: register(this)
 activate CacheUpdater
 DAO <-- CacheUpdater
 deactivate CacheUpdater

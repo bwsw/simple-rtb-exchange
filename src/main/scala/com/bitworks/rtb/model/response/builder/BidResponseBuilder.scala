@@ -51,7 +51,6 @@ class BidResponseBuilder private(id: String, seatBid: Seq[SeatBid]) {
 object BidResponseBuilder {
   val Cur = "USD"
 
-  def apply(id: String, seatbid: Seq[SeatBid]): BidResponseBuilder = new BidResponseBuilder(
-    id,
+  def apply(id: String, seatbid: Seq[SeatBid]): BidResponseBuilder = new BidResponseBuilder(id,
     seatbid)
 }

@@ -8,7 +8,7 @@ package com.bitworks.rtb.model.db
   * @param publisherId      owner ID of the site
   * @param status           site status
   * @param privacyPolicy    privacy policy
-  * @param test             is site in test mode
+  * @param test             indicates if the site is in test mode
   * @param domain           domain of the site
   * @param keyword          comma separated list of keywords about the site
   * @param iabCategoriesIds ids of IAB content categories of the site

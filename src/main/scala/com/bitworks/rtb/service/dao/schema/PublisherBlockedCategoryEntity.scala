@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.dao.schema
 
 /**
-  * Database blocked category entity.
+  * Database publisher blocked IAB category entity.
   *
   * @author Egor Ilchenko
   */

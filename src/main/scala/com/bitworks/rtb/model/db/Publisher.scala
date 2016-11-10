@@ -5,7 +5,7 @@ package com.bitworks.rtb.model.db
   *
   * @param id                   database ID
   * @param name                 publisher name
-  * @param categoriesIds        Ids of IAB content categories that describe the publisher
+  * @param categoriesIds        ids of IAB content categories that describe the publisher
   * @param domain               domain of the publisher
   * @param blockedDomains       block list of advertisers by their domains
   * @param blockedCategoriesIds ids of blocked advertiser categories

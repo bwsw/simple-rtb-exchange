@@ -18,9 +18,7 @@ trait AppDao extends BaseDao[App] with CacheHelper[App]
   * @param ctx          DB context
   * @param updater      [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
   */
-class AppDaoImpl(
-    ctx: DbContext,
-    val updater: CacheUpdater) extends AppDao with Logging {
+class AppDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends AppDao with Logging {
 
   val appType = 2
 

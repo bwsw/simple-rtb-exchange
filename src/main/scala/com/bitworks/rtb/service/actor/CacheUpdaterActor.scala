@@ -12,13 +12,13 @@ import com.bitworks.rtb.service.dao.CacheUpdater
 class CacheUpdaterActor(dbUpdater: CacheUpdater) extends Actor with ActorLogging {
   override def receive = {
     case InitCache =>
-      log.debug("cache initializing started...")
+      log.info("cache initializing started...")
       dbUpdater.notifyAll(InitCache)
-      log.debug("cache initializing finished")
+      log.info("cache initializing finished")
     case UpdateCache =>
-      log.debug("cache updating started...")
+      log.info("cache updating started...")
       dbUpdater.notifyAll(UpdateCache)
-      log.debug("cache updating finished")
+      log.info("cache updating finished")
     case _ =>
   }
 }

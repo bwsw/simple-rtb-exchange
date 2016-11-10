@@ -11,12 +11,11 @@ class CacheUpdater {
   private var daoServices: List[BaseDao[_]] = List.empty
 
   /**
-    * Attaches DAO service to CacheUpdater
+    * Registers DAO service to CacheUpdater
     *
     * @param dao DAO Service
     */
-  def attach(dao: BaseDao[_]) = daoServices ::= dao
-
+  def register(dao: BaseDao[_]) = daoServices ::= dao
 
   /**
     * Notifies all attached DAO services

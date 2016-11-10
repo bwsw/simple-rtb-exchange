@@ -5,7 +5,7 @@ The [[com.bitworks.rtb]] package contains ready to use RTB Exchange application.
 
 Notable packages include:
   - [[com.bitworks.rtb.application `com.bitworks.rtb.application`]] contains entry point of RTB
-  exchangen application
+  exchange application
   - [[com.bitworks.rtb.model `com.bitworks.rtb.model`]] and its sub-packages contain ad/bid request
   and response objects
   - [[com.bitworks.rtb.service `com.bitworks.rtb.service`]] contains all domain logic
