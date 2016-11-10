@@ -51,6 +51,7 @@ composition(publisher, publisher_category, publisher_id)
 publisher_category -[hidden] publisher
 publisher_category -[hidden] iab_category
 
+publisher_blocked_advertiser -l[hidden] bidder
 
 table(iab_category) {
     primary_key(id): int
