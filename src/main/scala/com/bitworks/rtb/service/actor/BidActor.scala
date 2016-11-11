@@ -1,23 +1,36 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.bitworks.rtb.model.message.{BidRequestSuccess, SendBidRequest}
+import com.bitworks.rtb.model.message.{BidRequestFail, BidRequestSuccess, SendBidRequest}
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
+import com.bitworks.rtb.service.{BidRequestMaker, Configuration}
 import scaldi.Injector
+import scaldi.Injectable._
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 /**
   * Actor responsible for sending requests to bidders.
   *
   * @author Egor Ilchenko
   */
-class BidActor extends Actor with ActorLogging {
+class BidActor(implicit injector: Injector) extends Actor with ActorLogging {
+
+  val requestMaker = inject[BidRequestMaker]
+  val configuration = inject[Configuration]
+
+  val timeout = configuration.bidRequestTimeout
+
   override def receive: Receive = {
 
     case SendBidRequest(bidder, req) =>
-      val bid = BidBuilder("bidId", "impId", BigDecimal("123")).build
-      val seatBid = SeatBidBuilder(Seq(bid)).build
-      val bidResponse = BidResponseBuilder("respid", Seq(seatBid)).build
-      sender ! BidRequestSuccess(bidResponse)
+      try {
+        val response = Await.result(requestMaker.send(bidder, req), timeout)
+        sender ! BidRequestSuccess(response)
+      } catch {
+        case e: Throwable => sender ! BidRequestFail(e.getMessage)
+      }
 
   }
 }

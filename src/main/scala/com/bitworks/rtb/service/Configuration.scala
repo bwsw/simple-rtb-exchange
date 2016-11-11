@@ -26,4 +26,10 @@ class Configuration {
 
   /** Listener port */
   val port = conf.getInt("port")
+
+  /** Bid request timeout */
+  val bidRequestTimeout = FiniteDuration(
+    conf.getDuration(
+      "bid-request-timeout")
+      .toMillis, TimeUnit.MILLISECONDS)
 }
