@@ -10,3 +10,5 @@ Notable packages include:
   request and response objects from different representations (e.g. JSON)
   - [[com.bitworks.rtb.writer `com.bitworks.rtb.writer`]] contains utilities to create different
   representations (e.g. JSON) for ad/bid request and response objects
+  - [[com.bitworks.rtb.validator `com.bitworks.rtb.validator`]] contains utility to validate that
+  bid response is correct
