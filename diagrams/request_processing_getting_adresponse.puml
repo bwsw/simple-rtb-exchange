@@ -47,18 +47,18 @@ deactivate BidActor
 Exchange -> Exchange: Auction
 
 alt Win Bidder is found
+    Exchange -> WinBidActor: Winner BidResponse
+    activate WinBidActor
     opt BidResponse has winurl
-        Exchange -> WinBidActor: Win Notice
-        activate WinBidActor
         WinBidActor -> Bidder: HTTP request
         activate Bidder
         opt If ad url/markup not in BidResponse
             WinBidActor <-- Bidder: HTTP response
             deactivate Bidder
-            Exchange <-- WinBidActor: Ad url/markup
-            deactivate WinBidActor
         end
     end
+    Exchange <-- WinBidActor: BidResponse with ad url/markup
+    deactivate WinBidActor
 
     Exchange -> Factory: BidResponse
     activate Factory
