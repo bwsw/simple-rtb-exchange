@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="Pavel Tomskikh">
+        <preConditions>
+            <and>
+                <tableExists tableName="iab_category"/>
+                <tableIsEmpty tableName="iab_category"/>
+            </and>
+        </preConditions>
+
+        <loadData tableName="iab_category" file="resources/ticket2598/iab_primary.csv">
+            <column name="iab_id" type="string"/>
+            <column name="name" type="string"/>
+        </loadData>
+
+        <loadData tableName="iab_category" file="resources/ticket2598/iab_secondary.csv">
+            <column name="iab_id" type="string"/>
+            <column name="name" type="string"/>
+            <column name="parent_id" type="numeric"/>
+        </loadData>
+
+        <rollback>
+            <delete tableName="iab_category"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="Egor Ilchenko">
+        <preConditions>
+            <tableExists tableName="site_display_manager"/>
+        </preConditions>
+
+        <dropTable cascadeConstraints="true" tableName="site_display_manager"/>
+
+        <rollback>
+            <createTable tableName="site_display_manager"
+                         remarks="Display managers associated with the site/app">
+                <column name="site_id"
+                        type="integer"
+                        remarks="site">
+                    <constraints primaryKey="true"
+                                 foreignKeyName="site_id"
+                                 referencedTableName="site"
+                                 referencedColumnNames="id"/>
+                </column>
+
+                <column name="display_manager_id"
+                        type="integer"
+                        remarks="associated display manager">
+                    <constraints primaryKey="true"
+                                 foreignKeyName="display_manager_id"
+                                 referencedTableName="display_manager"
+                                 referencedColumnNames="id"/>
+                </column>
+            </createTable>
+
+            <createIndex tableName="site_display_manager"
+                         indexName="site_display_manager_display_manager_id_idx"
+                         unique="false">
+                <column name="display_manager_id"/>
+            </createIndex>
+
+            <createIndex tableName="site_display_manager"
+                         indexName="site_display_manager_site_id_idx"
+                         unique="false">
+                <column name="site_id"/>
+            </createIndex>
+
+            <sql>
+                CREATE TRIGGER update_new_site_site_display_manager_tsversion
+                AFTER INSERT OR UPDATE ON site_display_manager
+                FOR EACH ROW EXECUTE PROCEDURE update_new_site_tsversion()
+            </sql>
+
+            <sql>
+                CREATE TRIGGER update_old_site_site_display_manager_tsversion
+                AFTER UPDATE OR DELETE ON site_display_manager
+                FOR EACH ROW EXECUTE PROCEDURE update_old_site_tsversion()
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="Egor Ilchenko">
+        <preConditions>
+            <tableExists tableName="display_manager"/>
+        </preConditions>
+
+        <dropTable cascadeConstraints="true" tableName="display_manager"/>
+
+        <rollback>
+            <createTable tableName="display_manager"
+                         remarks="Information about software which renders ad">
+                <column name="id"
+                        type="integer"
+                        autoIncrement="true"
+                        remarks="unique id">
+                    <constraints primaryKey="true"/>
+                </column>
+
+                <column name="name"
+                        type="varchar(128)"
+                        remarks="diplay manager name">
+                    <constraints nullable="false"/>
+                </column>
+
+                <column name="ver"
+                        type="varchar(16)"
+                        remarks="display manager version">
+                    <constraints nullable="false"/>
+                </column>
+
+                <column name="tsversion"
+                        type="bigint"
+                        defaultValue="extract(epoch from now())::bigint"
+                        remarks="latest update time">
+                    <constraints nullable="false"/>
+                </column>
+
+                <column name="deleted"
+                        type="boolean"
+                        defaultValue="false"
+                        remarks="indicates if row deleted">
+                    <constraints nullable="false"/>
+                </column>
+            </createTable>
+
+            <sql>
+                CREATE TRIGGER update_display_manager
+                BEFORE UPDATE ON display_manager
+                FOR EACH ROW EXECUTE PROCEDURE update_tsversion()
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="3" author="Egor Ilchenko">
+        <preConditions>
+            <changeSetExecuted id="9" author="Pavel Tomskikh"
+                               changeLogFile="changelogs/ticket2597.xml"/>
+        </preConditions>
+
+        <sql>DROP TRIGGER update_new_publisher_site_tsversion ON publisher</sql>
+        <sql>DROP FUNCTION update_new_publisher_site_tsversion()</sql>
+
+        <rollback>
+            <createProcedure procedureName="update_new_publisher_site_tsversion">
+                CREATE OR REPLACE FUNCTION update_new_publisher_site_tsversion()
+                RETURNS TRIGGER AS $update_new_publisher_site_tsversion$
+                BEGIN
+                IF NEW.ts_version != OLD.ts_version THEN
+                UPDATE site SET ts_version = ts_version where publisher_id = NEW.id;
+                END IF;
+                RETURN NEW;
+                END;
+                $update_new_publisher_site_tsversion$ LANGUAGE plpgsql;
+            </createProcedure>
+
+            <sql>
+                CREATE TRIGGER update_new_publisher_site_tsversion
+                AFTER UPDATE ON publisher
+                FOR EACH ROW EXECUTE PROCEDURE update_new_publisher_site_tsversion()
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

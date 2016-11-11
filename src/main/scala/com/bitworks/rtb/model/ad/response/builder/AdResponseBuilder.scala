@@ -1,6 +1,6 @@
 package com.bitworks.rtb.model.ad.response.builder
 
-import com.bitworks.rtb.model.ad.response.{AdResponse, Imp, Error}
+import com.bitworks.rtb.model.ad.response.{AdResponse, Error, Imp}
 
 /**
   * Builder for [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].

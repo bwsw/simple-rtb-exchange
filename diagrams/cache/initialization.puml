@@ -1,0 +1,39 @@
+@startuml
+
+title: Cache initialization
+
+boundary CacheUpdater
+control DAO
+control CacheHelper
+database DB
+
+== System initialization ==
+
+DAO -> CacheUpdater: register(this)
+activate CacheUpdater
+DAO <-- CacheUpdater
+deactivate CacheUpdater
+
+== System working ==
+
+[-> CacheUpdater: init
+
+activate CacheUpdater
+    CacheUpdater -> DAO: notify(InitCache)
+    activate DAO
+        DAO -> DB: select
+        activate DB
+        DAO <-- DB: all not deleted entities
+        deactivate DB
+        DAO -> CacheHelper: updateCache(entities)
+        activate CacheHelper
+            CacheHelper -> CacheHelper: add all to cache
+            CacheHelper -> CacheHelper: update tsversion
+            CacheHelper --> DAO
+        deactivate CacheHelper
+        DAO --> CacheUpdater
+    deactivate DAO
+    [<-- CacheUpdater
+deactivate CacheUpdater
+
+@enduml
