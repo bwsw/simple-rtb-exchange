@@ -1,20 +1,24 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import com.bitworks.rtb.application.RequestContextWrapper
-import com.bitworks.rtb.model.ad.response.builder.{AdResponseBuilder, ImpBuilder}
+import akka.stream.ActorMaterializer
+import com.bitworks.rtb.application.HttpRequestWrapper
+import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
+import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.Auction
 import com.bitworks.rtb.service.dao.BidderDao
-import com.bitworks.rtb.service.factory.BidRequestFactory
+import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
 import com.bitworks.rtb.service.parser.AdRequestParser
 import com.bitworks.rtb.service.writer.AdResponseWriter
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
 
 import scala.collection.mutable.ListBuffer
+import scala.concurrent.duration._
+import scala.util.{Failure, Success}
 
 
 /**
@@ -25,83 +29,87 @@ import scala.collection.mutable.ListBuffer
 class RequestActor(
     bidActor: ActorRef,
     winActor: ActorRef,
-    ctx: RequestContextWrapper)(
+    request: HttpRequestWrapper)(
     implicit inj: Injector) extends Actor with ActorLogging {
 
+  import context.dispatcher
+
+  implicit val materializer = ActorMaterializer()
   val writer = inject[AdResponseWriter]
   val parser = inject[AdRequestParser]
   val factory = inject[BidRequestFactory]
   val auction = inject[Auction]
   val bidderDao = inject[BidderDao]
+  val adFactory = inject[AdResponseFactory]
 
   val bidders = bidderDao.getAll
   val receivedBidResponses = new ListBuffer[BidRequestResult]
 
   override def receive: Receive = {
 
-    case HandleRequest(bytes) =>
-      try {
-        log.debug("started request handling")
-        val adRequest = parser.parse(bytes)
-        val bidRequest = factory.create(adRequest)
+    case HandleRequest =>
+      log.debug("started request handling")
+      val timeout = 1.second
+      request.inner.entity.toStrict(timeout) map {
+        entity =>
+          val bytes = entity.data.toArray
+          val adRequest = parser.parse(bytes)
+          val bidRequest = factory.create(adRequest)
 
-        bidderDao.getAll match {
-          case Seq() => self ! ValidationError("bidders not found")
-          case s: Seq[Bidder] =>
-            s.foreach { bidder =>
-              bidActor ! SendBidRequest(bidder, bidRequest)
-            }
-        }
-      }
-      catch {
-        case e: Throwable => self ! ValidationError(e.toString)
+          bidderDao.getAll match {
+            case Seq() => onError("bidders not found")
+            case s: Seq[Bidder] =>
+              s.foreach { bidder =>
+                bidActor ! SendBidRequest(bidder, bidRequest)
+              }
+          }
+      } onFailure {
+        case exc => onError(exc.toString)
       }
 
     case msg: BidRequestResult =>
       log.debug(s"bid response received: $msg")
       receivedBidResponses.append(msg)
       if (receivedBidResponses.size == bidders.length)
-        self ! StartAuction
+        startAuction()
 
-    case StartAuction =>
-      log.debug("auction started")
-      val successful = receivedBidResponses
-        .collect {
-          case BidRequestSucess(r) => r
-        }
-      log.debug(s"auction participants: ${successful.length}")
+    case msg: BidResponse =>
+      log.debug("bid response received")
 
-      val winner = auction.winner(successful)
-      log.debug(s"auction winner: $winner")
+      val response = adFactory.create(msg)
 
-      winner match {
-        case Some(r) => winActor ! r
-        case None => self ! ValidationError("winner not defined")
+      completeRequest(response)
+
+  }
+
+  def startAuction() = {
+    log.debug("auction started")
+    val successful = receivedBidResponses
+      .collect {
+        case BidRequestSuccess(r) => r
       }
+    log.debug(s"auction participants: ${successful.length}")
 
-    case AdMarkup(ad) =>
-      log.debug("ad markup received")
+    val winner = auction.winner(successful)
+    log.debug(s"auction winner: $winner")
 
-      val response = AdResponseBuilder("123")
-        .withImp(Seq(ImpBuilder("1", ad, 1).build))
-        .build
+    winner match {
+      case Some(r) => winActor ! r
+      case None => onError("winner not defined")
+    }
+  }
 
-      self ! response
+  def completeRequest(response: AdResponse) = {
+    val bytes = writer.write(response)
+    request.complete(bytes)
+  }
 
+  def onError(msg: String) = {
+    log.debug(s"error occured: $msg")
 
-    case ValidationError(msg) =>
-      log.debug(s"error occured: $msg")
+    val response = adFactory.create(Error(123, msg))
 
-      val response = AdResponseBuilder("123")
-        .withError(Error(123, msg))
-        .build
-
-      self ! response
-
-    case response: AdResponse =>
-      val bytes = writer.write(response)
-      ctx.complete(bytes)
-
+    completeRequest(response)
   }
 }
 
@@ -111,7 +119,7 @@ object RequestActor {
   def props(
       bidActor: ActorRef,
       winActor: ActorRef,
-      ctx: RequestContextWrapper)()(implicit inj: Injector) = {
-    Props(new RequestActor(bidActor, winActor, ctx))
+      wrapper: HttpRequestWrapper)()(implicit inj: Injector) = {
+    Props(new RequestActor(bidActor, winActor, wrapper))
   }
 }

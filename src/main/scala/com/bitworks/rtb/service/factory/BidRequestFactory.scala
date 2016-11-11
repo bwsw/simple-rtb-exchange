@@ -9,10 +9,11 @@ import com.bitworks.rtb.model.request.builder.{BidRequestBuilder, ImpBuilder}
   *
   * @author Egor Ilchenko
   */
-trait BidRequestFactory{
+trait BidRequestFactory {
 
   /**
     * Returns [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
+    *
     * @param ad [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
     */
   def create(ad: AdRequest): BidRequest
@@ -21,7 +22,7 @@ trait BidRequestFactory{
 /**
   * Dummy factory implementation.
   */
-class BidRequestFactoryImpl extends BidRequestFactory{
+class BidRequestFactoryImpl extends BidRequestFactory {
   override def create(ad: AdRequest) = {
     val imp = ImpBuilder("impID").build
     BidRequestBuilder("bidRequestID", Seq(imp)).build

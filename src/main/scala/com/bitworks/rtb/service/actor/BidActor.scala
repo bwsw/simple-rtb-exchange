@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.bitworks.rtb.model.message.{BidRequestSucess, SendBidRequest}
+import com.bitworks.rtb.model.message.{BidRequestSuccess, SendBidRequest}
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
 import scaldi.Injector
 
@@ -17,7 +17,7 @@ class BidActor extends Actor with ActorLogging {
       val bid = BidBuilder("bidId", "impId", BigDecimal("123")).build
       val seatBid = SeatBidBuilder(Seq(bid)).build
       val bidResponse = BidResponseBuilder("respid", Seq(seatBid)).build
-      sender ! BidRequestSucess(bidResponse)
+      sender ! BidRequestSuccess(bidResponse)
 
   }
 }

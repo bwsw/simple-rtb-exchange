@@ -1,7 +1,6 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.bitworks.rtb.model.message.AdMarkup
 import com.bitworks.rtb.model.response.BidResponse
 import scaldi.Injector
 
@@ -15,9 +14,8 @@ class WinActor extends Actor with ActorLogging {
     case msg: BidResponse =>
 
       log.debug("bid response received")
-      val adMarkup = """<p>smth ad markup with "quotes"</p>"""
 
-      sender ! AdMarkup(adMarkup)
+      sender ! msg
   }
 }
 

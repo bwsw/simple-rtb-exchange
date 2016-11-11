@@ -8,4 +8,4 @@ import com.bitworks.rtb.model.response.BidResponse
   * @param response [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
   * @author Egor Ilchenko
   */
-case class BidRequestSucess(response: BidResponse) extends BidRequestResult
+case class BidRequestSuccess(response: BidResponse) extends BidRequestResult

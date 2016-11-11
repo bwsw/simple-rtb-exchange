@@ -3,7 +3,7 @@ package com.bitworks.rtb.application
 import akka.actor.ActorSystem
 import com.bitworks.rtb.service.actor._
 import com.bitworks.rtb.service.dao._
-import com.bitworks.rtb.service.factory.{BidRequestFactory, BidRequestFactoryImpl}
+import com.bitworks.rtb.service.factory._
 import com.bitworks.rtb.service.parser.{AdRequestJsonParser, AdRequestParser}
 import com.bitworks.rtb.service.writer.{AdResponseJsonWriter, AdResponseWriter}
 import com.bitworks.rtb.service.{Auction, AuctionImpl, Configuration}
@@ -32,6 +32,7 @@ class RtbModule extends Module {
   bind[AdRequestParser] toNonLazy injected[AdRequestJsonParser]
   bind[AdResponseWriter] toNonLazy injected[AdResponseJsonWriter]
   bind[BidRequestFactory] toNonLazy injected[BidRequestFactoryImpl]
+  bind[AdResponseFactory] toNonLazy injected[AdResponseFactoryImpl]
   bind[Auction] toNonLazy injected[AuctionImpl]
 
   bind[RequestHandler] toNonLazy injected[RequestHandler]

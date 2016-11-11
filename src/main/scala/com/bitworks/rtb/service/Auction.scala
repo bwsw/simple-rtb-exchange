@@ -7,10 +7,11 @@ import com.bitworks.rtb.model.response.BidResponse
   *
   * @author Egor Ilchenko
   */
-trait Auction{
+trait Auction {
 
   /**
     * Returns won [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    *
     * @param responses bid responses, taking part in auction
     * @return Some(BidResponse) or None, if winner not found
     */
@@ -20,7 +21,7 @@ trait Auction{
 /**
   * Dummy auction implementation.
   */
-class AuctionImpl extends Auction{
+class AuctionImpl extends Auction {
   override def winner(responses: Seq[BidResponse]) = {
     responses match {
       case Seq() => None
