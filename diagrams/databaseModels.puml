@@ -21,10 +21,7 @@ class Bidder {
     +name: String
     +endpoint: String
 }
-class DisplayManager {
-    +name: String
-    +ver: String
-}
+
 class Site {
     +name: String
     +publisherId: Int
@@ -54,7 +51,6 @@ enum Status {
 
 BaseEntity <|-- App
 BaseEntity <|-- Bidder
-BaseEntity <|-- DisplayManager
 BaseEntity <|-- IABCategory
 BaseEntity <|-- Publisher
 BaseEntity <|-- Site
