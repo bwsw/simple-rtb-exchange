@@ -1,11 +1,11 @@
-package com.bitworks.rtb.validator
+package com.bitworks.rtb.service.validator
 
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.model.response.builder._
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.validator.BidResponseValidator BidResponseValidator]]
+  * Test for [[com.bitworks.rtb.service.validator.BidResponseValidator BidResponseValidator]]
   *
   * @author Pavel Tomskikh
   */

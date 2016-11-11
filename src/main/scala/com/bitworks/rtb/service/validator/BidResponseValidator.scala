@@ -1,4 +1,4 @@
-package com.bitworks.rtb.validator
+package com.bitworks.rtb.service.validator
 
 import com.bitworks.rtb.model.request.{App, BidRequest, Imp}
 import com.bitworks.rtb.model.response._
