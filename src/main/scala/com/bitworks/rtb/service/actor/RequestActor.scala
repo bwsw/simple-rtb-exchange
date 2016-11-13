@@ -40,7 +40,7 @@ class RequestActor(
   val factory = inject[BidRequestFactory]
   val auction = inject[Auction]
   val bidderDao = inject[BidderDao]
-  val adFactory = inject[AdResponseFactory]
+  val adResponseFactory = inject[AdResponseFactory]
 
   val bidders = bidderDao.getAll
   val receivedBidResponses = new ListBuffer[BidRequestResult]
@@ -58,8 +58,8 @@ class RequestActor(
 
           bidderDao.getAll match {
             case Seq() => onError("bidders not found")
-            case s: Seq[Bidder] =>
-              s.foreach { bidder =>
+            case bidders: Seq[Bidder] =>
+              bidders.foreach { bidder =>
                 bidActor ! SendBidRequest(bidder, bidRequest)
               }
           }
@@ -76,7 +76,7 @@ class RequestActor(
     case msg: BidResponse =>
       log.debug("bid response received")
 
-      val response = adFactory.create(msg)
+      val response = adResponseFactory.create(msg)
 
       completeRequest(response)
 
@@ -86,7 +86,7 @@ class RequestActor(
     log.debug("auction started")
     val successful = receivedBidResponses
       .collect {
-        case BidRequestSuccess(r) => r
+        case BidRequestSuccess(response) => response
       }
     log.debug(s"auction participants: ${successful.length}")
 
@@ -94,7 +94,7 @@ class RequestActor(
     log.debug(s"auction winner: $winner")
 
     winner match {
-      case Some(r) => winActor ! r
+      case Some(response) => winActor ! response
       case None => onError("winner not defined")
     }
   }
@@ -105,9 +105,9 @@ class RequestActor(
   }
 
   def onError(msg: String) = {
-    log.debug(s"error occured: $msg")
+    log.debug(s"an error occurred: $msg")
 
-    val response = adFactory.create(Error(123, msg))
+    val response = adResponseFactory.create(Error(123, msg))
 
     completeRequest(response)
   }
