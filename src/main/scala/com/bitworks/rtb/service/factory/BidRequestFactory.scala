@@ -12,7 +12,7 @@ import com.bitworks.rtb.model.request.builder.{BidRequestBuilder, ImpBuilder}
 trait BidRequestFactory {
 
   /**
-    * Returns [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
+    * Returns [[com.bitworks.rtb.model.request.BidRequest BidRequest]].
     *
     * @param ad [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
     */

@@ -1,6 +1,5 @@
 package com.bitworks.rtb.application
 
-import akka.http.scaladsl.model.headers.Connection
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 
 import scala.concurrent.Promise

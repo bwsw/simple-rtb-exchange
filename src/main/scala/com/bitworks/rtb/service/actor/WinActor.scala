@@ -12,16 +12,14 @@ import scaldi.Injector
 class WinActor extends Actor with ActorLogging {
   override def receive: Receive = {
     case msg: BidResponse =>
-
       log.debug("bid response received")
-
       sender ! msg
   }
 }
 
 object WinActor {
 
-  /** Returns Props for [[com.bitworks.rtb.service.actor.WinActor WinActor]] */
+  /** Returns Props for [[com.bitworks.rtb.service.actor.WinActor WinActor]]. */
   def props(implicit inj: Injector) = {
     Props(new WinActor)
   }

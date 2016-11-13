@@ -3,7 +3,6 @@ package com.bitworks.rtb.service.actor
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
-import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
@@ -18,11 +17,9 @@ import scaldi.akka.AkkaInjectable._
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration._
-import scala.util.{Failure, Success}
-
 
 /**
-  * Main actor processing ad requests.
+  * Main actor to process ad requests.
   *
   * @author Egor Ilchenko
   */
@@ -115,7 +112,7 @@ class RequestActor(
 
 object RequestActor {
 
-  /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]] */
+  /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]]. */
   def props(
       bidActor: ActorRef,
       winActor: ActorRef,

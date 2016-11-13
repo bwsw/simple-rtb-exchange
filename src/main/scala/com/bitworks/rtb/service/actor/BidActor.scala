@@ -12,19 +12,17 @@ import scaldi.Injector
   */
 class BidActor extends Actor with ActorLogging {
   override def receive: Receive = {
-
     case SendBidRequest(bidder, req) =>
       val bid = BidBuilder("bidId", "impId", BigDecimal("123")).build
       val seatBid = SeatBidBuilder(Seq(bid)).build
       val bidResponse = BidResponseBuilder("respid", Seq(seatBid)).build
       sender ! BidRequestSuccess(bidResponse)
-
   }
 }
 
 object BidActor {
 
-  /** Returns Props for [[com.bitworks.rtb.service.actor.BidActor BidActor]] */
+  /** Returns Props for [[com.bitworks.rtb.service.actor.BidActor BidActor]]. */
   def props(implicit inj: Injector) = {
     Props(new BidActor)
   }

@@ -10,7 +10,7 @@ import com.bitworks.rtb.model.response.BidResponse
 trait Auction {
 
   /**
-    * Returns won [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * Returns won [[com.bitworks.rtb.model.response.BidResponse BidResponse]].
     *
     * @param responses bid responses, taking part in auction
     * @return Some(BidResponse) or None, if winner not found
