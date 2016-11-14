@@ -16,9 +16,11 @@ object RtbApplication {
   implicit val system = inject[ActorSystem]
 
   val config = inject[Configuration]
+  val handler = inject[RequestHandler]
 
   def main(args: Array[String]): Unit = {
     runCacheUpdater()
+    handler.run()
   }
 
   /** Inits cache and starts cache update scheduler  */

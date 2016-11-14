@@ -12,11 +12,18 @@ import scala.concurrent.duration.FiniteDuration
   * @author Egor Ilchenko
   */
 class Configuration {
-  private val conf = ConfigFactory.load()
+
+  private val conf = ConfigFactory.load().getConfig("rtb-exchange")
 
   /** Cache updating interval */
   val cacheUpdateInterval = FiniteDuration(
     conf.getDuration(
-      "rtb-exchange.cache-update-interval")
+      "cache-update-interval")
       .toMillis, TimeUnit.MILLISECONDS)
+
+  /** Listener interface */
+  val interface = conf.getString("interface")
+
+  /** Listener port */
+  val port = conf.getInt("port")
 }
