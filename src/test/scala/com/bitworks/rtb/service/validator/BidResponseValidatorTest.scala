@@ -61,10 +61,10 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
   }
 
-  it should "validate correct not bidded BidResponse" in {
+  it should "not validate BidResponse with nbr" in {
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq.empty).withNbr(1).build
 
-    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse with empty id" in {

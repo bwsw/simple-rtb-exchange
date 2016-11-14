@@ -23,28 +23,23 @@ class BidResponseValidator {
     if (bidResponse.id == bidRequest.id &&
       bidResponse.bidId.forall(_.nonEmpty) &&
       bidResponse.cur.nonEmpty &&
-      bidResponse.customData.forall(_.nonEmpty)) {
+      bidResponse.customData.forall(_.nonEmpty) &
+      bidResponse.nbr.isEmpty) {
 
-      var seatBids: Seq[SeatBid] = bidResponse.seatBid
-
-      if (bidResponse.nbr.isEmpty) {
-        seatBids = bidResponse.seatBid.map(validateSeatBid(bidRequest)).filter(_.nonEmpty)
-          .map(_.get)
-        if (seatBids.isEmpty) return None
-      }
-
-      Some(
-        BidResponse(
-          bidResponse.id,
-          seatBids,
-          bidResponse.bidId,
-          bidResponse.cur,
-          bidResponse.customData,
-          bidResponse.nbr,
-          bidResponse.ext))
-    }
-
-    else None
+      val seatBids = bidResponse.seatBid.map(validateSeatBid(bidRequest)).filter(_.nonEmpty)
+        .map(_.get)
+      if (seatBids.nonEmpty) {
+        Some(
+          BidResponse(
+            bidResponse.id,
+            seatBids,
+            bidResponse.bidId,
+            bidResponse.cur,
+            bidResponse.customData,
+            bidResponse.nbr,
+            bidResponse.ext))
+      } else None
+    } else None
   }
 
   private def validateSeatBid(bidRequest: BidRequest)(seatBid: SeatBid): Option[SeatBid] = {
@@ -86,13 +81,11 @@ class BidResponseValidator {
       val banner = imp.banner.get
       checkOneDimension(h, banner.h, banner.hmin, banner.hmax) &&
         checkOneDimension(w, banner.w, banner.wmin, banner.wmax)
-    }
-    else if (imp.video.nonEmpty) {
+    } else if (imp.video.nonEmpty) {
       val video = imp.video.get
       (video.h.isEmpty || video.h == h) &&
         (video.w.isEmpty || video.w == w)
-    }
-    else true
+    } else true
   }
 
   private def checkOneDimension(
@@ -104,8 +97,7 @@ class BidResponseValidator {
       expected.nonEmpty && dimension.get == expected.get ||
         (min.isEmpty || dimension.get >= min.get) &&
           (max.isEmpty || dimension.get <= max.get)
-    }
-    else {
+    } else {
       expected.isEmpty &&
         max.isEmpty &&
         min.isEmpty
