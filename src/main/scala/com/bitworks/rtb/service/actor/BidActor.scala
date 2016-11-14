@@ -23,7 +23,6 @@ class BidActor(implicit injector: Injector) extends Actor with ActorLogging {
   val timeout = configuration.bidRequestTimeout
 
   override def receive: Receive = {
-
     case SendBidRequest(bidder, req) =>
       try {
         val response = Await.result(requestMaker.send(bidder, req), timeout)
@@ -37,7 +36,7 @@ class BidActor(implicit injector: Injector) extends Actor with ActorLogging {
 
 object BidActor {
 
-  /** Returns Props for [[com.bitworks.rtb.service.actor.BidActor BidActor]] */
+  /** Returns Props for [[com.bitworks.rtb.service.actor.BidActor BidActor]]. */
   def props(implicit inj: Injector) = {
     Props(new BidActor)
   }

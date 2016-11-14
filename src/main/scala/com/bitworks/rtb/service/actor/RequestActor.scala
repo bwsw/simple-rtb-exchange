@@ -3,7 +3,6 @@ package com.bitworks.rtb.service.actor
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
-import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
@@ -18,11 +17,9 @@ import scaldi.akka.AkkaInjectable._
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration._
-import scala.util.{Failure, Success}
-
 
 /**
-  * Main actor processing ad requests.
+  * Main actor to process ad requests.
   *
   * @author Egor Ilchenko
   */
@@ -40,7 +37,7 @@ class RequestActor(
   val factory = inject[BidRequestFactory]
   val auction = inject[Auction]
   val bidderDao = inject[BidderDao]
-  val adFactory = inject[AdResponseFactory]
+  val adResponseFactory = inject[AdResponseFactory]
 
   val bidders = bidderDao.getAll
   val receivedBidResponses = new ListBuffer[BidRequestResult]
@@ -58,8 +55,8 @@ class RequestActor(
 
           bidderDao.getAll match {
             case Seq() => onError("bidders not found")
-            case s: Seq[Bidder] =>
-              s.foreach { bidder =>
+            case bidders: Seq[Bidder] =>
+              bidders.foreach { bidder =>
                 bidActor ! SendBidRequest(bidder, bidRequest)
               }
           }
@@ -76,7 +73,7 @@ class RequestActor(
     case msg: BidResponse =>
       log.debug("bid response received")
 
-      val response = adFactory.create(msg)
+      val response = adResponseFactory.create(msg)
 
       completeRequest(response)
 
@@ -86,7 +83,7 @@ class RequestActor(
     log.debug("auction started")
     val successful = receivedBidResponses
       .collect {
-        case BidRequestSuccess(r) => r
+        case BidRequestSuccess(response) => response
       }
     log.debug(s"auction participants: ${successful.length}")
 
@@ -94,7 +91,7 @@ class RequestActor(
     log.debug(s"auction winner: $winner")
 
     winner match {
-      case Some(r) => winActor ! r
+      case Some(response) => winActor ! response
       case None => onError("winner not defined")
     }
   }
@@ -105,9 +102,9 @@ class RequestActor(
   }
 
   def onError(msg: String) = {
-    log.debug(s"error occured: $msg")
+    log.debug(s"an error occurred: $msg")
 
-    val response = adFactory.create(Error(123, msg))
+    val response = adResponseFactory.create(Error(123, msg))
 
     completeRequest(response)
   }
@@ -115,7 +112,7 @@ class RequestActor(
 
 object RequestActor {
 
-  /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]] */
+  /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]]. */
   def props(
       bidActor: ActorRef,
       winActor: ActorRef,

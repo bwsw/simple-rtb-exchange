@@ -6,7 +6,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import scala.concurrent.duration._
 
 /**
-  * Test for [[Configuration Configuration]]
+  * Test for [[Configuration Configuration]].
   *
   * @author Egor Ilchenko
   */

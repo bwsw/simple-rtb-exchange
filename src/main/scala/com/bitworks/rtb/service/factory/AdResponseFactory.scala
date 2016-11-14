@@ -12,14 +12,14 @@ import com.bitworks.rtb.model.response.BidResponse
 trait AdResponseFactory {
 
   /**
-    * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]]
+    * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
     *
     * @param bid [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     */
   def create(bid: BidResponse): AdResponse
 
   /**
-    * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]]
+    * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
     *
     * @param error [[com.bitworks.rtb.model.ad.response.Error Error]]
     */
