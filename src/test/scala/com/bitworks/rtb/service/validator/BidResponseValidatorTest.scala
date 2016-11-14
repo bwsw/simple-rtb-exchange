@@ -153,6 +153,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
       .withBundle(app.bundle.get)
       .withH(banner.hmax.get)
       .withW(banner.w.get)
+      .withAdm("<img src=\"http://localhost/img.jpg\" />")
       .build
     val seatBid = SeatBidBuilder(Seq(bid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build

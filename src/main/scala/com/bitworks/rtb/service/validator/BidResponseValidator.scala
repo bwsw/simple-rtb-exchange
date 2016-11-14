@@ -12,41 +12,41 @@ import com.bitworks.rtb.model.response._
 class BidResponseValidator {
 
   /**
-    * Returns Some([[com.bitworks.rtb.model.response.BidResponse BidResponse]]) if bidResponse is
-    * valid, or None else.
+    * Validates ([[com.bitworks.rtb.model.response.BidResponse BidResponse]]) for a specified
+    * [[com.bitworks.rtb.model.request.BidRequest BidRequest]].
     *
     * @param bidRequest  [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object
     * @param bidResponse validated [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     *                    object
+    * @return BidResponse if it is valid, None otherwise
     */
   def validate(bidRequest: BidRequest, bidResponse: BidResponse): Option[BidResponse] = {
-    def checkParams = {
-      bidResponse.id == bidRequest.id &&
-        bidResponse.bidId.forall(_.nonEmpty) &&
-        bidResponse.cur.nonEmpty &&
-        bidResponse.customData.forall(_.nonEmpty) &&
-        bidResponse.nbr.isEmpty
+    if (bidResponse.id != bidRequest.id || bidResponse.nbr.nonEmpty || !bidResponse.bidId
+      .forall(_.nonEmpty) || !bidResponse.customData.forall(_.nonEmpty) || bidResponse.cur
+      .isEmpty) {
+      return None
     }
 
-    if (checkParams) {
-      val seatBids = bidResponse.seatBid.map(validateSeatBid(bidRequest)).filter(_.nonEmpty)
-        .map(_.get)
-      if (seatBids.nonEmpty) {
-        Some(
-          BidResponse(
-            bidResponse.id,
-            seatBids,
-            bidResponse.bidId,
-            bidResponse.cur,
-            bidResponse.customData,
-            bidResponse.nbr,
-            bidResponse.ext))
-      } else None
-    } else None
+    val seatBids = bidResponse.seatBid.map(validateSeatBid(bidRequest)).filter(_.nonEmpty)
+      .map(_.get)
+    if (seatBids.nonEmpty) {
+      Some(
+        BidResponse(
+          bidResponse.id,
+          seatBids,
+          bidResponse.bidId,
+          bidResponse.cur,
+          bidResponse.customData,
+          bidResponse.nbr,
+          bidResponse.ext))
+    }
+    else None
   }
 
-
   private def validateSeatBid(bidRequest: BidRequest)(seatBid: SeatBid): Option[SeatBid] = {
+    if (seatBid.bid.isEmpty || !seatBid.seat.forall(_.nonEmpty)) {
+      return None
+    }
     seatBid.group match {
       case 0 =>
         val bids = seatBid.bid.filter(validateBid(bidRequest, seatBid.seat))
@@ -64,12 +64,12 @@ class BidResponseValidator {
       bid.id.nonEmpty &&
         bid.adId.forall(_.nonEmpty) &&
         checkDealId(imp) &&
-        bid.nurl.forall(_.nonEmpty) &&
-        bid.adm.forall(_.nonEmpty) &&
-        checkBundle &&
+        (bid.adm.exists(_.nonEmpty) || bid.nurl.exists(_.nonEmpty)) &&
+        bid.bundle.forall(_.nonEmpty) &&
         bid.iurl.forall(_.nonEmpty) &&
         bid.cid.forall(_.nonEmpty) &&
         bid.crid.forall(_.nonEmpty) &&
+        checkBlackList(bid.adomain, bidRequest.badv) &&
         checkBlackList(bid.cat, bidRequest.bcat) &&
         checkSize(bid.h, bid.w, imp)
     }
@@ -78,16 +78,6 @@ class BidResponseValidator {
       bid.dealId match {
         case Some(dealId) => validateBidWithDeal(bidRequest, imp, seat, bid)
         case None => validateBidWithoutDeal(bidRequest, imp, seat, bid)
-      }
-    }
-
-    def checkBundle = {
-      if (bid.bundle.nonEmpty) {
-        bidRequest.app.nonEmpty &&
-          bidRequest.app.get.bundle == bid.bundle
-      } else {
-        bidRequest.app.isEmpty ||
-          bidRequest.app.get.bundle.isEmpty
       }
     }
 
@@ -102,11 +92,8 @@ class BidResponseValidator {
       val banner = imp.banner.get
       checkOneDimension(h, banner.h, banner.hmin, banner.hmax) &&
         checkOneDimension(w, banner.w, banner.wmin, banner.wmax)
-    } else if (imp.video.nonEmpty) {
-      val video = imp.video.get
-      (video.h.isEmpty || video.h == h) &&
-        (video.w.isEmpty || video.w == w)
-    } else true
+    }
+    else true
   }
 
   private def checkOneDimension(
@@ -118,7 +105,8 @@ class BidResponseValidator {
       expected.nonEmpty && dimension.get == expected.get ||
         (min.isEmpty || dimension.get >= min.get) &&
           (max.isEmpty || dimension.get <= max.get)
-    } else {
+    }
+    else {
       expected.isEmpty &&
         max.isEmpty &&
         min.isEmpty
@@ -131,26 +119,25 @@ class BidResponseValidator {
       seat: Option[String],
       bid: Bid): Boolean = {
 
-    def checkFondDeal(deal: Deal) = {
-      bid.price >= deal.bidFloor && (
-        bid.adomain.isEmpty ||
-          checkWhiteList(bid.adomain, deal.wadomain) ||
-          checkBlackList(bid.adomain, bidRequest.badv)) && (
-        deal.wseat.isEmpty ||
+    def checkDeal(deal: Deal) = {
+      // TODO: to check whether this works correctly in Scala
+      bid.price >= deal.bidFloor &&
+        checkWhiteList(bid.adomain, deal.wadomain) &&
+        (deal.wseat.isEmpty ||
           seat.nonEmpty &&
             deal.wseat.get.contains(seat.get))
     }
 
-    def checkDeal = {
+    def checkImpDeal = {
       imp.pmp.get.deals.get.find(_.id == bid.dealId.get) match {
-        case Some(deal) => checkFondDeal(deal)
+        case Some(deal) => checkDeal(deal)
         case None => false
       }
     }
 
     imp.pmp.nonEmpty &&
       imp.pmp.get.deals.nonEmpty &&
-      checkDeal
+      checkImpDeal
   }
 
   private def validateBidWithoutDeal(
@@ -158,15 +145,15 @@ class BidResponseValidator {
       imp: Imp,
       seat: Option[String],
       bid: Bid): Boolean = {
-    bid.price >= imp.bidFloor && (
-      bid.adomain.isEmpty ||
-        checkBlackList(bid.adomain, bidRequest.badv))
+    // TODO: to check whether this works correctly in Scala
+    bid.price >= imp.bidFloor
   }
 
   private def checkWhiteList[T](items: Option[Seq[T]], whiteList: Option[Seq[T]]): Boolean = {
-    whiteList.isEmpty &&
-      items.isEmpty ||
-      items.get.exists(whiteList.get.contains)
+    if (whiteList.forall(_.isEmpty)) {
+      return true
+    }
+    items.isEmpty || items.get.exists(whiteList.get.contains)
   }
 
   private def checkBlackList[T](items: Option[Seq[T]], blackList: Option[Seq[T]]): Boolean = {
