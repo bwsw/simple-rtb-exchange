@@ -9,7 +9,7 @@ import com.bitworks.rtb.model.request.{Device, Regs}
   * @param imp value of imp in [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
   * @author Egor Ilchenko
   */
-class AdRequestBuilder(imp: Seq[Imp]) {
+class AdRequestBuilder(id: String, imp: Seq[Imp]) {
   private var site: Option[Site] = None
   private var app: Option[App] = None
   private var device: Option[Device] = None
@@ -54,7 +54,7 @@ class AdRequestBuilder(imp: Seq[Imp]) {
   }
 
   /** Returns [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]] */
-  def build = AdRequest(imp, site, app, device, user, test, tmax, regs)
+  def build = AdRequest(id, imp, site, app, device, user, test, tmax, regs)
 }
 
 /**
@@ -65,5 +65,5 @@ class AdRequestBuilder(imp: Seq[Imp]) {
 object AdRequestBuilder {
   val Test = 0
 
-  def apply(imp: Seq[Imp]) = new AdRequestBuilder(imp)
+  def apply(id: String, imp: Seq[Imp]) = new AdRequestBuilder(id, imp)
 }

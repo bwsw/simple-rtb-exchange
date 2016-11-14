@@ -36,10 +36,11 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
   }
 
   it should "correctly parse JSON without optional fields" in {
-    val json = """{ "imp": [] }""".getBytes
+    val json = """{ "id": "id", "imp": [] }""".getBytes
     val parser = new AdRequestJsonParser
 
     val expectedModel = ad.request.AdRequest(
+      "id",
       Seq.empty,
       None,
       None,
@@ -216,6 +217,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val regs = Regs(Some(42), None)
 
     ad.request.AdRequest(
+      "id",
       Seq(adRequestImp),
       Some(site),
       Some(app),
