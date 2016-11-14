@@ -7,19 +7,19 @@ import com.bitworks.rtb.model.response._
   * Validator for [[com.bitworks.rtb.model.response.BidResponse BidResponse]] according to
   * [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object.
   *
-  * @param bidRequest [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object
   * @author Pavel Tomskikh
   */
-class BidResponseValidator(bidRequest: BidRequest) {
+class BidResponseValidator {
 
   /**
     * Returns Some([[com.bitworks.rtb.model.response.BidResponse BidResponse]]) if bidResponse is
     * valid, or None else.
     *
+    * @param bidRequest  [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object
     * @param bidResponse validated [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     *                    object
     */
-  def validate(bidResponse: BidResponse): Option[BidResponse] = {
+  def validate(bidRequest: BidRequest, bidResponse: BidResponse): Option[BidResponse] = {
     if (bidResponse.id == bidRequest.id &&
       bidResponse.bidId.forall(_.nonEmpty) &&
       bidResponse.cur.nonEmpty &&
@@ -28,7 +28,8 @@ class BidResponseValidator(bidRequest: BidRequest) {
       var seatBids: Seq[SeatBid] = bidResponse.seatBid
 
       if (bidResponse.nbr.isEmpty) {
-        seatBids = bidResponse.seatBid.map(validateSeatBid).filter(_.nonEmpty).map(_.get)
+        seatBids = bidResponse.seatBid.map(validateSeatBid(bidRequest)).filter(_.nonEmpty)
+          .map(_.get)
         if (seatBids.isEmpty) return None
       }
 
@@ -46,26 +47,26 @@ class BidResponseValidator(bidRequest: BidRequest) {
     else None
   }
 
-  private def validateSeatBid(seatBid: SeatBid): Option[SeatBid] = {
+  private def validateSeatBid(bidRequest: BidRequest)(seatBid: SeatBid): Option[SeatBid] = {
     seatBid.group match {
       case 0 =>
-        val bids = seatBid.bid.filter(validateBid(bidRequest.imp, seatBid.seat))
+        val bids = seatBid.bid.filter(validateBid(bidRequest, seatBid.seat))
         if (bids.nonEmpty) Some(SeatBid(bids, seatBid.seat, seatBid.group, seatBid.ext))
         else None
       case 1 =>
-        if (seatBid.bid.forall(validateBid(bidRequest.imp, seatBid.seat))) Some(seatBid)
+        if (seatBid.bid.forall(validateBid(bidRequest, seatBid.seat))) Some(seatBid)
         else None
       case _ => None
     }
   }
 
-  private def validateBid(imps: Seq[Imp], seat: Option[String])(bid: Bid): Boolean = {
-    imps.find(_.id == bid.impId) match {
+  private def validateBid(bidRequest: BidRequest, seat: Option[String])(bid: Bid): Boolean = {
+    bidRequest.imp.find(_.id == bid.impId) match {
       case Some(imp) =>
         bid.id.nonEmpty && (
           bid.dealId match {
-            case Some(dealId) => validateBidWithDeal(imp, seat, bid)
-            case None => validateBidWithoutDeal(imp, seat, bid)
+            case Some(dealId) => validateBidWithDeal(bidRequest, imp, seat, bid)
+            case None => validateBidWithoutDeal(bidRequest, imp, seat, bid)
           }) &&
           bid.adId.forall(_.nonEmpty) &&
           bid.nurl.forall(_.nonEmpty) &&
@@ -119,6 +120,7 @@ class BidResponseValidator(bidRequest: BidRequest) {
   }
 
   private def validateBidWithDeal(
+      bidRequest: BidRequest,
       imp: Imp,
       seat: Option[String],
       bid: Bid): Boolean = {
@@ -137,7 +139,11 @@ class BidResponseValidator(bidRequest: BidRequest) {
       })
   }
 
-  private def validateBidWithoutDeal(imp: Imp, seat: Option[String], bid: Bid): Boolean = {
+  private def validateBidWithoutDeal(
+      bidRequest: BidRequest,
+      imp: Imp,
+      seat: Option[String],
+      bid: Bid): Boolean = {
     bid.price >= imp.bidFloor && (
       bid.adomain.isEmpty ||
         isLeastOneNotInBlackList(bid.adomain, bidRequest.badv))

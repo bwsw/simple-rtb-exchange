@@ -34,7 +34,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     .withBadv(Seq("bad.com"))
     .build
 
-  val validator = new BidResponseValidator(bidRequest)
+  val validator = new BidResponseValidator
 
   val correctBid = BidBuilder(
     "1",
@@ -58,32 +58,32 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
 
   "BidResponseValidator" should "validate correct BidResponse" in {
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(correctSeatBid)).build
-    validator.validate(bidResponse) shouldBe Some(bidResponse)
+    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
   }
 
   it should "validate correct not bidded BidResponse" in {
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq.empty).withNbr(1).build
 
-    validator.validate(bidResponse) shouldBe Some(bidResponse)
+    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
   }
 
   it should "not validate BidResponse with empty id" in {
     val incorrectBidResponse = BidResponseBuilder("fh2i8", Seq(correctSeatBid)).build
 
-    validator.validate(incorrectBidResponse) shouldBe None
+    validator.validate(bidRequest, incorrectBidResponse) shouldBe None
   }
 
   it should "not validate BidResponse without seatBids and nbr" in {
     val incorrectBidResponse = BidResponseBuilder(bidRequest.id, Seq.empty).build
 
-    validator.validate(incorrectBidResponse) shouldBe None
+    validator.validate(bidRequest, incorrectBidResponse) shouldBe None
   }
 
   it should "not validate BidResponse without Bids in SeatBid" in {
     val incorrectSeatBid = SeatBidBuilder(Seq.empty).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(incorrectSeatBid)).build
 
-    validator.validate(bidResponse) shouldBe None
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse with incorrect group in SeatBid" in {
@@ -92,7 +92,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
       .build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(incorrectSeatBid)).build
 
-    validator.validate(bidResponse) shouldBe None
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse with small price" in {
@@ -100,7 +100,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     val seatBid = SeatBidBuilder(Seq(incorrectBid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
-    validator.validate(bidResponse) shouldBe None
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "remove incorrect Bids from SeatBid when SeatBid.group = 0" in {
@@ -114,7 +114,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     val expectedSeatBid = SeatBidBuilder(Seq(correctBid)).withSeat(seat).withGroup(0).build
     val expectedBidResponse = BidResponseBuilder(bidRequest.id, Seq(expectedSeatBid)).build
 
-    validator.validate(bidResponse) shouldBe Some(expectedBidResponse)
+    validator.validate(bidRequest, bidResponse) shouldBe Some(expectedBidResponse)
   }
 
   it should "not validate incorrect Bids when SeatBid.group = 1" in {
@@ -122,7 +122,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     val seatBid = SeatBidBuilder(Seq(incorrectBid, correctBid)).withGroup(1).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
-    validator.validate(bidResponse) shouldBe None
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse with blocked categories" in {
@@ -132,7 +132,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     val seatBid = SeatBidBuilder(Seq(incorrectBid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
-    validator.validate(bidResponse) shouldBe None
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse when all domains is blocked" in {
@@ -142,7 +142,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     val seatBid = SeatBidBuilder(Seq(incorrectBid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
-    validator.validate(bidResponse) shouldBe None
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "validate BidResponse when not all domains is blocked" in {
@@ -154,7 +154,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     val seatBid = SeatBidBuilder(Seq(bid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
-    validator.validate(bidResponse) shouldBe Some(bidResponse)
+    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
   }
 
   it should "validate BidResponse without dealId" in {
@@ -165,6 +165,6 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     val seatBid = SeatBidBuilder(Seq(bid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
-    validator.validate(bidResponse) shouldBe Some(bidResponse)
+    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
   }
 }
