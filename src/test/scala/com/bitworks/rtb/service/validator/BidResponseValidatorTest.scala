@@ -32,6 +32,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
   val bidRequest = BidRequestBuilder("19875198", Seq(imp))
     .withBcat(Seq("IAB7-3"))
     .withBadv(Seq("bad.com"))
+    .withApp(app)
     .build
 
   val validator = new BidResponseValidator
@@ -135,9 +136,11 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
-  it should "not validate BidResponse when all domains is blocked" in {
+  it should "not validate BidResponse with blocked domains" in {
     val incorrectBid = BidBuilder("1", imp.id, imp.bidFloor + 1)
-      .withAdomain(bidRequest.badv.get)
+      .withAdomain(bidRequest.badv.get :+ "notblocked.com")
+      .withH(banner.hmax.get)
+      .withW(banner.w.get)
       .build
     val seatBid = SeatBidBuilder(Seq(incorrectBid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
@@ -145,9 +148,9 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
-  it should "validate BidResponse when not all domains is blocked" in {
-    val bid = BidBuilder("1", imp.id, imp.bidFloor + 1)
-      .withAdomain(bidRequest.badv.get :+ "notblocked.com")
+  it should "validate BidResponse without dealId" in {
+    val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
+      .withBundle(app.bundle.get)
       .withH(banner.hmax.get)
       .withW(banner.w.get)
       .build
@@ -157,14 +160,14 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
   }
 
-  it should "validate BidResponse without dealId" in {
-    val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
+  it should "not validate BidResponse without bundle" in {
+    val incorrectBid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
       .withH(banner.hmax.get)
       .withW(banner.w.get)
       .build
-    val seatBid = SeatBidBuilder(Seq(bid)).build
+    val seatBid = SeatBidBuilder(Seq(incorrectBid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
-    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 }

@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.validator
 
-import com.bitworks.rtb.model.request.{App, BidRequest, Imp}
+import com.bitworks.rtb.model.request.{App, BidRequest, Deal, Imp}
 import com.bitworks.rtb.model.response._
 
 /**
@@ -20,12 +20,15 @@ class BidResponseValidator {
     *                    object
     */
   def validate(bidRequest: BidRequest, bidResponse: BidResponse): Option[BidResponse] = {
-    if (bidResponse.id == bidRequest.id &&
-      bidResponse.bidId.forall(_.nonEmpty) &&
-      bidResponse.cur.nonEmpty &&
-      bidResponse.customData.forall(_.nonEmpty) &
-      bidResponse.nbr.isEmpty) {
+    def checkParams = {
+      bidResponse.id == bidRequest.id &&
+        bidResponse.bidId.forall(_.nonEmpty) &&
+        bidResponse.cur.nonEmpty &&
+        bidResponse.customData.forall(_.nonEmpty) &&
+        bidResponse.nbr.isEmpty
+    }
 
+    if (checkParams) {
       val seatBids = bidResponse.seatBid.map(validateSeatBid(bidRequest)).filter(_.nonEmpty)
         .map(_.get)
       if (seatBids.nonEmpty) {
@@ -42,6 +45,7 @@ class BidResponseValidator {
     } else None
   }
 
+
   private def validateSeatBid(bidRequest: BidRequest)(seatBid: SeatBid): Option[SeatBid] = {
     seatBid.group match {
       case 0 =>
@@ -56,22 +60,39 @@ class BidResponseValidator {
   }
 
   private def validateBid(bidRequest: BidRequest, seat: Option[String])(bid: Bid): Boolean = {
+    def checkParams(imp: Imp) = {
+      bid.id.nonEmpty &&
+        bid.adId.forall(_.nonEmpty) &&
+        checkDealId(imp) &&
+        bid.nurl.forall(_.nonEmpty) &&
+        bid.adm.forall(_.nonEmpty) &&
+        checkBundle &&
+        bid.iurl.forall(_.nonEmpty) &&
+        bid.cid.forall(_.nonEmpty) &&
+        bid.crid.forall(_.nonEmpty) &&
+        checkBlackList(bid.cat, bidRequest.bcat) &&
+        checkSize(bid.h, bid.w, imp)
+    }
+
+    def checkDealId(imp: Imp) = {
+      bid.dealId match {
+        case Some(dealId) => validateBidWithDeal(bidRequest, imp, seat, bid)
+        case None => validateBidWithoutDeal(bidRequest, imp, seat, bid)
+      }
+    }
+
+    def checkBundle = {
+      if (bid.bundle.nonEmpty) {
+        bidRequest.app.nonEmpty &&
+          bidRequest.app.get.bundle == bid.bundle
+      } else {
+        bidRequest.app.isEmpty ||
+          bidRequest.app.get.bundle.isEmpty
+      }
+    }
+
     bidRequest.imp.find(_.id == bid.impId) match {
-      case Some(imp) =>
-        bid.id.nonEmpty && (
-          bid.dealId match {
-            case Some(dealId) => validateBidWithDeal(bidRequest, imp, seat, bid)
-            case None => validateBidWithoutDeal(bidRequest, imp, seat, bid)
-          }) &&
-          bid.adId.forall(_.nonEmpty) &&
-          bid.nurl.forall(_.nonEmpty) &&
-          bid.adm.forall(_.nonEmpty) &&
-          bidRequest.app.forall(checkBundle(bid.bundle)) &&
-          bid.iurl.forall(_.nonEmpty) &&
-          bid.cid.forall(_.nonEmpty) &&
-          bid.crid.forall(_.nonEmpty) &&
-          isAllNotInBlackList(bid.cat, bidRequest.bcat) &&
-          checkSize(bid.h, bid.w, imp)
+      case Some(imp) => checkParams(imp)
       case None => false
     }
   }
@@ -104,31 +125,32 @@ class BidResponseValidator {
     }
   }
 
-  private def checkBundle(bundle: Option[String])(app: App): Boolean = {
-    app.bundle.forall { b =>
-      bundle.nonEmpty &&
-        b == bundle.get
-    }
-  }
-
   private def validateBidWithDeal(
       bidRequest: BidRequest,
       imp: Imp,
       seat: Option[String],
       bid: Bid): Boolean = {
-    imp.pmp.nonEmpty &&
-      imp.pmp.get.deals.nonEmpty && (
+
+    def checkFondDeal(deal: Deal) = {
+      bid.price >= deal.bidFloor && (
+        bid.adomain.isEmpty ||
+          checkWhiteList(bid.adomain, deal.wadomain) ||
+          checkBlackList(bid.adomain, bidRequest.badv)) && (
+        deal.wseat.isEmpty ||
+          seat.nonEmpty &&
+            deal.wseat.get.contains(seat.get))
+    }
+
+    def checkDeal = {
       imp.pmp.get.deals.get.find(_.id == bid.dealId.get) match {
-        case Some(deal) =>
-          bid.price >= deal.bidFloor && (
-            bid.adomain.isEmpty ||
-              isLeastOneInWhiteList(bid.adomain, deal.wadomain) ||
-              isLeastOneNotInBlackList(bid.adomain, bidRequest.badv)) && (
-            deal.wseat.isEmpty ||
-              seat.nonEmpty &&
-                deal.wseat.get.contains(seat.get))
+        case Some(deal) => checkFondDeal(deal)
         case None => false
-      })
+      }
+    }
+
+    imp.pmp.nonEmpty &&
+      imp.pmp.get.deals.nonEmpty &&
+      checkDeal
   }
 
   private def validateBidWithoutDeal(
@@ -138,29 +160,18 @@ class BidResponseValidator {
       bid: Bid): Boolean = {
     bid.price >= imp.bidFloor && (
       bid.adomain.isEmpty ||
-        isLeastOneNotInBlackList(bid.adomain, bidRequest.badv))
+        checkBlackList(bid.adomain, bidRequest.badv))
   }
 
-  private def isLeastOneInWhiteList[T](
-      items: Option[Seq[T]],
-      whiteList: Option[Seq[T]]): Boolean = {
-    whiteList.isEmpty ||
-      items.nonEmpty &&
-        whiteList.get.intersect(items.get).nonEmpty
+  private def checkWhiteList[T](items: Option[Seq[T]], whiteList: Option[Seq[T]]): Boolean = {
+    whiteList.isEmpty &&
+      items.isEmpty ||
+      items.get.exists(whiteList.get.contains)
   }
 
-  private def isLeastOneNotInBlackList[T](
-      items: Option[Seq[T]],
-      blackList: Option[Seq[T]]): Boolean = {
-    blackList.isEmpty ||
-      items.nonEmpty &&
-        items.get.exists(!blackList.get.contains(_))
-  }
-
-  private def isAllNotInBlackList[T](items: Option[Seq[T]], blackList: Option[Seq[T]]): Boolean = {
+  private def checkBlackList[T](items: Option[Seq[T]], blackList: Option[Seq[T]]): Boolean = {
     blackList.isEmpty ||
       items.isEmpty ||
       !items.get.exists(blackList.get.contains)
   }
-
 }
