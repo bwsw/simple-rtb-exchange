@@ -15,8 +15,8 @@ trait SiteDao extends BaseDao[Site] with CacheHelper[Site]
 /**
   * DAO implementation for [[com.bitworks.rtb.model.db.Site Site]].
   *
-  * @param ctx          DB context
-  * @param updater      [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
+  * @param ctx     DB context
+  * @param updater [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
   */
 class SiteDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends SiteDao with Logging {
 
@@ -25,7 +25,7 @@ class SiteDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends SiteDao wit
   val siteType = 1
 
   override def notify(action: CacheMessage) = {
-    val apps = action match {
+    val sites = action match {
       case InitCache => ctx.run {
         Schema.site
           .filter(_.`type` == lift(siteType))
@@ -37,12 +37,17 @@ class SiteDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends SiteDao wit
           .filter(_.tsversion >= lift(tsversion))
       }
     }
-    updateCache(apps, getCreator)
+    updateCache(sites, getCreator(sites))
   }
 
   /** Returns function creates [[com.bitworks.rtb.model.db.Site Site]] */
-  private def getCreator: SiteEntity => Option[Site] = createSite(
-    ctx.run(Schema.siteCategory))
+  private def getCreator(sites: Seq[SiteEntity]): SiteEntity => Option[Site] = {
+    val siteCategories = ctx.run {
+      Schema.siteCategory
+        .filter(sc => liftQuery(sites.map(_.id)).contains(sc.siteId))
+    }
+    createSite(siteCategories)
+  }
 
   /**
     * Creates [[com.bitworks.rtb.model.db.Site Site]] from
