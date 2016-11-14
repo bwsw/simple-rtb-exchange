@@ -41,7 +41,8 @@ class AppDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends AppDao with 
   }
 
   /** Returns function creates [[com.bitworks.rtb.model.db.App App]] */
-  private def getCreator = createApp(ctx.run(Schema.siteCategory))(_)
+  private def getCreator: SiteEntity => Option[App] = createApp(
+    ctx.run(Schema.siteCategory))
 
   /**
     * Creates [[com.bitworks.rtb.model.db.App App]] from

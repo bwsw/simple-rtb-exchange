@@ -36,10 +36,10 @@ class PublisherDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends Publis
   }
 
   /** Returns function creates [[com.bitworks.rtb.model.db.Publisher Publisher]] */
-  private def getCreator = createPublisher(
+  private def getCreator: PublisherEntity => Option[Publisher] = createPublisher(
     ctx.run(Schema.publisherCategory),
     ctx.run(Schema.publisherBlockedCategory),
-    ctx.run(Schema.publisherBlockedAdvertiser))(_)
+    ctx.run(Schema.publisherBlockedAdvertiser))
 
   /**
     * Creates [[com.bitworks.rtb.model.db.App App]] from

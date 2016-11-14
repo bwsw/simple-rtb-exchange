@@ -41,8 +41,8 @@ class SiteDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends SiteDao wit
   }
 
   /** Returns function creates [[com.bitworks.rtb.model.db.Site Site]] */
-  private def getCreator = createSite(
-    ctx.run(Schema.siteCategory))(_)
+  private def getCreator: SiteEntity => Option[Site] = createSite(
+    ctx.run(Schema.siteCategory))
 
   /**
     * Creates [[com.bitworks.rtb.model.db.Site Site]] from
