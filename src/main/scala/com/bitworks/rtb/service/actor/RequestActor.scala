@@ -78,8 +78,12 @@ class RequestActor(
 
       adRequest match {
         case Some(ar) =>
-          val response = adResponseFactory.create(ar, msg)
-          completeRequest(response)
+          try {
+            val response = adResponseFactory.create(ar, msg)
+            completeRequest(response)
+          } catch {
+            case e: Throwable => onError(e.getMessage)
+          }
         case None =>
           log.error("ad request is not defined")
           request.fail()
