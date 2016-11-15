@@ -21,13 +21,17 @@ class BidResponseValidator {
     * @return BidResponse if it is valid, None otherwise
     */
   def validate(bidRequest: BidRequest, bidResponse: BidResponse): Option[BidResponse] = {
-    if (bidResponse.id != bidRequest.id || bidResponse.nbr.nonEmpty || !bidResponse.bidId
-      .forall(_.nonEmpty) || !bidResponse.customData.forall(_.nonEmpty) || bidResponse.cur
-      .isEmpty) {
+    if (bidResponse.id != bidRequest.id ||
+      bidResponse.nbr.nonEmpty ||
+      !bidResponse.bidId.forall(_.nonEmpty) ||
+      !bidResponse.customData.forall(_.nonEmpty) ||
+      bidResponse.cur.isEmpty) {
       return None
     }
 
-    val seatBids = bidResponse.seatBid.map(validateSeatBid(bidRequest)).filter(_.nonEmpty)
+    val seatBids = bidResponse.seatBid
+      .map(validateSeatBid(bidRequest))
+      .filter(_.nonEmpty)
       .map(_.get)
     if (seatBids.nonEmpty) {
       Some(
@@ -39,8 +43,7 @@ class BidResponseValidator {
           bidResponse.customData,
           bidResponse.nbr,
           bidResponse.ext))
-    }
-    else None
+    } else None
   }
 
   private def validateSeatBid(bidRequest: BidRequest)(seatBid: SeatBid): Option[SeatBid] = {
@@ -69,9 +72,9 @@ class BidResponseValidator {
         bid.iurl.forall(_.nonEmpty) &&
         bid.cid.forall(_.nonEmpty) &&
         bid.crid.forall(_.nonEmpty) &&
-        checkBlackList(bid.adomain, bidRequest.badv) &&
         checkBlackList(bid.cat, bidRequest.bcat) &&
-        checkSize(bid.h, bid.w, imp)
+        checkSize(bid.h, bid.w, imp) &&
+        checkBlackList(bid.attr, getBattr(imp))
     }
 
     def checkDealId(imp: Imp) = {
@@ -87,13 +90,19 @@ class BidResponseValidator {
     }
   }
 
+  private def getBattr(imp: Imp): Option[Seq[Int]] = {
+    if (imp.banner.nonEmpty) imp.banner.get.battr
+    else if (imp.video.nonEmpty) imp.video.get.battr
+    else if (imp.native.nonEmpty) imp.native.get.battr
+    else None
+  }
+
   private def checkSize(h: Option[Int], w: Option[Int], imp: Imp): Boolean = {
     if (imp.banner.nonEmpty) {
       val banner = imp.banner.get
       checkOneDimension(h, banner.h, banner.hmin, banner.hmax) &&
         checkOneDimension(w, banner.w, banner.wmin, banner.wmax)
-    }
-    else true
+    } else true
   }
 
   private def checkOneDimension(
@@ -105,8 +114,7 @@ class BidResponseValidator {
       expected.nonEmpty && dimension.get == expected.get ||
         (min.isEmpty || dimension.get >= min.get) &&
           (max.isEmpty || dimension.get <= max.get)
-    }
-    else {
+    } else {
       expected.isEmpty &&
         max.isEmpty &&
         min.isEmpty
@@ -120,7 +128,6 @@ class BidResponseValidator {
       bid: Bid): Boolean = {
 
     def checkDeal(deal: Deal) = {
-      // TODO: to check whether this works correctly in Scala
       bid.price >= deal.bidFloor &&
         checkWhiteList(bid.adomain, deal.wadomain) &&
         (deal.wseat.isEmpty ||
@@ -145,8 +152,8 @@ class BidResponseValidator {
       imp: Imp,
       seat: Option[String],
       bid: Bid): Boolean = {
-    // TODO: to check whether this works correctly in Scala
-    bid.price >= imp.bidFloor
+    bid.price >= imp.bidFloor &&
+      checkBlackList(bid.adomain, bidRequest.badv)
   }
 
   private def checkWhiteList[T](items: Option[Seq[T]], whiteList: Option[Seq[T]]): Boolean = {
@@ -156,7 +163,7 @@ class BidResponseValidator {
     items.isEmpty || items.get.exists(whiteList.get.contains)
   }
 
-  private def checkBlackList[T](items: Option[Seq[T]], blackList: Option[Seq[T]]): Boolean = {
+  private def checkBlackList[T](items: Option[Iterable[T]], blackList: Option[Seq[T]]): Boolean = {
     blackList.isEmpty ||
       items.isEmpty ||
       !items.get.exists(blackList.get.contains)

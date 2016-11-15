@@ -23,6 +23,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     .withHmax(400)
     .withHmin(200)
     .withW(150)
+    .withBattr(Seq(1, 2))
     .build
   val imp = ImpBuilder("13512532")
     .withBidFloor(deal.bidFloor)
@@ -43,11 +44,11 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     deal.bidFloor + 0.1)
     .withAdId("adid")
     .withNurl("nurl")
-    .withAdm("adm")
+    .withAdm("\"<img src=\\\"http://localhost/img.jpg\\\" />\"")
     .withAdomain(deal.wadomain.get)
     .withBundle(app.bundle.get)
     .withCat(Seq("IAB2-2"))
-    .withAttr(Set(1, 3, 5))
+    .withAttr(Set(5, 6, 7))
     .withH(banner.hmin.get + 10)
     .withW(banner.w.get)
     .withDealId(deal.id)
@@ -69,44 +70,53 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
   }
 
   it should "not validate BidResponse with empty id" in {
-    val incorrectBidResponse = BidResponseBuilder("fh2i8", Seq(correctSeatBid)).build
+    val bidResponse = BidResponseBuilder("fh2i8", Seq(correctSeatBid)).build
 
-    validator.validate(bidRequest, incorrectBidResponse) shouldBe None
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse without seatBids and nbr" in {
-    val incorrectBidResponse = BidResponseBuilder(bidRequest.id, Seq.empty).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq.empty).build
 
-    validator.validate(bidRequest, incorrectBidResponse) shouldBe None
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse without Bids in SeatBid" in {
-    val incorrectSeatBid = SeatBidBuilder(Seq.empty).build
-    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(incorrectSeatBid)).build
+    val seatBid = SeatBidBuilder(Seq.empty).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
     validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse with incorrect group in SeatBid" in {
-    val incorrectSeatBid = SeatBidBuilder(Seq(correctBid))
+    val seatBid = SeatBidBuilder(Seq(correctBid))
       .withGroup(2)
       .build
-    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(incorrectSeatBid)).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
     validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse with small price" in {
-    val incorrectBid = BidBuilder("1", imp.id, imp.bidFloor - 0.01).build
-    val seatBid = SeatBidBuilder(Seq(incorrectBid)).build
+    val bid = BidBuilder("1", imp.id, imp.bidFloor - 0.01)
+      .withAdomain(correctBid.adomain.get)
+      .withCat(correctBid.cat.get)
+      .withAttr(correctBid.attr.get)
+      .withH(correctBid.h.get)
+      .withW(correctBid.w.get)
+      .withAdm(correctBid.adm.get)
+      .build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
     validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "remove incorrect Bids from SeatBid when SeatBid.group = 0" in {
-    val incorrectBid = BidBuilder("2", imp.id, -5).build
-    val seatBid = SeatBidBuilder(Seq(incorrectBid, correctBid))
+    val bid = BidBuilder("2", imp.id, -5)
+      .withAdm(correctBid.adm.get)
+      .build
+    val seatBid = SeatBidBuilder(Seq(bid, correctBid))
       .withGroup(0)
       .withSeat(seat)
       .build
@@ -119,18 +129,25 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
   }
 
   it should "not validate incorrect Bids when SeatBid.group = 1" in {
-    val incorrectBid = BidBuilder("2", imp.id, imp.bidFloor - 0.01).build
-    val seatBid = SeatBidBuilder(Seq(incorrectBid, correctBid)).withGroup(1).build
+    val bid = BidBuilder("2", imp.id, imp.bidFloor - 0.01)
+      .withAdm(correctBid.adm.get)
+      .build
+    val seatBid = SeatBidBuilder(Seq(bid, correctBid)).withGroup(1).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
     validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
   it should "not validate BidResponse with blocked categories" in {
-    val incorrectBid = BidBuilder("1", imp.id, imp.bidFloor + 1)
-      .withCat(bidRequest.bcat.get :+ "IAB4-4")
+    val bid = BidBuilder("1", imp.id, imp.bidFloor + 1)
+      .withAdomain(correctBid.adomain.get)
+      .withCat(correctBid.cat.get ++ bidRequest.bcat.get)
+      .withAttr(correctBid.attr.get)
+      .withH(correctBid.h.get)
+      .withW(correctBid.w.get)
+      .withAdm(correctBid.adm.get)
       .build
-    val seatBid = SeatBidBuilder(Seq(incorrectBid)).build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
     validator.validate(bidRequest, bidResponse) shouldBe None
@@ -138,9 +155,12 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
 
   it should "not validate BidResponse with blocked domains" in {
     val incorrectBid = BidBuilder("1", imp.id, imp.bidFloor + 1)
-      .withAdomain(bidRequest.badv.get :+ "notblocked.com")
-      .withH(banner.hmax.get)
-      .withW(banner.w.get)
+      .withAdomain(correctBid.adomain.get ++ bidRequest.badv.get)
+      .withCat(correctBid.cat.get)
+      .withAttr(correctBid.attr.get)
+      .withH(correctBid.h.get)
+      .withW(correctBid.w.get)
+      .withAdm(correctBid.adm.get)
       .build
     val seatBid = SeatBidBuilder(Seq(incorrectBid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
@@ -150,10 +170,12 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
 
   it should "validate BidResponse without dealId" in {
     val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
-      .withBundle(app.bundle.get)
-      .withH(banner.hmax.get)
-      .withW(banner.w.get)
-      .withAdm("<img src=\"http://localhost/img.jpg\" />")
+      .withAdomain(correctBid.adomain.get)
+      .withCat(correctBid.cat.get)
+      .withAttr(correctBid.attr.get)
+      .withH(correctBid.h.get)
+      .withW(correctBid.w.get)
+      .withAdm(correctBid.adm.get)
       .build
     val seatBid = SeatBidBuilder(Seq(bid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
@@ -161,12 +183,31 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
   }
 
-  it should "not validate BidResponse without bundle" in {
-    val incorrectBid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
-      .withH(banner.hmax.get)
-      .withW(banner.w.get)
+  it should "not validate BidResponse with blocked attr" in {
+    val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
+      .withAdomain(correctBid.adomain.get)
+      .withCat(correctBid.cat.get)
+      .withAttr(correctBid.attr.get ++ banner.battr.get.toSet)
+      .withH(correctBid.h.get)
+      .withW(correctBid.w.get)
+      .withAdm(correctBid.adm.get)
       .build
-    val seatBid = SeatBidBuilder(Seq(incorrectBid)).build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+    validator.validate(bidRequest, bidResponse) shouldBe None
+  }
+
+  it should "not validate BidResponse with incorrect size" in {
+    val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
+      .withAdomain(correctBid.adomain.get)
+      .withCat(correctBid.cat.get)
+      .withAttr(correctBid.attr.get)
+      .withH(banner.hmax.get + 1)
+      .withW(correctBid.w.get)
+      .withAdm(correctBid.adm.get)
+      .build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
     validator.validate(bidRequest, bidResponse) shouldBe None
