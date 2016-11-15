@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.validator
 
-import com.bitworks.rtb.model.request.{App, BidRequest, Deal, Imp}
+import com.bitworks.rtb.model.request.{BidRequest, Deal, Imp}
 import com.bitworks.rtb.model.response._
 
 /**
@@ -66,6 +66,7 @@ class BidResponseValidator {
     def checkParams(imp: Imp) = {
       bid.id.nonEmpty &&
         bid.adId.forall(_.nonEmpty) &&
+        bid.price >= 0 &&
         checkDealId(imp) &&
         (bid.adm.exists(_.nonEmpty) || bid.nurl.exists(_.nonEmpty)) &&
         bid.bundle.forall(_.nonEmpty) &&
@@ -111,13 +112,16 @@ class BidResponseValidator {
       min: Option[Int],
       max: Option[Int]): Boolean = {
     if (dimension.nonEmpty) {
-      expected.nonEmpty && dimension.get == expected.get ||
-        (min.isEmpty || dimension.get >= min.get) &&
-          (max.isEmpty || dimension.get <= max.get)
+      if (dimension.get <= 0) {
+        return false
+      }
+      if (max.isEmpty && min.isEmpty) {
+        expected.forall(_ == dimension.get)
+      } else {
+        min.forall(dimension.get >= _) && max.forall(dimension.get <= _)
+      }
     } else {
-      expected.isEmpty &&
-        max.isEmpty &&
-        min.isEmpty
+      expected.isEmpty && max.isEmpty && min.isEmpty
     }
   }
 
