@@ -1,6 +1,5 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.application.RtbModule
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
 import org.scalatest.OptionValues._
 import scaldi.Injectable._
@@ -15,7 +14,7 @@ class PublisherDaoTest extends BaseDaoTest {
 
   implicit val PublisherModule = new Module {
     bind[PublisherDao] toProvider injected[PublisherDaoImpl] // new instance per inject
-  } :: new RtbModule
+  } :: dbModule
 
   "PublisherDao" should "load publisher by ID correctly after cache init" in {
     val publisherDao = inject[PublisherDao]

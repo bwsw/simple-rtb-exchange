@@ -1,19 +1,19 @@
 package com.bitworks.rtb.service
 
-import com.bitworks.rtb.application.RtbModule
+import akka.actor.ActorSystem
 import com.bitworks.rtb.model.db.Bidder
-import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
 import com.bitworks.rtb.service.parser.BidResponseParser
 import com.bitworks.rtb.service.writer.BidRequestWriter
-import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
+import scaldi.Injectable._
 import scaldi.Module
 
-import scala.concurrent.Future
-import scaldi.Injectable._
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 /**
   * Test for [[com.bitworks.rtb.service.BidRequestMakerImpl BidRequestMakerImpl]].
@@ -38,10 +38,12 @@ class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
   (requestMakerStub.post _).when(*, *).returns(Future.successful(new Array[Byte](0)))
 
   implicit val predefined = new Module {
-    bind[BidRequestWriter] to writerStub
-    bind[BidResponseParser] to parserStub
-    bind[RequestMaker] to requestMakerStub
-  } :: new RtbModule
+    bind[BidRequestWriter] toNonLazy writerStub
+    bind[BidResponseParser] toNonLazy parserStub
+    bind[RequestMaker] toNonLazy requestMakerStub
+    bind[ActorSystem] toNonLazy ActorSystem()
+    bind[BidRequestMaker] toNonLazy injected[BidRequestMakerImpl]
+  }
 
 
   "BidRequestMaker" should "write request before sending" in {
@@ -78,7 +80,7 @@ class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
     } :: predefined
 
     val bidRequestMaker = inject[BidRequestMaker]
-    bidRequestMaker.send(bidder, bidRequest)
+    Await.ready(bidRequestMaker.send(bidder, bidRequest), 1.second)
 
     (parserStub.parse _).verify(array).once
   }
