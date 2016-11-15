@@ -32,8 +32,8 @@ trait RequestMaker {
   */
 class AkkaHttpRequestMaker(
     implicit system: ActorSystem,
-    m: Materializer) extends RequestMaker {
-  val unmarshallingTimeout = 1.second
+    m: Materializer,
+    configuration: Configuration) extends RequestMaker {
 
   import system.dispatcher
 
@@ -48,7 +48,7 @@ class AkkaHttpRequestMaker(
     * @return extracted body as byte array
     */
   private def extractBody(response: HttpResponse) = {
-    response.entity.toStrict(unmarshallingTimeout) map { strict =>
+    response.entity.toStrict(configuration.toStrictTimeout) map { strict =>
       strict.data.toArray
     }
   }

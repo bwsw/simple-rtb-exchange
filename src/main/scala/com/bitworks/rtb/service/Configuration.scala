@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import com.typesafe.config.ConfigFactory
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration._
 
 /**
   * Access point to application configuration.
@@ -15,21 +15,24 @@ class Configuration {
 
   private val conf = ConfigFactory.load().getConfig("rtb-exchange")
 
-  /** Cache updating interval */
-  val cacheUpdateInterval = FiniteDuration(
+  /** Cache updating interval. */
+  def cacheUpdateInterval = FiniteDuration(
     conf.getDuration(
       "cache-update-interval")
       .toMillis, TimeUnit.MILLISECONDS)
 
-  /** Listener interface */
-  val interface = conf.getString("interface")
+  /** Listener interface. */
+  def interface = conf.getString("interface")
 
-  /** Listener port */
-  val port = conf.getInt("port")
+  /** Listener port. */
+  def port = conf.getInt("port")
 
-  /** Bid request timeout */
-  val bidRequestTimeout = FiniteDuration(
+  /** Bid request timeout. */
+  def bidRequestTimeout = FiniteDuration(
     conf.getDuration(
       "bid-request-timeout")
       .toMillis, TimeUnit.MILLISECONDS)
+
+  /** Timeout for converting HttpEntity to strict Entity. */
+  def toStrictTimeout = 1.second
 }
