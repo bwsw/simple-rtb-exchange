@@ -66,7 +66,6 @@ class BidResponseValidator {
     def checkParams(imp: Imp) = {
       bid.id.nonEmpty &&
         bid.adId.forall(_.nonEmpty) &&
-        bid.price >= 0 &&
         checkDealId(imp) &&
         (bid.adm.exists(_.nonEmpty) || bid.nurl.exists(_.nonEmpty)) &&
         bid.bundle.forall(_.nonEmpty) &&
