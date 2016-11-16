@@ -7,7 +7,7 @@ import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
 import com.bitworks.rtb.model.response.BidResponse
-import com.bitworks.rtb.service.Auction
+import com.bitworks.rtb.service.{Auction, Configuration}
 import com.bitworks.rtb.service.dao.BidderDao
 import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
 import com.bitworks.rtb.service.parser.AdRequestParser
@@ -32,6 +32,7 @@ class RequestActor(
   import context.dispatcher
 
   implicit val materializer = ActorMaterializer()
+  val configuration = inject[Configuration]
   val writer = inject[AdResponseWriter]
   val parser = inject[AdRequestParser]
   val factory = inject[BidRequestFactory]
@@ -46,8 +47,8 @@ class RequestActor(
 
     case HandleRequest =>
       log.debug("started request handling")
-      val timeout = 1.second
-      request.inner.entity.toStrict(timeout) map {
+
+      request.inner.entity.toStrict(configuration.toStrictTimeout) map {
         entity =>
           val bytes = entity.data.toArray
           val adRequest = parser.parse(bytes)

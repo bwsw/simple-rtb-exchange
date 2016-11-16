@@ -1,6 +1,5 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.application.RtbModule
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
 import org.scalatest.OptionValues._
 import scaldi.Injectable._
@@ -15,7 +14,7 @@ class BidderDaoTest extends BaseDaoTest {
 
   implicit val bidderModule = new Module {
     bind[BidderDao] toProvider injected[BidderDaoImpl] // new instance per inject
-  } :: new RtbModule
+  } :: dbModule
 
   "BidderDao" should "load bidder by ID correctly after cache init" in {
     val bidderDao = inject[BidderDao]
