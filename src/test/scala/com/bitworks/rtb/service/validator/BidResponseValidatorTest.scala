@@ -3,6 +3,7 @@ package com.bitworks.rtb.service.validator
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.model.response.builder._
 import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.prop.TableDrivenPropertyChecks._
 
 /**
   * Test for [[com.bitworks.rtb.service.validator.BidResponseValidator BidResponseValidator]].
@@ -229,63 +230,145 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
   }
 
   it should "not validate BidResponse with invalid height" in {
-    val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
-      .withAdomain(correctBid.adomain.get)
-      .withCat(correctBid.cat.get)
-      .withAttr(correctBid.attr.get)
-      .withH(0)
-      .withW(correctBid.w.get)
-      .withAdm(correctBid.adm.get)
-      .build
-    val seatBid = SeatBidBuilder(Seq(bid)).build
-    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+    val heights = Table(
+      ("hmin", "hexp", "hmax", "h"),
+      (Some(100), Some(200), Some(300), None),
+      (Some(100), None, Some(300), None),
+      (Some(100), Some(200), None, None),
+      (None, Some(200), Some(300), None),
+      (None, None, Some(300), None),
+      (Some(100), Some(200), Some(300), Some(0)),
+      (None, None, None, Some(0)),
+      (Some(100), Some(200), Some(300), Some(99)),
+      (Some(100), Some(200), Some(300), Some(301)),
+      (None, Some(200), None, Some(201)))
 
-    validator.validate(bidRequest, bidResponse) shouldBe None
+    forAll(heights) {
+      (hmin: Option[Int], hexp: Option[Int], hmax: Option[Int], h: Option[Int]) =>
+        val bannerBuilder = BannerBuilder()
+        hmin.foreach(bannerBuilder.withHmin)
+        hexp.foreach(bannerBuilder.withH)
+        hmax.foreach(bannerBuilder.withHmax)
+        val banner = bannerBuilder.build
+        val imp = ImpBuilder("1").withBanner(banner).build
+        val bidRequest = BidRequestBuilder("987349863", Seq(imp)).build
+
+        val bidBuilder = BidBuilder("1", imp.id, 1).withAdm("adm")
+        h.foreach(bidBuilder.withH)
+        val bid = bidBuilder.build
+        val seatBid = SeatBidBuilder(Seq(bid)).build
+        val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+        validator.validate(bidRequest, bidResponse) shouldBe None
+    }
   }
 
   it should "not validate BidResponse with invalid width" in {
-    val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
-      .withAdomain(correctBid.adomain.get)
-      .withCat(correctBid.cat.get)
-      .withAttr(correctBid.attr.get)
-      .withH(correctBid.h.get)
-      .withW(0)
-      .withAdm(correctBid.adm.get)
-      .build
-    val seatBid = SeatBidBuilder(Seq(bid)).build
-    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+    val widths = Table(
+      ("wmin", "wexp", "wmax", "w"),
+      (Some(100), Some(200), Some(300), None),
+      (Some(100), None, Some(300), None),
+      (Some(100), Some(200), None, None),
+      (None, Some(200), Some(300), None),
+      (None, None, Some(300), None),
+      (Some(100), Some(200), Some(300), Some(0)),
+      (None, None, None, Some(0)),
+      (Some(100), Some(200), Some(300), Some(99)),
+      (Some(100), Some(200), Some(300), Some(301)),
+      (None, Some(200), None, Some(201)))
 
-    validator.validate(bidRequest, bidResponse) shouldBe None
+    forAll(widths) {
+      (wmin: Option[Int], wexp: Option[Int], wmax: Option[Int], w: Option[Int]) =>
+        val bannerBuilder = BannerBuilder()
+        wmin.foreach(bannerBuilder.withWmin)
+        wexp.foreach(bannerBuilder.withW)
+        wmax.foreach(bannerBuilder.withWmax)
+        val banner = bannerBuilder.build
+        val imp = ImpBuilder("1").withBanner(banner).build
+        val bidRequest = BidRequestBuilder("987349863", Seq(imp)).build
+
+        val bidBuilder = BidBuilder("1", imp.id, 1).withAdm("adm")
+        w.foreach(bidBuilder.withW)
+        val bid = bidBuilder.build
+        val seatBid = SeatBidBuilder(Seq(bid)).build
+        val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+        validator.validate(bidRequest, bidResponse) shouldBe None
+    }
   }
 
   it should "validate BidResponse with exact width" in {
-    val banner = BannerBuilder().withW(150).build
-    val imp = ImpBuilder("13512532").withBanner(banner).build
-    val bidRequest = BidRequestBuilder("19875198", Seq(imp)).build
+    val widths = Table(
+      ("wmin", "wexp", "wmax", "w"),
+      (Some(100), Some(200), Some(300), Some(100)),
+      (Some(100), Some(200), Some(300), Some(120)),
+      (Some(100), Some(200), Some(300), Some(200)),
+      (Some(100), Some(200), Some(300), Some(230)),
+      (Some(100), Some(200), Some(300), Some(300)),
+      (None, Some(200), Some(300), Some(1)),
+      (None, None, Some(300), Some(1)),
+      (Some(100), Some(200), None, Some(Integer.MAX_VALUE)),
+      (Some(100), None, None, Some(Integer.MAX_VALUE)),
+      (None, Some(200), None, Some(200)),
+      (None, None, None, Some(200)),
+      (None, None, None, None)
+    )
 
-    val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
-      .withW(banner.w.get)
-      .withAdm(correctBid.adm.get)
-      .build
-    val seatBid = SeatBidBuilder(Seq(bid)).build
-    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+    forAll(widths) {
+      (wmin: Option[Int], wexp: Option[Int], wmax: Option[Int], w: Option[Int]) =>
+        val bannerBuilder = BannerBuilder()
+        wmin.foreach(bannerBuilder.withWmin)
+        wexp.foreach(bannerBuilder.withW)
+        wmax.foreach(bannerBuilder.withWmax)
+        val banner = bannerBuilder.build
+        val imp = ImpBuilder("1").withBanner(banner).build
+        val bidRequest = BidRequestBuilder("987349863", Seq(imp)).build
 
-    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
+        val bidBuilder = BidBuilder("1", imp.id, 1).withAdm("adm")
+        w.foreach(bidBuilder.withW)
+        val bid = bidBuilder.build
+        val seatBid = SeatBidBuilder(Seq(bid)).build
+        val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+        validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
+    }
   }
 
   it should "validate BidResponse with exact height" in {
-    val banner = BannerBuilder().withH(150).build
-    val imp = ImpBuilder("13512532").withBanner(banner).build
-    val bidRequest = BidRequestBuilder("19875198", Seq(imp)).build
+    val heights = Table(
+      ("hmin", "hexp", "hmax", "h"),
+      (Some(100), Some(200), Some(300), Some(100)),
+      (Some(100), Some(200), Some(300), Some(120)),
+      (Some(100), Some(200), Some(300), Some(200)),
+      (Some(100), Some(200), Some(300), Some(230)),
+      (Some(100), Some(200), Some(300), Some(300)),
+      (None, Some(200), Some(300), Some(1)),
+      (None, None, Some(300), Some(1)),
+      (Some(100), Some(200), None, Some(Integer.MAX_VALUE)),
+      (Some(100), None, None, Some(Integer.MAX_VALUE)),
+      (None, Some(200), None, Some(200)),
+      (None, None, None, Some(200)),
+      (None, None, None, None)
+    )
 
-    val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
-      .withH(banner.h.get)
-      .withAdm(correctBid.adm.get)
-      .build
-    val seatBid = SeatBidBuilder(Seq(bid)).build
-    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+    forAll(heights) {
+      (hmin: Option[Int], hexp: Option[Int], hmax: Option[Int], h: Option[Int]) =>
+        val bannerBuilder = BannerBuilder()
+        hmin.foreach(bannerBuilder.withHmin)
+        hexp.foreach(bannerBuilder.withH)
+        hmax.foreach(bannerBuilder.withHmax)
+        val banner = bannerBuilder.build
+        val imp = ImpBuilder("1").withBanner(banner).build
+        val bidRequest = BidRequestBuilder("987349863", Seq(imp)).build
 
-    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
+        val bidBuilder = BidBuilder("1", imp.id, 1).withAdm("adm")
+        h.foreach(bidBuilder.withH)
+        val bid = bidBuilder.build
+        val seatBid = SeatBidBuilder(Seq(bid)).build
+        val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+        validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
+    }
   }
 
 }
