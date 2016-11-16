@@ -1,5 +1,7 @@
 name := "rtb-exchange"
 
+organization := "com.bitworks"
+
 version := "1.0"
 
 scalaVersion := "2.11.8"
@@ -29,3 +31,5 @@ libraryDependencies ++= Seq(
 
 fork in Test := true
 javaOptions in Test += "-Dconfig.resource=application.test.conf"
+
+publishTo := Some("Nexus" at "http://rtb-ci.z1.netpoint-dc.com:8081/nexus/content/repositories/bitworks-rtb/")
