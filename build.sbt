@@ -32,4 +32,10 @@ libraryDependencies ++= Seq(
 fork in Test := true
 javaOptions in Test += "-Dconfig.resource=application.test.conf"
 
-publishTo := Some("Nexus" at "http://rtb-ci.z1.netpoint-dc.com:8081/nexus/content/repositories/bitworks-rtb/")
+publishTo := {
+  val nexus = "http://rtb-ci.z1.netpoint-dc.com:8081/nexus/content/repositories/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "bitworks-rtb-snapshot/")
+  else
+    Some("releases" at nexus + "bitworks-rtb/")
+}
