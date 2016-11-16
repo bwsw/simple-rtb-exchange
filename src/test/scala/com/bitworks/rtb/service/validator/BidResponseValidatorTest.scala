@@ -199,7 +199,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
   }
 
-  it should "not validate BidResponse with blocked attr" in {
+  it should "not validate BidResponse with attr blocked in banner" in {
     val bid = BidBuilder("1", imp.id, imp.bidFloor + 0.1)
       .withAdomain(correctBid.adomain.get)
       .withCat(correctBid.cat.get)
@@ -369,6 +369,60 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
 
         validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
     }
+  }
+
+  it should "validate BidResponse for BidRequest with video" in {
+    val video = VideoBuilder(Seq("video/x-flv")).build
+    val imp = ImpBuilder("4").withVideo(video).build
+    val bidRequest = BidRequestBuilder("5783216", Seq(imp)).build
+
+    val bid = BidBuilder("5", imp.id, imp.bidFloor).withAdm("adm").build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
+  }
+
+  it should "validate BidResponse for BidRequest with native" in {
+    val native = NativeBuilder("native request...").build
+    val imp = ImpBuilder("4").withNative(native).build
+    val bidRequest = BidRequestBuilder("5783216", Seq(imp)).build
+
+    val bid = BidBuilder("5", imp.id, imp.bidFloor).withAdm("adm").build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
+  }
+
+  it should "not validate BidResponse with attr blocked in video" in {
+    val video = VideoBuilder(Seq("video/x-flv")).withBattr(Seq(1, 2, 3)).build
+    val imp = ImpBuilder("4").withVideo(video).build
+    val bidRequest = BidRequestBuilder("5783216", Seq(imp)).build
+
+    val bid = BidBuilder("5", imp.id, imp.bidFloor)
+      .withAdm("adm")
+      .withAttr(Set(6, 2, 5))
+      .build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+    validator.validate(bidRequest, bidResponse) shouldBe None
+  }
+
+  it should "not validate BidResponse with attr blocked in native" in {
+    val native = NativeBuilder("native request...").withBattr(Seq(1, 2, 3)).build
+    val imp = ImpBuilder("4").withNative(native).build
+    val bidRequest = BidRequestBuilder("5783216", Seq(imp)).build
+
+    val bid = BidBuilder("5", imp.id, imp.bidFloor)
+      .withAdm("adm")
+      .withAttr(Set(6, 2, 5))
+      .build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+    validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
 }
