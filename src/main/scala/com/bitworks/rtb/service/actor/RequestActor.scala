@@ -1,6 +1,8 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, Props}
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
@@ -22,8 +24,6 @@ import scala.collection.mutable.ListBuffer
   * @author Egor Ilchenko
   */
 class RequestActor(
-    bidActor: ActorRef,
-    winActor: ActorRef,
     request: HttpRequestWrapper)(
     implicit inj: Injector) extends Actor with ActorLogging {
 
@@ -43,6 +43,13 @@ class RequestActor(
 
   var auctionStartCancellable: Option[Cancellable] = None
 
+  val bidActorProps = injectActorProps[BidActor]
+  val bidRouter = context.actorOf(
+    RoundRobinPool(bidders.length)
+      .props(bidActorProps), "bidrouter")
+
+  val winActor = injectActorRef[WinActor]
+
   override def receive: Receive = {
 
     case HandleRequest =>
@@ -56,6 +63,12 @@ class RequestActor(
 
           bidderDao.getAll.foreach { bidder =>
             bidActor ! SendBidRequest(bidder, bidRequest)
+          bidderDao.getAll match {
+            case Seq() => onError("bidders not found")
+            case bidders: Seq[Bidder] =>
+              bidders.foreach { bidder =>
+                bidRouter ! SendBidRequest(bidder, bidRequest)
+              }
           }
 
           auctionStartCancellable = Some(
@@ -119,9 +132,7 @@ object RequestActor {
 
   /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]]. */
   def props(
-      bidActor: ActorRef,
-      winActor: ActorRef,
       wrapper: HttpRequestWrapper)()(implicit inj: Injector) = {
-    Props(new RequestActor(bidActor, winActor, wrapper))
+    Props(new RequestActor(wrapper))
   }
 }
