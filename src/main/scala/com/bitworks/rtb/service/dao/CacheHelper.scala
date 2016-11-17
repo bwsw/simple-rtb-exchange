@@ -25,7 +25,7 @@ trait CacheHelper[E] extends BaseDao[E] with Logging{
       entities: Seq[T],
       f: T => Option[E]) = {
 
-    log.info(s"cache updating started. DB entities count: ${entities.length}")
+    log.info("Cache update started")
 
     entities.foreach { x =>
       if (x.deleted) {
@@ -40,8 +40,9 @@ trait CacheHelper[E] extends BaseDao[E] with Logging{
       tsversion = math.max(tsversion, x.tsversion)
     }
 
-    log.info(s"cache updating finished. Cache entities count: ${byIdCache.size}, " +
-      s"latest tsversion: $tsversion")
+    log.info(s"Count of entities: ${byIdCache.size}")
+    log.info(s"Latest tsversion: $tsversion")
+    log.info("Cache update finished")
   }
 
   override def get(id: Int): Option[E] = {
