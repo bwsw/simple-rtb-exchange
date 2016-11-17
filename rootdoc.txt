@@ -17,4 +17,4 @@ Notable packages include:
   provides data access objects for DB entities
   - [[com.bitworks.rtb.service.actor `com.bitworks.rtb.service.actor`]] contains actors
   - [[com.bitworks.rtb.service.validator `com.bitworks.rtb.validator`]] contains utility to
-  validate that bid response is correct
+  check whether bid response is correct
