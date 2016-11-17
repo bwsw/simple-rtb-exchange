@@ -1,7 +1,6 @@
 package com.bitworks.rtb.service.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, Props}
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, Cancellable, Props}
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
@@ -62,13 +61,7 @@ class RequestActor(
           val bidRequest = factory.create(adRequest)
 
           bidderDao.getAll.foreach { bidder =>
-            bidActor ! SendBidRequest(bidder, bidRequest)
-          bidderDao.getAll match {
-            case Seq() => onError("bidders not found")
-            case bidders: Seq[Bidder] =>
-              bidders.foreach { bidder =>
-                bidRouter ! SendBidRequest(bidder, bidRequest)
-              }
+            bidRouter ! SendBidRequest(bidder, bidRequest)
           }
 
           auctionStartCancellable = Some(
