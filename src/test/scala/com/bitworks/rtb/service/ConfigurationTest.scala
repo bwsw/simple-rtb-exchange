@@ -46,4 +46,15 @@ class ConfigurationTest extends FlatSpec with Matchers {
 
     port shouldBe expected
   }
+
+  it should "load bid request timeout correctly" in {
+    System.setProperty("rtb-exchange.bid-request-timeout", "500 milliseconds")
+
+    ConfigFactory.invalidateCaches()
+    val conf = new Configuration
+
+    val timeout = conf.bidRequestTimeout
+
+    timeout shouldBe 500.milliseconds
+  }
 }

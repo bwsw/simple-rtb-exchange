@@ -1,22 +1,22 @@
 package com.bitworks.rtb.service.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
 import com.bitworks.rtb.model.response.BidResponse
-import com.bitworks.rtb.service.Auction
 import com.bitworks.rtb.service.dao.BidderDao
 import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
 import com.bitworks.rtb.service.parser.AdRequestParser
 import com.bitworks.rtb.service.writer.AdResponseWriter
+import com.bitworks.rtb.service.{Auction, Configuration}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.duration._
 
 /**
   * Main actor to process ad requests.
@@ -24,14 +24,13 @@ import scala.concurrent.duration._
   * @author Egor Ilchenko
   */
 class RequestActor(
-    bidActor: ActorRef,
-    winActor: ActorRef,
     request: HttpRequestWrapper)(
     implicit inj: Injector) extends Actor with ActorLogging {
 
   import context.dispatcher
 
   implicit val materializer = ActorMaterializer()
+  val configuration = inject[Configuration]
   val writer = inject[AdResponseWriter]
   val parser = inject[AdRequestParser]
   val factory = inject[BidRequestFactory]
@@ -42,12 +41,19 @@ class RequestActor(
   val bidders = bidderDao.getAll
   val receivedBidResponses = new ListBuffer[BidRequestResult]
 
+  val bidActorProps = injectActorProps[BidActor]
+  val bidRouter = context.actorOf(
+    RoundRobinPool(bidders.length)
+      .props(bidActorProps), "bidrouter")
+
+  val winActor = injectActorRef[WinActor]
+
   override def receive: Receive = {
 
     case HandleRequest =>
       log.debug("started request handling")
-      val timeout = 1.second
-      request.inner.entity.toStrict(timeout) map {
+
+      request.inner.entity.toStrict(configuration.toStrictTimeout) map {
         entity =>
           val bytes = entity.data.toArray
           val adRequest = parser.parse(bytes)
@@ -57,7 +63,7 @@ class RequestActor(
             case Seq() => onError("bidders not found")
             case bidders: Seq[Bidder] =>
               bidders.foreach { bidder =>
-                bidActor ! SendBidRequest(bidder, bidRequest)
+                bidRouter ! SendBidRequest(bidder, bidRequest)
               }
           }
       } onFailure {
@@ -114,9 +120,7 @@ object RequestActor {
 
   /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]]. */
   def props(
-      bidActor: ActorRef,
-      winActor: ActorRef,
       wrapper: HttpRequestWrapper)()(implicit inj: Injector) = {
-    Props(new RequestActor(bidActor, winActor, wrapper))
+    Props(new RequestActor(wrapper))
   }
 }

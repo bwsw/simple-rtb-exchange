@@ -1,6 +1,5 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.application.RtbModule
 import com.bitworks.rtb.model.db.Status
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
 import org.scalatest.OptionValues._
@@ -16,7 +15,7 @@ class AppDaoTest extends BaseDaoTest {
 
   implicit val appModule = new Module {
     bind[AppDao] toProvider injected[AppDaoImpl] // new instance per inject
-  } :: new RtbModule
+  } :: dbModule
 
   "AppDao" should "load app by ID correctly after cache init" in {
     val appDao = inject[AppDao]
