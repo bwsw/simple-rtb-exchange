@@ -57,7 +57,8 @@ class RequestActor(
         entity =>
           val bytes = entity.data.toArray
           val adRequest = parser.parse(bytes)
-          val bidRequest = factory.create(adRequest)
+          // Fix this for Option[BidRequest]
+          val bidRequest = factory.create(adRequest).get
 
           bidderDao.getAll match {
             case Seq() => onError("bidders not found")
