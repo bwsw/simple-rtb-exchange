@@ -5,6 +5,7 @@ import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
+import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
 import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.dao.BidderDao
@@ -40,7 +41,7 @@ class RequestActor(
   val bidders = bidderDao.getAll
   val receivedBidResponses = new ListBuffer[BidRequestResult]
 
-  var auctionStartCancellable: Option[Cancellable] = None
+  var auctionStarted = false
 
   val bidActorProps = injectActorProps[BidActor]
   val bidRouter = context.actorOf(
@@ -60,15 +61,18 @@ class RequestActor(
           val adRequest = parser.parse(bytes)
           val bidRequest = factory.create(adRequest)
 
-          bidderDao.getAll.foreach { bidder =>
-            bidRouter ! SendBidRequest(bidder, bidRequest)
-          }
+          bidders match {
+            case Seq() => onError("bidders not found")
+            case _: Seq[Bidder] =>
+              bidders.foreach { bidder =>
+                bidRouter ! SendBidRequest(bidder, bidRequest)
+              }
 
-          auctionStartCancellable = Some(
-            context.system.scheduler.scheduleOnce(
-              configuration.bidRequestTimeout,
-              self,
-              StartAuction))
+              context.system.scheduler.scheduleOnce(
+                configuration.bidRequestTimeout,
+                self,
+                StartAuction)
+          }
 
       } onFailure {
         case exc => onError(exc.toString)
@@ -88,22 +92,23 @@ class RequestActor(
       completeRequest(response)
 
     case StartAuction =>
-      auctionStartCancellable.foreach(_.cancel())
-      log.debug("auction started")
-      val successful = receivedBidResponses
-        .collect {
-          case BidRequestSuccess(response) => response
+      if (!auctionStarted) {
+        auctionStarted = true
+        log.debug("auction started")
+        val successful = receivedBidResponses
+          .collect {
+            case BidRequestSuccess(response) => response
+          }
+        log.debug(s"auction participants: ${successful.length}")
+
+        val winner = auction.winner(successful)
+        log.debug(s"auction winner: $winner")
+
+        winner match {
+          case Some(response) => winActor ! response
+          case None => onError("winner not defined")
         }
-      log.debug(s"auction participants: ${successful.length}")
-
-      val winner = auction.winner(successful)
-      log.debug(s"auction winner: $winner")
-
-      winner match {
-        case Some(response) => winActor ! response
-        case None => onError("winner not defined")
       }
-
   }
 
   def completeRequest(response: AdResponse) = {
