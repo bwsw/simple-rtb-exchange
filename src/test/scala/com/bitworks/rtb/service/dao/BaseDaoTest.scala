@@ -7,6 +7,8 @@ import org.dbunit.JdbcDatabaseTester
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder
 import org.dbunit.operation.DatabaseOperation
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
+import scaldi.Module
+import scaldi.Injectable._
 
 /**
   * Base class for DAO tests.
@@ -31,12 +33,22 @@ trait BaseDaoTest extends FlatSpec with BeforeAndAfterAll with Matchers {
 
   val connection = tester.getConnection
 
+  implicit val dbModule = new Module {
+    bind[DbContext] toNonLazy new DbContext("db")
+    bind[CacheUpdater] toNonLazy new CacheUpdater
+  }
+
   override def beforeAll(): Unit = {
     val path = getClass.getResource("setup.xml").getPath
     val dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build(new File(path))
     DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet)
   }
 
+  override def afterAll(): Unit = {
+    connection.close()
+    val context = inject[DbContext]
+    context.close()
+  }
 
   /**
     * Loads dataset from class path and execute it

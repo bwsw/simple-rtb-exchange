@@ -1,6 +1,5 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.application.RtbModule
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
 import org.scalatest.OptionValues._
 import scaldi.Injectable._
@@ -14,7 +13,7 @@ import scaldi.Module
 class CategoryDaoTest extends BaseDaoTest {
   implicit val categoryModule = new Module {
     bind[CategoryDao] toProvider injected[CategoryDaoImpl] // new instance per inject
-  } :: new RtbModule
+  } :: dbModule
 
   "CategoryDao" should "load category by ID correctly after cache init" in {
     val categoryDao = inject[CategoryDao]

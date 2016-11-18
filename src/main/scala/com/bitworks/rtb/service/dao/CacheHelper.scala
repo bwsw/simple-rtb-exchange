@@ -1,6 +1,7 @@
 package com.bitworks.rtb.service.dao
 
 import com.bitworks.rtb.model.db.BaseEntity
+import com.bitworks.rtb.service.Logging
 import com.bitworks.rtb.service.dao.schema.EntityMetaInfo
 
 /**
@@ -8,7 +9,7 @@ import com.bitworks.rtb.service.dao.schema.EntityMetaInfo
   *
   * @author Egor Ilchenko
   */
-trait CacheHelper[E] extends BaseDao[E] {
+trait CacheHelper[E] extends BaseDao[E] with Logging{
 
   private var byIdCache: Map[Int, E] = Map.empty
 
@@ -24,6 +25,8 @@ trait CacheHelper[E] extends BaseDao[E] {
       entities: Seq[T],
       f: T => Option[E]) = {
 
+    log.info("Cache update started")
+
     entities.foreach { x =>
       if (x.deleted) {
         byIdCache = byIdCache - x.id
@@ -36,6 +39,10 @@ trait CacheHelper[E] extends BaseDao[E] {
       }
       tsversion = math.max(tsversion, x.tsversion)
     }
+
+    log.info(s"Count of entities: ${byIdCache.size}")
+    log.info(s"Latest tsversion: $tsversion")
+    log.info("Cache update finished")
   }
 
   override def get(id: Int): Option[E] = {
