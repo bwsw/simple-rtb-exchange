@@ -7,6 +7,7 @@ import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
+import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.dao.BidderDao
 import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
@@ -48,6 +49,8 @@ class RequestActor(
 
   val winActor = injectActorRef[WinActor]
 
+  var bidRequest: Option[BidRequest] = None
+
   override def receive: Receive = {
 
     case HandleRequest =>
@@ -57,13 +60,13 @@ class RequestActor(
         entity =>
           val bytes = entity.data.toArray
           val adRequest = parser.parse(bytes)
-          val bidRequest = factory.create(adRequest)
+          bidRequest = Some(factory.create(adRequest))
 
           bidderDao.getAll match {
             case Seq() => onError("bidders not found")
             case bidders: Seq[Bidder] =>
               bidders.foreach { bidder =>
-                bidRouter ! SendBidRequest(bidder, bidRequest)
+                bidRouter ! SendBidRequest(bidder, bidRequest.get)
               }
           }
       } onFailure {
@@ -77,7 +80,7 @@ class RequestActor(
         startAuction()
 
     case msg: BidResponse =>
-      log.debug("bid response received")
+      log.debug(s"bid response received $msg")
 
       val response = adResponseFactory.create(msg)
 
@@ -94,15 +97,20 @@ class RequestActor(
     log.debug(s"auction participants: ${successful.length}")
 
     val winner = auction.winner(successful)
+
     log.debug(s"auction winner: $winner")
 
     winner match {
-      case Some(response) => winActor ! response
+      case Some(response) =>
+        log.debug(s"winner seatBids: ${response.seatBid.length}")
+        log.debug(s"winner bids; ${response.seatBid.flatMap(_.bid).length}")
+        winActor ! SendWinNotice(bidRequest.get, response)
       case None => onError("winner not defined")
     }
   }
 
   def completeRequest(response: AdResponse) = {
+    log.debug("completing request...")
     val bytes = writer.write(response)
     request.complete(bytes)
   }
