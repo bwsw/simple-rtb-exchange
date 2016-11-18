@@ -63,9 +63,9 @@ class AdResponseFactoryImpl extends AdResponseFactory with Logging {
     */
   private def getImp(request: AdRequest, bid: Bid) = {
     val `type` = request.imp.find(_.id == bid.impId) match {
-      case Some(Imp(_, Some(_), None, None)) => 1
-      case Some(Imp(_, None, Some(_), None)) => 2
-      case Some(Imp(_, None, None, Some(_))) => 3
+      case Some(Imp(_, Some(_), None, None)) => ImpBuilder.bannerType
+      case Some(Imp(_, None, Some(_), None)) => ImpBuilder.videoType
+      case Some(Imp(_, None, None, Some(_))) => ImpBuilder.nativeType
       case _ =>
         log.error(s"cannot determine type of adRequest. r: $request; bid: $bid")
         throw new DataValidationException("cannot determine ad response type")
