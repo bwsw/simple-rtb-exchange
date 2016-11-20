@@ -6,14 +6,13 @@ import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.stream.Materializer
 
 import scala.concurrent.Future
-import scala.concurrent.duration._
 
 /**
   * Http request maker.
   *
   * @author Egor Ilchenko
   */
-trait RequestMaker {
+trait HttpRequestMaker {
 
   /**
     * Makes POST request.
@@ -33,7 +32,7 @@ trait RequestMaker {
 class AkkaHttpRequestMaker(
     implicit system: ActorSystem,
     m: Materializer,
-    configuration: Configuration) extends RequestMaker {
+    configuration: Configuration) extends HttpRequestMaker {
 
   import system.dispatcher
 
