@@ -28,8 +28,15 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
   }
 
-  it should "throw exception if required fields are missed" in {
-    val incorrectJson = """{"someobj":"someval"}""".getBytes
+  it should "throw exception if id is missed" in {
+    val incorrectJson = """{"imp": []}""".getBytes
+    val parser = new AdRequestJsonParser
+
+    an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
+  }
+
+  it should "throw exception if imp is missed" in {
+    val incorrectJson = """{"id": "id"}""".getBytes
     val parser = new AdRequestJsonParser
 
     an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
