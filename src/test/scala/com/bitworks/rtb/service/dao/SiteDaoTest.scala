@@ -1,9 +1,7 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.application.RtbModule
-import com.bitworks.rtb.model.db.Status
+import com.bitworks.rtb.model.db.{Site, Status}
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
-import org.scalatest.OptionValues._
 import scaldi.Injectable._
 import scaldi.Module
 
@@ -16,7 +14,7 @@ class SiteDaoTest extends BaseDaoTest {
 
   implicit val siteModule = new Module {
     bind[SiteDao] toProvider injected[SiteDaoImpl] // new instance per inject
-  } :: new RtbModule
+  } :: dbModule
 
   "SiteDao" should "load site by ID correctly after cache init" in {
     val siteDao = inject[SiteDao]
@@ -26,18 +24,21 @@ class SiteDaoTest extends BaseDaoTest {
 
     siteDao.notify(InitCache)
 
+    val expectedSite = Some(
+      Site(
+        11,
+        "site",
+        1,
+        Status.active,
+        1,
+        false,
+        "site_domain",
+        Some("keyword"),
+        Seq(1)))
+
     val site = siteDao.get(11)
 
-    site shouldBe defined
-    val a = site.value
-    a.publisherId shouldBe 1
-    a.name shouldBe "site"
-    a.status shouldBe Status.active
-    a.privacyPolicy shouldBe 1
-    a.test shouldBe false
-    a.domain shouldBe "site_domain"
-    a.keyword shouldBe Some("keyword")
-    a.iabCategoriesIds should contain theSameElementsAs Seq(1)
+    site shouldBe expectedSite
   }
 
   it should "not load deleted site from DB" in {
@@ -56,10 +57,21 @@ class SiteDaoTest extends BaseDaoTest {
     siteDao.notify(InitCache)
     executeQuery("site-delete.xml", Update)
 
+    val expectedForDeleteSite = Some(
+      Site(
+        13,
+        "fordelete",
+        1,
+        Status.active,
+        1,
+        false,
+        "site_domain",
+        Some("keyword"),
+        Seq()))
+
     val forDeleteSite = siteDao.get(13)
 
-    forDeleteSite shouldBe defined
-    forDeleteSite.value.name shouldBe "fordelete"
+    forDeleteSite shouldBe expectedForDeleteSite
 
     siteDao.notify(UpdateCache)
     val deletedSite = siteDao.get(13)
@@ -78,8 +90,19 @@ class SiteDaoTest extends BaseDaoTest {
 
     siteDao.notify(UpdateCache)
 
+    val expectedSite = Some(
+      Site(
+        14,
+        "insertedsite",
+        1,
+        Status.active,
+        1,
+        false,
+        "site_domain",
+        Some("keyword"),
+        Seq()))
+
     val site = siteDao.get(14)
-    site shouldBe defined
-    site.value.name shouldBe "insertedsite"
+    site shouldBe expectedSite
   }
 }

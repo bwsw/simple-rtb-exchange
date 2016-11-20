@@ -1,8 +1,7 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.application.RtbModule
+import com.bitworks.rtb.model.db.Publisher
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
-import org.scalatest.OptionValues._
 import scaldi.Injectable._
 import scaldi.Module
 
@@ -15,7 +14,7 @@ class PublisherDaoTest extends BaseDaoTest {
 
   implicit val PublisherModule = new Module {
     bind[PublisherDao] toProvider injected[PublisherDaoImpl] // new instance per inject
-  } :: new RtbModule
+  } :: dbModule
 
   "PublisherDao" should "load publisher by ID correctly after cache init" in {
     val publisherDao = inject[PublisherDao]
@@ -25,19 +24,18 @@ class PublisherDaoTest extends BaseDaoTest {
 
     publisherDao.notify(InitCache)
 
+    val expectedPublisher = Some(
+      Publisher(
+        1,
+        "publisher",
+        Seq(1),
+        "domain",
+        Seq("blocked_domain"),
+        Seq(2)))
+
     val publisher = publisherDao.get(1)
 
-    publisher shouldBe defined
-    val p = publisher.value
-
-    p.name shouldBe "publisher"
-    p.domain shouldBe "domain"
-
-    p.categoriesIds should contain theSameElementsAs Seq(1)
-
-    p.blockedCategoriesIds should contain theSameElementsAs Seq(2)
-
-    p.blockedDomains should contain theSameElementsAs Seq("blocked_domain")
+    publisher shouldBe expectedPublisher
   }
 
   it should "not load deleted publisher from DB" in {
@@ -56,11 +54,18 @@ class PublisherDaoTest extends BaseDaoTest {
     publisherDao.notify(InitCache)
     executeQuery("publisher-delete.xml", Update)
 
+    val expectedForDeletePublisher = Some(
+      Publisher(
+        3,
+        "fordelete",
+        Seq(),
+        "fordelete",
+        Seq(),
+        Seq()))
+
     val forDeletePublisher = publisherDao.get(3)
 
-    forDeletePublisher shouldBe defined
-    forDeletePublisher.value.name shouldBe "fordelete"
-    forDeletePublisher.value.domain shouldBe "fordelete"
+    forDeletePublisher shouldBe expectedForDeletePublisher
 
     publisherDao.notify(UpdateCache)
     val deletedPublisher = publisherDao.get(3)
@@ -79,9 +84,16 @@ class PublisherDaoTest extends BaseDaoTest {
 
     publisherDao.notify(UpdateCache)
 
+    val expectedPublisher = Some(
+      Publisher(
+        4,
+        "insertedpublisher",
+        Seq(),
+        "inserteddomain",
+        Seq(),
+        Seq()))
+
     val publisher = publisherDao.get(4)
-    publisher shouldBe defined
-    publisher.value.name shouldBe "insertedpublisher"
-    publisher.value.domain shouldBe "inserteddomain"
+    publisher shouldBe expectedPublisher
   }
 }

@@ -13,6 +13,7 @@ class AdRequestBuilderTest extends FlatSpec with Matchers {
 
   "AdRequestBuilder" should "build AdRequest correctly" in {
     val adRequest = AdRequest(
+      "id",
       Seq(ImpBuilder("id").build),
       Some(SiteBuilder(1001).build),
       Some(AppBuilder(1002).build),
@@ -22,7 +23,8 @@ class AdRequestBuilderTest extends FlatSpec with Matchers {
       Some(2),
       Some(RegsBuilder().build))
 
-    val builder = AdRequestBuilder(adRequest.imp).withTest(adRequest.test)
+    val builder = AdRequestBuilder(adRequest.id, adRequest.imp)
+      .withTest(adRequest.test)
     adRequest.site.foreach(site => builder.withSite(site))
     adRequest.app.foreach(app => builder.withApp(app))
     adRequest.device.foreach(device => builder.withDevice(device))
@@ -37,6 +39,7 @@ class AdRequestBuilderTest extends FlatSpec with Matchers {
 
   it should "build AdRequest with default values correctly" in {
     val adRequest = AdRequest(
+      "id",
       Seq(ImpBuilder("id").build),
       None,
       None,
@@ -46,7 +49,7 @@ class AdRequestBuilderTest extends FlatSpec with Matchers {
       None,
       None)
 
-    val builtAdRequest = AdRequestBuilder(adRequest.imp).build
+    val builtAdRequest = AdRequestBuilder(adRequest.id, adRequest.imp).build
 
     builtAdRequest shouldBe adRequest
   }

@@ -61,8 +61,9 @@ class AdRequestJsonParser extends AdRequestParser with JsonParseHelper {
 
   private def getAdRequest(node: JsonNode) = {
     require(node.isObject, "adRequest node must be an object")
+    val id = node.getChild("id").getString
     val imps = node.getChild("imp").getSeq(getImp)
-    val builder = AdRequestBuilder(imps)
+    val builder = AdRequestBuilder(id, imps)
 
     node.fields().asScala.foreach(e => e.getKey match {
       case "device" => builder.withDevice(getDevice(e.getValue))

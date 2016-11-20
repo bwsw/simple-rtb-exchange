@@ -1,9 +1,7 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.application.RtbModule
-import com.bitworks.rtb.model.db.Status
+import com.bitworks.rtb.model.db.{App, Status}
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
-import org.scalatest.OptionValues._
 import scaldi.Injectable._
 import scaldi.Module
 
@@ -16,7 +14,7 @@ class AppDaoTest extends BaseDaoTest {
 
   implicit val appModule = new Module {
     bind[AppDao] toProvider injected[AppDaoImpl] // new instance per inject
-  } :: new RtbModule
+  } :: dbModule
 
   "AppDao" should "load app by ID correctly after cache init" in {
     val appDao = inject[AppDao]
@@ -26,21 +24,24 @@ class AppDaoTest extends BaseDaoTest {
 
     appDao.notify(InitCache)
 
+    val expectedApp = Some(
+      App(
+        1,
+        "app",
+        1,
+        Status.active,
+        1,
+        false,
+        Some("app_domain"),
+        Some("keyword"),
+        Seq(1),
+        "bundle",
+        "store",
+        "ver"))
+
     val app = appDao.get(1)
 
-    app shouldBe defined
-    val a = app.value
-    a.publisherId shouldBe 1
-    a.name shouldBe "app"
-    a.status shouldBe Status.active
-    a.privacyPolicy shouldBe 1
-    a.test shouldBe false
-    a.domain shouldBe Some("app_domain")
-    a.keyword shouldBe Some("keyword")
-    a.bundle shouldBe "bundle"
-    a.storeUrl shouldBe "store"
-    a.version shouldBe "ver"
-    a.iabCategoriesIds should contain theSameElementsAs Seq(1)
+    app shouldBe expectedApp
   }
 
   it should "not load deleted app from DB" in {
@@ -59,10 +60,24 @@ class AppDaoTest extends BaseDaoTest {
     appDao.notify(InitCache)
     executeQuery("app-delete.xml", Update)
 
+    val expectedForDeleteApp = Some(
+      App(
+        3,
+        "fordelete",
+        1,
+        Status.active,
+        1,
+        false,
+        Some("app_domain"),
+        Some("keyword"),
+        Seq(),
+        "bundle",
+        "store",
+        "ver"))
+
     val forDeleteApp = appDao.get(3)
 
-    forDeleteApp shouldBe defined
-    forDeleteApp.value.name shouldBe "fordelete"
+    forDeleteApp shouldBe expectedForDeleteApp
 
     appDao.notify(UpdateCache)
     val deletedApp = appDao.get(3)
@@ -81,8 +96,21 @@ class AppDaoTest extends BaseDaoTest {
 
     appDao.notify(UpdateCache)
 
+    val expectedApp = Some(
+      App(
+        4,
+        "insertedapp",
+        1,
+        Status.active,
+        1,
+        false,
+        Some("app_domain"),
+        Some("keyword"),
+        Seq(),
+        "bundle",
+        "store",
+        "ver"))
     val app = appDao.get(4)
-    app shouldBe defined
-    app.value.name shouldBe "insertedapp"
+    app shouldBe expectedApp
   }
 }
