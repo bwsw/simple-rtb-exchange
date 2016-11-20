@@ -1,9 +1,7 @@
 package com.bitworks.rtb.service.dao
 
-import com.bitworks.rtb.application.RtbModule
 import com.bitworks.rtb.model.db.{Site, Status}
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
-import org.scalatest.OptionValues._
 import scaldi.Injectable._
 import scaldi.Module
 
@@ -16,7 +14,7 @@ class SiteDaoTest extends BaseDaoTest {
 
   implicit val siteModule = new Module {
     bind[SiteDao] toProvider injected[SiteDaoImpl] // new instance per inject
-  } :: new RtbModule
+  } :: dbModule
 
   "SiteDao" should "load site by ID correctly after cache init" in {
     val siteDao = inject[SiteDao]
