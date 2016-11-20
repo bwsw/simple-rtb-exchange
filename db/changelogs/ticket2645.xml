@@ -8,9 +8,8 @@
 
     <changeSet id="1" author="Pavel Tomskikh">
         <preConditions>
-            <changeSetExecuted id="9"
-                               author="Pavel Tomskikh"
-                               changeLogFile="changelogs/ticket2597.xml"/>
+            <tableExists tableName="publisher"/>
+            <tableExists tableName="site"/>
         </preConditions>
 
         <createProcedure procedureName="delete_publisher">
@@ -26,7 +25,7 @@
 
         <sql>
             CREATE TRIGGER delete_publisher
-            BEFORE UPDATE ON publisher
+            AFTER UPDATE ON publisher
             FOR EACH ROW
             WHEN (NEW.deleted = TRUE)
             EXECUTE PROCEDURE delete_publisher()
