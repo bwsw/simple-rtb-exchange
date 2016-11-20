@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.dao
 
+import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
-import org.scalatest.OptionValues._
 import scaldi.Injectable._
 import scaldi.Module
 
@@ -24,11 +24,15 @@ class BidderDaoTest extends BaseDaoTest {
 
     bidderDao.notify(InitCache)
 
+    val expectedBidder = Some(
+      Bidder(
+        1,
+        "bidder",
+        "endpoint"))
+
     val bidder = bidderDao.get(1)
 
-    bidder shouldBe defined
-    bidder.value.name shouldBe "bidder"
-    bidder.value.endpoint shouldBe "endpoint"
+    bidder shouldBe expectedBidder
   }
 
   it should "not load deleted bidder from DB" in {
@@ -47,11 +51,15 @@ class BidderDaoTest extends BaseDaoTest {
     bidderDao.notify(InitCache)
     executeQuery("bidder-delete.xml", Update)
 
+    val expectedForDeleteBidder = Some(
+      Bidder(
+        3,
+        "fordelete",
+        "fordelete"))
+
     val forDeleteBidder = bidderDao.get(3)
 
-    forDeleteBidder shouldBe defined
-    forDeleteBidder.value.name shouldBe "fordelete"
-    forDeleteBidder.value.endpoint shouldBe "fordelete"
+    forDeleteBidder shouldBe expectedForDeleteBidder
 
     bidderDao.notify(UpdateCache)
     val deletedBidder = bidderDao.get(3)
@@ -70,9 +78,13 @@ class BidderDaoTest extends BaseDaoTest {
 
     bidderDao.notify(UpdateCache)
 
+    val expectedBidder = Some(
+      Bidder(
+        4,
+        "insertedbidder",
+        "insertedendpoint"))
+
     val bidder = bidderDao.get(4)
-    bidder shouldBe defined
-    bidder.value.name shouldBe "insertedbidder"
-    bidder.value.endpoint shouldBe "insertedendpoint"
+    bidder shouldBe expectedBidder
   }
 }
