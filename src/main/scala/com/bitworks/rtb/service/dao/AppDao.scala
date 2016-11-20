@@ -15,8 +15,8 @@ trait AppDao extends BaseDao[App] with CacheHelper[App]
 /**
   * DAO implementation for [[com.bitworks.rtb.model.db.App App]].
   *
-  * @param ctx          DB context
-  * @param updater      [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
+  * @param ctx     DB context
+  * @param updater [[com.bitworks.rtb.service.dao.CacheUpdater CacheUpdater]]
   */
 class AppDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends AppDao with Logging {
 
@@ -37,11 +37,17 @@ class AppDaoImpl(ctx: DbContext, val updater: CacheUpdater) extends AppDao with 
           .filter(_.tsversion >= lift(tsversion))
       }
     }
-    updateCache(apps, getCreator)
+    updateCache(apps, getCreator(apps))
   }
 
   /** Returns function creates [[com.bitworks.rtb.model.db.App App]] */
-  private def getCreator = createApp(ctx.run(Schema.siteCategory))(_)
+  private def getCreator(apps: Seq[SiteEntity]): SiteEntity => Option[App] = {
+    val appCategories = ctx.run {
+      Schema.siteCategory
+        .filter(sc => liftQuery(apps.map(_.id)).contains(sc.siteId))
+    }
+    createApp(appCategories)
+  }
 
   /**
     * Creates [[com.bitworks.rtb.model.db.App App]] from
