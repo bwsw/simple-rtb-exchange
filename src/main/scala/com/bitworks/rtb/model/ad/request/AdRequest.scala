@@ -5,6 +5,7 @@ import com.bitworks.rtb.model.request.{Device, Regs}
 /**
   * Ad request.
   *
+  * @param id     ID of the ad request
   * @param imp    array of [[com.bitworks.rtb.model.ad.request.Imp Imp]] objects
   * @param site   details via [[com.bitworks.rtb.model.ad.request.Site Site]] object
   * @param app    details via [[com.bitworks.rtb.model.ad.request.App App]] object
@@ -18,6 +19,7 @@ import com.bitworks.rtb.model.request.{Device, Regs}
   * @author Egor Ilchenko
   */
 case class AdRequest(
+    id: String,
     imp: Seq[Imp],
     site: Option[Site],
     app: Option[App],
