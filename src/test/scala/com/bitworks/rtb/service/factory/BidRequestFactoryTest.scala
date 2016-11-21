@@ -4,6 +4,7 @@ import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.request.{builder => ad}
 import com.bitworks.rtb.model.db
 import com.bitworks.rtb.model.db.IABCategory
+import com.bitworks.rtb.model.request.Producer
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.service.dao._
 import org.easymock.EasyMock._
@@ -41,7 +42,7 @@ class BidRequestFactoryTest
 
   def getCategoriesId(ids: Seq[Int]) = getCategories(ids).map(_.iabId)
 
-
+  val correctIabsExample = getCategories(Seq(1, 2, 3)).map(_.iabId)
   val categoryDao = mock[CategoryDao]
   expecting {
     categoryDao.getAll.andStubReturn(iabCategories)
@@ -729,38 +730,75 @@ class BidRequestFactoryTest
     factory.create(adRequest) shouldBe None
   }
 
+  val correctProducerTable = Table(
+    ("id", "name", "cat", "domain"),
+    (None, None, None, None),
+    (Some("123"), None, None, None),
+    (None, Some("prod"), None, None),
+    (None, None, Some(correctIabsExample), None),
+    (None, None, None, Some("prod.com")),
+    (Some("123"), Some("prod"), Some(correctIabsExample), Some("prod.com"))
+  )
+
   it should "create bid request for ad request with correct producer" in {
-    val content = ContentBuilder().withProducer(correctProducer).build
-    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
-    val adSite = adSiteBuilder.withContent(content).build
-    val adRequest = AdRequestBuilder(Seq(adImp))
-      .withSite(adSite)
-      .build
+    forAll(correctProducerTable) { (
+      id: Option[String],
+      name: Option[String],
+      cat: Option[Seq[String]],
+      domain: Option[String]) =>
 
-    val site = siteBuilder
-      .withPublisher(publisher1)
-      .withContent(content)
-      .build
-    val imp = ImpBuilder(adImp.id).withBanner(correctBanner).build
-    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
-      .withSite(site)
-      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
-      .withBadv(dbPublisher1.blockedDomains)
-      .build
+      val producer = Producer(id, name, cat, domain, None)
+      val content = ContentBuilder().withProducer(producer).build
+      val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+      val adSite = adSiteBuilder.withContent(content).build
+      val adRequest = AdRequestBuilder(Seq(adImp))
+        .withSite(adSite)
+        .build
 
-    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      val site = siteBuilder
+        .withPublisher(publisher1)
+        .withContent(content)
+        .build
+      val imp = ImpBuilder(adImp.id).withBanner(correctBanner).build
+      val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+        .withSite(site)
+        .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+        .withBadv(dbPublisher1.blockedDomains)
+        .build
+
+      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+    }
   }
 
-  it should "not create bid request for ad request with incorrect producer" in {
-    val producer = ProducerBuilder().withName("").build
-    val content = ContentBuilder().withProducer(producer).build
-    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
-    val adSite = adSiteBuilder.withContent(content).build
-    val adRequest = AdRequestBuilder(Seq(adImp))
-      .withSite(adSite)
-      .build
+  val incorrectProducerTable = Table(
+    ("id", "name", "cat", "domain"),
+    (Some(""), Some("prod"), Some(correctIabsExample), Some("prod.com")),
+    (Some("123"), Some(""), Some(correctIabsExample), Some("prod.com")),
+    (Some("123"), Some("prod"), Some(Seq("notiab")), Some("prod.com")),
+    (Some("123"), Some("prod"), Some(correctIabsExample), Some("")),
+    (Some(""), None, None, None),
+    (None, Some(""), None, None),
+    (None, None, Some(Seq()), None),
+    (None, None, None, Some(""))
+  )
 
-    factory.create(adRequest) shouldBe None
+  it should "not create bid request for ad request with incorrect producer" in {
+    forAll(incorrectProducerTable) { (
+      id: Option[String],
+      name: Option[String],
+      cat: Option[Seq[String]],
+      domain: Option[String]) =>
+
+      val producer = Producer(id, name, cat, domain, None)
+      val content = ContentBuilder().withProducer(producer).build
+      val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+      val adSite = adSiteBuilder.withContent(content).build
+      val adRequest = AdRequestBuilder(Seq(adImp))
+        .withSite(adSite)
+        .build
+
+      factory.create(adRequest) shouldBe None
+    }
   }
 
   it should "create bid request for ad request with correct regs" in {

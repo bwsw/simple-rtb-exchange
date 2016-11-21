@@ -337,9 +337,8 @@ class BidRequestFactoryImpl(
 
   private def check(regs: Regs): Boolean = regs.coppa.forall(isFlag)
 
-  private def checkCategories(s: Seq[String]): Boolean = {
-    s.forall(cat => categoryDao.getAll.exists(_.iabId == cat))
-  }
+  private def checkCategories(s: Seq[String]): Boolean =
+    s.nonEmpty && s.forall(cat => categoryDao.getAll.exists(_.iabId == cat))
 
   private def checkImpIds(imps: Seq[ad.request.Imp]): Boolean = {
     val ids = imps.map(_.id)

@@ -5,6 +5,7 @@ import java.time.LocalDate
 import scala.util.Random
 
 /**
+  * Helper for bid request factory.
   *
   * @author Pavel Tomskikh
   */
