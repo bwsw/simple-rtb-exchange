@@ -36,7 +36,7 @@ class RtbModule extends Module {
   bind[RequestHandler] toNonLazy injected[RequestHandler]
   bind[CacheUpdaterActor] toProvider injected[CacheUpdaterActor]
 
-  bind[RequestMaker] toNonLazy injected[AkkaHttpRequestMaker]
+  bind[HttpRequestMaker] toNonLazy injected[AkkaHttpRequestMaker]
 
 
   bind[AdRequestParser] toNonLazy injected[AdRequestJsonParser]

@@ -8,7 +8,6 @@ import scaldi.Injector
 import scaldi.Injectable._
 
 import scala.concurrent.Await
-import scala.concurrent.duration._
 
 /**
   * Actor responsible for sending requests to bidders.
@@ -30,7 +29,6 @@ class BidActor(implicit injector: Injector) extends Actor with ActorLogging {
       } catch {
         case e: Throwable => sender ! BidRequestFail(e.getMessage)
       }
-
   }
 }
 
