@@ -16,3 +16,5 @@ Notable packages include:
   - [[com.bitworks.rtb.service.dao `com.bitworks.rtb.service.dao`]] contains DB schema and
   provides data access objects for DB entities
   - [[com.bitworks.rtb.service.actor `com.bitworks.rtb.service.actor`]] contains actors
+  - [[com.bitworks.rtb.service.validator `com.bitworks.rtb.validator`]] contains utility to
+  check whether bid response is correct

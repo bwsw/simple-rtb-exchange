@@ -34,13 +34,13 @@ class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
   val parserStub = stub[BidResponseParser]
   (parserStub.parse _).when(*).returns(bidResponse)
 
-  val requestMakerStub = stub[RequestMaker]
+  val requestMakerStub = stub[HttpRequestMaker]
   (requestMakerStub.post _).when(*, *).returns(Future.successful(new Array[Byte](0)))
 
   implicit val predefined = new Module {
     bind[BidRequestWriter] toNonLazy writerStub
     bind[BidResponseParser] toNonLazy parserStub
-    bind[RequestMaker] toNonLazy requestMakerStub
+    bind[HttpRequestMaker] toNonLazy requestMakerStub
     bind[ActorSystem] toNonLazy ActorSystem()
     bind[BidRequestMaker] toNonLazy injected[BidRequestMakerImpl]
   }
@@ -72,11 +72,11 @@ class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
   it should "parse received bytes" in {
     val array = new Array[Byte](24)
 
-    val requestMakerStub = stub[RequestMaker]
+    val requestMakerStub = stub[HttpRequestMaker]
     (requestMakerStub.post _).when(*, *).returns(Future.successful(array)).once
 
     val module = new Module {
-      bind[RequestMaker] to requestMakerStub
+      bind[HttpRequestMaker] to requestMakerStub
     } :: predefined
 
     val bidRequestMaker = inject[BidRequestMaker]

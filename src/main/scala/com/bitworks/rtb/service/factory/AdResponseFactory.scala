@@ -1,5 +1,6 @@
 package com.bitworks.rtb.service.factory
 
+import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
 import com.bitworks.rtb.model.response.BidResponse
@@ -14,24 +15,26 @@ trait AdResponseFactory {
   /**
     * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
     *
-    * @param bid [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * @param request [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
+    * @param bid     [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     */
-  def create(bid: BidResponse): AdResponse
+  def create(request: AdRequest, bid: BidResponse): AdResponse
 
   /**
     * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
     *
-    * @param error [[com.bitworks.rtb.model.ad.response.Error Error]]
+    * @param request [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
+    * @param error   [[com.bitworks.rtb.model.ad.response.Error Error]]
     */
-  def create(error: Error): AdResponse
+  def create(request: AdRequest, error: Error): AdResponse
 }
 
 /**
   * Dummy factory implementation.
   */
 class AdResponseFactoryImpl extends AdResponseFactory {
-  override def create(bid: BidResponse): AdResponse = {
-    AdResponseBuilder("someid")
+  override def create(request: AdRequest, bid: BidResponse): AdResponse = {
+    AdResponseBuilder(request.id)
       .withError(
         Error(
           1,
@@ -39,8 +42,8 @@ class AdResponseFactoryImpl extends AdResponseFactory {
       .build
   }
 
-  override def create(error: Error): AdResponse = {
-    AdResponseBuilder("someid")
+  override def create(request: AdRequest, error: Error): AdResponse = {
+    AdResponseBuilder(request.id)
       .withError(error)
       .build
   }

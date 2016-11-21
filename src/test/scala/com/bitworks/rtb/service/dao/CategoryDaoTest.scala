@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.dao
 
+import com.bitworks.rtb.model.db.IABCategory
 import com.bitworks.rtb.model.message.{InitCache, UpdateCache}
-import org.scalatest.OptionValues._
 import scaldi.Injectable._
 import scaldi.Module
 
@@ -23,13 +23,16 @@ class CategoryDaoTest extends BaseDaoTest {
 
     categoryDao.notify(InitCache)
 
+    val expectedCategory = Some(
+      IABCategory(
+        2,
+        "IAB2",
+        "iabname",
+        Some(1)))
+
     val category = categoryDao.get(2)
 
-    category shouldBe defined
-    category.value.iabId shouldBe "IAB2"
-    category.value.name shouldBe "iabname"
-    category.value.parentId shouldBe defined
-    category.value.parentId.value shouldBe 1
+    category shouldBe expectedCategory
   }
 
   it should "not load deleted category from DB" in {
@@ -48,12 +51,16 @@ class CategoryDaoTest extends BaseDaoTest {
     categoryDao.notify(InitCache)
     executeQuery("category-delete.xml", Update)
 
+    val expectedForDeleteCategory = Some(
+      IABCategory(
+        4,
+        "fordelet",
+        "fordelete",
+        None))
+
     val forDeleteCategory = categoryDao.get(4)
 
-    forDeleteCategory shouldBe defined
-    forDeleteCategory.value.iabId shouldBe "fordelet"
-    forDeleteCategory.value.name shouldBe "fordelete"
-    forDeleteCategory.value.parentId should not be defined
+    forDeleteCategory shouldBe expectedForDeleteCategory
 
     categoryDao.notify(UpdateCache)
     val deletedCategory = categoryDao.get(4)
@@ -72,10 +79,15 @@ class CategoryDaoTest extends BaseDaoTest {
 
     categoryDao.notify(UpdateCache)
 
+    val expectedCategory = Some(
+      IABCategory(
+        5,
+        "IAB3",
+        "inserted",
+        None))
+
     val category = categoryDao.get(5)
-    category shouldBe defined
-    category.value.iabId shouldBe "IAB3"
-    category.value.name shouldBe "inserted"
-    category.value.parentId should not be defined
+
+    category shouldBe expectedCategory
   }
 }
