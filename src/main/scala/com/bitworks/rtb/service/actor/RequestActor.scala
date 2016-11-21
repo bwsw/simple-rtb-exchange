@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.actor
 
-import akka.actor.{Actor, ActorLogging, Cancellable, Props}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
@@ -115,7 +115,7 @@ class RequestActor(
           case None => onError("winner not defined")
         }
       }
-      
+
   }
 
   /**
