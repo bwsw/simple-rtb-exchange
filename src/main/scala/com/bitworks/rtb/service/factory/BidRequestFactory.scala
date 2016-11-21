@@ -16,7 +16,7 @@ trait BidRequestFactory {
     *
     * @param ad [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
     */
-  def create(ad: AdRequest): BidRequest
+  def create(ad: AdRequest): Option[BidRequest]
 }
 
 /**
@@ -25,6 +25,6 @@ trait BidRequestFactory {
 class BidRequestFactoryImpl extends BidRequestFactory {
   override def create(ad: AdRequest) = {
     val imp = ImpBuilder("impID").build
-    BidRequestBuilder("bidRequestID", Seq(imp)).build
+    Some(BidRequestBuilder("bidRequestID", Seq(imp)).build)
   }
 }
