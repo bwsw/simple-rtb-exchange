@@ -27,11 +27,6 @@ trait FactoryHelper {
       notLarger(expected, max)
   }
 
-  def genId() = {
-    val len = 16
-    Random.alphanumeric.take(len).mkString
-  }
-
   def between(left: Int, right: Int)(i: Int) = left <= i && i <= right
 
   def between(left: Float, right: Float)(i: Float) = left <= i && i <= right

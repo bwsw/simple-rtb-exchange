@@ -44,7 +44,8 @@ class BidRequestFactoryImpl(
     * @return created Some(BidRequest) if adRequest is valid, or None if not valid
     */
   override def create(adRequest: AdRequest): Option[BidRequest] = {
-    if (adRequest.imp.isEmpty ||
+    if (adRequest.id.isEmpty ||
+      adRequest.imp.isEmpty ||
       (adRequest.site.isEmpty == adRequest.app.isEmpty) ||
       !isFlag(adRequest.test) ||
       !adRequest.tmax.forall(isPositive) ||
@@ -57,7 +58,7 @@ class BidRequestFactoryImpl(
     val imps = adRequest.imp.map(create)
     if (!checkSeq(imps)) return None
 
-    val builder = BidRequestBuilder(genId(), imps.map(_.get))
+    val builder = BidRequestBuilder(adRequest.id, imps.map(_.get))
       .withTest(adRequest.test)
 
     adRequest.tmax.foreach(builder.withTmax)
