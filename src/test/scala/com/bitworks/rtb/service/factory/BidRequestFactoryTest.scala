@@ -1,16 +1,16 @@
 package com.bitworks.rtb.service.factory
 
-import com.bitworks.rtb.application.RtbModule
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.request.{builder => ad}
 import com.bitworks.rtb.model.db
 import com.bitworks.rtb.model.db.IABCategory
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.service.dao._
-import org.scalamock.scalatest.MockFactory
+import org.easymock.EasyMock._
+import org.easymock.IAnswer
+import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
-import scaldi.Injectable._
 
 /**
   * Test for [[com.bitworks.rtb.service.factory.BidRequestFactory BidRequestFactory]].
@@ -20,12 +20,11 @@ import scaldi.Injectable._
 class BidRequestFactoryTest
   extends FlatSpec
     with Matchers
-    with MockFactory
+    with EasyMockSugar
     with OneInstancePerTest {
 
-  implicit val predefined = new RtbModule
-
-  class CategoryDaoMock extends CategoryDaoImpl(inject[DbContext], inject[CacheUpdater])
+  val intCapture = newCapture[Int]
+  val seqIntCapture = newCapture[Seq[Int]]
 
   val iabCategories = Seq(
     IABCategory(1, "IAB1", "iab1", None),
@@ -42,32 +41,53 @@ class BidRequestFactoryTest
 
   def getCategoriesId(ids: Seq[Int]) = getCategories(ids).map(_.iabId)
 
-  val categoryDao = stub[CategoryDaoMock]
-  (categoryDao.getAll _).when().returns(iabCategories)
-  (categoryDao.get(_: Int)).when(*).onCall(getCategory _)
-  (categoryDao.get(_: Seq[Int])).when(*).onCall(getCategories _)
 
-  class PublisherDaoMock extends PublisherDaoImpl(inject[DbContext], inject[CacheUpdater])
+  val categoryDao = mock[CategoryDao]
+  expecting {
+    categoryDao.getAll.andStubReturn(iabCategories)
+    categoryDao.get(capture(intCapture)).andStubAnswer(
+      new IAnswer[Option[IABCategory]] {
+        override def answer(): Option[IABCategory] = getCategory(intCapture.getValue)
+      })
+    categoryDao.get(capture(seqIntCapture)).andStubAnswer(
+      new IAnswer[Seq[IABCategory]] {
+        override def answer(): Seq[IABCategory] = getCategories(seqIntCapture.getValue)
+      })
+    replay(categoryDao)
+  }
 
   val dbPublisher1 = db.Publisher(
     1, "pub1", Seq(1, 2, 3), "pub1.com", Seq("block1.com", "block2.com"), Seq(6, 7))
-  val publisher1Builder = PublisherBuilder()
+  val publisher1 = PublisherBuilder()
     .withId(dbPublisher1.id.toString)
     .withName(dbPublisher1.name)
     .withCat(getCategoriesId(dbPublisher1.categoriesIds))
     .withDomain(dbPublisher1.domain)
+    .build
   val dbPublisher2 = db.Publisher(
     2, "pub2", Seq(3, 4, 5), "pub2.com", Seq("block2.com", "block3.com"), Seq(1, 2))
-  val publisher2Builder = PublisherBuilder()
+  val publisher2 = PublisherBuilder()
     .withId(dbPublisher2.id.toString)
     .withName(dbPublisher2.name)
     .withCat(getCategoriesId(dbPublisher2.categoriesIds))
     .withDomain(dbPublisher2.domain)
+    .build
   val dbPublishers = Seq(dbPublisher1, dbPublisher2)
-  val publisherDao = stub[PublisherDaoMock]
-  (publisherDao.get(_: Int)).when(*).onCall { i: Int => dbPublishers.find(_.id == i) }
-
-  class SiteDaoMock extends SiteDaoImpl(inject[DbContext], inject[CacheUpdater])
+  val publisherDao = mock[PublisherDao]
+  expecting {
+    publisherDao.getAll.andStubReturn(dbPublishers)
+    publisherDao.get(capture(intCapture)).andStubAnswer(
+      new IAnswer[Option[db.Publisher]] {
+        override def answer(): Option[db.Publisher] =
+          dbPublishers.find(_.id == intCapture.getValue)
+      })
+    publisherDao.get(capture(seqIntCapture)).andStubAnswer(
+      new IAnswer[Seq[db.Publisher]] {
+        override def answer(): Seq[db.Publisher] =
+          dbPublishers.filter(p => seqIntCapture.getValue.contains(p.id))
+      })
+    replay(publisherDao)
+  }
 
   val dbSite = db.Site(
     1, "site", 1, db.Status.active, 0, test = true, "site.com", Some("kw1,kw2"), Seq(1, 2))
@@ -80,10 +100,21 @@ class BidRequestFactoryTest
     .withCat(getCategoriesId(dbSite.iabCategoriesIds))
     .withPrivacyPolicy(dbSite.privacyPolicy)
   val dbSites = Seq(dbSite)
-  val siteDao = stub[SiteDaoMock]
-  (siteDao.get(_: Int)).when(*).onCall { i: Int => dbSites.find(_.id == i) }
-
-  class AppDaoMock extends AppDaoImpl(inject[DbContext], inject[CacheUpdater])
+  val siteDao = mock[SiteDao]
+  expecting {
+    siteDao.getAll.andStubReturn(dbSites)
+    siteDao.get(capture(intCapture)).andStubAnswer(
+      new IAnswer[Option[db.Site]] {
+        override def answer(): Option[db.Site] =
+          dbSites.find(_.id == intCapture.getValue)
+      })
+    siteDao.get(capture(seqIntCapture)).andStubAnswer(
+      new IAnswer[Seq[db.Site]] {
+        override def answer(): Seq[db.Site] =
+          dbSites.filter(p => seqIntCapture.getValue.contains(p.id))
+      })
+    replay(siteDao)
+  }
 
   val dbApp = db.App(
     2,
@@ -108,8 +139,21 @@ class BidRequestFactoryTest
     .withStoreUrl(dbApp.storeUrl)
     .withPrivacyPolicy(dbApp.privacyPolicy)
   val dbApps = Seq(dbApp)
-  val appDao = stub[AppDaoMock]
-  (appDao.get(_: Int)).when(*).onCall { i: Int => dbApps.find(_.id == i) }
+  val appDao = mock[AppDao]
+  expecting {
+    appDao.getAll.andStubReturn(dbApps)
+    appDao.get(capture(intCapture)).andStubAnswer(
+      new IAnswer[Option[db.App]] {
+        override def answer(): Option[db.App] =
+          dbApps.find(_.id == intCapture.getValue)
+      })
+    appDao.get(capture(seqIntCapture)).andStubAnswer(
+      new IAnswer[Seq[db.App]] {
+        override def answer(): Seq[db.App] =
+          dbApps.filter(p => seqIntCapture.getValue.contains(p.id))
+      })
+    replay(appDao)
+  }
 
   val bidRequestId = "12345"
 
@@ -179,14 +223,79 @@ class BidRequestFactoryTest
     .withIp("8.8.8.8")
     .withIpv6("::1")
     .withDeviceType(5)
-    .withMake("make")
-    .withModel("model")
+    .withMake("nokla")
+    .withModel("3310")
+    .withOs("android")
+    .withOsv("2.4")
+    .withHwv("1.1")
+    .withH(200)
+    .withW(100)
+    .withPpi(16)
+    .withPxRatio(1)
+    .withJs(1)
+    .withFlashVer("2")
+    .withLanguage("ch")
+    .withCarrier("edge")
+    .withConnectionType(4)
+    .withIfa("ifa")
+    .withDidsha1("sha1")
+    .withDidmd5("md5")
+    .withDpidsha1("sha1")
+    .withDpidmd5("md5")
+    .withMacsha1("sha1")
+    .withMacmd5("md5")
     .build
   val correctRegs = RegsBuilder().withCoppa(1).build
+  val correctBanner = BannerBuilder()
+    .withWmin(280)
+    .withW(300)
+    .withWmax(320)
+    .withHmin(90)
+    .withH(100)
+    .withHmax(120)
+    .withId("banner1")
+    .withBtype(Seq(1, 4))
+    .withBattr(Seq(1, 5, 16))
+    .withPos(4)
+    .withMimes(Seq("application/x-shockwave-flash"))
+    .withTopFrame(1)
+    .withExpdir(Seq(1, 2, 5))
+    .withApi(Seq(2, 3))
+    .build
+  val correctVideo = VideoBuilder(Seq("video/x-ms-wmv", "video/x-flv"))
+    .withMinDuration(10)
+    .withMaxDuration(3600)
+    .withProtocol(1)
+    .withProtocols(Seq(1, 5, 6))
+    .withW(320)
+    .withH(240)
+    .withStartDelay(0)
+    .withLinearity(1)
+    .withSequence(1)
+    .withBattr(Seq(11, 16))
+    .withMaxExtended(-1)
+    .withMinBitrate(64)
+    .withMaxBitrate(4000)
+    .withBoxingAllowed(1)
+    .withPlaybackMethod(Seq(2, 4))
+    .withDelivery(Seq(2))
+    .withPos(0)
+    .withCompanionAd(Seq(correctBanner))
+    .withApi(Seq(5))
+    .withCompanionType(Seq(1, 2, 3))
+    .build
+  val correctNative = NativeBuilder("native ad")
+    .withVer("1.0")
+    .withApi(Seq(1, 4, 5))
+    .withBattr(Seq(1, 2, 3, 7, 15, 16))
+    .build
 
   "BidRequestFactory" should "create bid request for correct ad request with site" in {
-    val banner = BannerBuilder().build
-    val adImp = ad.ImpBuilder("1").withBanner(banner).build
+    val adImp = ad.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
     val adSite = adSiteBuilder
       .withSectionCat(getCategoriesId(Seq(1, 2)))
       .withPageCat(getCategoriesId(Seq(1)))
@@ -204,7 +313,7 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    val site = siteBuilder.withPublisher(publisher1Builder.build)
+    val site = siteBuilder.withPublisher(publisher1)
       .withSectionCat(adSite.sectionCat.get)
       .withPageCat(adSite.pageCat.get)
       .withPage(adSite.page.get)
@@ -213,7 +322,11 @@ class BidRequestFactoryTest
       .withMobile(adSite.mobile.get)
       .withContent(adSite.content.get)
       .build
-    val imp = ImpBuilder(adImp.id).withBanner(banner).build
+    val imp = ImpBuilder(adImp.id)
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
     val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
       .withSite(site)
       .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
@@ -228,8 +341,11 @@ class BidRequestFactoryTest
   }
 
   it should "create bid request for correct ad request with app" in {
-    val banner = BannerBuilder().build
-    val adImp = ad.ImpBuilder("1").withBanner(banner).build
+    val adImp = ad.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
     val adApp = adAppBuilder
       .withSectionCat(getCategoriesId(Seq(5, 6)))
       .withPageCat(getCategoriesId(Seq(5)))
@@ -244,12 +360,16 @@ class BidRequestFactoryTest
       .build
 
     val app = appBuilder
-      .withPublisher(publisher2Builder.build)
+      .withPublisher(publisher2)
       .withSectionCat(adApp.sectionCat.get)
       .withPageCat(adApp.pageCat.get)
       .withContent(adApp.content.get)
       .build
-    val imp = ImpBuilder(adImp.id).withBanner(banner).build
+    val imp = ImpBuilder(adImp.id)
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
     val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
       .withApp(app)
       .withBcat(getCategoriesId(dbPublisher2.blockedCategoriesIds))
@@ -264,8 +384,11 @@ class BidRequestFactoryTest
   }
 
   it should "not create bid request for ad request with site and app" in {
-    val banner = BannerBuilder().build
-    val adImp = ad.ImpBuilder("1").withBanner(banner).build
+    val adImp = ad.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
     val adApp = adAppBuilder
       .withSectionCat(getCategoriesId(Seq(5, 6)))
       .withPageCat(getCategoriesId(Seq(5)))
@@ -315,7 +438,7 @@ class BidRequestFactoryTest
       val adImp = ad.ImpBuilder("1").withBanner(banner).build
       val adRequest = AdRequestBuilder(Seq(adImp)).withSite(adSiteBuilder.build).build
 
-      val site = siteBuilder.withPublisher(publisher1Builder.build).build
+      val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withBanner(banner).build
       val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
         .withSite(site)
@@ -338,7 +461,7 @@ class BidRequestFactoryTest
       val adImp = ad.ImpBuilder("1").withBanner(banner).build
       val adRequest = AdRequestBuilder(Seq(adImp)).withSite(adSiteBuilder.build).build
 
-      val site = siteBuilder.withPublisher(publisher1Builder.build).build
+      val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withBanner(banner).build
       val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
         .withSite(site)
@@ -392,4 +515,284 @@ class BidRequestFactoryTest
     }
   }
 
+  it should "create bid request for ad request with correct banner" in {
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp)).withSite(adSite).build
+
+    val site = siteBuilder.withPublisher(publisher1).build
+    val imp = ImpBuilder(adImp.id).withBanner(correctBanner).build
+    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+      .withSite(site)
+      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+      .withBadv(dbPublisher1.blockedDomains)
+      .build
+
+    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+  }
+
+  it should "not create bid request for ad request with incorrect banner" in {
+    val banner = BannerBuilder().withApi(Seq(10)).build
+    val adImp = ad.ImpBuilder("1").withBanner(banner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp)).withSite(adSite).build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "create bid request for ad request with correct video" in {
+    val adImp = ad.ImpBuilder("1").withVideo(correctVideo).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp)).withSite(adSite).build
+
+    val site = siteBuilder.withPublisher(publisher1).build
+    val imp = ImpBuilder(adImp.id).withVideo(correctVideo).build
+    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+      .withSite(site)
+      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+      .withBadv(dbPublisher1.blockedDomains)
+      .build
+
+    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+  }
+
+  it should "not create bid request for ad request with incorrect video" in {
+    val video = VideoBuilder(Seq("mimes")).withBattr(Seq(1, 2, 22)).build
+    val adImp = ad.ImpBuilder("1").withVideo(video).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp)).withSite(adSite).build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "create bid request for ad request with correct native" in {
+    val adImp = ad.ImpBuilder("1").withNative(correctNative).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp)).withSite(adSite).build
+
+    val site = siteBuilder.withPublisher(publisher1).build
+    val imp = ImpBuilder(adImp.id).withNative(correctNative).build
+    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+      .withSite(site)
+      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+      .withBadv(dbPublisher1.blockedDomains)
+      .build
+
+    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+  }
+
+  it should "not create bid request for ad request with incorrect native" in {
+    val native = NativeBuilder("").build
+    val adImp = ad.ImpBuilder("1").withNative(native).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp)).withSite(adSite).build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "not create bid request for ad request without banner, video and native" in {
+    val adImp = ad.ImpBuilder("1").build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp)).withSite(adSite).build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "create bid request for ad request with correct user" in {
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .withUser(correctAdUser)
+      .build
+
+    val site = siteBuilder.withPublisher(publisher1).build
+    val imp = ImpBuilder(adImp.id).withBanner(correctBanner).build
+    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+      .withSite(site)
+      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+      .withBadv(dbPublisher1.blockedDomains)
+      .withUser(correctUser)
+      .build
+
+    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+  }
+
+  it should "not create bid request for ad request with incorrect user" in {
+    val user = ad.UserBuilder().withGender("unknown").build
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .withUser(user)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "create bid request for ad request with correct device" in {
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .withDevice(correctDevice)
+      .build
+
+    val site = siteBuilder.withPublisher(publisher1).build
+    val imp = ImpBuilder(adImp.id).withBanner(correctBanner).build
+    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+      .withSite(site)
+      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+      .withBadv(dbPublisher1.blockedDomains)
+      .withDevice(correctDevice)
+      .build
+
+    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+  }
+
+  it should "not create bid request for ad request with incorrect device" in {
+    val device = DeviceBuilder().withW(-1).build
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .withDevice(device)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "create bid request for ad request with correct geo" in {
+    val adUser = ad.UserBuilder().withGeo(correctGeo).build
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .withUser(adUser)
+      .build
+
+    val user = UserBuilder().withGeo(correctGeo).build
+    val site = siteBuilder.withPublisher(publisher1).build
+    val imp = ImpBuilder(adImp.id).withBanner(correctBanner).build
+    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+      .withSite(site)
+      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+      .withBadv(dbPublisher1.blockedDomains)
+      .withUser(user)
+      .build
+
+    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+  }
+
+  it should "not create bid request for ad request with incorrect geo" in {
+    val geo = GeoBuilder().withLat(1000).build
+    val adUser = ad.UserBuilder().withGeo(geo).build
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .withUser(adUser)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "create bid request for ad request with correct content" in {
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.withContent(correctContent).build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .build
+
+    val site = siteBuilder
+      .withPublisher(publisher1)
+      .withContent(correctContent)
+      .build
+    val imp = ImpBuilder(adImp.id).withBanner(correctBanner).build
+    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+      .withSite(site)
+      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+      .withBadv(dbPublisher1.blockedDomains)
+      .build
+
+    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+  }
+
+  it should "not create bid request for ad request with incorrect content" in {
+    val content = ContentBuilder().withCat(Seq("notiabcat")).build
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.withContent(content).build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "create bid request for ad request with correct producer" in {
+    val content = ContentBuilder().withProducer(correctProducer).build
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.withContent(content).build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .build
+
+    val site = siteBuilder
+      .withPublisher(publisher1)
+      .withContent(content)
+      .build
+    val imp = ImpBuilder(adImp.id).withBanner(correctBanner).build
+    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+      .withSite(site)
+      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+      .withBadv(dbPublisher1.blockedDomains)
+      .build
+
+    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+  }
+
+  it should "not create bid request for ad request with incorrect producer" in {
+    val producer = ProducerBuilder().withName("").build
+    val content = ContentBuilder().withProducer(producer).build
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.withContent(content).build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "create bid request for ad request with correct regs" in {
+    val regs = RegsBuilder().withCoppa(1).build
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .withRegs(regs)
+      .build
+
+    val site = siteBuilder.withPublisher(publisher1).build
+    val imp = ImpBuilder(adImp.id).withBanner(correctBanner).build
+    val expectedBidRequest = BidRequestBuilder(bidRequestId, Seq(imp))
+      .withSite(site)
+      .withBcat(getCategoriesId(dbPublisher1.blockedCategoriesIds))
+      .withBadv(dbPublisher1.blockedDomains)
+      .withRegs(regs)
+      .build
+
+    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+  }
+
+  it should "not create bid request for ad request with incorrect regs" in {
+    val regs = RegsBuilder().withCoppa(2).build
+    val adImp = ad.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.build
+    val adRequest = AdRequestBuilder(Seq(adImp))
+      .withSite(adSite)
+      .withRegs(regs)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
 }
