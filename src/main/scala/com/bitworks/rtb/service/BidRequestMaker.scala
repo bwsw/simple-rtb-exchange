@@ -2,6 +2,7 @@ package com.bitworks.rtb.service
 
 import akka.actor.ActorSystem
 import com.bitworks.rtb.model.db.Bidder
+import com.bitworks.rtb.model.http.{HttpRequestModel, POST}
 import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.parser.BidResponseParser
@@ -42,7 +43,9 @@ class BidRequestMakerImpl(
   override def send(bidder: Bidder, request: BidRequest) = {
 
     val bytes = writer.write(request)
-    httpRequestMaker.post(bidder.endpoint, bytes) map { bytes =>
+    val requestModel = HttpRequestModel(bidder.endpoint, POST, Some(bytes))
+    httpRequestMaker.make(requestModel) map { response =>
+      val bytes = response.body.bytes
       parser.parse(bytes)
     }
   }
