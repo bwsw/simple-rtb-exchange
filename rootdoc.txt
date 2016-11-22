@@ -13,7 +13,7 @@ Notable packages include:
   to create ad/bid request and response objects from different representations (e.g. JSON)
   - [[com.bitworks.rtb.service.writer `com.bitworks.rtb.service.writer`]] contains utilities to
   create different representations (e.g. JSON) for ad/bid request and response objects
-  - [[com.bitworks.rtb.service.writer `com.bitworks.rtb.service.factory`]] contains utilities to
+  - [[com.bitworks.rtb.service.factory `com.bitworks.rtb.service.factory`]] contains utilities to
   create bid request from ad request and ad response from bid response
   - [[com.bitworks.rtb.service.dao `com.bitworks.rtb.service.dao`]] contains DB schema and
   provides data access objects for DB entities
