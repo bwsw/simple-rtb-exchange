@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="Pavel Tomskikh">
+        <preConditions>
+            <tableExists tableName="publisher"/>
+            <tableExists tableName="site"/>
+        </preConditions>
+
+        <createProcedure procedureName="delete_publisher">
+            CREATE OR REPLACE FUNCTION delete_publisher() RETURNS TRIGGER AS $delete_publisher$
+            BEGIN
+            UPDATE site
+            SET deleted = TRUE
+            WHERE publisher_id = OLD.id;
+            RETURN NEW;
+            END;
+            $delete_publisher$ LANGUAGE plpgsql;
+        </createProcedure>
+
+        <sql>
+            CREATE TRIGGER delete_publisher
+            AFTER UPDATE ON publisher
+            FOR EACH ROW
+            WHEN (NEW.deleted = TRUE)
+            EXECUTE PROCEDURE delete_publisher()
+        </sql>
+
+        <rollback>
+            <sql>DROP TRIGGER delete_publisher ON publisher</sql>
+            <sql>DROP FUNCTION delete_publisher()</sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

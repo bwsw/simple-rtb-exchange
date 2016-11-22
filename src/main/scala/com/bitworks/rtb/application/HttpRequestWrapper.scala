@@ -21,6 +21,18 @@ class HttpRequestWrapper(val inner: HttpRequest, p: Promise[HttpResponse]) {
   def complete(bytes: Array[Byte]) = {
     p.success(HttpResponse().withEntity(bytes))
   }
+
+  /**
+    * Completes HttpRequest with exception.
+    *
+    * @param throwable throwed exception
+    */
+  def fail(throwable: Option[Throwable] = None) = {
+    throwable match {
+      case Some(t) => p.failure(t)
+      case None => p.failure(new RuntimeException)
+    }
+  }
 }
 
 object HttpRequestWrapper {

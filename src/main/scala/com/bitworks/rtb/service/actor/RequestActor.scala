@@ -4,6 +4,7 @@ import akka.actor.{Actor, ActorLogging, Props}
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
+import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
@@ -49,6 +50,8 @@ class RequestActor(
 
   val winActor = injectActorRef[WinActor]
 
+  var adRequest: Option[AdRequest] = None
+
   var bidRequest: Option[BidRequest] = None
 
   override def receive: Receive = {
@@ -59,8 +62,8 @@ class RequestActor(
       request.inner.entity.toStrict(configuration.toStrictTimeout) map {
         entity =>
           val bytes = entity.data.toArray
-          val adRequest = parser.parse(bytes)
-          bidRequest = Some(factory.create(adRequest))
+          adRequest = Some(parser.parse(bytes))
+          val bidRequest = factory.create(adRequest.get)
 
           bidderDao.getAll match {
             case Seq() => onError("bidders not found")
@@ -82,12 +85,23 @@ class RequestActor(
     case msg: BidResponse =>
       log.debug(s"bid response received $msg")
 
-      val response = adResponseFactory.create(msg)
-
-      completeRequest(response)
-
+      adRequest match {
+        case Some(ar) =>
+          try {
+            val response = adResponseFactory.create(ar, msg)
+            completeRequest(response)
+          } catch {
+            case e: Throwable => onError(e.getMessage)
+          }
+        case None =>
+          log.error("ad request is not defined")
+          request.fail()
+      }
   }
 
+  /**
+    * Starts auction between successful bid responses.
+    */
   def startAuction() = {
     log.debug("auction started")
     val successful = receivedBidResponses
@@ -109,18 +123,33 @@ class RequestActor(
     }
   }
 
+  /**
+    * Completes request with ad response.
+    *
+    * @param response [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]]
+    */
   def completeRequest(response: AdResponse) = {
     log.debug("completing request...")
     val bytes = writer.write(response)
     request.complete(bytes)
   }
 
+  /**
+    * Completes request with unsuccessful ad response.
+    *
+    * @param msg error message
+    */
   def onError(msg: String) = {
     log.debug(s"an error occurred: $msg")
 
-    val response = adResponseFactory.create(Error(123, msg))
-
-    completeRequest(response)
+    adRequest match {
+      case Some(ar) =>
+        val response = adResponseFactory.create(ar, Error(123, msg))
+        completeRequest(response)
+      case None =>
+        log.error("ad request is not defined")
+        request.fail()
+    }
   }
 }
 
