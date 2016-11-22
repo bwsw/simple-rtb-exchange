@@ -22,4 +22,8 @@ class ImpBuilder private(id: String, adm: String, `type`: Int) {
   */
 object ImpBuilder {
   def apply(id: String, adm: String, `type`: Int) = new ImpBuilder(id, adm, `type`)
+
+  val bannerType = 1
+  val videoType = 2
+  val nativeType = 3
 }
