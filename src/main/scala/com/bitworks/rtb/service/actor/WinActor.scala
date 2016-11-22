@@ -2,23 +2,19 @@ package com.bitworks.rtb.service.actor
 
 import java.util.concurrent.TimeoutException
 
-import akka.actor.Status.Success
 import akka.actor.{Actor, ActorLogging, Props}
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.HttpRequest
+import akka.pattern.after
 import com.bitworks.rtb.model.message.SendWinNotice
-import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 import com.bitworks.rtb.service.{Configuration, WinNoticeRequestMaker}
-import scaldi.Injector
 import scaldi.Injectable._
-import akka.pattern.after
+import scaldi.Injector
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 
 /**
-  * Actor responsible for sending win notice and getting ad request.
+  * Actor responsible for sending win notice and getting ad markup.
   *
   * @author Egor Ilchenko
   */
@@ -30,110 +26,101 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case SendWinNotice(request, response) =>
-      val seatBids = substituteNurls(request, response)
-      log.debug(s"seatBids after nurl subs: $seatBids")
+      val preparedResponse = requestMaker.prepareResponse(response, request)
+      val seatBids = preparedResponse.seatBid
+      log.debug(s"seatBids after preparation: $seatBids")
 
-      val winNoticeUrls = seatBids
-        .flatMap(x => x.bid)
-        .filter(x => x.adm.isDefined && x.nurl.isDefined)
-        .flatMap(_.nurl)
-      log.debug(s"sending win notices to $winNoticeUrls ...")
-      winNoticeUrls.foreach(requestMaker.sendWinNotice)
-      log.debug(s"win notices sended")
+      sendWinNotices(seatBids)
 
-      val bidsNeedAdm = seatBids
-        .flatMap(x => x.bid)
-        .filter(x => x.adm.isEmpty && x.nurl.isDefined)
-      log.debug(s"adm needed for ${bidsNeedAdm.length} bids, getting...")
-
-      val fBidsWithAdm = bidsNeedAdm.map(getBidWithBody)
-      val fSequenced = Future.sequence(fBidsWithAdm)
       val localSender = sender
-      fSequenced.onSuccess { case bidsWithAdm =>
-        log.debug("adms received")
-        log.debug(s"\tsuccessfully: ${bidsWithAdm.count(_._2.isDefined)}")
-        log.debug(s"\twith error: ${bidsWithAdm.count(_._2.isEmpty)}")
+      val fBidsWithAdm = getBidsWithAdm(seatBids)
+      fBidsWithAdm.onSuccess { case bidsWithAdm =>
+        log.debug(
+          s"adms received\n" +
+            s"\tsuccessfully: ${bidsWithAdm.count(_._2.isDefined)}\n" +
+            s"\twith error: ${bidsWithAdm.count(_._2.isEmpty)}")
 
-        val preparedSeatBids = replaceAdms(seatBids, bidsWithAdm)
-        val result = response.copy(seatBid = preparedSeatBids)
-        log.debug(s"sending response back...")
-        localSender ! result
+        val responseWithAdm = updateResponseWithAdm(preparedResponse, bidsWithAdm)
+        localSender ! responseWithAdm
       }
   }
 
-  def replaceAdms(seatBids: Seq[SeatBid], replacements: Seq[(Bid, Option[Bid])]) = {
-    seatBids.map { seatBid =>
+  /**
+    * Sends win notices using fire and forget pattern.
+    *
+    * @param seatBids sequence of [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
+    */
+  def sendWinNotices(seatBids: Seq[SeatBid]) = {
+    val winNoticeUrls = seatBids
+      .flatMap(x => x.bid)
+      .filter(x => x.adm.isDefined && x.nurl.isDefined)
+      .flatMap(_.nurl)
+    winNoticeUrls.foreach(requestMaker.sendWinNotice)
+
+    log.debug(s"Win notices sended to $winNoticeUrls")
+  }
+
+  /**
+    * Sends win notices and gets ad markup from bidder.
+    *
+    * @param seatBids sequence of [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
+    * @return sequence of tuples ([[com.bitworks.rtb.model.response.Bid Bid]],
+    *         Option [[com.bitworks.rtb.model.response.Bid Bid]]), where first element
+    *         is source Bid and second element is some Bid with ad markup or None, if
+    *         getting of ad markup failed
+    */
+  def getBidsWithAdm(seatBids: Seq[SeatBid]) = {
+    val bidsWithoutAdm = seatBids
+      .flatMap(x => x.bid)
+      .filter(x => x.adm.isEmpty && x.nurl.isDefined)
+
+    log.debug(s"adm needed for ${bidsWithoutAdm.length} bids, getting...")
+
+    val timeout = after(
+      duration = config.winNoticeTimeout,
+      using = context.system.scheduler
+    )(Future.failed(new TimeoutException))
+
+    val fBidsWithAdm = bidsWithoutAdm.map { bid =>
+      Future
+        .firstCompletedOf(
+          Seq(
+            requestMaker.getAdMarkup(bid.nurl.get),
+            timeout)).map { body =>
+        (bid, Some(bid.copy(adm = Some(body))))
+      }.recover { case _ =>
+        log.error(s"getting ad markup failed for bid: $bid")
+        (bid, None)
+      }
+    }
+    Future.sequence(fBidsWithAdm)
+  }
+
+
+  /**
+    * Updates [[com.bitworks.rtb.model.response.BidResponse BidResponse]] with Bids that conatains
+    * ad markup.
+    *
+    * @param response     [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * @param replacements replacements for Bids, where first element
+    *                     is source Bid and second element is some Bid with ad markup or None,
+    *                     if getting of ad markup failed
+    * @return updated [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    *         with missing ad markups
+    */
+  def updateResponseWithAdm(response: BidResponse, replacements: Seq[(Bid, Option[Bid])]) = {
+    val seatBids = response.seatBid.map { seatBid =>
       val bids = seatBid.bid.flatMap { bid =>
         replacements.find(_._1 == bid) match {
+          case Some((_, replacement)) => replacement
           case None => Some(bid)
-          case Some(rep) => rep._2 match {
-            case None => None
-            case Some(value) => Some(value)
-          }
         }
       }
       seatBid.copy(bid = bids)
     }
+    response.copy(seatBid = seatBids)
   }
 
-  val timeout = after(
-    duration = config.winNoticeTimeout,
-    using = context.system.scheduler
-  )(Future.failed(new TimeoutException))
-
-  def getBidWithBody(bid: Bid) = {
-    Future
-      .firstCompletedOf(
-        Seq(
-          requestMaker.getAdMarkup(bid.nurl.get),
-          timeout)).map { body =>
-      (bid, Some(bid.copy(adm = Some(body))))
-    }.recover { case _ =>
-      log.error(s"getting ad markup failed for bid: $bid")
-      (bid, None)
-    }
-  }
-
-  def substituteNurls(
-      request: BidRequest,
-      response: BidResponse) = {
-    response.seatBid.map { seatBid =>
-      val updatedBids = seatBid.bid.map { bid =>
-        bid.copy(
-          nurl = bid.nurl match {
-            case None => None
-            case Some(nurl) => Some(substituteNurl(nurl, request, response, seatBid, bid))
-          })
-      }
-      seatBid.copy(bid = updatedBids)
-    }
-  }
-
-  def substituteNurl(
-      nurl: String,
-      request: BidRequest,
-      response: BidResponse,
-      seatBid: SeatBid,
-      bid: Bid) = {
-    val subs = Seq(
-      "${AUCTION_ID}" -> request.id,
-      "${AUCTION_BID_ID}" -> bid.id,
-      "${AUCTION_IMP_ID}" -> bid.impId,
-      "${AUCTION_SEAT_ID}" -> seatBid.seat.get,
-      "${AUCTION_AD_ID}" -> bid.adId.get,
-      "${AUCTION_PRICE}" -> bid.price.toString,
-      "${AUCTION_CURRENCY}" -> response.cur
-    )
-    replace(nurl, subs)
-  }
-
-  def replace(
-      str: String,
-      replacements: Seq[(String, String)]): String = replacements match {
-    case Nil => str
-    case (key, value) :: tl =>
-      replace(str.replaceAllLiterally(key, value), tl)
-  }
 }
 
 object WinActor {

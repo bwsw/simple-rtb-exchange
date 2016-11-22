@@ -63,9 +63,9 @@ class RequestActor(
         entity =>
           val bytes = entity.data.toArray
           adRequest = Some(parser.parse(bytes))
-          val bidRequest = factory.create(adRequest.get)
+          bidRequest = Some(factory.create(adRequest.get))
 
-          bidderDao.getAll match {
+          bidders match {
             case Seq() => onError("bidders not found")
             case bidders: Seq[Bidder] =>
               bidders.foreach { bidder =>
