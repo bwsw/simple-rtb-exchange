@@ -2,11 +2,11 @@ package com.bitworks.rtb.service
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
+import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
+import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import com.bitworks.rtb.model.http._
 
-import scala.collection.immutable.Seq
 import scala.concurrent.Future
 
 /**
@@ -17,7 +17,7 @@ import scala.concurrent.Future
 trait HttpRequestMaker {
 
   /**
-    * Makes HTTP request
+    * Makes HTTP request.
     *
     * @param request [[com.bitworks.rtb.model.http.HttpRequestModel HttpRequestModel]]
     * @return [[com.bitworks.rtb.model.http.HttpResponseModel HttpResponseModel]]
