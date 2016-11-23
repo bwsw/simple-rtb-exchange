@@ -110,14 +110,14 @@ class WinNoticeRequestMakerTest extends FlatSpec with Matchers with EasyMockSuga
       .build
     val request = BidRequestBuilder("reqid", Seq.empty).build
 
-    val result = winNoticeRequestMaker.prepareResponse(response, request)
-    val bid = result.seatBid.head.bid.head
+    val result = winNoticeRequestMaker.prepareResponses(Seq(response), request)
+    val bid = result.flatMap(_.seatBid).head.bid.head
     val expectedBidNurl = s"${request.id}/${response.seatBid.head.bid.head.id}" +
       s"/${response.seatBid.head.seat.get}/${response.cur}"
 
     bid.nurl.get shouldBe expectedBidNurl
 
-    val emptyBid = result.seatBid.head.bid.last
+    val emptyBid = result.flatMap(_.seatBid).head.bid.last
 
     emptyBid.nurl should not be defined
   }

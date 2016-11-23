@@ -40,7 +40,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
     val requestMaker = niceMock[WinNoticeRequestMaker]
     expecting {
-      requestMaker.prepareResponse(bidResponse, bidRequest).andReturn(bidResponse).times(1)
+      requestMaker.prepareResponses(Seq(bidResponse), bidRequest).andReturn(Seq(bidResponse)).times(1)
     }
 
     implicit val module = new Module {
@@ -52,7 +52,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
     whenExecuting(requestMaker, configuration) {
       val actor = TestActorRef(new WinActor)
-      val fAnswer = (actor ? SendWinNotice(bidRequest, bidResponse))
+      val fAnswer = (actor ? SendWinNotice(bidRequest, Seq(bidResponse)))
         .recover { case _ => bidResponse }
       try {
         whenReady(fAnswer) { _ => }
@@ -78,9 +78,9 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
     val requestMaker = niceMock[WinNoticeRequestMaker]
     expecting {
-      requestMaker.prepareResponse(bidResponse, bidRequest).andStubReturn(bidResponse)
-      requestMaker.sendWinNotice("one").times(1)
-      requestMaker.sendWinNotice("two").times(1)
+      requestMaker.prepareResponses(Seq(bidResponse), bidRequest).andStubReturn(Seq(bidResponse))
+      requestMaker.sendWinNotice("one").andReturn(Future.failed(new TimeoutException())).times(1)
+      requestMaker.sendWinNotice("two").andReturn(Future.failed(new TimeoutException())).times(1)
     }
 
     implicit val module = new Module {
@@ -91,7 +91,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
     whenExecuting(requestMaker, configuration) {
       val actor = TestActorRef(new WinActor)
-      val fAnswer = (actor ? SendWinNotice(bidRequest, bidResponse))
+      val fAnswer = (actor ? SendWinNotice(bidRequest, Seq(bidResponse)))
         .recover { case _ => bidResponse }
       try {
         whenReady(fAnswer) { _ => }
@@ -117,7 +117,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
     val requestMaker = niceMock[WinNoticeRequestMaker]
     expecting {
-      requestMaker.prepareResponse(bidResponse, bidRequest).andStubReturn(bidResponse)
+      requestMaker.prepareResponses(Seq(bidResponse), bidRequest).andStubReturn(Seq(bidResponse))
       requestMaker.getAdMarkup("one").andReturn(Future.failed(new TimeoutException())).times(1)
       requestMaker.getAdMarkup("two").andReturn(Future.failed(new TimeoutException())).times(1)
     }
@@ -130,7 +130,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
     whenExecuting(requestMaker, configuration) {
       val actor = TestActorRef(new WinActor)
-      val fAnswer = (actor ? SendWinNotice(bidRequest, bidResponse))
+      val fAnswer = (actor ? SendWinNotice(bidRequest, Seq(bidResponse)))
         .recover { case _ => bidResponse }
       try {
         whenReady(fAnswer) { _ => }
@@ -158,7 +158,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
     val requestMaker = niceMock[WinNoticeRequestMaker]
     expecting {
-      requestMaker.prepareResponse(bidResponse, bidRequest).andStubReturn(bidResponse)
+      requestMaker.prepareResponses(Seq(bidResponse), bidRequest).andStubReturn(Seq(bidResponse))
       requestMaker.getAdMarkup("one").andReturn(Future.successful(admone)).times(1)
       requestMaker.getAdMarkup("two").andReturn(Future.successful(admtwo)).times(1)
     }
@@ -182,7 +182,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
     whenExecuting(requestMaker, configuration) {
       val actor = TestActorRef(new WinActor)
-      val fAnswer = (actor ? SendWinNotice(bidRequest, bidResponse))
+      val fAnswer = (actor ? SendWinNotice(bidRequest, Seq(bidResponse)))
         .recover { case _ => bidResponse }
       try {
         whenReady(fAnswer) { ans =>

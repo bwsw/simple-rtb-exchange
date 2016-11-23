@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service
 
 import akka.actor.ActorSystem
-import com.bitworks.rtb.model.http.HttpRequestModel
+import com.bitworks.rtb.model.http.{HttpRequestModel, HttpResponseModel}
 import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 
@@ -19,7 +19,7 @@ trait WinNoticeRequestMaker {
     *
     * @param nurl win notice URL
     */
-  def sendWinNotice(nurl: String): Unit
+  def sendWinNotice(nurl: String): Future[HttpResponseModel]
 
   /**
     * Sends win notice to given URL and returns ad markup.
@@ -32,13 +32,13 @@ trait WinNoticeRequestMaker {
   /**
     * Prepares bid response to win notice sending.
     *
-    * @param response [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
-    * @param request  [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
+    * @param responses [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * @param request   [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
     * @return prepared [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     */
-  def prepareResponse(
-      response: BidResponse,
-      request: BidRequest): BidResponse
+  def prepareResponses(
+      responses: Seq[BidResponse],
+      request: BidRequest): Seq[BidResponse]
 }
 
 /**
@@ -63,20 +63,22 @@ class WinNoticeRequestMakerImpl(
     }
   }
 
-  override def prepareResponse(
-      response: BidResponse,
+  override def prepareResponses(
+      responses: Seq[BidResponse],
       request: BidRequest) = {
-    val seatBids = response.seatBid.map { seatBid =>
-      val updatedBids = seatBid.bid.map { bid =>
-        bid.copy(
-          nurl = bid.nurl match {
-            case None => None
-            case Some(nurl) => Some(substituteNurl(nurl, request, response, seatBid, bid))
-          })
+    responses.map { response =>
+      val seatBids = response.seatBid.map { seatBid =>
+        val updatedBids = seatBid.bid.map { bid =>
+          bid.copy(
+            nurl = bid.nurl match {
+              case None => None
+              case Some(nurl) => Some(substituteNurl(nurl, request, response, seatBid, bid))
+            })
+        }
+        seatBid.copy(bid = updatedBids)
       }
-      seatBid.copy(bid = updatedBids)
+      response.copy(seatBid = seatBids)
     }
-    response.copy(seatBid = seatBids)
   }
 
   /**

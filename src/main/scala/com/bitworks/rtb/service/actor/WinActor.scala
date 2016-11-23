@@ -25,9 +25,9 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
   import context.dispatcher
 
   override def receive: Receive = {
-    case SendWinNotice(request, response) =>
-      val preparedResponse = requestMaker.prepareResponse(response, request)
-      val seatBids = preparedResponse.seatBid
+    case SendWinNotice(request, responses) =>
+      val preparedResponses = requestMaker.prepareResponses(responses, request)
+      val seatBids = preparedResponses.flatMap(_.seatBid)
       log.debug(s"seatBids after preparation: $seatBids")
 
       sendWinNotices(seatBids)
@@ -40,7 +40,7 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
             s"\tsuccessfully: ${bidsWithAdm.count(_._2.isDefined)}\n" +
             s"\twith error: ${bidsWithAdm.count(_._2.isEmpty)}")
 
-        val responseWithAdm = updateResponseWithAdm(preparedResponse, bidsWithAdm)
+        val responseWithAdm = updateResponsesWithAdm(preparedResponses, bidsWithAdm)
         localSender ! responseWithAdm
       }
   }
@@ -101,24 +101,26 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
     * Updates [[com.bitworks.rtb.model.response.BidResponse BidResponse]] with Bids that conatains
     * ad markup.
     *
-    * @param response     [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * @param responses    [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     * @param replacements replacements for Bids, where first element
     *                     is source Bid and second element is some Bid with ad markup or None,
     *                     if getting of ad markup failed
     * @return updated [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     *         with missing ad markups
     */
-  def updateResponseWithAdm(response: BidResponse, replacements: Seq[(Bid, Option[Bid])]) = {
-    val seatBids = response.seatBid.map { seatBid =>
-      val bids = seatBid.bid.flatMap { bid =>
-        replacements.find(_._1 == bid) match {
-          case Some((_, replacement)) => replacement
-          case None => Some(bid)
+  def updateResponsesWithAdm(responses: Seq[BidResponse], replacements: Seq[(Bid, Option[Bid])]) = {
+    responses.map { response =>
+      val seatBids = response.seatBid.map { seatBid =>
+        val bids = seatBid.bid.flatMap { bid =>
+          replacements.find(_._1 == bid) match {
+            case Some((_, replacement)) => replacement
+            case None => Some(bid)
+          }
         }
+        seatBid.copy(bid = bids)
       }
-      seatBid.copy(bid = bids)
+      response.copy(seatBid = seatBids)
     }
-    response.copy(seatBid = seatBids)
   }
 
 }
