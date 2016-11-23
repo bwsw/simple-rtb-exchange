@@ -42,6 +42,8 @@ class RequestActor(
   val bidders = bidderDao.getAll
   val receivedBidResponses = new ListBuffer[BidRequestResult]
 
+  var auctionStarted = false
+
   val bidActorProps = injectActorProps[BidActor]
   val bidRouter = context.actorOf(
     RoundRobinPool(bidders.length)
@@ -63,13 +65,19 @@ class RequestActor(
           // Fix this for Option[BidRequest]
           val bidRequest = factory.create(adRequest).get
 
-          bidderDao.getAll match {
+          bidders match {
             case Seq() => onError("bidders not found")
-            case bidders: Seq[Bidder] =>
+            case _: Seq[Bidder] =>
               bidders.foreach { bidder =>
                 bidRouter ! SendBidRequest(bidder, bidRequest)
               }
+
+              context.system.scheduler.scheduleOnce(
+                configuration.bidRequestTimeout,
+                self,
+                StartAuction)
           }
+
       } onFailure {
         case exc => onError(exc.toString)
       }
@@ -78,11 +86,10 @@ class RequestActor(
       log.debug(s"bid response received: $msg")
       receivedBidResponses.append(msg)
       if (receivedBidResponses.size == bidders.length)
-        startAuction()
+        self ! StartAuction
 
     case msg: BidResponse =>
       log.debug("bid response received")
-
       adRequest match {
         case Some(ar) =>
           try {
@@ -95,26 +102,25 @@ class RequestActor(
           log.error("ad request is not defined")
           request.fail()
       }
-  }
 
-  /**
-    * Starts auction between successful bid responses.
-    */
-  def startAuction() = {
-    log.debug("auction started")
-    val successful = receivedBidResponses
-      .collect {
-        case BidRequestSuccess(response) => response
+    case StartAuction =>
+      if (!auctionStarted) {
+        auctionStarted = true
+        log.debug("auction started")
+        val successful = receivedBidResponses
+          .collect {
+            case BidRequestSuccess(response) => response
+          }
+        log.debug(s"auction participants: ${successful.length}")
+        val winner = auction.winner(successful)
+        log.debug(s"auction winner: $winner")
+
+        winner match {
+          case Some(response) => winActor ! response
+          case None => onError("winner not defined")
+        }
       }
-    log.debug(s"auction participants: ${successful.length}")
 
-    val winner = auction.winner(successful)
-    log.debug(s"auction winner: $winner")
-
-    winner match {
-      case Some(response) => winActor ! response
-      case None => onError("winner not defined")
-    }
   }
 
   /**
@@ -123,6 +129,7 @@ class RequestActor(
     * @param response [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]]
     */
   def completeRequest(response: AdResponse) = {
+    log.debug("completing request...")
     val bytes = writer.write(response)
     request.complete(bytes)
   }
