@@ -5,7 +5,7 @@ package com.bitworks.rtb.service
   *
   * @author Pavel Tomskikh
   */
-trait EnumeratedLists {
+trait BidRequestConstants {
   val bannerAdTypes = 1 to 4
   val creativeAttributes = 1 to 16
   val adPosition = 0 to 7

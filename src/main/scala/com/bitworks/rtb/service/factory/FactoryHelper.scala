@@ -2,8 +2,6 @@ package com.bitworks.rtb.service.factory
 
 import java.time.LocalDate
 
-import scala.util.Random
-
 /**
   * Helper for bid request factory.
   *

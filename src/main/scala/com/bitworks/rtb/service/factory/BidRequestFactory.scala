@@ -4,7 +4,7 @@ import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.request._
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.model.{ad, db}
-import com.bitworks.rtb.service.EnumeratedLists
+import com.bitworks.rtb.service.BidRequestConstants
 import com.bitworks.rtb.service.dao.{AppDao, CategoryDao, PublisherDao, SiteDao}
 
 /**
@@ -33,7 +33,7 @@ class BidRequestFactoryImpl(
     siteDao: SiteDao,
     appDao: AppDao)
   extends BidRequestFactory
-    with EnumeratedLists
+    with BidRequestConstants
     with FactoryHelper {
 
   /**
