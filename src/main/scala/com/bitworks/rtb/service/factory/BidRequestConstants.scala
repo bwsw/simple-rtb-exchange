@@ -1,4 +1,4 @@
-package com.bitworks.rtb.service
+package com.bitworks.rtb.service.factory
 
 /**
   * Enumerated lists from specification.
