@@ -433,7 +433,7 @@ class BidRequestFactoryTest
     (None, None, Some(300)),
     (None, None, None))
 
-  it should "create bid request for ad request with correct banner heights" in {
+  it should "create bid request for ad request with correct banner height" in {
     forAll(correctSizes) { (min: Option[Int], exp: Option[Int], max: Option[Int]) =>
       val bannerBuilder = BannerBuilder()
       min.foreach(bannerBuilder.withHmin)
@@ -456,7 +456,7 @@ class BidRequestFactoryTest
     }
   }
 
-  it should "create bid request for ad request with correct banner widths" in {
+  it should "create bid request for ad request with correct banner width" in {
     forAll(correctSizes) { (min: Option[Int], exp: Option[Int], max: Option[Int]) =>
       val bannerBuilder = BannerBuilder()
       min.foreach(bannerBuilder.withWmin)
@@ -491,7 +491,7 @@ class BidRequestFactoryTest
     (None, Some(0), None),
     (None, None, Some(0)))
 
-  it should "not create bid request for ad request with incorrect banner heights" in {
+  it should "not create bid request for ad request with incorrect banner height" in {
     forAll(incorrectSizes) { (min: Option[Int], exp: Option[Int], max: Option[Int]) =>
       val bannerBuilder = BannerBuilder()
       min.foreach(bannerBuilder.withHmin)
@@ -506,7 +506,7 @@ class BidRequestFactoryTest
     }
   }
 
-  it should "not create bid request for ad request with incorrect banner widths" in {
+  it should "not create bid request for ad request with incorrect banner width" in {
     forAll(incorrectSizes) { (min: Option[Int], exp: Option[Int], max: Option[Int]) =>
       val bannerBuilder = BannerBuilder()
       min.foreach(bannerBuilder.withWmin)

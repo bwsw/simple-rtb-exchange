@@ -9,7 +9,7 @@ import java.time.LocalDate
   */
 trait FactoryHelper {
 
-  val nowYear = LocalDate.now.getYear
+  def isValidBirthdayYear(i: Int) = between(1900, LocalDate.now.getYear)(i)
 
   def checkSeq[T](p: T => Boolean)(s: Seq[T]): Boolean =
     s.nonEmpty && s.forall(p)

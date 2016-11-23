@@ -1,10 +1,10 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.AdRequest
+import com.bitworks.rtb.model.db.Status
 import com.bitworks.rtb.model.request._
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.model.{ad, db}
-import com.bitworks.rtb.service.BidRequestConstants
 import com.bitworks.rtb.service.dao.{AppDao, CategoryDao, PublisherDao, SiteDao}
 
 /**
@@ -71,26 +71,42 @@ class BidRequestFactoryImpl(
       else return None
     }
 
-    var publisherId: Int = 0
+    var publisher: Option[db.Publisher] = None
 
     if (adRequest.site.nonEmpty) {
-      val site = create(adRequest.site.get)
-      if (site.nonEmpty) {
-        builder.withSite(site.get)
-        publisherId = getPublisherId(site.get)
-      } else return None
+      val dbSite = siteDao.get(adRequest.site.get.id)
+      if (dbSite.isEmpty) {
+        return None
+      }
+      publisher = publisherDao.get(dbSite.get.publisherId)
+      if (publisher.isEmpty) {
+        return None
+      }
+      val site = create(adRequest.site.get, dbSite.get, publisher.get)
+      if (site.isEmpty) {
+        return None
+      }
+      builder.withSite(site.get)
     }
     else {
-      val app = create(adRequest.app.get)
-      if (app.nonEmpty) {
-        builder.withApp(app.get)
-        publisherId = getPublisherId(app.get)
-      } else return None
+      val dbApp = appDao.get(adRequest.app.get.id)
+      if (dbApp.isEmpty) {
+        return None
+      }
+      publisher = publisherDao.get(dbApp.get.publisherId)
+      if (publisher.isEmpty) {
+        return None
+      }
+      val app = create(adRequest.app.get, dbApp.get, publisher.get)
+      if (app.isEmpty) {
+        return None
+      }
+      builder.withApp(app.get)
     }
 
     builder
-      .withBcat(getBlockedCategories(publisherId))
-      .withBadv(getBlockedDomains(publisherId))
+      .withBcat(getBlockedCategories(publisher.get))
+      .withBadv(publisher.get.blockedDomains)
 
     Some(builder.build)
   }
@@ -114,7 +130,10 @@ class BidRequestFactoryImpl(
     Some(builder.build)
   }
 
-  private def create(adSite: ad.request.Site): Option[Site] = {
+  private def create(
+      adSite: ad.request.Site,
+      site: db.Site,
+      publisher: db.Publisher): Option[Site] = {
     if (!adSite.sectionCat.forall(checkCategories) ||
       !adSite.pageCat.forall(checkCategories) ||
       !adSite.page.forall(_.nonEmpty) ||
@@ -125,70 +144,66 @@ class BidRequestFactoryImpl(
       return None
     }
 
-    val site = siteDao.get(adSite.id)
-    if (site.nonEmpty) {
-      val publisher = create(publisherDao.get(site.get.publisherId).get)
-
-      val builder = SiteBuilder()
-        .withId(site.get.id.toString)
-        .withName(site.get.name)
-        .withPublisher(publisher)
-        .withDomain(site.get.domain)
-        .withPrivacyPolicy(site.get.privacyPolicy)
-
-      site.get.keyword.foreach(builder.withKeywords)
-      adSite.sectionCat.foreach(builder.withSectionCat)
-      adSite.pageCat.foreach(builder.withPageCat)
-      adSite.page.foreach(builder.withPage)
-      adSite.ref.foreach(builder.withRef)
-      adSite.search.foreach(builder.withSearch)
-      adSite.mobile.foreach(builder.withMobile)
-      adSite.content.foreach(builder.withContent)
-
-      val cats = getCategories(site.get.iabCategoriesIds)
-      if (cats.nonEmpty) {
-        builder.withCat(cats)
-      }
-
-      Some(builder.build)
+    if (site.status != Status.active) {
+      return None
     }
-    else None
+
+    val builder = SiteBuilder()
+      .withId(site.id.toString)
+      .withName(site.name)
+      .withPublisher(create(publisher))
+      .withDomain(site.domain)
+      .withPrivacyPolicy(site.privacyPolicy)
+
+    site.keyword.foreach(builder.withKeywords)
+    adSite.sectionCat.foreach(builder.withSectionCat)
+    adSite.pageCat.foreach(builder.withPageCat)
+    adSite.page.foreach(builder.withPage)
+    adSite.ref.foreach(builder.withRef)
+    adSite.search.foreach(builder.withSearch)
+    adSite.mobile.foreach(builder.withMobile)
+    adSite.content.foreach(builder.withContent)
+
+    val cats = getCategories(site.iabCategoriesIds)
+    if (cats.nonEmpty) {
+      builder.withCat(cats)
+    }
+
+    Some(builder.build)
   }
 
-  private def create(adApp: ad.request.App): Option[App] = {
+  private def create(adApp: ad.request.App, app: db.App, publisher: db.Publisher): Option[App] = {
     if (!adApp.sectionCat.forall(checkCategories) ||
       !adApp.pageCat.forall(checkCategories) ||
       !adApp.content.forall(check)) {
       return None
     }
 
-    val app = appDao.get(adApp.id)
+    if (app.status != Status.active) {
+      return None
+    }
 
-    if (app.nonEmpty) {
-      val publisher = create(publisherDao.get(app.get.publisherId).get)
+    val builder = AppBuilder()
+      .withId(app.id.toString)
+      .withName(app.name)
+      .withBundle(app.bundle)
+      .withStoreUrl(app.storeUrl)
+      .withVer(app.version)
+      .withPrivacyPolicy(app.privacyPolicy)
+      .withPublisher(create(publisher))
 
-      val builder = AppBuilder()
-        .withId(app.get.id.toString)
-        .withName(app.get.name)
-        .withBundle(app.get.bundle)
-        .withStoreUrl(app.get.storeUrl)
-        .withVer(app.get.version)
-        .withPrivacyPolicy(app.get.privacyPolicy)
-        .withPublisher(publisher)
+    app.keyword.foreach(builder.withKeywords)
+    app.domain.foreach(builder.withDomain)
+    adApp.sectionCat.foreach(builder.withSectionCat)
+    adApp.pageCat.foreach(builder.withPageCat)
+    adApp.content.foreach(builder.withContent)
 
-      app.get.keyword.foreach(builder.withKeywords)
-      app.get.domain.foreach(builder.withDomain)
-      adApp.sectionCat.foreach(builder.withSectionCat)
-      adApp.pageCat.foreach(builder.withPageCat)
-      adApp.content.foreach(builder.withContent)
+    val cats = getCategories(app.iabCategoriesIds)
+    if (cats.nonEmpty) {
+      builder.withCat(cats)
+    }
 
-      val cats = getCategories(app.get.iabCategoriesIds)
-      if (cats.nonEmpty) {
-        builder.withCat(cats)
-      }
-
-      Some(builder.build)
-    } else None
+    Some(builder.build)
   }
 
   private def create(dbPublisher: db.Publisher): Publisher = {
@@ -206,23 +221,21 @@ class BidRequestFactoryImpl(
   }
 
   private def create(adUser: ad.request.User): Option[User] = {
+    if (!adUser.id.forall(_.nonEmpty) ||
+      !adUser.yob.forall(isValidBirthdayYear) ||
+      !adUser.gender.forall(genders.contains) ||
+      !adUser.geo.forall(check) ||
+      !adUser.keywords.forall(_.nonEmpty)) {
+      return None
+    }
+
     val builder = UserBuilder()
     adUser.id.foreach(builder.withId)
-
-    val yearDownBound = 1900
-    val availGenders = Seq("M", "F", "O")
-
-    if (adUser.yob.forall(between(yearDownBound, nowYear)) &&
-      adUser.gender.forall(availGenders.contains) &&
-      adUser.geo.forall(check)) {
-
-      adUser.yob.foreach(builder.withYob)
-      adUser.gender.foreach(builder.withGender)
-      adUser.geo.foreach(builder.withGeo)
-      adUser.keywords.foreach(builder.withKeywords)
-
-      Some(builder.build)
-    } else None
+    adUser.yob.foreach(builder.withYob)
+    adUser.gender.foreach(builder.withGender)
+    adUser.geo.foreach(builder.withGeo)
+    adUser.keywords.foreach(builder.withKeywords)
+    Some(builder.build)
   }
 
   private def check(banner: Banner): Boolean = {
@@ -240,7 +253,9 @@ class BidRequestFactoryImpl(
 
   private def check(video: Video): Boolean = {
     video.mimes.forall(_.nonEmpty) &&
+      video.minDuration.forall(isPositive) &&
       notLarger(video.minDuration, video.maxDuration) &&
+      video.minBitrate.forall(isPositive) &&
       notLarger(video.minBitrate, video.maxBitrate) &&
       video.protocol.forall(videoBidResponseProtocol.contains) &&
       video.protocols.forall(check(videoBidResponseProtocol)) &&
@@ -295,7 +310,8 @@ class BidRequestFactoryImpl(
   }
 
   private def check(device: Device): Boolean = {
-    device.geo.forall(check) &&
+    device.ua.forall(_.nonEmpty) &&
+      device.geo.forall(check) &&
       device.dnt.forall(isFlag) &&
       device.lmt.forall(isFlag) &&
       device.ip.forall(_.nonEmpty) &&
@@ -352,15 +368,11 @@ class BidRequestFactoryImpl(
   private def getPublisherId(app: App) =
     appDao.get(app.id.get.toInt).get.publisherId
 
-  private def getBlockedCategories(publisherId: Int): Seq[String] = {
-    getCategories(
-      publisherDao.get(publisherId).get
-        .blockedCategoriesIds)
+  private def getBlockedCategories(publisher: db.Publisher): Seq[String] = {
+    getCategories(publisher.blockedCategoriesIds)
   }
 
   private def getCategories(ids: Seq[Int]): Seq[String] =
     categoryDao.get(ids).map(_.iabId)
 
-  private def getBlockedDomains(publisherId: Int): Seq[String] =
-    publisherDao.get(publisherId).get.blockedDomains
 }

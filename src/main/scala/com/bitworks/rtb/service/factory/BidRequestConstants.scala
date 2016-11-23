@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.factory
 
 /**
-  * Enumerated lists from specification.
+  * Enumerated lists from the specification.
   *
   * @author Pavel Tomskikh
   */
@@ -23,6 +23,7 @@ trait BidRequestConstants {
   val deviceType = 1 to 7
   val connectionType = 0 to 6
   val noBidReasonCodes = 0 to 8
+  val genders = Seq("M", "F", "O")
 
   def isVideoStartDelay(i: Int) = i >= -2
 
