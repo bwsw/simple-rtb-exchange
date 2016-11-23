@@ -61,21 +61,24 @@ class RequestActor(
       request.inner.entity.toStrict(configuration.toStrictTimeout) map {
         entity =>
           val bytes = entity.data.toArray
-          val adRequest = parser.parse(bytes)
-          // Fix this for Option[BidRequest]
-          val bidRequest = factory.create(adRequest).get
+          adRequest = Some(parser.parse(bytes))
 
-          bidders match {
-            case Seq() => onError("bidders not found")
-            case _: Seq[Bidder] =>
-              bidders.foreach { bidder =>
-                bidRouter ! SendBidRequest(bidder, bidRequest)
-              }
+          val bidRequest = factory.create(adRequest.get)
+          if (bidRequest.isEmpty) {
+            bidders match {
+              case Seq() => onError("bidders not found")
+              case _: Seq[Bidder] =>
+                bidders.foreach { bidder =>
+                  bidRouter ! SendBidRequest(bidder, bidRequest.get)
+                }
 
-              context.system.scheduler.scheduleOnce(
-                configuration.bidRequestTimeout,
-                self,
-                StartAuction)
+                context.system.scheduler.scheduleOnce(
+                  configuration.bidRequestTimeout,
+                  self,
+                  StartAuction)
+            }
+          } else {
+            onError("Bid request can not be constructed.")
           }
 
       } onFailure {
