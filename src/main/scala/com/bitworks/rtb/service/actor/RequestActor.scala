@@ -110,10 +110,10 @@ class RequestActor(
     val winner = auction.winner(successful)
     log.debug(s"auction winner: $winner")
 
-    winner match {
-      case Some(response) => winActor ! response
-      case None => onError("winner not defined")
-    }
+//    winner match {
+//      case Some(response) => winActor ! response
+//      case None => onError("winner not defined")
+//    }
   }
 
   /**

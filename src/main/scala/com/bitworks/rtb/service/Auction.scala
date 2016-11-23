@@ -1,6 +1,5 @@
 package com.bitworks.rtb.service
 
-import com.bitworks.rtb.model.response.builder.{BidResponseBuilder, SeatBidBuilder}
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 
 /**
@@ -16,125 +15,128 @@ trait Auction {
     * @param responses bid responses, taking part in auction
     * @return Some(BidResponse) or None, if winner not found
     */
-  def winner(responses: Seq[BidResponse]): Option[BidResponse]
+  def winners(responses: Seq[BidResponse]): Seq[BidResponse]
 }
 
 /**
-  * Dummy auction implementation.
+  * Auction implementation.
+  *
+  * @author Egor Ilchenko
   */
 class AuctionImpl extends Auction with Logging {
-  override def winner(responses: Seq[BidResponse]) : Option[BidResponse] = {
-    log.debug("auction started!")
-    log.debug(s"bid responses: $responses")
-    val groups = getModel(responses)
-    log.debug(s"groups: $groups")
-    val comb = maxCombination(groups.toList)
-    log.debug(s"max comb $comb")
-    val response = getResponse(comb)
-    log.debug(s"response: $response")
-    Some(response)
-  }
 
-  private def maxCombination(groups: List[BidGroup]) = {
-    val res = (1 to groups.length)
-      .flatMap(x => combinations(x, groups))
-        .map{x =>
-          log.debug(s"possible comb: $x")
-          x
-        }
-      .filter(_.nonEmpty)
-      .reduceLeft { (left, right) =>
-        val sumLeft = if (left.isEmpty) {
-          BigDecimal(0)
-        }
-        else {
-          left.map(_.price).sum
-        }
-        val sumRight = if (right.isEmpty) {
-          BigDecimal(0)
-        }
-        else {
-          right.map(_.price).sum
-        }
-        if (sumLeft > sumRight)
-          left
-        else
-          right
-      }
-
-    res
-  }
-
-  private var currentMax = BigDecimal(0)
-
-  private def combinations(k: Int, list: List[BidGroup]): List[List[BidGroup]] = {
-
-    val result = list match {
-      case Nil => Nil
-      case head :: xs =>
-        if (k <= 0 || k > list.length) {
-          Nil
-        }
-        else if (k == 1) {
-          list.map(List(_))
-        }
-        else {
-          val filteredXs = xs.filter { elem =>
-            !elem.impIds.exists(bb => head.impIds.contains(bb))
-          }
-
-          val left = combinations(k - 1, filteredXs).map(head :: _)
-
-          val right = combinations(k, xs)
-          left ::: right
-        }
-    }
+  override def winners(responses: Seq[BidResponse]): Seq[BidResponse] = {
+    val groups = toBidGroups(responses)
+    val combinations = maxCombination(groups)
+    val result = toBidResponses(combinations)
     result
   }
 
-  private def getResponse(models: Seq[BidGroup]) = {
-    val seatBids = models
-      .collect { case m: BidGroup => m }
-      .groupBy(_.seatBid)
-      .map { case (seatBid, bidGroups) =>
-        val builder = SeatBidBuilder(bidGroups.flatMap(_.bids))
-        if (seatBid.seat.isDefined) {
-          builder.withSeat(seatBid.seat.get)
+  /**
+    * Returns groups combination with maximum price.
+    *
+    * @param groups all bid groups
+    */
+  private def maxCombination(groups: List[BidsGroup]) = (1 to groups.length)
+    .view
+    .map(combinations(_, groups))
+    .takeWhile(_.nonEmpty)
+    .flatten
+    .toList match {
+    case Nil => Nil
+    case list => list.maxBy(x => x.map(_.price).sum)
+  }
+
+  /**
+    * Returns all possible combinations of groups by k elements.
+    *
+    * @param k      amount of groups in one combination
+    * @param groups bid groups to make combinations with
+    */
+  private def combinations(k: Int, groups: List[BidsGroup]): List[List[BidsGroup]] = groups match {
+    case Nil => Nil
+    case head :: tail =>
+      if (k <= 0 || k > groups.length) {
+        Nil
+      }
+      else if (k == 1) {
+        groups.map(List(_))
+      }
+      else {
+        val filtered = tail.filter { elem =>
+          !elem.impIds.exists(bb => head.impIds.contains(bb))
         }
-        builder.build
-      }.toSeq
 
-    BidResponseBuilder("empty", seatBids).build
+        val left = combinations(k - 1, filtered).map(head :: _)
+        val right = combinations(k, tail)
+        left ::: right
+      }
   }
 
-  private def getModel(responses: Seq[BidResponse]): Seq[BidGroup] = {
-    val groups = responses
-      .flatMap(_.seatBid)
-      .filter(_.group == 1)
-      .map { x =>
-        BidGroup(
-          x,
-          x.bid,
-          x.bid.map(_.impId),
-          x.bid.map(_.price).foldLeft(BigDecimal(0))((le, re) => le + re))
-      }
+  /**
+    * Maps groups of bids to bid responses, preserving source hierarchy.
+    *
+    * @param groups groups of bids
+    * @return sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    */
+  def toBidResponses(groups: Seq[BidsGroup]) = groups
+    .groupBy(_.bidResponse)
+    .map { case (response, byResponse) =>
+      val seatBids = byResponse
+        .groupBy(_.seatBid)
+        .map { case (seatBid, bySeatBid) =>
+          seatBid.copy(bid = bySeatBid.flatMap(_.bids))
+        }
+      response.copy(seatBid = seatBids.toSeq)
+    }.toSeq
 
-    val groupedSingles = responses
-      .flatMap(_.seatBid)
-      .filter(_.group == 0)
-      .flatMap(x => x.bid.map((_, x)))
-      .map { case (bid, seatBid) =>
-        BidGroup(seatBid, Seq(bid), Seq(bid.impId), bid.price)
-      }
-
-    groups ++ groupedSingles
-  }
+  /**
+    * Maps bid responses to groups of bids.
+    * If bids from seatBid can won individually, group is split to smallest groups,
+    * each containing one bid.
+    *
+    * @param responses sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * @return sequence of groups of bids
+    */
+  def toBidGroups(responses: Seq[BidResponse]) = responses
+    .flatMap { response =>
+      response.seatBid
+        .flatMap {
+          case seatBid@SeatBid(_, _, 0, _) =>
+            seatBid.bid.map { bid =>
+              BidsGroup(
+                response,
+                seatBid,
+                Seq(bid),
+                Seq(bid.impId),
+                bid.price)
+            }
+          case seatBid =>
+            Seq(
+              BidsGroup(
+                response,
+                seatBid,
+                seatBid.bid,
+                seatBid.bid.map(_.impId),
+                seatBid.bid.map(_.price).sum))
+        }
+    }.toList
 }
 
-
-
-case class BidGroup(
+/**
+  * Group of bids, which should win or loose only as a group.
+  *
+  * @param bidResponse associated [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+  * @param seatBid     associated [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
+  * @param bids        sequence of [[com.bitworks.rtb.model.response.Bid Bid]]
+  * @param impIds      ids of impressions on which bids from the group made
+  * @param price       total group price
+  * @author Egor Ilchenko
+  */
+case class BidsGroup(
+    bidResponse: BidResponse,
     seatBid: SeatBid,
     bids: Seq[Bid],
     impIds: Seq[String],
     price: BigDecimal)
+
