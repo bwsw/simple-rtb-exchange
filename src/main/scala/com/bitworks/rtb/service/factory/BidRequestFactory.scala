@@ -245,7 +245,7 @@ class BidRequestFactoryImpl(
       banner.battr.forall(check(creativeAttributes)) &&
       banner.btype.forall(check(bannerAdTypes)) &&
       banner.pos.forall(adPosition.contains) &&
-      banner.mimes.forall(_.nonEmpty) &&
+      banner.mimes.forall(checkSeq(_.nonEmpty)) &&
       banner.topFrame.forall(isFlag) &&
       banner.expdir.forall(check(expandableDirection)) &&
       banner.api.forall(check(apiFrameworks))
@@ -254,8 +254,10 @@ class BidRequestFactoryImpl(
   private def check(video: Video): Boolean = {
     video.mimes.forall(_.nonEmpty) &&
       video.minDuration.forall(isPositive) &&
+      video.maxDuration.forall(isPositive) &&
       notLarger(video.minDuration, video.maxDuration) &&
       video.minBitrate.forall(isPositive) &&
+      video.maxBitrate.forall(isPositive) &&
       notLarger(video.minBitrate, video.maxBitrate) &&
       video.protocol.forall(videoBidResponseProtocol.contains) &&
       video.protocols.forall(check(videoBidResponseProtocol)) &&
@@ -349,7 +351,8 @@ class BidRequestFactoryImpl(
       geo.regionFips104.forall(_.nonEmpty) &&
       geo.metro.forall(_.nonEmpty) &&
       geo.city.forall(_.nonEmpty) &&
-      geo.zip.forall(_.nonEmpty)
+      geo.zip.forall(_.nonEmpty) &&
+      geo.utcOffset.forall(between(-12, 14))
   }
 
   private def check(regs: Regs): Boolean = regs.coppa.forall(isFlag)
