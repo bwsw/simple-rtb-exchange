@@ -12,7 +12,7 @@ trait Auction {
   /**
     * Returns won [[com.bitworks.rtb.model.response.BidResponse BidResponse]].
     *
-    * @param responses sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]],
+    * @param responses sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     *                  that take part in auction
     * @return sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]] containing
     *         best bids
