@@ -12,8 +12,10 @@ trait Auction {
   /**
     * Returns won [[com.bitworks.rtb.model.response.BidResponse BidResponse]].
     *
-    * @param responses bid responses, taking part in auction
-    * @return Some(BidResponse) or None, if winner not found
+    * @param responses sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]],
+    *                  that take part in auction
+    * @return sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]] containing
+    *         best bids
     */
   def winners(responses: Seq[BidResponse]): Seq[BidResponse]
 }
@@ -33,7 +35,7 @@ class AuctionImpl extends Auction with Logging {
   }
 
   /**
-    * Returns groups combination with maximum price.
+    * Returns combination of groups with maximum price.
     *
     * @param groups all bid groups
     */
