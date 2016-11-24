@@ -1,6 +1,8 @@
 name := "rtb-exchange"
 
-version := "1.0"
+organization := "com.bitworks"
+
+version := "1.0.0-SNAPSHOT"
 
 scalaVersion := "2.11.8"
 
@@ -23,9 +25,19 @@ libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
   "org.dbunit" % "dbunit" % "2.5.3" % "test",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.3.0" % "test",
-  "com.typesafe.akka" % "akka-testkit_2.11" % "2.4.12" % "test"
-
+  "com.typesafe.akka" % "akka-testkit_2.11" % "2.4.12" % "test",
+  "org.easymock" % "easymock" % "3.4" % "test",
+  "com.github.tomakehurst" % "wiremock" % "2.3.1" % "test"
 )
 
 fork in Test := true
 javaOptions in Test += "-Dconfig.resource=application.test.conf"
+
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+publishTo := {
+  val nexus = "http://rtb-ci.z1.netpoint-dc.com:8081/nexus/content/repositories/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "bitworks-rtb-snapshot/")
+  else
+    Some("releases" at nexus + "bitworks-rtb/")
+}
