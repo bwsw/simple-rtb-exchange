@@ -28,17 +28,18 @@ import scala.collection.mutable.ListBuffer
 class BidRequestActor(
     adRequest: AdRequest,
     bidRequest: BidRequest)(
-    implicit inj: Injector) extends Actor with ActorLogging {
+    implicit inj: Injector)
+  extends Actor
+    with ActorLogging {
+
+  import context.dispatcher
 
   implicit val materializer = ActorMaterializer()
   val auction = inject[Auction]
-  val bidderDao = inject[BidderDao]
   val adResponseFactory = inject[AdResponseFactory]
-
-  val bidders = bidderDao.getAll
-  val receivedBidResponses = new ListBuffer[BidRequestResult]
-
+  val bidders = inject[BidderDao].getAll
   val bidActorProps = injectActorProps[BidActor]
+  val receivedBidResponses = new ListBuffer[BidRequestResult]
   val bidRouter = context.actorOf(
     RoundRobinPool(bidders.length)
       .props(bidActorProps), "bidrouter")
@@ -67,12 +68,9 @@ class BidRequestActor(
 
     case bidResponse: BidResponse =>
       log.debug("bid response received")
-      try {
-        val response = adResponseFactory.create(adRequest, bidResponse)
-        context.parent ! response
-      } catch {
-        case e: Throwable => onError(e.getMessage)
-      }
+      val response = adResponseFactory.create(adRequest, bidResponse)
+      context.parent ! response
+      context stop self
   }
 
   /**
@@ -80,17 +78,17 @@ class BidRequestActor(
     */
   def startAuction() = {
     log.debug("auction started")
-    val successful = receivedBidResponses
-      .collect {
-        case BidRequestSuccess(response) => response
-      }
+    val successful = receivedBidResponses.collect {
+      case BidRequestSuccess(response) => response
+    }
     log.debug(s"auction participants: ${successful.length}")
 
     val winner = auction.winner(successful)
     log.debug(s"auction winner: $winner")
 
     winner match {
-      case Some(response) => winActor ! response
+      case Some(response) =>
+        winActor ! response
       case None => onError("winner not found")
     }
   }
@@ -103,6 +101,7 @@ class BidRequestActor(
   def onError(msg: String) = {
     log.debug(s"an error occurred: $msg")
     context.parent ! adResponseFactory.create(adRequest, Error(123, msg))
+    context stop self
   }
 }
 
@@ -111,10 +110,7 @@ object BidRequestActor {
   /**
     * Returns Props for [[com.bitworks.rtb.service.actor.BidRequestActor BidRequestActor]].
     */
-  def props(
-      adRequest: AdRequest,
-      bidRequest: BidRequest)(
-      implicit inj: Injector) = {
-    Props(new BidRequestActor(adRequest, bidRequest))
-  }
+  def props(adRequest: AdRequest, bidRequest: BidRequest)(
+      implicit inj: Injector) =
+  Props(new BidRequestActor(adRequest, bidRequest))
 }

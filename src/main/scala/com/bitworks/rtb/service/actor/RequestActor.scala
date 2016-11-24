@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.actor
 
-import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
@@ -19,11 +19,12 @@ import scaldi.akka.AkkaInjectable._
   */
 class RequestActor(
     request: HttpRequestWrapper)(
-    implicit inj: Injector) extends Actor with ActorLogging {
+    implicit inj: Injector)
+  extends Actor
+    with ActorLogging {
 
   import context.dispatcher
 
-  implicit val system = inject[ActorSystem]
   implicit val materializer = ActorMaterializer()
   val configuration = inject[Configuration]
   val writer = inject[AdResponseWriter]
@@ -43,7 +44,7 @@ class RequestActor(
           factory.create(adRequest) match {
             case Some(bidRequest) =>
               val props = BidRequestActor.props(adRequest, bidRequest)
-              system.actorOf(props)
+              context.actorOf(props)
             case None =>
               val msg = "bid request not created"
               log.debug(msg)
@@ -56,7 +57,6 @@ class RequestActor(
 
     case adResponse: AdResponse =>
       log.debug("ad response received")
-      system.stop(sender) // or BidRequest must stop themself?
       completeRequest(adResponse)
   }
 
@@ -84,8 +84,6 @@ class RequestActor(
 object RequestActor {
 
   /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]]. */
-  def props(
-      wrapper: HttpRequestWrapper)()(implicit inj: Injector) = {
-    Props(new RequestActor(wrapper))
-  }
+  def props(wrapper: HttpRequestWrapper)(implicit inj: Injector) =
+  Props(new RequestActor(wrapper))
 }
