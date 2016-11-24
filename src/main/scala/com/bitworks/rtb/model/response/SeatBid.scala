@@ -11,7 +11,11 @@ package com.bitworks.rtb.model.response
   * @param ext   placeholder for bidder-specific extensions to OpenRTB
   * @author Egor Ilchenko
   */
-case class SeatBid(bid: Seq[Bid], seat: Option[String], group: Int, ext: Option[Any])
+case class SeatBid(bid: Seq[Bid], seat: Option[String], group: Int, ext: Option[Any]){
+
+  /** Is impressions must be won or lost as a group. */
+  def isGrouped = group == 1
+}
 
 
 

@@ -2,7 +2,7 @@ package com.bitworks.rtb.service
 
 import akka.actor.ActorSystem
 import com.bitworks.rtb.model.db.Bidder
-import com.bitworks.rtb.model.http.{HttpRequestModel, HttpResponseBody, HttpResponseModel, POST}
+import com.bitworks.rtb.model.http.{HttpRequestModel, HttpResponseModel, POST}
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
 import com.bitworks.rtb.service.parser.BidResponseParser
@@ -40,7 +40,7 @@ class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
     .when(*)
     .returns(
       Future.successful(
-        HttpResponseModel(HttpResponseBody(new Array[Byte](0), ""), 200, Seq.empty)))
+        HttpResponseModel(new Array[Byte](0), 200, Seq.empty)))
 
   implicit val predefined = new Module {
     bind[BidRequestWriter] toNonLazy writerStub
@@ -80,7 +80,7 @@ class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
     val requestMakerStub = stub[HttpRequestMaker]
     (requestMakerStub.make _).when(*).returns(
       Future.successful(
-        HttpResponseModel(HttpResponseBody(array, ""), 200, Seq.empty))).once
+        HttpResponseModel(array, 200, Seq.empty))).once
 
     val module = new Module {
       bind[HttpRequestMaker] to requestMakerStub

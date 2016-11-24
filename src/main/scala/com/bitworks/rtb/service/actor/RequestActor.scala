@@ -43,6 +43,8 @@ class RequestActor(
   val bidders = bidderDao.getAll
   val receivedBidResponses = new ListBuffer[BidRequestResult]
 
+  var auctionStarted = false
+
   val bidActorProps = injectActorProps[BidActor]
   val bidRouter = context.actorOf(
     RoundRobinPool(bidders.length)
@@ -67,11 +69,17 @@ class RequestActor(
 
           bidders match {
             case Seq() => onError("bidders not found")
-            case bidders: Seq[Bidder] =>
+            case _: Seq[Bidder] =>
               bidders.foreach { bidder =>
                 bidRouter ! SendBidRequest(bidder, bidRequest.get)
               }
+
+              context.system.scheduler.scheduleOnce(
+                configuration.bidRequestTimeout,
+                self,
+                StartAuction)
           }
+
       } onFailure {
         case exc => onError(exc.toString)
       }
@@ -80,15 +88,14 @@ class RequestActor(
       log.debug(s"bid response received: $msg")
       receivedBidResponses.append(msg)
       if (receivedBidResponses.size == bidders.length)
-        startAuction()
+        self ! StartAuction
 
-    case msg: Seq[BidResponse]=>
-      log.debug(s"bid responses received $msg")
-
+    case CreateAdResponse(responses) =>
+      log.debug("bid responses received")
       adRequest match {
         case Some(ar) =>
           try {
-            val response = adResponseFactory.create(ar, msg.head)
+            val response = adResponseFactory.create(ar, responses)
             completeRequest(response)
           } catch {
             case e: Throwable => onError(e.getMessage)
@@ -97,18 +104,24 @@ class RequestActor(
           log.error("ad request is not defined")
           request.fail()
       }
-  }
 
-  /**
-    * Starts auction between successful bid responses.
-    */
-  def startAuction() = {
-    log.debug("auction started")
-    val successful = receivedBidResponses
-      .collect {
-        case BidRequestSuccess(response) => response
+    case StartAuction =>
+      if (!auctionStarted) {
+        auctionStarted = true
+        log.debug("auction started")
+        val successful = receivedBidResponses
+          .collect {
+            case BidRequestSuccess(response) => response
+          }
+        log.debug(s"auction participants: ${successful.length}")
+        val winners = auction.winners(successful)
+        log.debug(s"auction winners: $winners")
+
+        winners match {
+          case Nil => onError("winner not defined")
+          case _ => winActor ! winners.head
+        }
       }
-    log.debug(s"auction participants: ${successful.length}")
 
     val winners = auction.winners(successful)
 

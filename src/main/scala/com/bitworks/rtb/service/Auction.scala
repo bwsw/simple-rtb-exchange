@@ -1,5 +1,6 @@
 package com.bitworks.rtb.service
 
+import com.bitworks.rtb.model.response.builder.SeatBidBuilder
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 
 /**
@@ -12,8 +13,10 @@ trait Auction {
   /**
     * Returns won [[com.bitworks.rtb.model.response.BidResponse BidResponse]].
     *
-    * @param responses bid responses, taking part in auction
-    * @return Some(BidResponse) or None, if winner not found
+    * @param responses sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    *                  that take part in auction
+    * @return sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]] containing
+    *         best bids
     */
   def winners(responses: Seq[BidResponse]): Seq[BidResponse]
 }
@@ -33,7 +36,7 @@ class AuctionImpl extends Auction with Logging {
   }
 
   /**
-    * Returns groups combination with maximum price.
+    * Returns combination of groups with maximum price.
     *
     * @param groups all bid groups
     */
@@ -79,7 +82,7 @@ class AuctionImpl extends Auction with Logging {
     * @param groups groups of bids
     * @return sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     */
-  def toBidResponses(groups: Seq[BidsGroup]) = groups
+  def toBidResponses(groups: Seq[BidsGroup]): Seq[BidResponse] = groups
     .groupBy(_.bidResponse)
     .map { case (response, byResponse) =>
       val seatBids = byResponse
@@ -96,13 +99,21 @@ class AuctionImpl extends Auction with Logging {
     * each containing one bid.
     *
     * @param responses sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
-    * @return sequence of groups of bids
+    * @return list of groups of bids
     */
-  def toBidGroups(responses: Seq[BidResponse]) = responses
+  def toBidGroups(responses: Seq[BidResponse]): List[BidsGroup] = responses
     .flatMap { response =>
       response.seatBid
-        .flatMap {
-          case seatBid@SeatBid(_, _, 0, _) =>
+        .flatMap { seatBid =>
+          if (seatBid.isGrouped) {
+            Seq(
+              BidsGroup(
+                response,
+                seatBid,
+                seatBid.bid,
+                seatBid.bid.map(_.impId),
+                seatBid.bid.map(_.price).sum))
+          } else {
             seatBid.bid.map { bid =>
               BidsGroup(
                 response,
@@ -111,14 +122,7 @@ class AuctionImpl extends Auction with Logging {
                 Seq(bid.impId),
                 bid.price)
             }
-          case seatBid =>
-            Seq(
-              BidsGroup(
-                response,
-                seatBid,
-                seatBid.bid,
-                seatBid.bid.map(_.impId),
-                seatBid.bid.map(_.price).sum))
+          }
         }
     }.toList
 }

@@ -18,7 +18,7 @@ import scala.concurrent.Future
 trait HttpRequestMaker {
 
   /**
-    * Makes HTTP request
+    * Makes HTTP request.
     *
     * @param request [[com.bitworks.rtb.model.http.HttpRequestModel HttpRequestModel]]
     * @return [[com.bitworks.rtb.model.http.HttpResponseModel HttpResponseModel]]
