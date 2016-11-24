@@ -1,6 +1,8 @@
 name := "rtb-exchange"
 
-version := "1.0"
+organization := "com.bitworks"
+
+version := "1.0.0-SNAPSHOT"
 
 scalaVersion := "2.11.8"
 
@@ -30,3 +32,12 @@ libraryDependencies ++= Seq(
 
 fork in Test := true
 javaOptions in Test += "-Dconfig.resource=application.test.conf"
+
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+publishTo := {
+  val nexus = "http://rtb-ci.z1.netpoint-dc.com:8081/nexus/content/repositories/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "bitworks-rtb-snapshot/")
+  else
+    Some("releases" at nexus + "bitworks-rtb/")
+}
