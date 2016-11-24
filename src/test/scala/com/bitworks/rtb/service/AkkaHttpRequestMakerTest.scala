@@ -76,7 +76,8 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
         getRequestedFor(urlEqualTo(path))
           .withHeader(requestHeaderName, equalTo(requestHeaderValue)))
 
-      response.body.string shouldBe responseBody
+      val bodyAsString = new String(response.body)
+      bodyAsString shouldBe responseBody
       response.status shouldBe responseStatusCode
       response.headers should contain(HttpHeaderModel(responseHeaderName, responseHeaderValue))
 
@@ -99,7 +100,8 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
       verify(
         getRequestedFor(urlEqualTo(path)))
 
-      response.body.string shouldBe ""
+      val bodyAsString = new String(response.body)
+      bodyAsString shouldBe ""
     }
   }
 
@@ -130,7 +132,8 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
           .withHeader(requestHeaderName, equalTo(requestHeaderValue))
           .withRequestBody(equalTo(responseBody)))
 
-      response.body.string shouldBe responseBody
+      val bodyAsString = new String(response.body)
+      bodyAsString shouldBe responseBody
       response.status shouldBe responseStatusCode
       response.headers should contain(HttpHeaderModel(responseHeaderName, responseHeaderValue))
     }
@@ -158,7 +161,8 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
         postRequestedFor(urlEqualTo(path))
           .withRequestBody(equalTo("")))
 
-      response.body.string shouldBe responseBody
+      val bodyAsString = new String(response.body)
+      bodyAsString shouldBe responseBody
       response.status shouldBe responseStatusCode
       response.headers should contain(HttpHeaderModel(responseHeaderName, responseHeaderValue))
     }

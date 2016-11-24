@@ -45,7 +45,7 @@ class AkkaHttpRequestMaker(
     */
   private def extractBody(response: HttpResponse) = {
     response.entity.toStrict(configuration.toStrictTimeout) map { strict =>
-      HttpResponseBody(strict.data.toArray, strict.data.utf8String)
+      strict.data.toArray
     }
   }
 
