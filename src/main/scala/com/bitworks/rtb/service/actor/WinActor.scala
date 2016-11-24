@@ -1,6 +1,7 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
+import com.bitworks.rtb.model.message.CreateAdResponse
 import com.bitworks.rtb.model.response.BidResponse
 import scaldi.Injector
 
@@ -13,7 +14,7 @@ class WinActor extends Actor with ActorLogging {
   override def receive: Receive = {
     case msg: BidResponse =>
       log.debug("bid response received")
-      sender ! msg
+      sender ! CreateAdResponse(Seq.empty)
   }
 }
 

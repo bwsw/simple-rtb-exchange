@@ -87,12 +87,12 @@ class RequestActor(
       if (receivedBidResponses.size == bidders.length)
         self ! StartAuction
 
-    case msg: BidResponse =>
-      log.debug("bid response received")
+    case CreateAdResponse(responses) =>
+      log.debug("bid responses received")
       adRequest match {
         case Some(ar) =>
           try {
-            val response = adResponseFactory.create(ar, msg)
+            val response = adResponseFactory.create(ar, responses)
             completeRequest(response)
           } catch {
             case e: Throwable => onError(e.getMessage)
@@ -111,12 +111,12 @@ class RequestActor(
             case BidRequestSuccess(response) => response
           }
         log.debug(s"auction participants: ${successful.length}")
-        val winner = auction.winner(successful)
-        log.debug(s"auction winner: $winner")
+        val winners = auction.winners(successful)
+        log.debug(s"auction winners: $winners")
 
-        winner match {
-          case Some(response) => winActor ! response
-          case None => onError("winner not defined")
+        winners match {
+          case Nil => onError("winner not defined")
+          case _ => winActor ! winners.head
         }
       }
 
