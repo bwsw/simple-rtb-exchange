@@ -81,7 +81,7 @@ class AuctionImpl extends Auction with Logging {
     * @param groups groups of bids
     * @return sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     */
-  def toBidResponses(groups: Seq[BidsGroup]) = groups
+  def toBidResponses(groups: Seq[BidsGroup]): Seq[BidResponse] = groups
     .groupBy(_.bidResponse)
     .map { case (response, byResponse) =>
       val seatBids = byResponse
@@ -98,9 +98,9 @@ class AuctionImpl extends Auction with Logging {
     * each containing one bid.
     *
     * @param responses sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
-    * @return sequence of groups of bids
+    * @return list of groups of bids
     */
-  def toBidGroups(responses: Seq[BidResponse]) = responses
+  def toBidGroups(responses: Seq[BidResponse]): List[BidsGroup] = responses
     .flatMap { response =>
       response.seatBid
         .flatMap {
