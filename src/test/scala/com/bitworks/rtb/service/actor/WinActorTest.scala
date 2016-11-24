@@ -15,8 +15,8 @@ import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
 import scaldi.Module
 
-import scala.concurrent.Future
 import scala.concurrent.duration.{FiniteDuration, _}
+import scala.concurrent.{Await, Future}
 
 /**
   * Test for [[com.bitworks.rtb.service.actor.WinActor WinActor]].
@@ -32,55 +32,28 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
   }
 
   implicit val timeout: Timeout = 1.second
+  val duration = Duration(1, "s")
   implicit val system = ActorSystem("test")
 
-  "WinActor" should "prepare bid response for sending" in {
+  "WinActor" should "send win notices to bidders if admarkup is in bid response" in {
     val bidRequest = BidRequestBuilder("reqid", Seq.empty).build
-    val bidResponse = BidResponseBuilder("respid", Seq.empty).build
-
-    val requestMaker = niceMock[WinNoticeRequestMaker]
-    expecting {
-      requestMaker.prepareResponses(Seq(bidResponse), bidRequest).andReturn(Seq(bidResponse)).times(1)
-    }
-
-    implicit val module = new Module {
-      bind[Configuration] to configuration
-      bind[WinNoticeRequestMaker] to requestMaker
-    }
-    implicit val context = system.dispatcher
-
-
-    whenExecuting(requestMaker, configuration) {
-      val actor = TestActorRef(new WinActor)
-      val fAnswer = (actor ? SendWinNotice(bidRequest, Seq(bidResponse)))
-        .recover { case _ => bidResponse }
-      try {
-        whenReady(fAnswer) { _ => }
-      } catch {
-        case _: Throwable =>
-      }
-    }
-
-  }
-
-  it should "send win notices to bidders if admarkup is in bid response" in {
-    val bidRequest = BidRequestBuilder("reqid", Seq.empty).build
-    val bidResponse = BidResponseBuilder(
-      "respid",
-      Seq(
-        SeatBidBuilder(
-          Seq(
-            BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("someAdm").withNurl("one").build,
-            BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("three").build,
-            BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("someAdm").withNurl("two").build)
-        ).build))
+    val bid = BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("someAdm").withNurl("one").build
+    val bid1 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("three").build
+    val bid2 = BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("someAdm").withNurl("two")
       .build
+    val seatBid = SeatBidBuilder(Seq(bid, bid1, bid2)).build
+    val bidResponse = BidResponseBuilder("respid", Seq(seatBid)).build
 
     val requestMaker = niceMock[WinNoticeRequestMaker]
     expecting {
-      requestMaker.prepareResponses(Seq(bidResponse), bidRequest).andStubReturn(Seq(bidResponse))
+      requestMaker.replaceMacros("one", bidRequest, bidResponse, seatBid, bid).andStubReturn("one")
+      requestMaker.replaceMacros("three", bidRequest, bidResponse, seatBid, bid1)
+        .andStubReturn("three")
+      requestMaker.replaceMacros("two", bidRequest, bidResponse, seatBid, bid2)
+        .andStubReturn("two")
       requestMaker.sendWinNotice("one").andReturn(Future.failed(new TimeoutException())).times(1)
       requestMaker.sendWinNotice("two").andReturn(Future.failed(new TimeoutException())).times(1)
+      requestMaker.getAdMarkup("three").andStubReturn(Future.successful("stringgg"))
     }
 
     implicit val module = new Module {
@@ -93,31 +66,29 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
       val actor = TestActorRef(new WinActor)
       val fAnswer = (actor ? SendWinNotice(bidRequest, Seq(bidResponse)))
         .recover { case _ => bidResponse }
-      try {
-        whenReady(fAnswer) { _ => }
-      } catch {
-        case _: Throwable =>
-      }
+
+      Await.ready(fAnswer, duration)
     }
 
   }
 
   it should "get ad markup fir bids without admarkup" in {
     val bidRequest = BidRequestBuilder("reqid", Seq.empty).build
-    val bidResponse = BidResponseBuilder(
-      "respid",
-      Seq(
-        SeatBidBuilder(
-          Seq(
-            BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("one").build,
-            BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("someAdm").withNurl("three").build,
-            BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("two").build)
-        ).build))
+    val bid = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("one").build
+    val bid1 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("three").withAdm("someAdm")
       .build
+    val bid2 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("two")
+      .build
+    val seatBid = SeatBidBuilder(Seq(bid, bid1, bid2)).build
+    val bidResponse = BidResponseBuilder("respid", Seq(seatBid)).build
 
     val requestMaker = niceMock[WinNoticeRequestMaker]
     expecting {
-      requestMaker.prepareResponses(Seq(bidResponse), bidRequest).andStubReturn(Seq(bidResponse))
+      requestMaker.replaceMacros("one", bidRequest, bidResponse, seatBid, bid).andStubReturn("one")
+      requestMaker.replaceMacros("three", bidRequest, bidResponse, seatBid, bid1)
+        .andStubReturn("three")
+      requestMaker.replaceMacros("two", bidRequest, bidResponse, seatBid, bid2)
+        .andStubReturn("two")
       requestMaker.getAdMarkup("one").andReturn(Future.failed(new TimeoutException())).times(1)
       requestMaker.getAdMarkup("two").andReturn(Future.failed(new TimeoutException())).times(1)
     }
@@ -132,33 +103,31 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
       val actor = TestActorRef(new WinActor)
       val fAnswer = (actor ? SendWinNotice(bidRequest, Seq(bidResponse)))
         .recover { case _ => bidResponse }
-      try {
-        whenReady(fAnswer) { _ => }
-      } catch {
-        case _: Throwable =>
-      }
+
+      Await.ready(fAnswer, duration)
     }
   }
 
   it should "insert received ad markup to bids" in {
     val bidRequest = BidRequestBuilder("reqid", Seq.empty).build
-    val bidResponse = BidResponseBuilder(
-      "respid",
-      Seq(
-        SeatBidBuilder(
-          Seq(
-            BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("one").build,
-            BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("someAdm").withNurl("three").build,
-            BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("two").build)
-        ).build))
+    val bid = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("one").build
+    val bid1 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("three").withAdm("someAdm")
       .build
+    val bid2 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("two")
+      .build
+    val seatBid = SeatBidBuilder(Seq(bid, bid1, bid2)).build
+    val bidResponse = BidResponseBuilder("respid", Seq(seatBid)).build
 
     val admone = "admone"
     val admtwo = "admtwo"
 
     val requestMaker = niceMock[WinNoticeRequestMaker]
     expecting {
-      requestMaker.prepareResponses(Seq(bidResponse), bidRequest).andStubReturn(Seq(bidResponse))
+      requestMaker.replaceMacros("one", bidRequest, bidResponse, seatBid, bid).andStubReturn("one")
+      requestMaker.replaceMacros("three", bidRequest, bidResponse, seatBid, bid1)
+        .andStubReturn("three")
+      requestMaker.replaceMacros("two", bidRequest, bidResponse, seatBid, bid2)
+        .andStubReturn("two")
       requestMaker.getAdMarkup("one").andReturn(Future.successful(admone)).times(1)
       requestMaker.getAdMarkup("two").andReturn(Future.successful(admtwo)).times(1)
     }
@@ -184,13 +153,9 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
       val actor = TestActorRef(new WinActor)
       val fAnswer = (actor ? SendWinNotice(bidRequest, Seq(bidResponse)))
         .recover { case _ => bidResponse }
-      try {
-        whenReady(fAnswer) { ans =>
-          ans shouldBe expectedBidResponse
-        }
-      } catch {
-        case _: Throwable =>
-      }
+
+      val ans = Await.result(fAnswer, duration)
+      ans shouldBe Seq(expectedBidResponse)
     }
   }
 

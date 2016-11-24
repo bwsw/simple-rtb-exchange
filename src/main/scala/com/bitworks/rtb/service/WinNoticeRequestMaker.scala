@@ -30,15 +30,21 @@ trait WinNoticeRequestMaker {
   def getAdMarkup(nurl: String): Future[String]
 
   /**
-    * Prepares bid response to win notice sending.
+    * Replaces macros in win notice URL with appropriate data.
     *
-    * @param responses [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
-    * @param request   [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
-    * @return prepared [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * @param nurl     win notice URL
+    * @param request  [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
+    * @param response [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * @param seatBid  [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
+    * @param bid      [[com.bitworks.rtb.model.response.Bid Bid]]
+    * @return win notice URL with replaced macros
     */
-  def prepareResponses(
-      responses: Seq[BidResponse],
-      request: BidRequest): Seq[BidResponse]
+  def replaceMacros(
+      nurl: String,
+      request: BidRequest,
+      response: BidResponse,
+      seatBid: SeatBid,
+      bid: Bid) : String
 }
 
 /**
@@ -63,35 +69,7 @@ class WinNoticeRequestMakerImpl(
     }
   }
 
-  override def prepareResponses(
-      responses: Seq[BidResponse],
-      request: BidRequest) = {
-    responses.map { response =>
-      val seatBids = response.seatBid.map { seatBid =>
-        val updatedBids = seatBid.bid.map { bid =>
-          bid.copy(
-            nurl = bid.nurl match {
-              case None => None
-              case Some(nurl) => Some(substituteNurl(nurl, request, response, seatBid, bid))
-            })
-        }
-        seatBid.copy(bid = updatedBids)
-      }
-      response.copy(seatBid = seatBids)
-    }
-  }
-
-  /**
-    * Replaces macros in win notice URL with appropriate data.
-    *
-    * @param nurl     win notice URL
-    * @param request  [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
-    * @param response [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
-    * @param seatBid  [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
-    * @param bid      [[com.bitworks.rtb.model.response.Bid Bid]]
-    * @return win notice URL with replaced macros
-    */
-  def substituteNurl(
+  override def replaceMacros(
       nurl: String,
       request: BidRequest,
       response: BidResponse,

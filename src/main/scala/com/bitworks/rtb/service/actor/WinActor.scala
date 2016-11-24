@@ -5,6 +5,7 @@ import java.util.concurrent.TimeoutException
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.after
 import com.bitworks.rtb.model.message.SendWinNotice
+import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 import com.bitworks.rtb.service.{Configuration, WinNoticeRequestMaker}
 import scaldi.Injectable._
@@ -26,103 +27,115 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case SendWinNotice(request, responses) =>
-      val preparedResponses = requestMaker.prepareResponses(responses, request)
-      val seatBids = preparedResponses.flatMap(_.seatBid)
-      log.debug(s"seatBids after preparation: $seatBids")
-
-      sendWinNotices(seatBids)
-
       val localSender = sender
-      val fBidsWithAdm = getBidsWithAdm(seatBids)
-      fBidsWithAdm.onSuccess { case bidsWithAdm =>
-        log.debug(
-          s"adms received\n" +
-            s"\tsuccessfully: ${bidsWithAdm.count(_._2.isDefined)}\n" +
-            s"\twith error: ${bidsWithAdm.count(_._2.isEmpty)}")
 
-        val responseWithAdm = updateResponsesWithAdm(preparedResponses, bidsWithAdm)
-        localSender ! responseWithAdm
+      val fBidResponsesWithAdm = process(responses, request)
+      fBidResponsesWithAdm.onSuccess { case bidResponsesWithAdm =>
+        localSender ! bidResponsesWithAdm
       }
   }
 
   /**
-    * Sends win notices using fire and forget pattern.
+    * Sends win notices and gets ad markup if needed for each bid in responses.
     *
-    * @param seatBids sequence of [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
+    * @param responses sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponses]]
+    * @param request   [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
+    * @return sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponses]] with
+    *         ad markups filled in
     */
-  def sendWinNotices(seatBids: Seq[SeatBid]) = {
-    val winNoticeUrls = seatBids
-      .flatMap(x => x.bid)
-      .filter(x => x.adm.isDefined && x.nurl.isDefined)
-      .flatMap(_.nurl)
-    winNoticeUrls.foreach(requestMaker.sendWinNotice)
-
-    log.debug(s"Win notices sended to $winNoticeUrls")
-  }
-
-  /**
-    * Sends win notices and gets ad markup from bidder.
-    *
-    * @param seatBids sequence of [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
-    * @return sequence of tuples ([[com.bitworks.rtb.model.response.Bid Bid]],
-    *         Option [[com.bitworks.rtb.model.response.Bid Bid]]), where first element
-    *         is source Bid and second element is some Bid with ad markup or None, if
-    *         getting of ad markup failed
-    */
-  def getBidsWithAdm(seatBids: Seq[SeatBid]) = {
-    val bidsWithoutAdm = seatBids
-      .flatMap(x => x.bid)
-      .filter(x => x.adm.isEmpty && x.nurl.isDefined)
-
-    log.debug(s"adm needed for ${bidsWithoutAdm.length} bids, getting...")
-
-    val timeout = after(
-      duration = config.winNoticeTimeout,
-      using = context.system.scheduler
-    )(Future.failed(new TimeoutException))
-
-    val fBidsWithAdm = bidsWithoutAdm.map { bid =>
-      Future
-        .firstCompletedOf(
-          Seq(
-            requestMaker.getAdMarkup(bid.nurl.get),
-            timeout)).map { body =>
-        (bid, Some(bid.copy(adm = Some(body))))
-      }.recover { case _ =>
-        log.error(s"getting ad markup failed for bid: $bid")
-        (bid, None)
-      }
-    }
-    Future.sequence(fBidsWithAdm)
-  }
-
-
-  /**
-    * Updates [[com.bitworks.rtb.model.response.BidResponse BidResponse]] with Bids that conatains
-    * ad markup.
-    *
-    * @param responses    [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
-    * @param replacements replacements for Bids, where first element
-    *                     is source Bid and second element is some Bid with ad markup or None,
-    *                     if getting of ad markup failed
-    * @return updated [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
-    *         with missing ad markups
-    */
-  def updateResponsesWithAdm(responses: Seq[BidResponse], replacements: Seq[(Bid, Option[Bid])]) = {
-    responses.map { response =>
-      val seatBids = response.seatBid.map { seatBid =>
-        val bids = seatBid.bid.flatMap { bid =>
-          replacements.find(_._1 == bid) match {
-            case Some((_, replacement)) => replacement
-            case None => Some(bid)
-          }
+  def process(responses: Seq[BidResponse], request: BidRequest) = {
+    val fBidResponses = responses.map { response =>
+      val fSeatBids = response.seatBid.map { seatBid =>
+        val fBids = seatBid.bid.map(bid => proccessBid(request, response, seatBid, bid))
+        val sequenced = Future.sequence(fBids)
+        sequenced.map { bids =>
+          if (bids != seatBid.bid) seatBid.copy(bid = bids)
+          else seatBid
         }
-        seatBid.copy(bid = bids)
       }
-      response.copy(seatBid = seatBids)
+      val sequenced = Future.sequence(fSeatBids)
+      sequenced.map { seatBids =>
+        if (seatBids != response.seatBid) response.copy(seatBid = seatBids)
+        else response
+      }
+    }
+    Future.sequence(fBidResponses)
+  }
+
+  /**
+    * Sends win notice or gets ad markup for the bid.
+    *
+    * @param request  [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
+    * @param response [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * @param seatBid  [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
+    * @param bid      [[com.bitworks.rtb.model.response.Bid Bid]]
+    * @return [[com.bitworks.rtb.model.response.Bid Bid]] with ad markup filled in
+    */
+  def proccessBid(
+      request: BidRequest,
+      response: BidResponse,
+      seatBid: SeatBid,
+      bid: Bid): Future[Bid] = {
+    bid.nurl match {
+      case Some(nurl) =>
+
+        val preparedNurl = requestMaker.replaceMacros(
+          nurl,
+          request,
+          response,
+          seatBid,
+          bid)
+
+        bid.adm match {
+          case Some(_) => sendWinNotice(bid, preparedNurl)
+          case None => getBidWithAdm(bid, preparedNurl)
+        }
+      case None => Future.successful(bid)
     }
   }
 
+  /**
+    * Sends win notice to bid.
+    *
+    * @param bid          [[com.bitworks.rtb.model.response.Bid Bid]]
+    * @param preparedNurl ready to request win notice URL
+    */
+  def sendWinNotice(
+      bid: Bid,
+      preparedNurl: String): Future[Bid] = {
+    log.debug(s"""sending win notice to "$preparedNurl"""")
+
+    requestMaker.sendWinNotice(preparedNurl)
+    Future.successful(bid)
+  }
+
+  /**
+    * Returns [[com.bitworks.rtb.model.response.Bid Bid]] with admarkup.
+    *
+    * @param bid          [[com.bitworks.rtb.model.response.Bid Bid]]
+    * @param preparedNurl ready to request win notice URL
+    */
+  def getBidWithAdm(
+      bid: Bid,
+      preparedNurl: String): Future[Bid] = {
+    log.debug(s"""getting ad markup from "$preparedNurl"""")
+
+    val fAdMarkup = requestMaker.getAdMarkup(preparedNurl).map(adm => Some(adm))
+    val fTimeout = after(duration = config.winNoticeTimeout, using = context.system.scheduler)(
+      Future.failed(new TimeoutException()))
+
+    val fAdMarkupWithTimeout = Future.firstCompletedOf(Seq(fAdMarkup, fTimeout))
+      .recover {
+        case e: Throwable =>
+          log.info(s"""getting admarkup for "$preparedNurl" failed with $e""")
+          None
+      }
+
+    fAdMarkupWithTimeout.map { adm =>
+      log.debug(s"""admarkup for "$preparedNurl" received "$adm""""")
+      bid.copy(adm = adm)
+    }
+  }
 }
 
 object WinActor {
