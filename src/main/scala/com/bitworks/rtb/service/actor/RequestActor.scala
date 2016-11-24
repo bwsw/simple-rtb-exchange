@@ -119,14 +119,9 @@ class RequestActor(
 
         winners match {
           case Nil => onError("winner not defined")
-          case _ => winActor ! winners.head
+          case _ => winActor ! SendWinNotice(bidRequest.get, winners)
         }
       }
-
-    val winners = auction.winners(successful)
-
-    log.debug(s"auction winners: $winners")
-    winActor ! SendWinNotice(bidRequest.get, winners)
   }
 
   /**

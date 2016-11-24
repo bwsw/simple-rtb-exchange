@@ -44,7 +44,7 @@ trait WinNoticeRequestMaker {
       request: BidRequest,
       response: BidResponse,
       seatBid: SeatBid,
-      bid: Bid) : String
+      bid: Bid): String
 }
 
 /**
@@ -63,10 +63,10 @@ class WinNoticeRequestMakerImpl(
   }
 
   override def getAdMarkup(nurl: String) = {
-    val fResponse = httpRequestMaker.make(HttpRequestModel(nurl))
-    fResponse.map { response =>
-      response.body.string
-    }
+    httpRequestMaker.make(HttpRequestModel(nurl))
+      .map { response =>
+        new String(response.body)
+      }
   }
 
   override def replaceMacros(

@@ -6,7 +6,7 @@ import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.testkit.TestActorRef
 import akka.util.Timeout
-import com.bitworks.rtb.model.message.SendWinNotice
+import com.bitworks.rtb.model.message.{CreateAdResponse, SendWinNotice}
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
 import com.bitworks.rtb.service.{Configuration, WinNoticeRequestMaker}
@@ -155,7 +155,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
         .recover { case _ => bidResponse }
 
       val ans = Await.result(fAnswer, duration)
-      ans shouldBe Seq(expectedBidResponse)
+      ans shouldBe CreateAdResponse(Seq(expectedBidResponse))
     }
   }
 

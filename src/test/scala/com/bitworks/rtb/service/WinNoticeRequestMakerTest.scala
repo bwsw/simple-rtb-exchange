@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service
 
 import akka.actor.ActorSystem
-import com.bitworks.rtb.model.http.{GET, HttpRequestModel, HttpResponseBody, HttpResponseModel}
+import com.bitworks.rtb.model.http.{GET, HttpRequestModel, HttpResponseModel}
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
 import org.scalatest.concurrent.ScalaFutures
@@ -23,7 +23,7 @@ class WinNoticeRequestMakerTest extends FlatSpec with Matchers with EasyMockSuga
 
   "WinNoticeRequestMaker" should "send win notice correctly" in {
     val expectingRequest = HttpRequestModel("someuri", GET)
-    val response = HttpResponseModel(HttpResponseBody(new Array[Byte](0), ""), 200)
+    val response = HttpResponseModel(new Array[Byte](0), 200)
     val httpRequestMakerMock = mock[HttpRequestMaker]
     expecting {
       httpRequestMakerMock.make(expectingRequest).andReturn(Future.successful(response)).times(1)
@@ -37,7 +37,7 @@ class WinNoticeRequestMakerTest extends FlatSpec with Matchers with EasyMockSuga
 
   it should "get ad markup correctly" in {
     val expectingRequest = HttpRequestModel("someuri", GET)
-    val response = HttpResponseModel(HttpResponseBody(new Array[Byte](0), "body"), 200)
+    val response = HttpResponseModel(new Array[Byte](0), 200)
     val httpRequestMakerMock = mock[HttpRequestMaker]
     expecting {
       httpRequestMakerMock.make(expectingRequest).andReturn(Future.successful(response)).times(1)
@@ -48,7 +48,7 @@ class WinNoticeRequestMakerTest extends FlatSpec with Matchers with EasyMockSuga
     whenExecuting(httpRequestMakerMock) {
       val fBody = winNoticeRequestMaker.getAdMarkup(expectingRequest.uri)
       whenReady(fBody) { str =>
-        str shouldBe response.body.string
+        str shouldBe new String(response.body)
       }
     }
 

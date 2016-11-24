@@ -4,7 +4,7 @@ import java.util.concurrent.TimeoutException
 
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.after
-import com.bitworks.rtb.model.message.SendWinNotice
+import com.bitworks.rtb.model.message.{CreateAdResponse, SendWinNotice}
 import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 import com.bitworks.rtb.service.{Configuration, WinNoticeRequestMaker}
@@ -31,7 +31,7 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
 
       val fBidResponsesWithAdm = process(responses, request)
       fBidResponsesWithAdm.onSuccess { case bidResponsesWithAdm =>
-        localSender ! bidResponsesWithAdm
+        localSender ! CreateAdResponse(bidResponsesWithAdm)
       }
   }
 
@@ -127,12 +127,12 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
     val fAdMarkupWithTimeout = Future.firstCompletedOf(Seq(fAdMarkup, fTimeout))
       .recover {
         case e: Throwable =>
-          log.info(s"""getting admarkup for "$preparedNurl" failed with $e""")
+          log.info(s"""getting admarkup from "$preparedNurl" failed with $e""")
           None
       }
 
     fAdMarkupWithTimeout.map { adm =>
-      log.debug(s"""admarkup for "$preparedNurl" received "$adm""""")
+      log.debug(s"""admarkup from "$preparedNurl" received: "$adm""""")
       bid.copy(adm = adm)
     }
   }
