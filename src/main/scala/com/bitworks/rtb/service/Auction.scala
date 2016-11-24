@@ -1,5 +1,6 @@
 package com.bitworks.rtb.service
 
+import com.bitworks.rtb.model.response.builder.SeatBidBuilder
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 
 /**
@@ -103,8 +104,16 @@ class AuctionImpl extends Auction with Logging {
   def toBidGroups(responses: Seq[BidResponse]): List[BidsGroup] = responses
     .flatMap { response =>
       response.seatBid
-        .flatMap {
-          case seatBid@SeatBid(_, _, 0, _) =>
+        .flatMap { seatBid =>
+          if (seatBid.isGrouped) {
+            Seq(
+              BidsGroup(
+                response,
+                seatBid,
+                seatBid.bid,
+                seatBid.bid.map(_.impId),
+                seatBid.bid.map(_.price).sum))
+          } else {
             seatBid.bid.map { bid =>
               BidsGroup(
                 response,
@@ -113,14 +122,7 @@ class AuctionImpl extends Auction with Logging {
                 Seq(bid.impId),
                 bid.price)
             }
-          case seatBid =>
-            Seq(
-              BidsGroup(
-                response,
-                seatBid,
-                seatBid.bid,
-                seatBid.bid.map(_.impId),
-                seatBid.bid.map(_.price).sum))
+          }
         }
     }.toList
 }
