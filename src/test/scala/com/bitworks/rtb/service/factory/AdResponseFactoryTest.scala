@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
-import com.bitworks.rtb.model.ad.response.Error
+import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
 import com.bitworks.rtb.model.request.builder.{BannerBuilder, NativeBuilder, VideoBuilder}
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
@@ -202,7 +202,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
 
   it should "build ad response with error correctly" in {
     val factory = new AdResponseFactoryImpl
-    val error = Error(123, "123")
+    val error = Error(ErrorCode.NOT_SPECIFIED_ERROR, "123")
     val requestId = "reqId"
     val adRequest = AdRequestBuilder(requestId, Seq()).build
     val expectedResponse = AdResponseBuilder(requestId)

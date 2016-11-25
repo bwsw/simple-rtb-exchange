@@ -20,7 +20,7 @@ class AdResponseJsonWriter extends AdResponseWriter with JsonWriteHelper {
       .putOptionArray("imp", response.imp, getImpNode)
 
   private def getErrorNode(error: Error) = createObject
-      .put("code", error.code)
+      .put("code", error.code.id)
       .put("message", error.message)
 
   private def getImpNode(imp: Imp) = createObject

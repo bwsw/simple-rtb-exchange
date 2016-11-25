@@ -5,7 +5,7 @@ import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.request.AdRequest
-import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
+import com.bitworks.rtb.model.ad.response.{AdResponse, Error, ErrorCode}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
 import com.bitworks.rtb.model.request.BidRequest
@@ -145,7 +145,7 @@ class RequestActor(
 
     adRequest match {
       case Some(ar) =>
-        val response = adResponseFactory.create(ar, Error(123, msg))
+        val response = adResponseFactory.create(ar, Error(ErrorCode.NOT_SPECIFIED_ERROR, msg))
         completeRequest(response)
       case None =>
         log.error("ad request is not defined")
