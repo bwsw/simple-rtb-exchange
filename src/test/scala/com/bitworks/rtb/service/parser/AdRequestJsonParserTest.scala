@@ -1,6 +1,7 @@
 package com.bitworks.rtb.service.parser
 
 import com.bitworks.rtb.model._
+import com.bitworks.rtb.model.http.JSON
 import com.bitworks.rtb.model.request._
 import com.bitworks.rtb.service.DataValidationException
 import org.scalatest.{FlatSpec, Matchers}
@@ -55,7 +56,8 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
       None,
       ad.request.builder.AdRequestBuilder.Test,
       None,
-      None)
+      None,
+      JSON)
 
     val parsedModel = parser.parse(json)
 
@@ -232,7 +234,8 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
       Some(user),
       1,
       Some(2),
-      Some(regs))
+      Some(regs),
+      JSON)
   }
 
 }
