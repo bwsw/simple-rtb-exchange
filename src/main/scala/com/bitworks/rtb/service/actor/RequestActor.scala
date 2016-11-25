@@ -7,13 +7,13 @@ import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
+import com.bitworks.rtb.model.http.HttpHeaderModel
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
 import com.bitworks.rtb.model.request.BidRequest
-import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.dao.BidderDao
 import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
-import com.bitworks.rtb.service.parser.AdRequestParser
-import com.bitworks.rtb.service.writer.AdResponseWriter
+import com.bitworks.rtb.service.parser.AdRequestParserFactory
+import com.bitworks.rtb.service.writer.AdResponseWriterFactory
 import com.bitworks.rtb.service.{Auction, Configuration}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
@@ -33,8 +33,8 @@ class RequestActor(
 
   implicit val materializer = ActorMaterializer()
   val configuration = inject[Configuration]
-  val writer = inject[AdResponseWriter]
-  val parser = inject[AdRequestParser]
+  val writerFactory = inject[AdResponseWriterFactory]
+  val parserFactory = inject[AdRequestParserFactory]
   val factory = inject[BidRequestFactory]
   val auction = inject[Auction]
   val bidderDao = inject[BidderDao]
@@ -64,6 +64,8 @@ class RequestActor(
       request.inner.entity.toStrict(configuration.toStrictTimeout) map {
         entity =>
           val bytes = entity.data.toArray
+          val headers = request.inner.headers.map(x => HttpHeaderModel(x.name, x.value))
+          val parser = parserFactory.getParser(headers)
           adRequest = Some(parser.parse(bytes))
           bidRequest = Some(factory.create(adRequest.get))
 
@@ -131,8 +133,9 @@ class RequestActor(
     */
   def completeRequest(response: AdResponse) = {
     log.debug("completing request...")
+    val writer = writerFactory.getWriter(response.ct)
     val bytes = writer.write(response)
-    request.complete(bytes)
+    request.complete(bytes, response.ct)
   }
 
   /**

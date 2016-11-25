@@ -1,6 +1,8 @@
 package com.bitworks.rtb.application
 
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
+import akka.http.scaladsl.model.HttpHeader.ParsingResult.{Error, Ok}
+import akka.http.scaladsl.model.{HttpHeader, HttpRequest, HttpResponse}
+import com.bitworks.rtb.model.http.ContentType
 
 import scala.concurrent.Promise
 
@@ -18,8 +20,11 @@ class HttpRequestWrapper(val inner: HttpRequest, p: Promise[HttpResponse]) {
     *
     * @param bytes response body
     */
-  def complete(bytes: Array[Byte]) = {
-    p.success(HttpResponse().withEntity(bytes))
+  def complete(bytes: Array[Byte], ct: ContentType) = {
+    val header = HttpHeader.parse(ct.header.name, ct.header.value) match {
+      case Ok(h, _) => p.success(HttpResponse().withEntity(bytes).withHeaders(h))
+      case _ => fail()
+    }
   }
 
   /**

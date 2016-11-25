@@ -5,10 +5,8 @@ import akka.stream.{ActorMaterializer, Materializer}
 import com.bitworks.rtb.service.actor._
 import com.bitworks.rtb.service.dao._
 import com.bitworks.rtb.service.factory._
-import com.bitworks.rtb.service.parser.{AdRequestJsonParser, AdRequestParser,
-BidResponseJsonParser, BidResponseParser}
-import com.bitworks.rtb.service.writer.{AdResponseJsonWriter, AdResponseWriter,
-BidRequestJsonWriter, BidRequestWriter}
+import com.bitworks.rtb.service.parser._
+import com.bitworks.rtb.service.writer._
 import com.bitworks.rtb.service._
 import scaldi.Module
 
@@ -39,12 +37,14 @@ class RtbModule extends Module {
   bind[HttpRequestMaker] toNonLazy injected[AkkaHttpRequestMaker]
 
 
-  bind[AdRequestParser] toNonLazy injected[AdRequestJsonParser]
-  bind[AdResponseWriter] toNonLazy injected[AdResponseJsonWriter]
-  bind[BidRequestWriter] toNonLazy injected[BidRequestJsonWriter]
-  bind[BidResponseParser] toNonLazy injected[BidResponseJsonParser]
+  bind[AdRequestParserFactory] toNonLazy AdRequestParserFactoryImpl()
+  bind[AdResponseWriterFactory] toNonLazy AdResponseWriterFactoryImpl()
+  bind[BidRequestWriterFactory] toNonLazy BidRequestWriterFactoryImpl()
+  bind[BidResponseParserFactory] toNonLazy BidResponseParserFactoryImpl()
+
   bind[BidRequestFactory] toNonLazy injected[BidRequestFactoryImpl]
   bind[AdResponseFactory] toNonLazy injected[AdResponseFactoryImpl]
+
   bind[Auction] toNonLazy injected[AuctionImpl]
 
   bind[BidRequestMaker] toNonLazy injected[BidRequestMakerImpl]
