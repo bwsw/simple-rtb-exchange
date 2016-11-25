@@ -187,14 +187,14 @@ class BidRequestActorTest
         EasyMock.replay(bidderDao)
       }
 
-      val injector = new Module {
+      implicit val injector = new Module {
         bind[BidderDao] toNonLazy bidderDao
         bind[Configuration] toNonLazy configuration
         bind[BidActor] toProvider new BidActorMock
         bind[WinActor] toProvider new WinActorMock
       } :: predefinedInjector
 
-      childActorOf(BidRequestActor.props(adRequest, bidRequest)(injector), "bidRequestActor")
+      childActorOf(BidRequestActor.props(adRequest, bidRequest), "bidRequestActor")
       expectMsg(adResponse)
     }
   }
