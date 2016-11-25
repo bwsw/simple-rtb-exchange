@@ -66,6 +66,7 @@ class RequestActor(
     * @param response [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]] object
     */
   def completeRequest(response: AdResponse) = {
+    log.debug("completing request...")
     val bytes = writer.write(response)
     request.complete(bytes)
   }

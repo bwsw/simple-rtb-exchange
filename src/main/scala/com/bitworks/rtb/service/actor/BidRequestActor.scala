@@ -8,10 +8,9 @@ import com.bitworks.rtb.model.ad.response.Error
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message._
 import com.bitworks.rtb.model.request.BidRequest
-import com.bitworks.rtb.model.response.BidResponse
-import com.bitworks.rtb.service.Auction
 import com.bitworks.rtb.service.dao.BidderDao
 import com.bitworks.rtb.service.factory.AdResponseFactory
+import com.bitworks.rtb.service.{Auction, Configuration}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
 
@@ -35,6 +34,7 @@ class BidRequestActor(
   import context.dispatcher
 
   implicit val materializer = ActorMaterializer()
+  val configuration = inject[Configuration]
   val auction = inject[Auction]
   val adResponseFactory = inject[AdResponseFactory]
   val bidders = inject[BidderDao].getAll
@@ -46,16 +46,23 @@ class BidRequestActor(
 
   val winActor = injectActorRef[WinActor]
 
+  var auctionStarted = false
+
   override def preStart(): Unit = {
     log.debug("started bid request handling")
 
     bidders match {
       case Seq() => onError("bidders not found")
-      case bidders: Seq[Bidder] =>
+      case _: Seq[Bidder] =>
         bidders.foreach { bidder =>
           bidRouter ! SendBidRequest(bidder, bidRequest)
         }
     }
+
+    context.system.scheduler.scheduleOnce(
+      configuration.bidRequestTimeout,
+      self,
+      StartAuction)
   }
 
   override def receive: Receive = {
@@ -63,34 +70,35 @@ class BidRequestActor(
       log.debug(s"bid response received: $bidRequestResult")
       receivedBidResponses.append(bidRequestResult)
       if (receivedBidResponses.size == bidders.length) {
-        startAuction()
+        self ! StartAuction
       }
 
-    case bidResponse: BidResponse =>
-      log.debug("bid response received")
-      val response = adResponseFactory.create(adRequest, bidResponse)
-      context.parent ! response
-      context stop self
-  }
+    case CreateAdResponse(responses) =>
+      log.debug("bid responses received")
+      try {
+        val response = adResponseFactory.create(adRequest, responses)
+        context.parent ! response
+        context stop self
+      } catch {
+        case e: Throwable => onError(e.getMessage)
+      }
 
-  /**
-    * Starts auction between successful bid responses.
-    */
-  def startAuction() = {
-    log.debug("auction started")
-    val successful = receivedBidResponses.collect {
-      case BidRequestSuccess(response) => response
-    }
-    log.debug(s"auction participants: ${successful.length}")
+    case StartAuction =>
+      if (!auctionStarted) {
+        auctionStarted = true
+        log.debug("auction started")
+        val successful = receivedBidResponses.collect {
+          case BidRequestSuccess(response) => response
+        }
+        log.debug(s"auction participants: ${successful.length}")
+        val winners = auction.winners(successful)
+        log.debug(s"auction winners: $winners")
 
-    val winner = auction.winner(successful)
-    log.debug(s"auction winner: $winner")
-
-    winner match {
-      case Some(response) =>
-        winActor ! response
-      case None => onError("winner not found")
-    }
+        winners match {
+          case Nil => onError("winner not defined")
+          case _ => winActor ! winners.head
+        }
+      }
   }
 
   /**
