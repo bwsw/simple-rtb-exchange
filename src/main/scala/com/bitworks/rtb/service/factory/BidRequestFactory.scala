@@ -2,7 +2,7 @@ package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.request.BidRequest
-import com.bitworks.rtb.model.request.builder.{BidRequestBuilder, ImpBuilder}
+import com.bitworks.rtb.model.request.builder.{BidRequestBuilder, ImpBuilder, VideoBuilder}
 
 /**
   * Factory for [[com.bitworks.rtb.model.request.BidRequest BidRequest]].
@@ -24,7 +24,7 @@ trait BidRequestFactory {
   */
 class BidRequestFactoryImpl extends BidRequestFactory {
   override def create(ad: AdRequest) = {
-    val imp = ImpBuilder("impID").build
+    val imp = ImpBuilder("impID").withVideo(VideoBuilder(Seq.empty).build).build
     Some(BidRequestBuilder("bidRequestID", Seq(imp)).build)
   }
 }

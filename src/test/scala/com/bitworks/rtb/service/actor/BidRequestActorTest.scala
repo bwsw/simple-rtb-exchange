@@ -13,7 +13,7 @@ import com.bitworks.rtb.model.request.builder.{BidRequestBuilder, ImpBuilder}
 import com.bitworks.rtb.model.response.builder._
 import com.bitworks.rtb.service.dao.BidderDao
 import com.bitworks.rtb.service.factory.AdResponseFactory
-import com.bitworks.rtb.service.{Auction, BidRequestMaker, Configuration}
+import com.bitworks.rtb.service.{Auction, BidRequestMaker, Configuration, WinNoticeRequestMaker}
 import org.easymock.EasyMock
 import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -101,8 +101,10 @@ class BidRequestActorTest
 
   class WinActorMock(implicit inj: Injector) extends WinActor {
     override def receive: Receive = {
-      case `bidResponse1` => sender ! CreateAdResponse(Seq(bidResponse1))
-      case `bidResponse3` => sender ! CreateAdResponse(Seq(bidResponse3))
+      case SendWinNotice(`bidRequest`, Seq(`bidResponse1`)) =>
+        sender ! CreateAdResponse(Seq(bidResponse1))
+      case SendWinNotice(`bidRequest`, Seq(`bidResponse3`)) =>
+        sender ! CreateAdResponse(Seq(bidResponse3))
     }
   }
 
@@ -135,6 +137,7 @@ class BidRequestActorTest
     bind[Auction] toNonLazy auction
     bind[AdResponseFactory] toNonLazy adResponseFactory
     bind[BidRequestMaker] toNonLazy niceMock[BidRequestMaker]
+    bind[WinNoticeRequestMaker] toNonLazy niceMock[WinNoticeRequestMaker]
   }
 
   val responsesForBidders = Table(

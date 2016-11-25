@@ -7,6 +7,7 @@ import akka.http.scaladsl.model._
 import akka.stream.Materializer
 import com.bitworks.rtb.model.http._
 
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 
 /**

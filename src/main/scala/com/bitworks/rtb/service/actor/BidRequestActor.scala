@@ -96,7 +96,7 @@ class BidRequestActor(
 
         winners match {
           case Nil => onError("winner not defined")
-          case _ => winActor ! winners.head
+          case _ => winActor ! SendWinNotice(bidRequest, winners)
         }
       }
   }
