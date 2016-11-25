@@ -2,6 +2,7 @@ package com.bitworks.rtb.service
 
 import java.util.concurrent.TimeUnit
 
+import com.bitworks.rtb.model.http.{ContentType, JSON}
 import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.duration._
@@ -33,11 +34,20 @@ class Configuration {
       "bid-request-timeout")
       .toMillis, TimeUnit.MILLISECONDS)
 
-  /** Bid request timeout. */
+  /** Win notice timeout. */
   def winNoticeTimeout = FiniteDuration(
     conf.getDuration(
       "win-notice-timeout")
       .toMillis, TimeUnit.MILLISECONDS)
+
+  /* Bid request content type. **/
+  def bidRequestContentType: ContentType = conf.getString("bid-request-content-type") match {
+    case "JSON" =>
+      JSON
+    case s =>
+      throw new DataValidationException(
+        s"unknown bid request content type in config: $s")
+  }
 
   /** Timeout for converting HttpEntity to strict Entity. */
   def toStrictTimeout = 1.second
