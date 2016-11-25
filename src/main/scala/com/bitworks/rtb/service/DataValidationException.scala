@@ -1,21 +1,19 @@
 package com.bitworks.rtb.service
 
+import com.bitworks.rtb.model.ad.response.Error
+
 /**
   * An exception that indicates about incorrectness of data.
   *
   * @author Pavel Tomskikh
   */
 class DataValidationException(
-    message: String = null,
+    error: Error,
     cause: Throwable = null)
-    extends Exception(
-      DataValidationException.defaultMessage(message, cause),
-      cause)
+  extends Exception(
+    DataValidationException.defaultMessage(error),
+    cause)
 
 object DataValidationException {
-  def defaultMessage(message: String, cause: Throwable): String = {
-    if (message != null) message
-    else if (cause != null) cause.toString
-    else null
-  }
+  def defaultMessage(error: Error): String = error.toString
 }

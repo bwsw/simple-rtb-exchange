@@ -1,6 +1,7 @@
 package com.bitworks.rtb.service.parser
 
 import com.bitworks.rtb.model.ad.request.AdRequest
+import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.service.DataValidationException
 
 /**
@@ -21,7 +22,9 @@ trait AdRequestParser {
     }
     catch {
       case e: DataValidationException => throw e
-      case e: Throwable => throw new DataValidationException(cause = e)
+      case e: Throwable =>
+        val error = Error(ErrorCode.INCORRECT_REQUEST)
+        throw new DataValidationException(error, e)
     }
   }
 
