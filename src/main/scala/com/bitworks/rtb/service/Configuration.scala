@@ -33,6 +33,12 @@ class Configuration {
       "bid-request-timeout")
       .toMillis, TimeUnit.MILLISECONDS)
 
+  /** Bid request timeout. */
+  def winNoticeTimeout = FiniteDuration(
+    conf.getDuration(
+      "win-notice-timeout")
+      .toMillis, TimeUnit.MILLISECONDS)
+
   /** Timeout for converting HttpEntity to strict Entity. */
   def toStrictTimeout = 1.second
 }
