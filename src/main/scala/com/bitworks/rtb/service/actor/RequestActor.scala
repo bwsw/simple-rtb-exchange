@@ -8,6 +8,7 @@ import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
+import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.dao.BidderDao
 import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
@@ -53,6 +54,8 @@ class RequestActor(
 
   var adRequest: Option[AdRequest] = None
 
+  var bidRequest: Option[BidRequest] = None
+
   override def receive: Receive = {
 
     case HandleRequest =>
@@ -62,13 +65,13 @@ class RequestActor(
         entity =>
           val bytes = entity.data.toArray
           adRequest = Some(parser.parse(bytes))
-          val bidRequest = factory.create(adRequest.get)
+          bidRequest = Some(factory.create(adRequest.get))
 
           bidders match {
             case Seq() => onError("bidders not found")
             case _: Seq[Bidder] =>
               bidders.foreach { bidder =>
-                bidRouter ! SendBidRequest(bidder, bidRequest)
+                bidRouter ! SendBidRequest(bidder, bidRequest.get)
               }
 
               context.system.scheduler.scheduleOnce(
@@ -116,10 +119,9 @@ class RequestActor(
 
         winners match {
           case Nil => onError("winner not defined")
-          case _ => winActor ! winners.head
+          case _ => winActor ! SendWinNotice(bidRequest.get, winners)
         }
       }
-
   }
 
   /**
