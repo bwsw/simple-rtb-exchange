@@ -3,7 +3,7 @@ package com.bitworks.rtb.service.parser
 import com.bitworks.rtb.model.ad.request.builder.{AdRequestBuilder, AppBuilder, ImpBuilder,
 SiteBuilder, UserBuilder}
 import com.bitworks.rtb.model.ad.request.AdRequest
-import com.bitworks.rtb.model.http.JSON
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request.builder.{BannerBuilder, ContentBuilder, DeviceBuilder,
 GeoBuilder, NativeBuilder, ProducerBuilder, RegsBuilder, VideoBuilder}
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
@@ -66,7 +66,7 @@ class AdRequestJsonParser extends AdRequestParser with JsonParseHelper {
     require(node.isObject, "adRequest node must be an object")
     val id = node.getChild("id").getString
     val imps = node.getChild("imp").getSeq(getImp)
-    val builder = AdRequestBuilder(id, imps, JSON)
+    val builder = AdRequestBuilder(id, imps, Json)
 
     node.fields().asScala.foreach(
       e => e.getKey match {

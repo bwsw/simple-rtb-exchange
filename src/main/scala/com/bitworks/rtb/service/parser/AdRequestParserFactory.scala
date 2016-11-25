@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.parser
 
-import com.bitworks.rtb.model.http.{HttpHeaderModel, JSON}
+import com.bitworks.rtb.model.http.{ContentTypeModel, Json}
 import com.bitworks.rtb.service.{DataValidationException, HandlerRepository}
 
 /**
@@ -11,12 +11,12 @@ import com.bitworks.rtb.service.{DataValidationException, HandlerRepository}
 trait AdRequestParserFactory {
 
   /**
-    * Returns parser for given headers.
+    * Returns parser for given content type.
     *
-    * @param headers HTTP headers
+    * @param ct content type
     * @throws DataValidationException in case of missing handler
     */
-  def getParser(headers: Seq[HttpHeaderModel]): AdRequestParser
+  def getParser(ct: ContentTypeModel): AdRequestParser
 }
 
 /**
@@ -28,9 +28,9 @@ class AdRequestParserFactoryImpl(
     jsonParser: AdRequestJsonParser) extends HandlerRepository[AdRequestParser]
   with AdRequestParserFactory {
 
-  register(JSON -> jsonParser)
+  register(Json -> jsonParser)
 
-  override def getParser(headers: Seq[HttpHeaderModel]) = getHandler(headers)
+  override def getParser(ct: ContentTypeModel) = getHandler(ct)
 }
 
 /**

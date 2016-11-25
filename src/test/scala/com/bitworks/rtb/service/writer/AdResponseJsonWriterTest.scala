@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.writer
 
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error, Imp}
-import com.bitworks.rtb.model.http.JSON
+import com.bitworks.rtb.model.http.Json
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -20,7 +20,7 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers {
   "AdResponseJsonWriter" should "write json correctly" in {
     val imps = Seq(Imp("id1", "adm1", 1), Imp("id2", "adm2", 2))
     val error = Error(24, "error message")
-    val adResponse = AdResponse("id", Some(imps), Some(error), JSON)
+    val adResponse = AdResponse("id", Some(imps), Some(error), Json)
 
     val json = writer.write(adResponse)
     val path = getClass.getResource("adresponse.json").getPath
@@ -33,7 +33,7 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers {
   }
 
   it should "write json without optional fields correctly" in {
-    val adResponse = AdResponse("id", None, None, JSON)
+    val adResponse = AdResponse("id", None, None, Json)
 
     val json = writer.write(adResponse)
     val expectedJson = """{"id":"id"}"""

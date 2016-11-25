@@ -1,7 +1,7 @@
 package com.bitworks.rtb.model.ad.response.builder
 
 import com.bitworks.rtb.model.ad.response._
-import com.bitworks.rtb.model.http.JSON
+import com.bitworks.rtb.model.http.Json
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
@@ -14,8 +14,8 @@ class AdResponseBuilderTest extends FlatSpec with Matchers {
   "AdResponseBuilder" should "build AdResponse correctly" in {
     val imp = Imp("123", "admarkup", 1)
     val error = Error(33, "some error")
-    val ct = JSON
-    val adResponse = AdResponse("123", Some(Seq(imp)), Some(error), JSON)
+    val ct = Json
+    val adResponse = AdResponse("123", Some(Seq(imp)), Some(error), Json)
 
     var builder = AdResponseBuilder(adResponse.id, adResponse.ct)
     adResponse.imp.foreach(imp => builder = builder.withImp(imp))
@@ -27,7 +27,7 @@ class AdResponseBuilderTest extends FlatSpec with Matchers {
   }
 
   it should "build AdResponse with default values correctly" in {
-    val adResponse = AdResponse("123", None, None, JSON)
+    val adResponse = AdResponse("123", None, None, Json)
     val builtAdResponse = AdResponseBuilder(adResponse.id, adResponse.ct).build
 
     builtAdResponse shouldBe adResponse

@@ -2,7 +2,7 @@ package com.bitworks.rtb.service
 
 import akka.actor.ActorSystem
 import com.bitworks.rtb.model.db.Bidder
-import com.bitworks.rtb.model.http.{HttpRequestModel, HttpResponseModel, JSON, POST}
+import com.bitworks.rtb.model.http._
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
 import com.bitworks.rtb.service.parser.{BidResponseParser, BidResponseParserFactory}
@@ -43,10 +43,10 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
 
   val requestMakerMock = mock[HttpRequestMaker]
   requestMakerMock.make(anyObject()).andStubReturn(
-    Future.successful(HttpResponseModel(new Array[Byte](0), 200, Seq.empty)))
+    Future.successful(HttpResponseModel(new Array[Byte](0), 200, Unknown)))
 
   val configurationMock = mock[Configuration]
-  configurationMock.bidRequestContentType.andStubReturn(JSON)
+  configurationMock.bidRequestContentType.andStubReturn(Json)
 
   implicit val predefined = new Module {
     bind[BidRequestWriterFactory] to writerFactoryMock
@@ -132,7 +132,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
       .make(anyObject())
       .andReturn(
         Future.successful(
-          HttpResponseModel(array, 200, Seq.empty)))
+          HttpResponseModel(array, 200, Unknown)))
       .times(1)
 
     val parserMock = mock[BidResponseParser]

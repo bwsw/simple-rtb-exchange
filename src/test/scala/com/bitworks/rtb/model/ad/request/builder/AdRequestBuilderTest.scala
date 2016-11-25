@@ -1,7 +1,7 @@
 package com.bitworks.rtb.model.ad.request.builder
 
 import com.bitworks.rtb.model.ad.request.AdRequest
-import com.bitworks.rtb.model.http.JSON
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request.builder.{DeviceBuilder, RegsBuilder}
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -23,7 +23,7 @@ class AdRequestBuilderTest extends FlatSpec with Matchers {
       1,
       Some(2),
       Some(RegsBuilder().build),
-      JSON)
+      Json)
 
     val builder = AdRequestBuilder(adRequest.id, adRequest.imp, adRequest.ct)
       .withTest(adRequest.test)
@@ -50,7 +50,7 @@ class AdRequestBuilderTest extends FlatSpec with Matchers {
       AdRequestBuilder.Test,
       None,
       None,
-      JSON)
+      Json)
 
     val builtAdRequest = AdRequestBuilder(adRequest.id, adRequest.imp, adRequest.ct).build
 

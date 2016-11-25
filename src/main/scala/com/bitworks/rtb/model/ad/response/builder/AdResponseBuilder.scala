@@ -1,7 +1,7 @@
 package com.bitworks.rtb.model.ad.response.builder
 
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error, Imp}
-import com.bitworks.rtb.model.http.ContentType
+import com.bitworks.rtb.model.http.ContentTypeModel
 
 /**
   * Builder for [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
@@ -9,7 +9,7 @@ import com.bitworks.rtb.model.http.ContentType
   * @param id value of id in [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]] object
   * @author Pavel Tomskikh
   */
-class AdResponseBuilder private(id: String, ct: ContentType) {
+class AdResponseBuilder private(id: String, ct: ContentTypeModel) {
   var imp: Option[Seq[Imp]] = None
   var error: Option[Error] = None
 
@@ -32,5 +32,5 @@ class AdResponseBuilder private(id: String, ct: ContentType) {
   * @author Pavel Tomskikh
   */
 object AdResponseBuilder {
-  def apply(id: String, ct: ContentType) = new AdResponseBuilder(id, ct)
+  def apply(id: String, ct: ContentTypeModel) = new AdResponseBuilder(id, ct)
 }

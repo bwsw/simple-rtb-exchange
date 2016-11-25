@@ -47,7 +47,7 @@ class BidRequestMakerImpl(
 
     val requestModel = HttpRequestModel(bidder.endpoint, POST, Some(bytes))
     httpRequestMaker.make(requestModel) map { response =>
-      val parser = parserFactory.getParser(response.headers)
+      val parser = parserFactory.getParser(response.contentType)
       parser.parse(response.body)
     }
   }

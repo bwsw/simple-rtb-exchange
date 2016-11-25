@@ -1,13 +1,13 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
+import akka.http.scaladsl.model.MediaType
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
-import com.bitworks.rtb.model.http.HttpHeaderModel
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
 import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.service.dao.BidderDao
@@ -17,6 +17,7 @@ import com.bitworks.rtb.service.writer.AdResponseWriterFactory
 import com.bitworks.rtb.service.{Auction, Configuration}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
+import com.bitworks.rtb.service.ContentTypeConversions._
 
 import scala.collection.mutable.ListBuffer
 
@@ -64,8 +65,8 @@ class RequestActor(
       request.inner.entity.toStrict(configuration.toStrictTimeout) map {
         entity =>
           val bytes = entity.data.toArray
-          val headers = request.inner.headers.map(x => HttpHeaderModel(x.name, x.value))
-          val parser = parserFactory.getParser(headers)
+          log.debug(s"content-type: ${entity.contentType}")
+          val parser = parserFactory.getParser(entity.contentType)
           adRequest = Some(parser.parse(bytes))
           bidRequest = Some(factory.create(adRequest.get))
 

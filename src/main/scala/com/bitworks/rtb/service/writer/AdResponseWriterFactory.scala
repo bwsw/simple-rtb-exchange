@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.writer
 
-import com.bitworks.rtb.model.http.{ContentType, JSON}
+import com.bitworks.rtb.model.http.{ContentTypeModel, Json}
 import com.bitworks.rtb.service.HandlerRepository
 
 /**
@@ -15,7 +15,7 @@ trait AdResponseWriterFactory {
     *
     * @param ct content type
     */
-  def getWriter(ct: ContentType): AdResponseWriter
+  def getWriter(ct: ContentTypeModel): AdResponseWriter
 }
 
 /**
@@ -27,9 +27,9 @@ class AdResponseWriterFactoryImpl(
     jsonWriter: AdResponseJsonWriter) extends HandlerRepository[AdResponseWriter]
   with AdResponseWriterFactory {
 
-  register(JSON -> jsonWriter)
+  register(Json -> jsonWriter)
 
-  override def getWriter(ct: ContentType) = getHandler(ct)
+  override def getWriter(ct: ContentTypeModel) = getHandler(ct)
 }
 
 /**

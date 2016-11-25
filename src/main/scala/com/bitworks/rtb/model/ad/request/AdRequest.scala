@@ -1,6 +1,6 @@
 package com.bitworks.rtb.model.ad.request
 
-import com.bitworks.rtb.model.http.ContentType
+import com.bitworks.rtb.model.http.ContentTypeModel
 import com.bitworks.rtb.model.request.{Device, Regs}
 
 /**
@@ -31,4 +31,4 @@ case class AdRequest(
     test: Int,
     tmax: Option[Int],
     regs: Option[Regs],
-    ct: ContentType)
+    ct: ContentTypeModel)
