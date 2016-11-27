@@ -16,10 +16,10 @@ trait AdResponseFactory {
   /**
     * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
     *
-    * @param request [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
-    * @param bid     [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
+    * @param request   [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
+    * @param responses seqence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     */
-  def create(request: AdRequest, bid: BidResponse): AdResponse
+  def create(request: AdRequest, responses: Seq[BidResponse]): AdResponse
 
   /**
     * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
@@ -37,9 +37,9 @@ trait AdResponseFactory {
   * @author Egor Ilchenko
   */
 class AdResponseFactoryImpl extends AdResponseFactory with Logging {
-  override def create(request: AdRequest, bid: BidResponse) = {
-    val imps = bid
-      .seatBid
+  override def create(request: AdRequest, responses: Seq[BidResponse]) = {
+    val imps = responses
+      .flatMap(_.seatBid)
       .head
       .bid
       .map(getImp(request, _))

@@ -48,6 +48,7 @@ class RtbModule extends Module {
   bind[Auction] toNonLazy injected[AuctionImpl]
 
   bind[BidRequestMaker] toNonLazy injected[BidRequestMakerImpl]
+  bind[WinNoticeRequestMaker] toNonLazy injected[WinNoticeRequestMakerImpl]
 
   bind[BidActor] toProvider new BidActor
   bind[WinActor] toProvider new WinActor

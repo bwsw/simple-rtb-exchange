@@ -52,7 +52,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
         ))
       .build
 
-    val response = factory.create(adRequest, bidResponse)
+    val response = factory.create(adRequest, Seq(bidResponse))
 
     response shouldBe expectedResponse
   }
@@ -93,7 +93,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
         ))
       .build
 
-    val response = factory.create(adRequest, bidResponse)
+    val response = factory.create(adRequest, Seq(bidResponse))
 
     response shouldBe expectedResponse
   }
@@ -134,7 +134,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
         ))
       .build
 
-    val response = factory.create(adRequest, bidResponse)
+    val response = factory.create(adRequest, Seq(bidResponse))
 
     response shouldBe expectedResponse
   }
@@ -167,7 +167,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
       .build
 
     an[DataValidationException] shouldBe thrownBy {
-      factory.create(adRequest, bidResponse)
+      factory.create(adRequest, Seq(bidResponse))
     }
   }
 
@@ -196,7 +196,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
       .build
 
     an[DataValidationException] shouldBe thrownBy {
-      factory.create(adRequest, bidResponse)
+      factory.create(adRequest, Seq(bidResponse))
     }
   }
 
