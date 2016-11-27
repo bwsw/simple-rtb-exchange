@@ -8,6 +8,7 @@ import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
+import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.dao.BidderDao
 import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
@@ -53,6 +54,8 @@ class RequestActor(
 
   var adRequest: Option[AdRequest] = None
 
+  var bidRequest: Option[BidRequest] = None
+
   override def receive: Receive = {
 
     case HandleRequest =>
@@ -62,9 +65,8 @@ class RequestActor(
         entity =>
           val bytes = entity.data.toArray
           adRequest = Some(parser.parse(bytes))
-
-          val bidRequest = factory.create(adRequest.get)
-          if (bidRequest.isEmpty) {
+          bidRequest = factory.create(adRequest.get)
+          if (bidRequest.isDefined) {
             bidders match {
               case Seq() => onError("bidders not found")
               case _: Seq[Bidder] =>
@@ -91,12 +93,12 @@ class RequestActor(
       if (receivedBidResponses.size == bidders.length)
         self ! StartAuction
 
-    case msg: BidResponse =>
-      log.debug("bid response received")
+    case CreateAdResponse(responses) =>
+      log.debug("bid responses received")
       adRequest match {
         case Some(ar) =>
           try {
-            val response = adResponseFactory.create(ar, msg)
+            val response = adResponseFactory.create(ar, responses)
             completeRequest(response)
           } catch {
             case e: Throwable => onError(e.getMessage)
@@ -115,15 +117,14 @@ class RequestActor(
             case BidRequestSuccess(response) => response
           }
         log.debug(s"auction participants: ${successful.length}")
-        val winner = auction.winner(successful)
-        log.debug(s"auction winner: $winner")
+        val winners = auction.winners(successful)
+        log.debug(s"auction winners: $winners")
 
-        winner match {
-          case Some(response) => winActor ! response
-          case None => onError("winner not defined")
+        winners match {
+          case Nil => onError("winner not defined")
+          case _ => winActor ! SendWinNotice(bidRequest.get, winners)
         }
       }
-
   }
 
   /**
