@@ -54,7 +54,6 @@ class AkkaHttpRequestMaker(
     response.headers.map(x => HttpHeaderModel(x.name, x.value))
   }
 
-
   override def make(request: HttpRequestModel) = {
     val entity = request.body match {
       case None => HttpEntity.Empty

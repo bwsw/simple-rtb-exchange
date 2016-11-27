@@ -13,7 +13,6 @@ import scaldi.Injector
 
 import scala.concurrent.Future
 
-
 /**
   * Actor responsible for sending win notice and getting ad markup.
   *
