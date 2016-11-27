@@ -2,6 +2,7 @@ package com.bitworks.rtb.service
 
 import akka.actor.ActorSystem
 import com.bitworks.rtb.model.db.Bidder
+import com.bitworks.rtb.model.http.{HttpRequestModel, HttpResponseModel, POST}
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
 import com.bitworks.rtb.service.parser.BidResponseParser
@@ -35,7 +36,11 @@ class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
   (parserStub.parse _).when(*).returns(bidResponse)
 
   val requestMakerStub = stub[HttpRequestMaker]
-  (requestMakerStub.post _).when(*, *).returns(Future.successful(new Array[Byte](0)))
+  (requestMakerStub.make _)
+    .when(*)
+    .returns(
+      Future.successful(
+        HttpResponseModel(new Array[Byte](0), 200, Seq.empty)))
 
   implicit val predefined = new Module {
     bind[BidRequestWriter] toNonLazy writerStub
@@ -66,14 +71,16 @@ class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
     val bidRequestMaker = inject[BidRequestMaker]
     bidRequestMaker.send(bidder, bidRequest)
 
-    (requestMakerStub.post _).verify(bidder.endpoint, array).once
+    (requestMakerStub.make _).verify(HttpRequestModel(bidder.endpoint, POST, Some(array))).once
   }
 
   it should "parse received bytes" in {
     val array = new Array[Byte](24)
 
     val requestMakerStub = stub[HttpRequestMaker]
-    (requestMakerStub.post _).when(*, *).returns(Future.successful(array)).once
+    (requestMakerStub.make _).when(*).returns(
+      Future.successful(
+        HttpResponseModel(array, 200, Seq.empty))).once
 
     val module = new Module {
       bind[HttpRequestMaker] to requestMakerStub
