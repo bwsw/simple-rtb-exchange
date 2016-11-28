@@ -2,7 +2,7 @@ package com.bitworks.rtb.service
 
 import java.util.concurrent.TimeUnit
 
-import com.bitworks.rtb.model.http.{ContentTypeModel, Json}
+import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json, Protobuf}
 import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.duration._
@@ -42,8 +42,9 @@ class Configuration {
 
   /* Bid request content type. **/
   def bidRequestContentType: ContentTypeModel = conf.getString("bid-request-content-type") match {
-    case "JSON" =>
-      Json
+    case "JSON" => Json
+    case "Avro" => Avro
+    case "Protobuf" => Protobuf
     case s =>
       throw new DataValidationException(
         s"unknown bid request content type in config: $s")

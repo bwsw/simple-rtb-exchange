@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service
 
-import com.bitworks.rtb.model.http.Json
+import com.bitworks.rtb.model.http.{Avro, Json, Protobuf}
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -71,7 +71,7 @@ class ConfigurationTest extends FlatSpec with Matchers {
   }
 
   it should "load bid request content type correctly" in {
-    Seq("JSON" -> Json).foreach { testcase =>
+    Seq("JSON" -> Json, "Avro" -> Avro, "Protobuf" -> Protobuf).foreach { testcase =>
       System.setProperty("rtb-exchange.bid-request-content-type", testcase._1)
 
       ConfigFactory.invalidateCaches()
