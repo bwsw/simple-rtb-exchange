@@ -17,11 +17,8 @@ import scaldi.akka.AkkaInjectable._
   *
   * @author Egor Ilchenko
   */
-class RequestActor(
-    request: HttpRequestWrapper)(
-    implicit inj: Injector)
-  extends Actor
-    with ActorLogging {
+class RequestActor(request: HttpRequestWrapper)
+  (implicit inj: Injector) extends Actor with ActorLogging {
 
   import context.dispatcher
 
@@ -85,6 +82,5 @@ class RequestActor(
 object RequestActor {
 
   /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]]. */
-  def props(wrapper: HttpRequestWrapper)(implicit inj: Injector) =
-  Props(new RequestActor(wrapper))
+  def props(wrapper: HttpRequestWrapper)(implicit inj: Injector) = Props(new RequestActor(wrapper))
 }

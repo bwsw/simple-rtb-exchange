@@ -118,7 +118,6 @@ object BidRequestActor {
   /**
     * Returns Props for [[com.bitworks.rtb.service.actor.BidRequestActor BidRequestActor]].
     */
-  def props(adRequest: AdRequest, bidRequest: BidRequest)(
-      implicit inj: Injector) =
-  Props(new BidRequestActor(adRequest, bidRequest))
+  def props(adRequest: AdRequest, bidRequest: BidRequest)
+    (implicit inj: Injector) = Props(new BidRequestActor(adRequest, bidRequest))
 }
