@@ -7,10 +7,12 @@ package com.bitworks.rtb.model.http
   * @param method      request method (POST, GET)
   * @param body        request body (for POST method)
   * @param contentType request content type
+  * @param headers     request headers
   * @author Egor Ilchenko
   */
 case class HttpRequestModel(
     uri: String,
     method: Method = GET,
     body: Option[Array[Byte]] = None,
-    contentType: ContentTypeModel = Unknown)
+    contentType: ContentTypeModel = Unknown,
+    headers: Seq[HttpHeaderModel] = Seq.empty)

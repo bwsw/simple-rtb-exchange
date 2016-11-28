@@ -50,11 +50,28 @@ class AkkaHttpRequestMaker(
     }
   }
 
+  /**
+    * Extracts headers from response.
+    *
+    * @param response HttpResponse
+    * @return extracted header models
+    */
+  private def extractHeaders(response: HttpResponse) = {
+    response.headers.map(x => HttpHeaderModel(x.name, x.value))
+  }
+
   override def make(request: HttpRequestModel) = {
     val entity = request.body match {
       case None => HttpEntity.Empty
       case Some(bytes) => HttpEntity(request.contentType, bytes)
     }
+
+    val headers = request.headers.map { case h@HttpHeaderModel(key, value) =>
+      HttpHeader.parse(key, value) match {
+        case Ok(header, _) => header
+        case _ => throw new DataValidationException(s"cannot parse $h")
+      }
+    }.toList
 
     val akkaRequest = HttpRequest(
       method = request.method match {
@@ -62,18 +79,18 @@ class AkkaHttpRequestMaker(
         case POST => HttpMethods.POST
       },
       uri = request.uri,
-      entity = entity
+      entity = entity,
+      headers = headers
     )
     val fResponse = Http().singleRequest(akkaRequest)
 
-    val result = for {
+    for {
       response <- fResponse
       data <- extractData(response)
     } yield HttpResponseModel(
       data._1,
       response.status.intValue,
-      data._2)
-
-    result
+      data._2,
+      extractHeaders(response))
   }
 }

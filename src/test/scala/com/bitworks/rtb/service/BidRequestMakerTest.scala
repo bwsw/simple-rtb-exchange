@@ -23,7 +23,7 @@ import scala.concurrent.{Await, Future}
   * @author Egor Ilchenko
   */
 class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
-  with EasyMockSugar with ScalaFutures with Matchers with OneInstancePerTest{
+  with EasyMockSugar with ScalaFutures with Matchers with OneInstancePerTest {
 
   val bidRequest = BidRequestBuilder("someId", Seq.empty).build
   val bidResponse = BidResponseBuilder("123", Seq.empty).build
@@ -43,7 +43,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
 
   val requestMakerMock = mock[HttpRequestMaker]
   requestMakerMock.make(anyObject()).andStubReturn(
-    Future.successful(HttpResponseModel(new Array[Byte](0), 200, Unknown)))
+    Future.successful(HttpResponseModel(new Array[Byte](0), 200, Unknown, Seq.empty)))
 
   val configurationMock = mock[Configuration]
   configurationMock.bidRequestContentType.andStubReturn(Json)
@@ -58,7 +58,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
   }
 
   override def beforeEach = {
-    try{
+    try {
       replay(
         writerMock,
         parserMock,
@@ -66,7 +66,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
         parserFactoryMock,
         requestMakerMock,
         configurationMock)
-    } catch{
+    } catch {
       case e: Throwable =>
     }
   }
@@ -132,7 +132,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
       .make(anyObject())
       .andReturn(
         Future.successful(
-          HttpResponseModel(array, 200, Unknown)))
+          HttpResponseModel(array, 200, Unknown, Seq.empty)))
       .times(1)
 
     val parserMock = mock[BidResponseParser]

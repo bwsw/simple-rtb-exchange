@@ -48,6 +48,8 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
   private val contentTypeHeader = "Content-Type"
   private val responseHeaderJsonValue = "application/json"
   private val responseStatusCode = 201
+  private val customHeaderName = "customheader"
+  private val customHeaderValue = "customheadervalue"
 
   "Akka http request maker" should "make GET requests correctly" in {
     val path = "/get"
@@ -55,23 +57,27 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
       get(urlEqualTo(path)).willReturn(
         aResponse()
           .withBody(responseBody)
-          .withStatus(responseStatusCode)))
+          .withStatus(responseStatusCode)
+          .withHeader(customHeaderName, customHeaderValue)))
 
     val uri = s"http://localhost:$port$path"
     val request = HttpRequestModel(
       uri,
       GET,
-      None)
+      None,
+      headers = Seq(HttpHeaderModel(customHeaderName, customHeaderValue)))
 
     val fResponse = maker.make(request)
     whenReady(fResponse, timeout(Span(5, Seconds))) { response =>
       verify(
-        getRequestedFor(urlEqualTo(path)))
+        getRequestedFor(urlEqualTo(path))
+          .withHeader(customHeaderName, equalTo(customHeaderValue)))
 
       val bodyAsString = new String(response.body)
       bodyAsString shouldBe responseBody
       response.status shouldBe responseStatusCode
       response.contentType shouldBe Unknown
+      response.headers should contain(HttpHeaderModel(customHeaderName, customHeaderValue))
     }
   }
 
@@ -102,6 +108,7 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
         aResponse()
           .withBody(responseBody)
           .withHeader(contentTypeHeader, responseHeaderJsonValue)
+          .withHeader(customHeaderName, customHeaderValue)
           .withStatus(responseStatusCode)))
 
     val uri = s"http://localhost:$port$path"
@@ -110,19 +117,22 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
       uri,
       POST,
       Some(bytes),
-      Json)
+      Json,
+      headers = Seq(HttpHeaderModel(customHeaderName, customHeaderValue)))
 
     val fResponse = maker.make(request)
     whenReady(fResponse, timeout(Span(5, Seconds))) { response =>
       verify(
         postRequestedFor(urlEqualTo(path))
           .withHeader(contentTypeHeader, equalTo(responseHeaderJsonValue))
+          .withHeader(customHeaderName, equalTo(customHeaderValue))
           .withRequestBody(equalTo(responseBody)))
 
       val bodyAsString = new String(response.body)
       bodyAsString shouldBe responseBody
       response.status shouldBe responseStatusCode
       response.contentType shouldBe Json
+      response.headers should contain(HttpHeaderModel(customHeaderName, customHeaderValue))
     }
   }
 
