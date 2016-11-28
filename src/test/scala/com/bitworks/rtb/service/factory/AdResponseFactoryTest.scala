@@ -3,6 +3,7 @@ package com.bitworks.rtb.service.factory
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request.builder.{BannerBuilder, NativeBuilder, VideoBuilder}
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
 import com.bitworks.rtb.service.DataValidationException
@@ -18,15 +19,15 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
 
   "AdResponseFactory" should "return AdResponse with banner correctly" in {
     val factory = new AdResponseFactoryImpl
-    val requestId = "reqId"
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
-      requestId,
+      "reqId",
       Seq(
         com.bitworks.rtb.model.ad.request.builder.ImpBuilder(impId)
           .withBanner(BannerBuilder().build)
-          .build))
+          .build),
+      Json)
       .build
     val bidResponse = BidResponseBuilder(
       "bidResponseId",
@@ -41,7 +42,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
               .build))
           .build))
       .build
-    val expectedResponse = AdResponseBuilder(requestId)
+    val expectedResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
       .withImp(
         Seq(
           com.bitworks.rtb.model.ad.response.builder.ImpBuilder(
@@ -59,15 +60,15 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
 
   it should "return AdResponse with video correctly" in {
     val factory = new AdResponseFactoryImpl
-    val requestId = "reqId"
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
-      requestId,
+      "reqId",
       Seq(
         com.bitworks.rtb.model.ad.request.builder.ImpBuilder(impId)
           .withVideo(VideoBuilder(Seq.empty).build)
-          .build))
+          .build),
+      Json)
       .build
     val bidResponse = BidResponseBuilder(
       "bidResponseId",
@@ -82,7 +83,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
               .build))
           .build))
       .build
-    val expectedResponse = AdResponseBuilder(requestId)
+    val expectedResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
       .withImp(
         Seq(
           com.bitworks.rtb.model.ad.response.builder.ImpBuilder(
@@ -100,15 +101,15 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
 
   it should "return AdResponse with native correctly" in {
     val factory = new AdResponseFactoryImpl
-    val requestId = "reqId"
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
-      requestId,
+      "reqId",
       Seq(
         com.bitworks.rtb.model.ad.request.builder.ImpBuilder(impId)
           .withNative(NativeBuilder("nativeRequest").build)
-          .build))
+          .build),
+      Json)
       .build
     val bidResponse = BidResponseBuilder(
       "bidResponseId",
@@ -123,7 +124,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
               .build))
           .build))
       .build
-    val expectedResponse = AdResponseBuilder(requestId)
+    val expectedResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
       .withImp(
         Seq(
           com.bitworks.rtb.model.ad.response.builder.ImpBuilder(
@@ -141,16 +142,16 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
 
   it should "throw exception if cant determine type of response imp by request" in {
     val factory = new AdResponseFactoryImpl
-    val requestId = "reqId"
     val impId = "impId"
     val anotherImpId = "anotherImpId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
-      requestId,
+      "reqId",
       Seq(
         com.bitworks.rtb.model.ad.request.builder.ImpBuilder(impId)
           .withNative(NativeBuilder("nativeRequest").build)
-          .build))
+          .build),
+      Json)
       .build
     val bidResponse = BidResponseBuilder(
       "bidResponseId",
@@ -173,14 +174,14 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
 
   it should "throw exception if bid response contains empty adm" in {
     val factory = new AdResponseFactoryImpl
-    val requestId = "reqId"
     val impId = "impId"
     val adRequest = AdRequestBuilder(
-      requestId,
+      "reqId",
       Seq(
         com.bitworks.rtb.model.ad.request.builder.ImpBuilder(impId)
           .withNative(NativeBuilder("nativeRequest").build)
-          .build))
+          .build),
+      Json)
       .build
     val bidResponse = BidResponseBuilder(
       "bidResponseId",
@@ -203,9 +204,8 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
   it should "build ad response with error correctly" in {
     val factory = new AdResponseFactoryImpl
     val error = Error(ErrorCode.NOT_SPECIFIED_ERROR, "123")
-    val requestId = "reqId"
-    val adRequest = AdRequestBuilder(requestId, Seq()).build
-    val expectedResponse = AdResponseBuilder(requestId)
+    val adRequest = AdRequestBuilder("reqId", Seq(), Json).build
+    val expectedResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
       .withError(error)
       .build
 

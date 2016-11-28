@@ -44,13 +44,13 @@ class AdResponseFactoryImpl extends AdResponseFactory with Logging {
       .bid
       .map(getImp(request, _))
 
-    AdResponseBuilder(request.id)
+    AdResponseBuilder(request.id, request.ct)
       .withImp(imps)
       .build
   }
 
   override def create(request: AdRequest, error: Error) = {
-    AdResponseBuilder(request.id)
+    AdResponseBuilder(request.id, request.ct)
       .withError(error)
       .build
   }

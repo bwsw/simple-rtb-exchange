@@ -5,6 +5,7 @@ import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.ad.{request => ad}
 import com.bitworks.rtb.model.db
 import com.bitworks.rtb.model.db.IABCategory
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request._
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.service.DataValidationException
@@ -336,7 +337,7 @@ class BidRequestFactoryTest
       .withMobile(0)
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -386,7 +387,7 @@ class BidRequestFactoryTest
       .withMobile(0)
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -394,7 +395,7 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_INACTIVE
   }
 
@@ -413,7 +414,7 @@ class BidRequestFactoryTest
       .withMobile(0)
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -421,7 +422,7 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
   }
 
@@ -436,7 +437,7 @@ class BidRequestFactoryTest
       .withPageCat(getCategoriesId(Seq(5)))
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withApp(adApp)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -479,7 +480,7 @@ class BidRequestFactoryTest
       .withPageCat(getCategoriesId(Seq(5)))
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withApp(adApp)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -487,7 +488,7 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_INACTIVE
   }
 
@@ -502,7 +503,7 @@ class BidRequestFactoryTest
       .withPageCat(getCategoriesId(Seq(5)))
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withApp(adApp)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -510,7 +511,7 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
   }
 
@@ -534,7 +535,7 @@ class BidRequestFactoryTest
       .withMobile(0)
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withApp(adApp)
       .withSite(adSite)
       .withUser(correctAdUser)
@@ -543,7 +544,7 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
@@ -568,7 +569,8 @@ class BidRequestFactoryTest
       val banner = bannerBuilder.build
 
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSiteBuilder.build)
+        .build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withBanner(banner).build
@@ -591,7 +593,8 @@ class BidRequestFactoryTest
       val banner = bannerBuilder.build
 
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSiteBuilder.build)
+        .build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withBanner(banner).build
@@ -633,9 +636,10 @@ class BidRequestFactoryTest
       val banner = bannerBuilder.build
 
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSiteBuilder.build)
+        .build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
@@ -649,9 +653,10 @@ class BidRequestFactoryTest
       val banner = bannerBuilder.build
 
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSiteBuilder.build)
+        .build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
@@ -931,7 +936,7 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withBanner(banner).build
@@ -1388,9 +1393,9 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
@@ -1862,7 +1867,7 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withVideo(video).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withVideo(video).build
@@ -2768,9 +2773,9 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withVideo(video).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
@@ -2792,7 +2797,7 @@ class BidRequestFactoryTest
       val native = Native("native", ver, api, battr, None)
       val adImp = ad.builder.ImpBuilder("1").withNative(native).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withNative(native).build
@@ -2827,9 +2832,9 @@ class BidRequestFactoryTest
       val native = Native(request, ver, api, battr, None)
       val adImp = ad.builder.ImpBuilder("1").withNative(native).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
@@ -2837,9 +2842,9 @@ class BidRequestFactoryTest
   it should "throw DataValidationException for ad request without banner, video and native" in {
     val adImp = ad.builder.ImpBuilder("1").build
     val adSite = adSiteBuilder.build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
-    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
@@ -2866,7 +2871,7 @@ class BidRequestFactoryTest
       val adUser = ad.User(id, yob, gender, keywords, geo)
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withUser(adUser)
         .build
@@ -2910,12 +2915,12 @@ class BidRequestFactoryTest
       val adUser = ad.User(id, yob, gender, keywords, geo)
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withUser(adUser)
         .build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
@@ -3827,7 +3832,7 @@ class BidRequestFactoryTest
     forAll(correctDevices) { device =>
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withDevice(device)
         .build
@@ -5533,12 +5538,12 @@ class BidRequestFactoryTest
     forAll(incorrectDevices) { device =>
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withDevice(device)
         .build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
@@ -5703,7 +5708,7 @@ class BidRequestFactoryTest
       val adUser = ad.builder.UserBuilder().withGeo(geo).build
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withUser(adUser)
         .build
@@ -5962,12 +5967,12 @@ class BidRequestFactoryTest
       val adUser = ad.builder.UserBuilder().withGeo(geo).build
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withUser(adUser)
         .build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
@@ -6437,7 +6442,7 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.withContent(content).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .build
 
@@ -7207,24 +7212,25 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.withContent(content).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
-  it should "throw DataValidationException for ad request with incorrect iab category in content" in {
+  it should
+    "throw DataValidationException for ad request with incorrect iab category in content" in {
     val content = ContentBuilder().withCat(Seq("notiab")).build
     val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
     val adSite = adSiteBuilder.withContent(content).build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .build
 
-    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError.code shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
   }
 
@@ -7249,7 +7255,7 @@ class BidRequestFactoryTest
       val content = ContentBuilder().withProducer(producer).build
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.withContent(content).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .build
 
@@ -7291,25 +7297,26 @@ class BidRequestFactoryTest
       val content = ContentBuilder().withProducer(producer).build
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.withContent(content).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .build
 
-      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
       thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
-  it should "throw DataValidationException for ad request with incorrect iab category in producer" in {
+  it should "throw DataValidationException for ad request with incorrect iab category in " +
+    "producer" in {
     val producer = ProducerBuilder().withCat(Seq("notiab")).build
     val content = ContentBuilder().withProducer(producer).build
     val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
     val adSite = adSiteBuilder.withContent(content).build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .build
 
-    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError.code shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
   }
 
@@ -7317,7 +7324,7 @@ class BidRequestFactoryTest
     val regs = RegsBuilder().withCoppa(1).build
     val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
     val adSite = adSiteBuilder.build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .withRegs(regs)
       .build
@@ -7338,12 +7345,12 @@ class BidRequestFactoryTest
     val regs = RegsBuilder().withCoppa(2).build
     val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
     val adSite = adSiteBuilder.build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .withRegs(regs)
       .build
 
-    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 }

@@ -1,6 +1,7 @@
 package com.bitworks.rtb.model.ad.request.builder
 
 import com.bitworks.rtb.model.ad.request._
+import com.bitworks.rtb.model.http.ContentTypeModel
 import com.bitworks.rtb.model.request.{Device, Regs}
 
 /**
@@ -9,7 +10,7 @@ import com.bitworks.rtb.model.request.{Device, Regs}
   * @param imp value of imp in [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
   * @author Egor Ilchenko
   */
-class AdRequestBuilder(id: String, imp: Seq[Imp]) {
+class AdRequestBuilder(id: String, imp: Seq[Imp], ct: ContentTypeModel) {
   private var site: Option[Site] = None
   private var app: Option[App] = None
   private var device: Option[Device] = None
@@ -54,7 +55,7 @@ class AdRequestBuilder(id: String, imp: Seq[Imp]) {
   }
 
   /** Returns [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]] */
-  def build = AdRequest(id, imp, site, app, device, user, test, tmax, regs)
+  def build = AdRequest(id, imp, site, app, device, user, test, tmax, regs, ct)
 }
 
 /**
@@ -65,5 +66,5 @@ class AdRequestBuilder(id: String, imp: Seq[Imp]) {
 object AdRequestBuilder {
   val Test = 0
 
-  def apply(id: String, imp: Seq[Imp]) = new AdRequestBuilder(id, imp)
+  def apply(id: String, imp: Seq[Imp], ct: ContentTypeModel) = new AdRequestBuilder(id, imp, ct)
 }

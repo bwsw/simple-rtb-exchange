@@ -1,5 +1,7 @@
 package com.bitworks.rtb.model.ad.response
 
+import com.bitworks.rtb.model.http.ContentTypeModel
+
 /**
   * The top-level ad response object.
   *
@@ -12,4 +14,5 @@ package com.bitworks.rtb.model.ad.response
 case class AdResponse(
     id: String,
     imp: Option[Seq[Imp]],
-    error: Option[Error])
+    error: Option[Error],
+    ct: ContentTypeModel)

@@ -5,9 +5,10 @@ import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.response.AdResponse
 import com.bitworks.rtb.model.message._
+import com.bitworks.rtb.service.AkkaHttpRequestMaker._
 import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
-import com.bitworks.rtb.service.parser.AdRequestParser
-import com.bitworks.rtb.service.writer.AdResponseWriter
+import com.bitworks.rtb.service.parser.AdRequestParserFactory
+import com.bitworks.rtb.service.writer.AdResponseWriterFactory
 import com.bitworks.rtb.service.{Configuration, DataValidationException}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
@@ -27,8 +28,8 @@ class RequestActor(
 
   implicit val materializer = ActorMaterializer()
   val configuration = inject[Configuration]
-  val writer = inject[AdResponseWriter]
-  val parser = inject[AdRequestParser]
+  val writerFactory = inject[AdResponseWriterFactory]
+  val parserFactory = inject[AdRequestParserFactory]
   val factory = inject[BidRequestFactory]
   val adResponseFactory = inject[AdResponseFactory]
 
@@ -40,6 +41,8 @@ class RequestActor(
       request.inner.entity.toStrict(configuration.toStrictTimeout) map {
         entity =>
           val bytes = entity.data.toArray
+          log.debug(s"content-type: ${entity.contentType}")
+          val parser = parserFactory.getParser(entity.contentType)
           val adRequest = parser.parse(bytes)
           try {
             val bidRequest = factory.create(adRequest)
@@ -67,8 +70,9 @@ class RequestActor(
     */
   def completeRequest(response: AdResponse) = {
     log.debug("completing request...")
+    val writer = writerFactory.getWriter(response.ct)
     val bytes = writer.write(response)
-    request.complete(bytes)
+    request.complete(bytes, response.ct)
   }
 
   /**

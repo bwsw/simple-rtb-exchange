@@ -2,6 +2,7 @@ package com.bitworks.rtb.service.parser
 
 import com.bitworks.rtb.model._
 import com.bitworks.rtb.model.ad.response.ErrorCode
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request._
 import com.bitworks.rtb.service.DataValidationException
 import org.scalatest.{FlatSpec, Matchers}
@@ -19,7 +20,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val incorrectJson = "incorrectJson".getBytes
     val parser = new AdRequestJsonParser
 
-    val thrown = the [DataValidationException] thrownBy parser.parse(incorrectJson)
+    val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
     thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
@@ -27,7 +28,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val incorrectJson = """{"imp": "wrong", "device":"wrong too"}""".getBytes
     val parser = new AdRequestJsonParser
 
-    val thrown = the [DataValidationException] thrownBy parser.parse(incorrectJson)
+    val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
     thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
@@ -35,7 +36,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val incorrectJson = """{"imp": []}""".getBytes
     val parser = new AdRequestJsonParser
 
-    val thrown = the [DataValidationException] thrownBy parser.parse(incorrectJson)
+    val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
     thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
@@ -43,7 +44,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val incorrectJson = """{"id": "id"}""".getBytes
     val parser = new AdRequestJsonParser
 
-    val thrown = the [DataValidationException] thrownBy parser.parse(incorrectJson)
+    val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
     thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
@@ -60,7 +61,8 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
       None,
       ad.request.builder.AdRequestBuilder.Test,
       None,
-      None)
+      None,
+      Json)
 
     val parsedModel = parser.parse(json)
 
@@ -237,7 +239,8 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
       Some(user),
       1,
       Some(2),
-      Some(regs))
+      Some(regs),
+      Json)
   }
 
 }

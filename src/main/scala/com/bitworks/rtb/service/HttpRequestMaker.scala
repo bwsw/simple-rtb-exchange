@@ -3,11 +3,12 @@ package com.bitworks.rtb.service
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
-import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.{HttpEntity, _}
 import akka.stream.Materializer
+import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.http._
+import com.bitworks.rtb.service.AkkaHttpRequestMaker._
 
-import scala.collection.immutable.Seq
 import scala.concurrent.Future
 
 /**
@@ -39,33 +40,40 @@ class AkkaHttpRequestMaker(
   import system.dispatcher
 
   /**
-    * Extracts body from response.
+    * Extracts data from response.
     *
     * @param response HttpResponse
-    * @return extracted body as byte array
+    * @return extracted body and content type
     */
-  private def extractBody(response: HttpResponse) = {
+  private def extractData(response: HttpResponse) = {
     response.entity.toStrict(configuration.toStrictTimeout) map { strict =>
-      strict.data.toArray
+      (strict.data.toArray, strict.contentType)
     }
   }
 
-  private def extractHeader(response: HttpResponse) = {
+  /**
+    * Extracts headers from response.
+    *
+    * @param response HttpResponse
+    * @return extracted header models
+    */
+  private def extractHeaders(response: HttpResponse) = {
     response.headers.map(x => HttpHeaderModel(x.name, x.value))
   }
 
   override def make(request: HttpRequestModel) = {
     val entity = request.body match {
-      case None => HttpEntity.Empty
-      case Some(bytes) => HttpEntity.apply(bytes)
+      case None => HttpEntity(request.contentType, Array.emptyByteArray)
+      case Some(bytes) => HttpEntity(request.contentType, bytes)
     }
 
-    val headers = request.headers.map { case HttpHeaderModel(key, value) =>
+    val headers = request.headers.map { case h@HttpHeaderModel(key, value) =>
       HttpHeader.parse(key, value) match {
         case Ok(header, _) => header
-        case _ => throw new RuntimeException
+        case _ => throw new DataValidationException(
+          Error(ErrorCode.MISSING_HEADER, s"cannot parse $h"))
       }
-    }
+    }.toList
 
     val akkaRequest = HttpRequest(
       method = request.method match {
@@ -74,14 +82,63 @@ class AkkaHttpRequestMaker(
       },
       uri = request.uri,
       entity = entity,
-      headers = headers.toList
+      headers = headers
     )
     val fResponse = Http().singleRequest(akkaRequest)
 
-    val result = for {
+    for {
       response <- fResponse
-      body <- extractBody(response)
-    } yield HttpResponseModel(body, response.status.intValue, extractHeader(response))
-    result
+      data <- extractData(response)
+    } yield HttpResponseModel(
+      data._1,
+      response.status.intValue,
+      data._2,
+      extractHeaders(response))
   }
 }
+
+/**
+  * Http request maker implementation using akka-http.
+  *
+  * @author Egor Ilchenko
+  */
+object AkkaHttpRequestMaker {
+  private val `avro/binary` = ContentType(
+    MediaType.customBinary("avro", "binary", MediaType.NotCompressible))
+
+  private val `application/x-protobuf` = ContentType(
+    MediaType.customBinary("application", "x-protobuf", MediaType.NotCompressible))
+
+  /**
+    * Converts [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]]
+    * to akka http content type.
+    *
+    * @param ct [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]]
+    * @return akka http content type
+    */
+  implicit def toAkka(ct: ContentTypeModel): ContentType = {
+    ct match {
+      case Json => ContentTypes.`application/json`
+      case Avro => `avro/binary`
+      case Protobuf => `application/x-protobuf`
+      case Unknown => ContentTypes.NoContentType
+    }
+  }
+
+  /**
+    * Converts akka http content type to
+    * [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]].
+    *
+    * @param ct akka http content type
+    * @return [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]]
+    */
+  implicit def fromAkka(ct: ContentType): ContentTypeModel = {
+    ct match {
+      case ContentTypes.`application/json` => Json
+      case AkkaHttpRequestMaker.`avro/binary` => Avro
+      case AkkaHttpRequestMaker.`application/x-protobuf` => Protobuf
+      case _ => Unknown
+    }
+  }
+}
+

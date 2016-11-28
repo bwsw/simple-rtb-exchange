@@ -8,6 +8,7 @@ import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error, ErrorCode}
 import com.bitworks.rtb.model.db.Bidder
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.message._
 import com.bitworks.rtb.model.request.builder.{BidRequestBuilder, ImpBuilder}
 import com.bitworks.rtb.model.response.builder._
@@ -37,7 +38,7 @@ class BidRequestActorTest
     with OneInstancePerTest {
 
   val adImp = ad.request.builder.ImpBuilder("1").build
-  val adRequest = AdRequestBuilder("12345", Seq(adImp)).build
+  val adRequest = AdRequestBuilder("12345", Seq(adImp), Json).build
 
   val imp = ImpBuilder(adImp.id).build
   val bidRequest = BidRequestBuilder(adRequest.id, Seq(imp)).build
@@ -67,12 +68,12 @@ class BidRequestActorTest
   val bidRequestResult3 = BidRequestSuccess(bidResponse3)
 
   val adResponseImp1 = ad.response.Imp(imp.id, bid1.adm.get, 1)
-  val adResponse1 = AdResponseBuilder(adRequest.id).withImp(Seq(adResponseImp1)).build
+  val adResponse1 = AdResponseBuilder(adRequest.id, Json).withImp(Seq(adResponseImp1)).build
 
   val adResponseImp3 = ad.response.Imp(imp.id, bid3.adm.get, 1)
-  val adResponse3 = AdResponseBuilder(adRequest.id).withImp(Seq(adResponseImp3)).build
+  val adResponse3 = AdResponseBuilder(adRequest.id, Json).withImp(Seq(adResponseImp3)).build
 
-  val errorResponse = AdResponseBuilder(adRequest.id)
+  val errorResponse = AdResponseBuilder(adRequest.id, Json)
     .withError(Error(ErrorCode.NO_AD_FOUND, "error"))
     .build
 
