@@ -68,19 +68,22 @@ class RequestActor(
           log.debug(s"content-type: ${entity.contentType}")
           val parser = parserFactory.getParser(entity.contentType)
           adRequest = Some(parser.parse(bytes))
-          bidRequest = Some(factory.create(adRequest.get))
+          bidRequest = factory.create(adRequest.get)
+          if (bidRequest.isDefined) {
+            bidders match {
+              case Seq() => onError("bidders not found")
+              case _: Seq[Bidder] =>
+                bidders.foreach { bidder =>
+                  bidRouter ! SendBidRequest(bidder, bidRequest.get)
+                }
 
-          bidders match {
-            case Seq() => onError("bidders not found")
-            case _: Seq[Bidder] =>
-              bidders.foreach { bidder =>
-                bidRouter ! SendBidRequest(bidder, bidRequest.get)
-              }
-
-              context.system.scheduler.scheduleOnce(
-                configuration.bidRequestTimeout,
-                self,
-                StartAuction)
+                context.system.scheduler.scheduleOnce(
+                  configuration.bidRequestTimeout,
+                  self,
+                  StartAuction)
+            }
+          } else {
+            onError("Bid request can not be constructed.")
           }
 
       } onFailure {

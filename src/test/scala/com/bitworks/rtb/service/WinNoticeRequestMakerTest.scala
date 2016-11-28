@@ -51,7 +51,6 @@ class WinNoticeRequestMakerTest extends FlatSpec with Matchers with EasyMockSuga
         str shouldBe new String(response.body)
       }
     }
-
   }
 
   it should "replace strings correctly" in {

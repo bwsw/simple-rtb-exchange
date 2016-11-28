@@ -1,6 +1,5 @@
 package com.bitworks.rtb.service
 
-import com.bitworks.rtb.model.response.builder.SeatBidBuilder
 import com.bitworks.rtb.model.response.{Bid, BidResponse, SeatBid}
 
 /**
@@ -40,7 +39,7 @@ class AuctionImpl extends Auction with Logging {
     *
     * @param groups all bid groups
     */
-  private def maxCombination(groups: List[BidsGroup]) = (1 to groups.length)
+  private def maxCombination(groups: List[BidGroup]) = (1 to groups.length)
     .view
     .map(combinations(_, groups))
     .takeWhile(_.nonEmpty)
@@ -56,7 +55,7 @@ class AuctionImpl extends Auction with Logging {
     * @param k      amount of groups in one combination
     * @param groups bid groups to make combinations with
     */
-  private def combinations(k: Int, groups: List[BidsGroup]): List[List[BidsGroup]] = groups match {
+  private def combinations(k: Int, groups: List[BidGroup]): List[List[BidGroup]] = groups match {
     case Nil => Nil
     case head :: tail =>
       if (k <= 0 || k > groups.length) {
@@ -82,7 +81,7 @@ class AuctionImpl extends Auction with Logging {
     * @param groups groups of bids
     * @return sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     */
-  def toBidResponses(groups: Seq[BidsGroup]): Seq[BidResponse] = groups
+  def toBidResponses(groups: Seq[BidGroup]): Seq[BidResponse] = groups
     .groupBy(_.bidResponse)
     .map { case (response, byResponse) =>
       val seatBids = byResponse
@@ -95,19 +94,19 @@ class AuctionImpl extends Auction with Logging {
 
   /**
     * Maps bid responses to groups of bids.
-    * If bids from seatBid can won individually, group is split to smallest groups,
-    * each containing one bid.
+    * If bids from seatBid can won individually the group is split to smallest groups each
+    * containing one bid.
     *
     * @param responses sequence of [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     * @return list of groups of bids
     */
-  def toBidGroups(responses: Seq[BidResponse]): List[BidsGroup] = responses
+  def toBidGroups(responses: Seq[BidResponse]): List[BidGroup] = responses
     .flatMap { response =>
       response.seatBid
         .flatMap { seatBid =>
           if (seatBid.isGrouped) {
             Seq(
-              BidsGroup(
+              BidGroup(
                 response,
                 seatBid,
                 seatBid.bid,
@@ -115,7 +114,7 @@ class AuctionImpl extends Auction with Logging {
                 seatBid.bid.map(_.price).sum))
           } else {
             seatBid.bid.map { bid =>
-              BidsGroup(
+              BidGroup(
                 response,
                 seatBid,
                 Seq(bid),
@@ -128,7 +127,7 @@ class AuctionImpl extends Auction with Logging {
 }
 
 /**
-  * Group of bids, which should win or loose only as a group.
+  * A group of bids which should win or loose only as a group.
   *
   * @param bidResponse associated [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
   * @param seatBid     associated [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
@@ -137,7 +136,7 @@ class AuctionImpl extends Auction with Logging {
   * @param price       total group price
   * @author Egor Ilchenko
   */
-case class BidsGroup(
+case class BidGroup(
     bidResponse: BidResponse,
     seatBid: SeatBid,
     bids: Seq[Bid],
