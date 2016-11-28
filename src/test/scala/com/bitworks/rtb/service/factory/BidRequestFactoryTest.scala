@@ -1,11 +1,13 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.ad.{request => ad}
 import com.bitworks.rtb.model.db
 import com.bitworks.rtb.model.db.IABCategory
 import com.bitworks.rtb.model.request._
 import com.bitworks.rtb.model.request.builder._
+import com.bitworks.rtb.service.DataValidationException
 import com.bitworks.rtb.service.dao._
 import org.easymock.EasyMock._
 import org.easymock.IAnswer
@@ -366,10 +368,10 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+    factory.create(adRequest) shouldBe expectedBidRequest
   }
 
-  it should "not create bid request for ad request with inactive site" in {
+  it should "throw DataValidationException for ad request with inactive site" in {
     val adImp = ad.builder.ImpBuilder("1")
       .withBanner(correctBanner)
       .withNative(correctNative)
@@ -392,7 +394,35 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    factory.create(adRequest) shouldBe None
+    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_INACTIVE
+  }
+
+  it should "throw DataValidationException for ad request with site which not in db" in {
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adSite = ad.builder.SiteBuilder(100)
+      .withSectionCat(getCategoriesId(Seq(1, 2)))
+      .withPageCat(getCategoriesId(Seq(1)))
+      .withPage("page123")
+      .withRef("from.com")
+      .withSearch("search")
+      .withMobile(0)
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      .withSite(adSite)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
   }
 
   it should "create bid request for correct ad request with app" in {
@@ -435,10 +465,10 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+    factory.create(adRequest) shouldBe expectedBidRequest
   }
 
-  it should "not create bid request for ad request with inactive app" in {
+  it should "throw DataValidationException for ad request with inactive app" in {
     val adImp = ad.builder.ImpBuilder("1")
       .withBanner(correctBanner)
       .withNative(correctNative)
@@ -457,10 +487,34 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    factory.create(adRequest) shouldBe None
+    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_INACTIVE
   }
 
-  it should "not create bid request for ad request with site and app" in {
+  it should "throw DataValidationException for ad request with app which not in db" in {
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adApp = ad.builder.AppBuilder(100)
+      .withSectionCat(getCategoriesId(Seq(5, 6)))
+      .withPageCat(getCategoriesId(Seq(5)))
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      .withApp(adApp)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
+  }
+
+  it should "throw DataValidationException for ad request with site and app" in {
     val adImp = ad.builder.ImpBuilder("1")
       .withBanner(correctBanner)
       .withNative(correctNative)
@@ -489,7 +543,8 @@ class BidRequestFactoryTest
       .withTmax(500)
       .build
 
-    factory.create(adRequest) shouldBe None
+    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   val correctSizes = Table(
@@ -523,7 +578,7 @@ class BidRequestFactoryTest
         .withBadv(dbPublisher1.blockedDomains)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
@@ -546,7 +601,7 @@ class BidRequestFactoryTest
         .withBadv(dbPublisher1.blockedDomains)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
@@ -569,7 +624,7 @@ class BidRequestFactoryTest
     (None, Some(-10), None),
     (Some(-10), None, None))
 
-  it should "not create bid request for ad request with incorrect banner height" in {
+  it should "throw DataValidationException for ad request with incorrect banner height" in {
     forAll(incorrectSizes) { (min: Option[Int], exp: Option[Int], max: Option[Int]) =>
       val bannerBuilder = BannerBuilder()
       min.foreach(bannerBuilder.withHmin)
@@ -580,11 +635,12 @@ class BidRequestFactoryTest
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
       val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
-  it should "not create bid request for ad request with incorrect banner width" in {
+  it should "throw DataValidationException for ad request with incorrect banner width" in {
     forAll(incorrectSizes) { (min: Option[Int], exp: Option[Int], max: Option[Int]) =>
       val bannerBuilder = BannerBuilder()
       min.foreach(bannerBuilder.withWmin)
@@ -595,7 +651,8 @@ class BidRequestFactoryTest
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
       val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -884,11 +941,11 @@ class BidRequestFactoryTest
         .withBadv(dbPublisher1.blockedDomains)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
-  it should "not create bid request for ad request with incorrect banner" in {
+  it should "throw DataValidationException for ad request with incorrect banner" in {
     val incorrectBanners = Table(
       ("w",
         "h",
@@ -1333,7 +1390,8 @@ class BidRequestFactoryTest
       val adSite = adSiteBuilder.build
       val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -1814,11 +1872,11 @@ class BidRequestFactoryTest
         .withBadv(dbPublisher1.blockedDomains)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
-  it should "not create bid request for ad request with incorrect video" in {
+  it should "throw DataValidationException for ad request with incorrect video" in {
     val incorrectBanner = BannerBuilder().withH(-1).build
     val incorrectVideos = Table(
       ("mimes",
@@ -2712,7 +2770,8 @@ class BidRequestFactoryTest
       val adSite = adSiteBuilder.build
       val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -2743,11 +2802,11 @@ class BidRequestFactoryTest
         .withBadv(dbPublisher1.blockedDomains)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
-  it should "not create bid request for ad request with incorrect native" in {
+  it should "throw DataValidationException for ad request with incorrect native" in {
     val correctNatives = Table(
       ("request", "ver", "api", "battr"),
       ("", None, None, None),
@@ -2770,16 +2829,18 @@ class BidRequestFactoryTest
       val adSite = adSiteBuilder.build
       val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
-  it should "not create bid request for ad request without banner, video and native" in {
+  it should "throw DataValidationException for ad request without banner, video and native" in {
     val adImp = ad.builder.ImpBuilder("1").build
     val adSite = adSiteBuilder.build
     val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
 
-    factory.create(adRequest) shouldBe None
+    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "create bid request for ad request with correct user" in {
@@ -2820,11 +2881,11 @@ class BidRequestFactoryTest
         .withUser(user)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
-  it should "not create bid request for ad request with incorrect user" in {
+  it should "throw DataValidationException for ad request with incorrect user" in {
     val incorrectGeo = GeoBuilder().withLat(1000).build
     val incorrectUsers = Table(
       ("id", "yob", "gender", "keywords", "geo"),
@@ -2854,7 +2915,8 @@ class BidRequestFactoryTest
         .withUser(adUser)
         .build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -3779,11 +3841,11 @@ class BidRequestFactoryTest
         .withDevice(device)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
-  it should "not create bid request for ad request with incorrect device" in {
+  it should "throw DataValidationException for ad request with incorrect device" in {
     val incorrectGeo = GeoBuilder().withLat(1000).build
     val incorrectDevices = Table[Device](
       "device",
@@ -5476,7 +5538,8 @@ class BidRequestFactoryTest
         .withDevice(device)
         .build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -5655,11 +5718,11 @@ class BidRequestFactoryTest
         .withUser(user)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
-  it should "not create bid request for ad request with incorrect geo" in {
+  it should "throw DataValidationException for ad request with incorrect geo" in {
     val incorrectGeos = Table(
       ("lat",
         "lon",
@@ -5904,7 +5967,8 @@ class BidRequestFactoryTest
         .withUser(adUser)
         .build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -6388,11 +6452,11 @@ class BidRequestFactoryTest
         .withBadv(dbPublisher1.blockedDomains)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
-  it should "not create bid request for ad request with incorrect content" in {
+  it should "throw DataValidationException for ad request with incorrect content" in {
     val incorrectProducer = ProducerBuilder().withName("").build
     val incorrectContents = Table(
       ("id",
@@ -6535,7 +6599,7 @@ class BidRequestFactoryTest
         None,
         None,
         None,
-        Some(Seq("notiab")),
+        Some(Seq()),
         None,
         None,
         None,
@@ -6877,7 +6941,7 @@ class BidRequestFactoryTest
         Some("s3"),
         Some(correctProducer),
         Some("content.com"),
-        Some(Seq("notiab")),
+        Some(Seq()),
         Some(2),
         Some(1),
         Some("MPAA"),
@@ -7147,8 +7211,21 @@ class BidRequestFactoryTest
         .withSite(adSite)
         .build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
+  }
+
+  it should "throw DataValidationException for ad request with incorrect iab category in content" in {
+    val content = ContentBuilder().withCat(Seq("notiab")).build
+    val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.withContent(content).build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      .withSite(adSite)
+      .build
+
+    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError.code shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
   }
 
   it should "create bid request for ad request with correct producer" in {
@@ -7187,16 +7264,16 @@ class BidRequestFactoryTest
         .withBadv(dbPublisher1.blockedDomains)
         .build
 
-      factory.create(adRequest) shouldBe Some(expectedBidRequest)
+      factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
 
-  it should "not create bid request for ad request with incorrect producer" in {
+  it should "throw DataValidationException for ad request with incorrect producer" in {
     val incorrectProducers = Table(
       ("id", "name", "cat", "domain"),
       (Some(""), Some("prod"), Some(correctIabsExample), Some("prod.com")),
       (Some("123"), Some(""), Some(correctIabsExample), Some("prod.com")),
-      (Some("123"), Some("prod"), Some(Seq("notiab")), Some("prod.com")),
+      (Some("123"), Some("prod"), Some(Seq()), Some("prod.com")),
       (Some("123"), Some("prod"), Some(correctIabsExample), Some("")),
       (Some(""), None, None, None),
       (None, Some(""), None, None),
@@ -7218,8 +7295,22 @@ class BidRequestFactoryTest
         .withSite(adSite)
         .build
 
-      factory.create(adRequest) shouldBe None
+      val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
     }
+  }
+
+  it should "throw DataValidationException for ad request with incorrect iab category in producer" in {
+    val producer = ProducerBuilder().withCat(Seq("notiab")).build
+    val content = ContentBuilder().withProducer(producer).build
+    val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
+    val adSite = adSiteBuilder.withContent(content).build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      .withSite(adSite)
+      .build
+
+    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError.code shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
   }
 
   it should "create bid request for ad request with correct regs" in {
@@ -7240,10 +7331,10 @@ class BidRequestFactoryTest
       .withRegs(regs)
       .build
 
-    factory.create(adRequest) shouldBe Some(expectedBidRequest)
+    factory.create(adRequest) shouldBe expectedBidRequest
   }
 
-  it should "not create bid request for ad request with incorrect regs" in {
+  it should "throw DataValidationException for ad request with incorrect regs" in {
     val regs = RegsBuilder().withCoppa(2).build
     val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
     val adSite = adSiteBuilder.build
@@ -7252,6 +7343,7 @@ class BidRequestFactoryTest
       .withRegs(regs)
       .build
 
-    factory.create(adRequest) shouldBe None
+    val thrown = the [DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
   }
 }

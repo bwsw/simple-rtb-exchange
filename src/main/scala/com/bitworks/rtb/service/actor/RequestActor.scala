@@ -65,7 +65,7 @@ class RequestActor(
         entity =>
           val bytes = entity.data.toArray
           adRequest = Some(parser.parse(bytes))
-          bidRequest = factory.create(adRequest.get)
+          bidRequest = Some(factory.create(adRequest.get))
           if (bidRequest.isDefined) {
             bidders match {
               case Seq() => onError("bidders not found")

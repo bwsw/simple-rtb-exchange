@@ -12,7 +12,9 @@ class DataValidationException(
     cause: Throwable = null)
   extends Exception(
     DataValidationException.defaultMessage(error),
-    cause)
+    cause) {
+  def getError = error
+}
 
 object DataValidationException {
   def defaultMessage(error: Error): String = error.toString
