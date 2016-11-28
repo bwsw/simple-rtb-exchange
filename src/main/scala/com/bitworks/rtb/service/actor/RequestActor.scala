@@ -18,7 +18,6 @@ import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
 
 import scala.collection.mutable.ListBuffer
-import com.bitworks.rtb.service.AkkaHttpRequestMaker._
 
 /**
   * Main actor to process ad requests.
