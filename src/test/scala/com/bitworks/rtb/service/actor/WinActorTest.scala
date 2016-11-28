@@ -72,7 +72,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
   }
 
-  it should "get ad markup fir bids without admarkup" in {
+  it should "get ad markup for bids without admarkup" in {
     val bidRequest = BidRequestBuilder("reqid", Seq.empty).build
     val bid = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("one").build
     val bid1 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("three").withAdm("someAdm")

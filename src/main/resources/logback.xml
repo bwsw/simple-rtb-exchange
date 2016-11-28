@@ -19,4 +19,6 @@
     <root level="info">
         <appender-ref ref="FILE" />
     </root>
+    <logger name="io.getquill" level="WARN" />
+    <logger name="com.zaxxer.hikari" level="WARN" />
 </configuration>

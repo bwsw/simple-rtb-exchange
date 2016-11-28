@@ -13,7 +13,7 @@ package com.bitworks.rtb.model.response
   */
 case class SeatBid(bid: Seq[Bid], seat: Option[String], group: Int, ext: Option[Any]){
 
-  /** Is impressions must be won or lost as a group. */
+  /** Checks whether impressions must be won or lost as a group. */
   def isGrouped = group == 1
 }
 
