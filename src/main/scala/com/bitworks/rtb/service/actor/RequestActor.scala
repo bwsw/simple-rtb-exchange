@@ -1,7 +1,6 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
-import akka.http.scaladsl.model.MediaType
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
@@ -17,9 +16,9 @@ import com.bitworks.rtb.service.writer.AdResponseWriterFactory
 import com.bitworks.rtb.service.{Auction, Configuration}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
-import com.bitworks.rtb.service.ContentTypeConversions._
 
 import scala.collection.mutable.ListBuffer
+import com.bitworks.rtb.service.AkkaHttpRequestMaker._
 
 /**
   * Main actor to process ad requests.

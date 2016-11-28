@@ -162,4 +162,55 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
     }
   }
 
+  it should "make POST requests with avro content type correctly" in {
+    val path = "/post"
+    val avroContentType = "avro/binary"
+    stubFor(
+      post(urlEqualTo(path)).willReturn(
+        aResponse()
+          .withHeader("Content-Type", avroContentType)))
+
+    val uri = s"http://localhost:$port$path"
+    val request = HttpRequestModel(
+      uri,
+      POST,
+      None,
+      Avro)
+
+    val fResponse = maker.make(request)
+    whenReady(fResponse, timeout(Span(5, Seconds))) { response =>
+      verify(
+        postRequestedFor(urlEqualTo(path))
+          .withHeader("Content-Type", equalTo(avroContentType))
+      )
+
+      response.contentType shouldBe Avro
+    }
+  }
+
+  it should "make POST requests with protobuf content type correctly" in {
+    val path = "/post"
+    val protobufContentType = "application/x-protobuf"
+    stubFor(
+      post(urlEqualTo(path)).willReturn(
+        aResponse()
+          .withHeader(contentTypeHeader, protobufContentType)))
+
+    val uri = s"http://localhost:$port$path"
+    val request = HttpRequestModel(
+      uri,
+      POST,
+      None,
+      Protobuf)
+
+    val fResponse = maker.make(request)
+    whenReady(fResponse, timeout(Span(5, Seconds))) { response =>
+      verify(
+        postRequestedFor(urlEqualTo(path))
+          .withHeader(contentTypeHeader, equalTo(protobufContentType))
+      )
+
+      response.contentType shouldBe Protobuf
+    }
+  }
 }
