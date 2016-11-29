@@ -2,6 +2,7 @@ package com.bitworks.rtb.application
 
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import com.bitworks.rtb.model.http.ContentTypeModel
+import com.bitworks.rtb.service.ContentTypeConversions._
 
 import scala.concurrent.Promise
 

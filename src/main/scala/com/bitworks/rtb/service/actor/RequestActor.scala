@@ -16,6 +16,7 @@ import com.bitworks.rtb.service.writer.AdResponseWriterFactory
 import com.bitworks.rtb.service.{Auction, Configuration}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
+import com.bitworks.rtb.service.ContentTypeConversions._
 
 import scala.collection.mutable.ListBuffer
 

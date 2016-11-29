@@ -6,6 +6,7 @@ import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import akka.http.scaladsl.model.{HttpEntity, _}
 import akka.stream.Materializer
 import com.bitworks.rtb.model.http._
+import com.bitworks.rtb.service.ContentTypeConversions._
 
 import scala.concurrent.Future
 
