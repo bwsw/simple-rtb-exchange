@@ -2,7 +2,7 @@ package com.bitworks.rtb.service.actor
 
 import akka.actor.{ActorSystem, Props}
 import akka.stream.ActorMaterializer
-import akka.testkit.{ImplicitSender, TestKit, TestKitBase}
+import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.bitworks.rtb.model.ad
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
@@ -103,6 +103,19 @@ class BidRequestActorTest
     def props(implicit inj: Injector) = Props(new BidActorMock)
   }
 
+  val testProbe = TestProbe()
+
+  class BidActorMockForwarder(implicit inj: Injector) extends BidActor {
+    override def receive: Receive = {
+      case msg: Any => testProbe.ref ! msg
+    }
+  }
+
+  object BidActorMockForwarder {
+    def props(implicit inj: Injector) = Props(new BidActorMockForwarder)
+  }
+
+
   class WinActorMock(implicit inj: Injector) extends WinActor {
     override def receive: Receive = {
       case SendWinNotice(`bidRequest`, Seq(`bidResponse1`)) =>
@@ -114,6 +127,16 @@ class BidRequestActorTest
 
   object WinActorMock {
     def props(implicit inj: Injector) = Props(new WinActorMock)
+  }
+
+  class WinActorMockForwarder(implicit inj: Injector) extends WinActor {
+    override def receive: Receive = {
+      case msg: Any => testProbe.ref ! msg
+    }
+  }
+
+  object WinActorMockForwarder {
+    def props(implicit inj: Injector) = Props(new WinActorMockForwarder)
   }
 
   implicit val materializer = ActorMaterializer()
@@ -144,19 +167,81 @@ class BidRequestActorTest
     bind[WinNoticeRequestMaker] toNonLazy niceMock[WinNoticeRequestMaker]
   }
 
-  val responsesForBidders = Table(
-    ("bidders", "adResponse"),
-    (Seq(), errorResponse),
-    (Seq(bidder1), adResponse1),
-    (Seq(bidder2), errorResponse),
-    (Seq(bidder1, bidder2), adResponse1),
-    (Seq(bidder3), adResponse3),
-    (Seq(bidder1, bidder3), adResponse3),
-    (Seq(bidder2, bidder3), adResponse3),
-    (Seq(bidder1, bidder2, bidder3), adResponse3)
-  )
+  "BidRequestActor" should "send ad request to bid actors" in {
 
-  "BidRequestActor" should "send error when bid responses not received from bidders" in {
+    val configuration = niceMock[Configuration]
+    expecting {
+      configuration.bidRequestTimeout.andStubReturn(bigAuctionTimeout)
+      EasyMock.replay(configuration)
+    }
+
+    val bidderDao = mock[BidderDao]
+    expecting {
+      bidderDao.getAll.andStubReturn(Seq(bidder1, bidder2, bidder3))
+      EasyMock.replay(bidderDao)
+    }
+
+    implicit val injector = new Module {
+      bind[BidderDao] toNonLazy bidderDao
+      bind[Configuration] toNonLazy configuration
+      bind[BidActor] toProvider new BidActorMockForwarder
+      bind[WinActor] toProvider new WinActorMock
+    } :: predefinedInjector
+
+    childActorOf(
+      BidRequestActor.props(adRequest, bidRequest),
+      "bidRequestActor") ! HandleRequest
+
+    testProbe.expectMsgAllOf(
+      SendBidRequest(bidder1, bidRequest),
+      SendBidRequest(bidder2, bidRequest),
+      SendBidRequest(bidder3, bidRequest))
+  }
+
+  it should "send correct bid response to win bidder after auction" in {
+    val bidderDao = mock[BidderDao]
+    expecting {
+      bidderDao.getAll.andStubReturn(Seq(bidder1, bidder2, bidder3))
+      EasyMock.replay(bidderDao)
+    }
+
+    implicit val injector = new Module {
+      bind[BidderDao] toNonLazy bidderDao
+      bind[Configuration] toNonLazy niceMock[Configuration]
+      bind[BidActor] toProvider new BidActorMock
+      bind[WinActor] toProvider new WinActorMockForwarder
+    } :: predefinedInjector
+
+    val bidRequestActor = childActorOf(
+      BidRequestActor.props(adRequest, bidRequest),
+      "bidRequestActor")
+    bidRequestActor ! bidRequestResult1
+    bidRequestActor ! bidRequestResult2
+    bidRequestActor ! bidRequestResult3
+    testProbe.expectMsg(SendWinNotice(bidRequest, Seq(bidResponse3)))
+  }
+
+  it should "send correct ad response when got winner's bid response" in {
+    val bidderDao = mock[BidderDao]
+    expecting {
+      bidderDao.getAll.andStubReturn(Seq(bidder1, bidder2, bidder3))
+      EasyMock.replay(bidderDao)
+    }
+
+    implicit val injector = new Module {
+      bind[BidderDao] toNonLazy bidderDao
+      bind[Configuration] toNonLazy niceMock[Configuration]
+      bind[BidActor] toProvider new BidActorMock
+      bind[WinActor] toProvider new WinActorMock
+    } :: predefinedInjector
+
+    childActorOf(
+      BidRequestActor.props(adRequest, bidRequest),
+      "bidRequestActor") ! CreateAdResponse(Seq(bidResponse1))
+    expectMsg(adResponse1)
+  }
+
+  it should "send error when bid responses not received from bidders" in {
     val configuration = niceMock[Configuration]
     expecting {
       configuration.bidRequestTimeout.andStubReturn(smallAuctionTimeout)
@@ -169,7 +254,7 @@ class BidRequestActorTest
       EasyMock.replay(bidderDao)
     }
 
-    val injector = new Module {
+    implicit val injector = new Module {
       bind[BidderDao] toNonLazy bidderDao
       bind[Configuration] toNonLazy configuration
       bind[BidActor] toProvider new BidActorMock
@@ -177,10 +262,22 @@ class BidRequestActorTest
     } :: predefinedInjector
 
     childActorOf(
-      BidRequestActor.props(adRequest, bidRequest)(injector),
+      BidRequestActor.props(adRequest, bidRequest),
       "bidRequestActor") ! HandleRequest
     expectMsg(errorResponse)
   }
+
+  val responsesForBidders = Table(
+    ("bidders", "adResponse"),
+    (Seq(), errorResponse),
+    (Seq(bidder1), adResponse1),
+    (Seq(bidder2), errorResponse),
+    (Seq(bidder1, bidder2), adResponse1),
+    (Seq(bidder3), adResponse3),
+    (Seq(bidder1, bidder3), adResponse3),
+    (Seq(bidder2, bidder3), adResponse3),
+    (Seq(bidder1, bidder2, bidder3), adResponse3)
+  )
 
   forAll(responsesForBidders) { (bidders: Seq[Bidder], adResponse: AdResponse) =>
     it should s"send ad response for $bidders correctly" in {
