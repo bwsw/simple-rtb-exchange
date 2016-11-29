@@ -81,8 +81,8 @@ class BidRequestActorTest
     .withError(Error(123, "error"))
     .build
 
-  val smallAuctionTimeout = 1 nanos
-  val bigAuctionTimeout = 10 seconds
+  val smallAuctionTimeout = 1.nanos
+  val bigAuctionTimeout = 10.seconds
 
   class BidActorMock(implicit inj: Injector) extends BidActor {
 
