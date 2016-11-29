@@ -9,6 +9,7 @@ scalaVersion := "2.11.8"
 scalacOptions in(Compile, doc) ++= Seq("-doc-title", "Bitworks RTB Exchange")
 scalacOptions in(Compile, doc) ++= Seq("-doc-version", version.value)
 scalacOptions in(Compile, doc) ++= Seq("-doc-root-content", "rootdoc.txt")
+scalacOptions in(Compile, doc) ++= Seq("-skip-packages", "akka")
 
 libraryDependencies ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.4",
