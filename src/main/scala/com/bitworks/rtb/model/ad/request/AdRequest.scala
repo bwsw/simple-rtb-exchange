@@ -1,5 +1,6 @@
 package com.bitworks.rtb.model.ad.request
 
+import com.bitworks.rtb.model.http.ContentTypeModel
 import com.bitworks.rtb.model.request.{Device, Regs}
 
 /**
@@ -16,6 +17,7 @@ import com.bitworks.rtb.model.request.{Device, Regs}
   * @param tmax   maximum time in milliseconds to submit a bid to avoid timeout
   * @param regs   a [[com.bitworks.rtb.model.request.Regs Regs]] object that specifies any
   *               industry, legal or governmental regulations in force for this request
+  * @param ct     request content type
   * @author Egor Ilchenko
   */
 case class AdRequest(
@@ -27,4 +29,5 @@ case class AdRequest(
     user: Option[User],
     test: Int,
     tmax: Option[Int],
-    regs: Option[Regs])
+    regs: Option[Regs],
+    ct: ContentTypeModel)

@@ -17,7 +17,7 @@ import scaldi.akka.AkkaInjectable._
 import scala.collection.mutable.ListBuffer
 
 /**
-  * Main actor to process bid requests.
+  * The main actor to process bid requests.
   *
   * @param adRequest  [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]] object
   * @param bidRequest [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object created
@@ -26,10 +26,8 @@ import scala.collection.mutable.ListBuffer
   */
 class BidRequestActor(
     adRequest: AdRequest,
-    bidRequest: BidRequest)(
-    implicit inj: Injector)
-  extends Actor
-    with ActorLogging {
+    bidRequest: BidRequest)
+  (implicit inj: Injector) extends Actor with ActorLogging {
 
   import context.dispatcher
 
