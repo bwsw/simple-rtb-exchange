@@ -48,24 +48,23 @@ class BidRequestActor(
 
   var auctionStarted = false
 
-  override def preStart(): Unit = {
-    log.debug("started bid request handling")
-
-    bidders match {
-      case Seq() => onError("bidders not found")
-      case _: Seq[Bidder] =>
-        bidders.foreach { bidder =>
-          bidRouter ! SendBidRequest(bidder, bidRequest)
-        }
-    }
-
-    context.system.scheduler.scheduleOnce(
-      configuration.bidRequestTimeout,
-      self,
-      StartAuction)
-  }
-
   override def receive: Receive = {
+    case HandleRequest =>
+      log.debug("started bid request handling")
+
+      bidders match {
+        case Seq() => onError("bidders not found")
+        case _: Seq[Bidder] =>
+          bidders.foreach { bidder =>
+            bidRouter ! SendBidRequest(bidder, bidRequest)
+          }
+      }
+
+      context.system.scheduler.scheduleOnce(
+        configuration.bidRequestTimeout,
+        self,
+        StartAuction)
+
     case bidRequestResult: BidRequestResult =>
       log.debug(s"bid response received: $bidRequestResult")
       receivedBidResponses.append(bidRequestResult)

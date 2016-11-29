@@ -2,7 +2,7 @@ package com.bitworks.rtb.service.actor
 
 import akka.actor.{ActorSystem, Props}
 import akka.stream.ActorMaterializer
-import akka.testkit.{ImplicitSender, TestKit}
+import akka.testkit.{ImplicitSender, TestKit, TestKitBase}
 import com.bitworks.rtb.model.ad
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
@@ -172,7 +172,9 @@ class BidRequestActorTest
       bind[WinActor] toProvider new WinActorMock
     } :: predefinedInjector
 
-    childActorOf(BidRequestActor.props(adRequest, bidRequest)(injector), "bidRequestActor")
+    childActorOf(
+      BidRequestActor.props(adRequest, bidRequest)(injector),
+      "bidRequestActor") ! HandleRequest
     expectMsg(errorResponse)
   }
 
@@ -197,7 +199,9 @@ class BidRequestActorTest
         bind[WinActor] toProvider new WinActorMock
       } :: predefinedInjector
 
-      childActorOf(BidRequestActor.props(adRequest, bidRequest), "bidRequestActor")
+      childActorOf(
+        BidRequestActor.props(adRequest, bidRequest)(injector),
+        "bidRequestActor") ! HandleRequest
       expectMsg(adResponse)
     }
   }

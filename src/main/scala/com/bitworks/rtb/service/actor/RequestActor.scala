@@ -41,7 +41,7 @@ class RequestActor(request: HttpRequestWrapper)
           factory.create(adRequest) match {
             case Some(bidRequest) =>
               val props = BidRequestActor.props(adRequest, bidRequest)
-              context.actorOf(props)
+              context.actorOf(props) ! HandleRequest
             case None =>
               val msg = "bid request not created"
               log.debug(msg)
