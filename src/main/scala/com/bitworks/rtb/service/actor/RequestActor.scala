@@ -9,11 +9,9 @@ import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
 import com.bitworks.rtb.model.request.BidRequest
-import com.bitworks.rtb.model.response.BidResponse
+import com.bitworks.rtb.service.ContentTypeConversions._
 import com.bitworks.rtb.service.dao.BidderDao
-import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
-import com.bitworks.rtb.service.parser.AdRequestParser
-import com.bitworks.rtb.service.writer.AdResponseWriter
+import com.bitworks.rtb.service.factory.{AdModelConverter, AdResponseFactory, BidRequestFactory}
 import com.bitworks.rtb.service.{Auction, Configuration}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
@@ -33,8 +31,7 @@ class RequestActor(
 
   implicit val materializer = ActorMaterializer()
   val configuration = inject[Configuration]
-  val writer = inject[AdResponseWriter]
-  val parser = inject[AdRequestParser]
+  val adConverter = inject[AdModelConverter]
   val factory = inject[BidRequestFactory]
   val auction = inject[Auction]
   val bidderDao = inject[BidderDao]
@@ -64,7 +61,8 @@ class RequestActor(
       request.inner.entity.toStrict(configuration.toStrictTimeout) map {
         entity =>
           val bytes = entity.data.toArray
-          adRequest = Some(parser.parse(bytes))
+          log.debug(s"content-type: ${entity.contentType}")
+          adRequest = Some(adConverter.parse(bytes, entity.contentType))
           bidRequest = factory.create(adRequest.get)
           if (bidRequest.isDefined) {
             bidders match {
@@ -134,8 +132,8 @@ class RequestActor(
     */
   def completeRequest(response: AdResponse) = {
     log.debug("completing request...")
-    val bytes = writer.write(response)
-    request.complete(bytes)
+    val bytes = adConverter.write(response)
+    request.complete(bytes, response.ct)
   }
 
   /**

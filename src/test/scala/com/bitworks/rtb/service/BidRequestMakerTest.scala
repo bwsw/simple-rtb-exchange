@@ -2,14 +2,14 @@ package com.bitworks.rtb.service
 
 import akka.actor.ActorSystem
 import com.bitworks.rtb.model.db.Bidder
-import com.bitworks.rtb.model.http.{HttpRequestModel, HttpResponseModel, POST}
+import com.bitworks.rtb.model.http._
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
-import com.bitworks.rtb.service.parser.BidResponseParser
-import com.bitworks.rtb.service.writer.BidRequestWriter
-import org.scalamock.scalatest.MockFactory
+import com.bitworks.rtb.service.factory.BidModelConverter
+import org.easymock.EasyMock._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
+import org.scalatest.easymock.EasyMockSugar
+import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers, OneInstancePerTest}
 import scaldi.Injectable._
 import scaldi.Module
 
@@ -21,75 +21,116 @@ import scala.concurrent.{Await, Future}
   *
   * @author Egor Ilchenko
   */
-class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
-  with MockFactory with ScalaFutures with Matchers {
+class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
+  with EasyMockSugar with ScalaFutures with Matchers with OneInstancePerTest {
 
-  // stubs configuration
   val bidRequest = BidRequestBuilder("someId", Seq.empty).build
   val bidResponse = BidResponseBuilder("123", Seq.empty).build
   val bidder = Bidder(123, "name", "endpoint")
+  val ct = Json
 
-  val writerStub = stub[BidRequestWriter]
-  (writerStub.write _).when(*).returns(new Array[Byte](0))
+  val bidConverter = mock[BidModelConverter]
+  bidConverter.write(anyObject(), same(ct)).andStubReturn(new Array[Byte](0))
+  bidConverter.parse(anyObject(), same(ct)).andStubReturn(bidResponse)
 
-  val parserStub = stub[BidResponseParser]
-  (parserStub.parse _).when(*).returns(bidResponse)
+  val requestMakerMock = mock[HttpRequestMaker]
+  requestMakerMock.make(anyObject()).andStubReturn(
+    Future.successful(HttpResponseModel(new Array[Byte](0), 200, ct, Seq.empty)))
 
-  val requestMakerStub = stub[HttpRequestMaker]
-  (requestMakerStub.make _)
-    .when(*)
-    .returns(
-      Future.successful(
-        HttpResponseModel(new Array[Byte](0), 200, Seq.empty)))
+  val configurationMock = mock[Configuration]
+  configurationMock.bidRequestContentType.andStubReturn(ct)
 
   implicit val predefined = new Module {
-    bind[BidRequestWriter] toNonLazy writerStub
-    bind[BidResponseParser] toNonLazy parserStub
-    bind[HttpRequestMaker] toNonLazy requestMakerStub
-    bind[ActorSystem] toNonLazy ActorSystem()
-    bind[BidRequestMaker] toNonLazy injected[BidRequestMakerImpl]
+    bind[BidModelConverter] to bidConverter
+    bind[HttpRequestMaker] to requestMakerMock
+    bind[Configuration] to configurationMock
+    bind[ActorSystem] to ActorSystem()
+    bind[BidRequestMaker] to injected[BidRequestMakerImpl]
   }
 
+  override def beforeEach = {
+    try {
+      replay(
+        bidConverter,
+        requestMakerMock,
+        configurationMock)
+    } catch {
+      case e: Throwable =>
+    }
+  }
+
+  override def afterEach = {
+    verify(
+      bidConverter,
+      requestMakerMock,
+      configurationMock)
+  }
 
   "BidRequestMaker" should "write request before sending" in {
-    val bidRequestMaker = inject[BidRequestMaker]
-    bidRequestMaker.send(bidder, bidRequest)
+    val converterMock = mock[BidModelConverter]
+    expecting {
+      converterMock.write(bidRequest, ct).andReturn(new Array[Byte](0)).times(1)
+    }
 
-    (writerStub.write _).verify(bidRequest).once
+    val module = new Module {
+      bind[BidModelConverter] toNonLazy converterMock
+    } :: predefined
+
+    whenExecuting(converterMock) {
+      val bidRequestMaker = inject[BidRequestMaker]
+      bidRequestMaker.send(bidder, bidRequest)
+    }
   }
 
   it should "POST writed request correctly" in {
     val array = new Array[Byte](24)
 
-    val writerStub = stub[BidRequestWriter]
-    (writerStub.write _).when(*).returns(array)
+    val converterMock = mock[BidModelConverter]
+    val requestMakerMock = mock[HttpRequestMaker]
+    expecting {
+      converterMock.write(bidRequest, ct).andReturn(array).times(1)
+      requestMakerMock
+        .make(HttpRequestModel(bidder.endpoint, POST, Some(array)))
+        .andReturn(Future.failed(new RuntimeException))
+        .times(1)
+    }
 
     val module = new Module {
-      bind[BidRequestWriter] to writerStub
+      bind[BidModelConverter] to converterMock
+      bind[HttpRequestMaker] to requestMakerMock
     } :: predefined
 
-    val bidRequestMaker = inject[BidRequestMaker]
-    bidRequestMaker.send(bidder, bidRequest)
-
-    (requestMakerStub.make _).verify(HttpRequestModel(bidder.endpoint, POST, Some(array))).once
+    whenExecuting(converterMock, requestMakerMock) {
+      val bidRequestMaker = inject[BidRequestMaker]
+      bidRequestMaker.send(bidder, bidRequest)
+    }
   }
 
   it should "parse received bytes" in {
     val array = new Array[Byte](24)
 
-    val requestMakerStub = stub[HttpRequestMaker]
-    (requestMakerStub.make _).when(*).returns(
-      Future.successful(
-        HttpResponseModel(array, 200, Seq.empty))).once
+    val converterMock = mock[BidModelConverter]
+    val requestMakerMock = mock[HttpRequestMaker]
+    expecting {
+      converterMock.write(anyObject(), same(ct)).andStubReturn(array)
+      converterMock.parse(array, ct).andReturn(bidResponse).times(1)
+      requestMakerMock
+        .make(anyObject())
+        .andReturn(
+          Future.successful(
+            HttpResponseModel(array, 200, ct, Seq.empty)))
+        .times(1)
+    }
 
     val module = new Module {
-      bind[HttpRequestMaker] to requestMakerStub
+      bind[HttpRequestMaker] to requestMakerMock
+      bind[BidModelConverter] to converterMock
     } :: predefined
 
-    val bidRequestMaker = inject[BidRequestMaker]
-    Await.ready(bidRequestMaker.send(bidder, bidRequest), 1.second)
-
-    (parserStub.parse _).verify(array).once
+    whenExecuting(requestMakerMock, converterMock) {
+      val bidRequestMaker = inject[BidRequestMaker]
+      Await.ready(bidRequestMaker.send(bidder, bidRequest), 1.second)
+    }
   }
 
   it should "return parsed BidResponse" in {
@@ -100,5 +141,4 @@ class BidRequestMakerTest extends FlatSpec with OneInstancePerTest
       result shouldBe bidResponse
     }
   }
-
 }
