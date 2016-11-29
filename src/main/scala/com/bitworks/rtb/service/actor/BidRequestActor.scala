@@ -56,12 +56,11 @@ class BidRequestActor(
           bidders.foreach { bidder =>
             bidRouter ! SendBidRequest(bidder, bidRequest)
           }
+          context.system.scheduler.scheduleOnce(
+            configuration.bidRequestTimeout,
+            self,
+            StartAuction)
       }
-
-      context.system.scheduler.scheduleOnce(
-        configuration.bidRequestTimeout,
-        self,
-        StartAuction)
 
     case bidRequestResult: BidRequestResult =>
       log.debug(s"bid response received: $bidRequestResult")
