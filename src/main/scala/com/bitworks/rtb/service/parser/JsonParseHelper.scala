@@ -23,7 +23,7 @@ trait JsonParseHelper {
       * Returns child node with specified name.
       *
       * @param name name of the node to get
-      * @throws IllegalArgumentException when child node is not found
+      * @throws scala.IllegalArgumentException when child node is not found
       */
     def getChild(name: String): JsonNode = {
       val childNode = node.path(name)
@@ -34,14 +34,14 @@ trait JsonParseHelper {
     /**
       * Returns node value as Seq[String].
       *
-      * @throws IllegalArgumentException if node is not a string array
+      * @throws scala.IllegalArgumentException if node is not a string array
       */
     def getStringSeq = getSeq(n => n.getString)
 
     /**
       * Returns node value as Seq[Int].
       *
-      * @throws IllegalArgumentException if node is not an int array
+      * @throws scala.IllegalArgumentException if node is not an int array
       */
     def getIntSeq = getSeq(n => n.getInt)
 
@@ -50,7 +50,7 @@ trait JsonParseHelper {
       *
       * @param f function to transform array elements
       * @tparam T type of the returning array
-      * @throws IllegalArgumentException if node is not an array
+      * @throws scala.IllegalArgumentException if node is not an array
       */
     def getSeq[T](f: JsonNode => T): Seq[T] = {
       require(node.isArray, "node must be an array")
@@ -60,7 +60,7 @@ trait JsonParseHelper {
     /**
       * Returns node value as int.
       *
-      * @throws IllegalArgumentException if node is is not an int
+      * @throws scala.IllegalArgumentException if node is is not an int
       */
     def getInt = {
       require(node.isInt, "node must be an integer")
@@ -70,7 +70,7 @@ trait JsonParseHelper {
     /**
       * Returns node value as string.
       *
-      * @throws IllegalArgumentException if node is not a string
+      * @throws scala.IllegalArgumentException if node is not a string
       */
     def getString = {
       require(node.isTextual, "node must be a string")
@@ -80,7 +80,7 @@ trait JsonParseHelper {
     /**
       * Returns node value as double.
       *
-      * @throws IllegalArgumentException if node is not an double
+      * @throws scala.IllegalArgumentException if node is not an double
       */
     def getDouble = {
       require(node.isNumber, "node must be a number")
@@ -90,7 +90,7 @@ trait JsonParseHelper {
     /**
       * Returns node value as float.
       *
-      * @throws IllegalArgumentException if node is not a float
+      * @throws scala.IllegalArgumentException if node is not a float
       */
     def getFloat = {
       require(node.isNumber, "node must be a number")
