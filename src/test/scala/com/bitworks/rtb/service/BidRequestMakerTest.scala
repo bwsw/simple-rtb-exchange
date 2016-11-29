@@ -5,7 +5,7 @@ import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.http._
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
-import com.bitworks.rtb.service.factory.BidModelsConverter
+import com.bitworks.rtb.service.factory.BidModelConverter
 import org.easymock.EasyMock._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.easymock.EasyMockSugar
@@ -29,7 +29,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
   val bidder = Bidder(123, "name", "endpoint")
   val ct = Json
 
-  val bidConverter = mock[BidModelsConverter]
+  val bidConverter = mock[BidModelConverter]
   bidConverter.write(anyObject(), same(ct)).andStubReturn(new Array[Byte](0))
   bidConverter.parse(anyObject(), same(ct)).andStubReturn(bidResponse)
 
@@ -41,7 +41,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
   configurationMock.bidRequestContentType.andStubReturn(ct)
 
   implicit val predefined = new Module {
-    bind[BidModelsConverter] to bidConverter
+    bind[BidModelConverter] to bidConverter
     bind[HttpRequestMaker] to requestMakerMock
     bind[Configuration] to configurationMock
     bind[ActorSystem] to ActorSystem()
@@ -67,13 +67,13 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
   }
 
   "BidRequestMaker" should "write request before sending" in {
-    val converterMock = mock[BidModelsConverter]
+    val converterMock = mock[BidModelConverter]
     expecting {
       converterMock.write(bidRequest, ct).andReturn(new Array[Byte](0)).times(1)
     }
 
     val module = new Module {
-      bind[BidModelsConverter] toNonLazy converterMock
+      bind[BidModelConverter] toNonLazy converterMock
     } :: predefined
 
     whenExecuting(converterMock) {
@@ -85,7 +85,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
   it should "POST writed request correctly" in {
     val array = new Array[Byte](24)
 
-    val converterMock = mock[BidModelsConverter]
+    val converterMock = mock[BidModelConverter]
     val requestMakerMock = mock[HttpRequestMaker]
     expecting {
       converterMock.write(bidRequest, ct).andReturn(array).times(1)
@@ -96,7 +96,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
     }
 
     val module = new Module {
-      bind[BidModelsConverter] to converterMock
+      bind[BidModelConverter] to converterMock
       bind[HttpRequestMaker] to requestMakerMock
     } :: predefined
 
@@ -109,7 +109,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
   it should "parse received bytes" in {
     val array = new Array[Byte](24)
 
-    val converterMock = mock[BidModelsConverter]
+    val converterMock = mock[BidModelConverter]
     val requestMakerMock = mock[HttpRequestMaker]
     expecting {
       converterMock.write(anyObject(), same(ct)).andStubReturn(array)
@@ -124,7 +124,7 @@ class BidRequestMakerTest extends FlatSpec with BeforeAndAfterEach
 
     val module = new Module {
       bind[HttpRequestMaker] to requestMakerMock
-      bind[BidModelsConverter] to converterMock
+      bind[BidModelConverter] to converterMock
     } :: predefined
 
     whenExecuting(requestMakerMock, converterMock) {

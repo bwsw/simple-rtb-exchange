@@ -9,12 +9,12 @@ import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message.{BidRequestResult, _}
 import com.bitworks.rtb.model.request.BidRequest
+import com.bitworks.rtb.service.ContentTypeConversions._
 import com.bitworks.rtb.service.dao.BidderDao
-import com.bitworks.rtb.service.factory.{AdModelsConverter, AdResponseFactory, BidRequestFactory}
+import com.bitworks.rtb.service.factory.{AdModelConverter, AdResponseFactory, BidRequestFactory}
 import com.bitworks.rtb.service.{Auction, Configuration}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
-import com.bitworks.rtb.service.ContentTypeConversions._
 
 import scala.collection.mutable.ListBuffer
 
@@ -31,7 +31,7 @@ class RequestActor(
 
   implicit val materializer = ActorMaterializer()
   val configuration = inject[Configuration]
-  val adConverter = inject[AdModelsConverter]
+  val adConverter = inject[AdModelConverter]
   val factory = inject[BidRequestFactory]
   val auction = inject[Auction]
   val bidderDao = inject[BidderDao]

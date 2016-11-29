@@ -63,23 +63,23 @@ class RtbModule extends Module {
       map
     }
 
-    bind[AdModelsConverter] toNonLazy injected[AdModelsConverterImpl]
+    bind[AdModelConverter] toNonLazy injected[AdModelConverterImpl]
   }
 
   def bindBidModelConverters = {
     bind[Map[ContentTypeModel, BidResponseParser]] toNonLazy {
-      val parser = injected[BidResponseJsonParser]
+      val jsonParser = injected[BidResponseJsonParser]
       val map: Map[ContentTypeModel, BidResponseParser] =
-        Map(Json -> parser, Unknown -> parser)
+        Map(Json -> jsonParser, Unknown -> jsonParser)
       map
     }
     bind[Map[ContentTypeModel, BidRequestWriter]] toNonLazy {
-      val writer = injected[BidRequestJsonWriter]
+      val jsonWriter = injected[BidRequestJsonWriter]
       val map: Map[ContentTypeModel, BidRequestWriter] =
-        Map(Json -> writer, Unknown -> writer)
+        Map(Json -> jsonWriter, Unknown -> jsonWriter)
       map
     }
 
-    bind[BidModelsConverter] toNonLazy injected[BidModelsConverterImpl]
+    bind[BidModelConverter] toNonLazy injected[BidModelConverterImpl]
   }
 }

@@ -10,13 +10,13 @@ import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.service.factory.BidModelsConverter BidModelsConverter]].
+  * Test for [[com.bitworks.rtb.service.factory.BidModelConverter BidModelConverter]].
   *
   * @author Egor Ilchenko
   */
-class BidModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
+class BidModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
 
-  "BidModelsConverter" should "parse bid response using suitable parser" in {
+  "BidModelConverter" should "parse bid response using suitable parser" in {
     val bytes = new Array[Byte](0)
     val response = BidResponseBuilder("id", Nil).build
 
@@ -27,7 +27,7 @@ class BidModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
 
     whenExecuting(parserMock) {
       val binding: Map[ContentTypeModel, BidResponseParser] = Map(Json -> parserMock)
-      val converter = new BidModelsConverterImpl(binding, Map.empty)
+      val converter = new BidModelConverterImpl(binding, Map.empty)
       val result = converter.parse(bytes, Json)
 
       result shouldBe response
@@ -36,7 +36,7 @@ class BidModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
 
   it should "throw exception if parser not found" in {
     val parser = mock[BidResponseParser]
-    val converter = new BidModelsConverterImpl(Map(Avro -> parser), Map.empty)
+    val converter = new BidModelConverterImpl(Map(Avro -> parser), Map.empty)
 
     an[DataValidationException] should be thrownBy {
       converter.parse(new Array[Byte](0), Json)
@@ -52,7 +52,7 @@ class BidModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     }
     whenExecuting(writerMock) {
       val binding: Map[ContentTypeModel, BidRequestWriter] = Map(Json -> writerMock)
-      val converter = new BidModelsConverterImpl(Map.empty, binding)
+      val converter = new BidModelConverterImpl(Map.empty, binding)
       val result = converter.write(request, Json)
 
       result shouldBe bytes
@@ -62,7 +62,7 @@ class BidModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
   it should "throw exception if writer not found" in {
     val request = BidRequestBuilder("id", Nil).build
     val writerMock = mock[BidRequestWriter]
-    val converter = new BidModelsConverterImpl(Map.empty, Map(Avro -> writerMock))
+    val converter = new BidModelConverterImpl(Map.empty, Map(Avro -> writerMock))
     an[DataValidationException] should be thrownBy {
       converter.write(request, Json)
     }

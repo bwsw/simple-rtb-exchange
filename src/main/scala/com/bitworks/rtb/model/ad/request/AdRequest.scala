@@ -12,8 +12,7 @@ import com.bitworks.rtb.model.request.{Device, Regs}
   * @param app    details via [[com.bitworks.rtb.model.ad.request.App App]] object
   * @param device details via [[com.bitworks.rtb.model.request.Device Device]] object
   * @param user   details via [[com.bitworks.rtb.model.ad.request.User User]] object
-  * @param test   indicator of test mode in which auctions are not billable, where 0 = live
-  *               mode,
+  * @param test   indicator of test mode in which auctions are not billable, where 0 = live mode,
   *               1 = test mode
   * @param tmax   maximum time in milliseconds to submit a bid to avoid timeout
   * @param regs   a [[com.bitworks.rtb.model.request.Regs Regs]] object that specifies any

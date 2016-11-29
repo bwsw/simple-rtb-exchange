@@ -10,13 +10,13 @@ import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
-  * Test for [[com.bitworks.rtb.service.factory.AdModelsConverter AdModelsConverter]].
+  * Test for [[com.bitworks.rtb.service.factory.AdModelConverter AdModelConverter]].
   *
   * @author Egor Ilchenko
   */
-class AdModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
+class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
 
-  "AdModelsConverter" should "parse ad request using suitable parser" in {
+  "AdModelConverter" should "parse ad request using suitable parser" in {
     val bytes = new Array[Byte](0)
     val request = AdRequestBuilder("id", Seq.empty, Json).build
 
@@ -27,7 +27,7 @@ class AdModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
 
     whenExecuting(parserMock) {
       val binding: Map[ContentTypeModel, AdRequestParser] = Map(Json -> parserMock)
-      val converter = new AdModelsConverterImpl(binding, Map.empty)
+      val converter = new AdModelConverterImpl(binding, Map.empty)
       val result = converter.parse(bytes, Json)
 
       result shouldBe request
@@ -36,7 +36,7 @@ class AdModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
 
   it should "throw exception if parser not found" in {
     val parser = mock[AdRequestParser]
-    val converter = new AdModelsConverterImpl(Map(Avro -> parser), Map.empty)
+    val converter = new AdModelConverterImpl(Map(Avro -> parser), Map.empty)
 
     an[DataValidationException] should be thrownBy {
       converter.parse(new Array[Byte](0), Json)
@@ -52,7 +52,7 @@ class AdModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     }
     whenExecuting(writerMock) {
       val binding: Map[ContentTypeModel, AdResponseWriter] = Map(Json -> writerMock)
-      val converter = new AdModelsConverterImpl(Map.empty, binding)
+      val converter = new AdModelConverterImpl(Map.empty, binding)
       val result = converter.write(response)
 
       result shouldBe bytes
@@ -62,7 +62,7 @@ class AdModelsConverterTest extends FlatSpec with Matchers with EasyMockSugar {
   it should "throw exception if writer not found" in {
     val response = AdResponseBuilder("id", Json).build
     val writer = mock[AdResponseWriter]
-    val converter = new AdModelsConverterImpl(Map.empty, Map(Avro -> writer))
+    val converter = new AdModelConverterImpl(Map.empty, Map(Avro -> writer))
     an[DataValidationException] should be thrownBy {
       converter.write(response)
     }

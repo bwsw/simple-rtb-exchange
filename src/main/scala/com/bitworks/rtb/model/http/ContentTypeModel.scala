@@ -1,7 +1,7 @@
 package com.bitworks.rtb.model.http
 
 /**
-  * Value of HTTP Content-Type header.
+  * HTTP Content-Type.
   *
   * @author Egor Ilchenko
   */

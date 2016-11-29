@@ -46,7 +46,7 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
 
   private val responseBody = "somestr"
   private val contentTypeHeader = "Content-Type"
-  private val responseHeaderJsonValue = "application/json"
+  private val jsonContentTypeValue = "application/json"
   private val responseStatusCode = 201
   private val customHeaderName = "customheader"
   private val customHeaderValue = "customheadervalue"
@@ -107,7 +107,7 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
       post(urlEqualTo(path)).willReturn(
         aResponse()
           .withBody(responseBody)
-          .withHeader(contentTypeHeader, responseHeaderJsonValue)
+          .withHeader(contentTypeHeader, jsonContentTypeValue)
           .withHeader(customHeaderName, customHeaderValue)
           .withStatus(responseStatusCode)))
 
@@ -124,7 +124,7 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
     whenReady(fResponse, timeout(Span(5, Seconds))) { response =>
       verify(
         postRequestedFor(urlEqualTo(path))
-          .withHeader(contentTypeHeader, equalTo(responseHeaderJsonValue))
+          .withHeader(contentTypeHeader, equalTo(jsonContentTypeValue))
           .withHeader(customHeaderName, equalTo(customHeaderValue))
           .withRequestBody(equalTo(responseBody)))
 

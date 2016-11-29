@@ -5,7 +5,7 @@ import akka.http.scaladsl.model.{ContentType, ContentTypes, MediaType}
 import com.bitworks.rtb.model.http._
 
 /**
-  *
+  * Implicit conversions for [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]].
   *
   * @author Egor Ilchenko
   */

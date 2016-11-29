@@ -71,7 +71,7 @@ class ConfigurationTest extends FlatSpec with Matchers {
   }
 
   it should "load bid request content type correctly" in {
-    Seq("JSON" -> Json, "Avro" -> Avro, "Protobuf" -> Protobuf).foreach { testcase =>
+    Seq("json" -> Json, "avro" -> Avro, "protobuf" -> Protobuf).foreach { testcase =>
       System.setProperty("rtb-exchange.bid-request-content-type", testcase._1)
 
       ConfigFactory.invalidateCaches()

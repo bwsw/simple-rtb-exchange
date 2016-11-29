@@ -5,7 +5,7 @@ import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.http.{HttpRequestModel, POST}
 import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.BidResponse
-import com.bitworks.rtb.service.factory.BidModelsConverter
+import com.bitworks.rtb.service.factory.BidModelConverter
 
 import scala.concurrent.Future
 
@@ -33,18 +33,18 @@ trait BidRequestMaker {
   */
 class BidRequestMakerImpl(
     config: Configuration,
-    bidConverter: BidModelsConverter,
+    bidModelConverter: BidModelConverter,
     httpRequestMaker: HttpRequestMaker,
     system: ActorSystem) extends BidRequestMaker {
 
   import system.dispatcher
 
   override def send(bidder: Bidder, request: BidRequest) = {
-    val bytes = bidConverter.write(request, config.bidRequestContentType)
+    val bytes = bidModelConverter.write(request, config.bidRequestContentType)
 
     val requestModel = HttpRequestModel(bidder.endpoint, POST, Some(bytes))
     httpRequestMaker.make(requestModel) map { response =>
-      bidConverter.parse(response.body, response.contentType)
+      bidModelConverter.parse(response.body, response.contentType)
     }
   }
 }

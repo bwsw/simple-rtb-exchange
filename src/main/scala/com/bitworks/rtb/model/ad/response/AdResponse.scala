@@ -9,6 +9,7 @@ import com.bitworks.rtb.model.http.ContentTypeModel
   * @param imp   array of [[com.bitworks.rtb.model.ad.response.Imp Imp]] objects representing
   *              impressions
   * @param error details via [[com.bitworks.rtb.model.ad.response.Error Error]] object about error
+  * @param ct    request content type
   * @author Pavel Tomskikh
   */
 case class AdResponse(
