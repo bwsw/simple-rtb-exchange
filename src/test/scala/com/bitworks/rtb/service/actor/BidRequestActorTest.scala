@@ -36,6 +36,10 @@ class BidRequestActorTest
     with BeforeAndAfterAll
     with OneInstancePerTest {
 
+  override def afterAll(): Unit = {
+    TestKit.shutdownActorSystem(system)
+  }
+
   val adImp = ad.request.builder.ImpBuilder("1").build
   val adRequest = AdRequestBuilder("12345", Seq(adImp)).build
 
