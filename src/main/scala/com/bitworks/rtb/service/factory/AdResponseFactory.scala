@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.{AdRequest, Imp}
-import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
+import com.bitworks.rtb.model.ad.response.{AdResponse, Error, ErrorCode}
 import com.bitworks.rtb.model.ad.response.builder.{AdResponseBuilder, ImpBuilder}
 import com.bitworks.rtb.model.response.{Bid, BidResponse}
 import com.bitworks.rtb.service.{DataValidationException, Logging}
@@ -62,19 +62,22 @@ class AdResponseFactoryImpl extends AdResponseFactory with Logging {
     * @param bid     [[com.bitworks.rtb.model.response.Bid Bid]]
     */
   private def getImp(request: AdRequest, bid: Bid) = {
+
     val `type` = request.imp.find(_.id == bid.impId) match {
       case Some(Imp(_, Some(_), None, None)) => ImpBuilder.bannerType
       case Some(Imp(_, None, Some(_), None)) => ImpBuilder.videoType
       case Some(Imp(_, None, None, Some(_))) => ImpBuilder.nativeType
       case _ =>
         log.error(s"cannot determine type of adRequest. r: $request; bid: $bid")
-        throw new DataValidationException("cannot determine ad response type")
+        val error = Error(ErrorCode.INCORRECT_REQUEST, "cannot determine ad response type")
+        throw new DataValidationException(error)
     }
     val adMarkup = bid.adm match {
       case Some(adm) => adm
       case None =>
         log.error(s"cannot build ad response. Empty adm")
-        throw new DataValidationException("cannot build ad response. Empty adm")
+        val error = Error(ErrorCode.NO_AD_FOUND, "cannot build ad response. Empty adm")
+        throw new DataValidationException(error)
     }
 
     ImpBuilder(bid.impId, adMarkup, `type`).build
