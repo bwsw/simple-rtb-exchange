@@ -33,6 +33,11 @@ libraryDependencies ++= Seq(
 fork in Test := true
 javaOptions in Test += "-Dconfig.resource=application.test.conf"
 
+
+assemblyJarName := s"${name.value}-${version.value}.jar"
+mainClass in assembly := Some("com.bitworks.rtb.application.RtbApplication")
+
+
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 publishTo := {
   val nexus = "http://rtb-ci.z1.netpoint-dc.com:8081/nexus/content/repositories/"
@@ -41,3 +46,10 @@ publishTo := {
   else
     Some("releases" at nexus + "bitworks-rtb/")
 }
+
+artifact in (Compile, assembly) := {
+  val art = (artifact in (Compile, assembly)).value
+  art.copy(`classifier` = Some("assembly"))
+}
+
+addArtifact(artifact in (Compile, assembly), assembly)
