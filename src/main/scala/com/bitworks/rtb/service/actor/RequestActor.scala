@@ -40,7 +40,7 @@ class RequestActor(request: HttpRequestWrapper)
           try {
             val bidRequest = factory.create(adRequest)
             val props = BidRequestActor.props(adRequest, bidRequest)
-            context.actorOf(props)
+            context.actorOf(props) ! HandleRequest
           } catch {
             case e: DataValidationException =>
               log.debug("bid request not created")
