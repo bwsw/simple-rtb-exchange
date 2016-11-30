@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="Pavel Tomskikh">
+        <preConditions>
+            <tableExists tableName="iab_category"/>
+            <tableExists tableName="publisher"/>
+            <tableExists tableName="publisher_category"/>
+            <tableExists tableName="publisher_blocked_category"/>
+            <tableExists tableName="publisher_blocked_advertiser"/>
+            <tableExists tableName="site"/>
+            <tableExists tableName="site_category"/>
+        </preConditions>
+
+        <loadData tableName="publisher" file="e2e/resources/ticket2712/publisher.csv">
+            <column name="name" type="string"/>
+            <column name="domain" type="string"/>
+        </loadData>
+
+        <loadData tableName="publisher_category"
+                  file="e2e/resources/ticket2712/publisher_category.csv">
+            <column name="publisher_id" type="numeric"/>
+            <column name="iab_category_id" type="numeric"/>
+        </loadData>
+
+        <loadData tableName="publisher_blocked_advertiser"
+                  file="e2e/resources/ticket2712/publisher_blocked_advertiser.csv">
+            <column name="publisher_id" type="numeric"/>
+            <column name="domain" type="string"/>
+        </loadData>
+
+        <loadData tableName="site" file="e2e/resources/ticket2712/site.csv">
+            <column name="name" type="string"/>
+            <column name="type" type="numeric"/>
+            <column name="publisher_id" type="numeric"/>
+            <column name="status" type="numeric"/>
+            <column name="privacy_policy" type="numeric"/>
+            <column name="test" type="boolean"/>
+            <column name="domain" type="string"/>
+        </loadData>
+
+        <loadData tableName="site_category"
+                  file="e2e/resources/ticket2712/site_category.csv">
+            <column name="site_id" type="numeric"/>
+            <column name="iab_category_id" type="numeric"/>
+        </loadData>
+
+        <rollback>
+            <delete tableName="site_category"/>
+            <delete tableName="site"/>
+            <delete tableName="publisher_blocked_advertiser"/>
+            <delete tableName="publisher_blocked_category"/>
+            <delete tableName="publisher_category"/>
+            <delete tableName="publisher"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

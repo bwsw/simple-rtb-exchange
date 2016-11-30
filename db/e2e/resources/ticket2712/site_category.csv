@@ -1,0 +1,2 @@
+site_id,iab_category_id
+(SELECT id FROM site WHERE name = 'site1'),(SELECT id FROM iab_category WHERE iab_id = 'IAB3')
