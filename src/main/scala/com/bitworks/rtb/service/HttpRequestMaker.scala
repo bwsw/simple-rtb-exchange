@@ -7,7 +7,7 @@ import akka.http.scaladsl.model.{HttpEntity, _}
 import akka.stream.Materializer
 import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.http._
-import com.bitworks.rtb.service.AkkaHttpRequestMaker._
+import com.bitworks.rtb.service.ContentTypeConversions._
 
 import scala.concurrent.Future
 
@@ -94,51 +94,6 @@ class AkkaHttpRequestMaker(
       response.status.intValue,
       data._2,
       extractHeaders(response))
-  }
-}
-
-/**
-  * Http request maker implementation using akka-http.
-  *
-  * @author Egor Ilchenko
-  */
-object AkkaHttpRequestMaker {
-  private val `avro/binary` = ContentType(
-    MediaType.customBinary("avro", "binary", MediaType.NotCompressible))
-
-  private val `application/x-protobuf` = ContentType(
-    MediaType.customBinary("application", "x-protobuf", MediaType.NotCompressible))
-
-  /**
-    * Converts [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]]
-    * to akka http content type.
-    *
-    * @param ct [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]]
-    * @return akka http content type
-    */
-  implicit def toAkka(ct: ContentTypeModel): ContentType = {
-    ct match {
-      case Json => ContentTypes.`application/json`
-      case Avro => `avro/binary`
-      case Protobuf => `application/x-protobuf`
-      case Unknown => ContentTypes.NoContentType
-    }
-  }
-
-  /**
-    * Converts akka http content type to
-    * [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]].
-    *
-    * @param ct akka http content type
-    * @return [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]]
-    */
-  implicit def fromAkka(ct: ContentType): ContentTypeModel = {
-    ct match {
-      case ContentTypes.`application/json` => Json
-      case AkkaHttpRequestMaker.`avro/binary` => Avro
-      case AkkaHttpRequestMaker.`application/x-protobuf` => Protobuf
-      case _ => Unknown
-    }
   }
 }
 

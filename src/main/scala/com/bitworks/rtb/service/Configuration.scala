@@ -43,9 +43,9 @@ class Configuration {
 
   /* Bid request content type. **/
   def bidRequestContentType: ContentTypeModel = conf.getString("bid-request-content-type") match {
-    case "JSON" => Json
-    case "Avro" => Avro
-    case "Protobuf" => Protobuf
+    case "json" => Json
+    case "avro" => Avro
+    case "protobuf" => Protobuf
     case s =>
       throw new DataValidationException(
         Error(

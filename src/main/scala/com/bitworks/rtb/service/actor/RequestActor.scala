@@ -5,11 +5,9 @@ import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.response.AdResponse
 import com.bitworks.rtb.model.message._
-import com.bitworks.rtb.service.AkkaHttpRequestMaker._
-import com.bitworks.rtb.service.factory.{AdResponseFactory, BidRequestFactory}
-import com.bitworks.rtb.service.parser.AdRequestParserFactory
-import com.bitworks.rtb.service.writer.AdResponseWriterFactory
+import com.bitworks.rtb.service.ContentTypeConversions._
 import com.bitworks.rtb.service.{Configuration, DataValidationException}
+import com.bitworks.rtb.service.factory.{AdModelConverter, AdResponseFactory, BidRequestFactory}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
 
@@ -18,18 +16,14 @@ import scaldi.akka.AkkaInjectable._
   *
   * @author Egor Ilchenko
   */
-class RequestActor(
-    request: HttpRequestWrapper)(
-    implicit inj: Injector)
-  extends Actor
-    with ActorLogging {
+class RequestActor(request: HttpRequestWrapper)
+  (implicit inj: Injector) extends Actor with ActorLogging {
 
   import context.dispatcher
 
   implicit val materializer = ActorMaterializer()
   val configuration = inject[Configuration]
-  val writerFactory = inject[AdResponseWriterFactory]
-  val parserFactory = inject[AdRequestParserFactory]
+  val adConverter = inject[AdModelConverter]
   val factory = inject[BidRequestFactory]
   val adResponseFactory = inject[AdResponseFactory]
 
@@ -42,8 +36,7 @@ class RequestActor(
         entity =>
           val bytes = entity.data.toArray
           log.debug(s"content-type: ${entity.contentType}")
-          val parser = parserFactory.getParser(entity.contentType)
-          val adRequest = parser.parse(bytes)
+          val adRequest = adConverter.parse(bytes, entity.contentType)
           try {
             val bidRequest = factory.create(adRequest)
             val props = BidRequestActor.props(adRequest, bidRequest)
@@ -52,6 +45,7 @@ class RequestActor(
             case e: DataValidationException =>
               log.debug("bid request not created")
               val response = adResponseFactory.create(adRequest, e.getError)
+
               completeRequest(response)
           }
       } onFailure {
@@ -70,8 +64,7 @@ class RequestActor(
     */
   def completeRequest(response: AdResponse) = {
     log.debug("completing request...")
-    val writer = writerFactory.getWriter(response.ct)
-    val bytes = writer.write(response)
+    val bytes = adConverter.write(response)
     request.complete(bytes, response.ct)
   }
 
@@ -89,6 +82,5 @@ class RequestActor(
 object RequestActor {
 
   /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]]. */
-  def props(wrapper: HttpRequestWrapper)(implicit inj: Injector) =
-  Props(new RequestActor(wrapper))
+  def props(wrapper: HttpRequestWrapper)(implicit inj: Injector) = Props(new RequestActor(wrapper))
 }

@@ -17,7 +17,7 @@ import scaldi.akka.AkkaInjectable._
 import scala.collection.mutable.ListBuffer
 
 /**
-  * Main actor to process bid requests.
+  * The main actor to process bid requests.
   *
   * @param adRequest  [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]] object
   * @param bidRequest [[com.bitworks.rtb.model.request.BidRequest BidRequest]] object created
@@ -26,10 +26,8 @@ import scala.collection.mutable.ListBuffer
   */
 class BidRequestActor(
     adRequest: AdRequest,
-    bidRequest: BidRequest)(
-    implicit inj: Injector)
-  extends Actor
-    with ActorLogging {
+    bidRequest: BidRequest)
+  (implicit inj: Injector) extends Actor with ActorLogging {
 
   import context.dispatcher
 
@@ -48,24 +46,22 @@ class BidRequestActor(
 
   var auctionStarted = false
 
-  override def preStart(): Unit = {
-    log.debug("started bid request handling")
-
-    bidders match {
-      case Seq() => onError("bidders not found")
-      case _: Seq[Bidder] =>
-        bidders.foreach { bidder =>
-          bidRouter ! SendBidRequest(bidder, bidRequest)
-        }
-    }
-
-    context.system.scheduler.scheduleOnce(
-      configuration.bidRequestTimeout,
-      self,
-      StartAuction)
-  }
-
   override def receive: Receive = {
+    case HandleRequest =>
+      log.debug("started bid request handling")
+
+      bidders match {
+        case Seq() => onError("bidders not found")
+        case _: Seq[Bidder] =>
+          bidders.foreach { bidder =>
+            bidRouter ! SendBidRequest(bidder, bidRequest)
+          }
+          context.system.scheduler.scheduleOnce(
+            configuration.bidRequestTimeout,
+            self,
+            StartAuction)
+      }
+
     case bidRequestResult: BidRequestResult =>
       log.debug(s"bid response received: $bidRequestResult")
       receivedBidResponses.append(bidRequestResult)
@@ -78,7 +74,6 @@ class BidRequestActor(
       try {
         val response = adResponseFactory.create(adRequest, responses)
         context.parent ! response
-        context stop self
       } catch {
         case e: Throwable => onError(e.getMessage)
       }
@@ -109,7 +104,6 @@ class BidRequestActor(
   def onError(msg: String) = {
     log.debug(s"an error occurred: $msg")
     context.parent ! adResponseFactory.create(adRequest, Error(ErrorCode.NO_AD_FOUND, msg))
-    context stop self
   }
 }
 
@@ -118,7 +112,6 @@ object BidRequestActor {
   /**
     * Returns Props for [[com.bitworks.rtb.service.actor.BidRequestActor BidRequestActor]].
     */
-  def props(adRequest: AdRequest, bidRequest: BidRequest)(
-      implicit inj: Injector) =
-  Props(new BidRequestActor(adRequest, bidRequest))
+  def props(adRequest: AdRequest, bidRequest: BidRequest)
+    (implicit inj: Injector) = Props(new BidRequestActor(adRequest, bidRequest))
 }
