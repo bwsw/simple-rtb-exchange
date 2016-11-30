@@ -2,7 +2,7 @@ package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error, ErrorCode}
-import com.bitworks.rtb.model.http.ContentTypeModel
+import com.bitworks.rtb.model.http.{ContentTypeModel, NoContentType}
 import com.bitworks.rtb.service.DataValidationException
 import com.bitworks.rtb.service.parser.AdRequestParser
 import com.bitworks.rtb.service.writer.AdResponseWriter
@@ -51,12 +51,13 @@ class AdModelConverterImpl(
     * @throws DataValidationException in case of missing handler or invalid bytes
     */
   override def parse(bytes: Array[Byte], ct: ContentTypeModel) = {
+    if (ct == NoContentType) {
+      throw new DataValidationException(Error(ErrorCode.MISSING_HEADER))
+    }
     adRequestParsers.get(ct) match {
       case Some(parser) => parser.parse(bytes)
       case None => throw new DataValidationException(
-        Error(
-          ErrorCode.INCORRECT_HEADER_VALUE,
-          s"cannot find ad request parser for $ct"))
+        Error(ErrorCode.INCORRECT_HEADER_VALUE, s"cannot find ad request parser for $ct"))
     }
   }
 
@@ -67,6 +68,9 @@ class AdModelConverterImpl(
     * @param response [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]]
     */
   override def write(response: AdResponse): Array[Byte] = {
+    if (response.ct == NoContentType) {
+      throw new DataValidationException(Error(ErrorCode.MISSING_HEADER))
+    }
     adResponseWriters.get(response.ct) match {
       case Some(writer) => writer.write(response)
       case None => throw new DataValidationException(
