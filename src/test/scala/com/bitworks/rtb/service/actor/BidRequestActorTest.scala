@@ -116,7 +116,6 @@ class BidRequestActorTest
     def props(implicit inj: Injector) = Props(new BidActorMockForwarder)
   }
 
-
   class WinActorMock(implicit inj: Injector) extends WinActor {
     override def receive: Receive = {
       case SendWinNotice(`bidRequest`, Seq(`bidResponse1`)) =>
@@ -169,7 +168,6 @@ class BidRequestActorTest
   }
 
   "BidRequestActor" should "send ad request to bid actors" in {
-
     val configuration = niceMock[Configuration]
     expecting {
       configuration.bidRequestTimeout.andStubReturn(bigAuctionTimeout)
@@ -200,6 +198,12 @@ class BidRequestActorTest
   }
 
   it should "send correct bid response to win bidder after auction" in {
+    val configuration = niceMock[Configuration]
+    expecting {
+      configuration.bidRequestTimeout.andStubReturn(bigAuctionTimeout)
+      EasyMock.replay(configuration)
+    }
+
     val bidderDao = mock[BidderDao]
     expecting {
       bidderDao.getAll.andStubReturn(Seq(bidder1, bidder2, bidder3))
@@ -208,7 +212,7 @@ class BidRequestActorTest
 
     implicit val injector = new Module {
       bind[BidderDao] toNonLazy bidderDao
-      bind[Configuration] toNonLazy niceMock[Configuration]
+      bind[Configuration] toNonLazy configuration
       bind[BidActor] toProvider new BidActorMock
       bind[WinActor] toProvider new WinActorMockForwarder
     } :: predefinedInjector
@@ -223,6 +227,12 @@ class BidRequestActorTest
   }
 
   it should "send correct ad response when got winner's bid response" in {
+    val configuration = niceMock[Configuration]
+    expecting {
+      configuration.bidRequestTimeout.andStubReturn(bigAuctionTimeout)
+      EasyMock.replay(configuration)
+    }
+
     val bidderDao = mock[BidderDao]
     expecting {
       bidderDao.getAll.andStubReturn(Seq(bidder1, bidder2, bidder3))
@@ -231,7 +241,7 @@ class BidRequestActorTest
 
     implicit val injector = new Module {
       bind[BidderDao] toNonLazy bidderDao
-      bind[Configuration] toNonLazy niceMock[Configuration]
+      bind[Configuration] toNonLazy configuration
       bind[BidActor] toProvider new BidActorMock
       bind[WinActor] toProvider new WinActorMock
     } :: predefinedInjector
@@ -277,8 +287,7 @@ class BidRequestActorTest
     (Seq(bidder3), adResponse3),
     (Seq(bidder1, bidder3), adResponse3),
     (Seq(bidder2, bidder3), adResponse3),
-    (Seq(bidder1, bidder2, bidder3), adResponse3)
-  )
+    (Seq(bidder1, bidder2, bidder3), adResponse3))
 
   forAll(responsesForBidders) { (bidders: Seq[Bidder], adResponse: AdResponse) =>
     it should s"send ad response for $bidders correctly" in {
