@@ -82,13 +82,13 @@ class BidRequestActorTest
     .build
 
   val smallAuctionTimeout = 1.nanos
-  val bigAuctionTimeout = 10.seconds
+  val bigAuctionTimeout = 1.seconds
 
   class BidActorMock(implicit inj: Injector) extends BidActor {
 
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    val responseTimeout = smallAuctionTimeout * 2
+    val responseTimeout = bigAuctionTimeout / 4
 
     override def receive: Receive = {
       case SendBidRequest(`bidder1`, `bidRequest`) =>

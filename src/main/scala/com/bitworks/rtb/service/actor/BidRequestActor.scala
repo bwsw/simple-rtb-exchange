@@ -74,7 +74,6 @@ class BidRequestActor(
       try {
         val response = adResponseFactory.create(adRequest, responses)
         context.parent ! response
-        context stop self
       } catch {
         case e: Throwable => onError(e.getMessage)
       }
@@ -105,7 +104,6 @@ class BidRequestActor(
   def onError(msg: String) = {
     log.debug(s"an error occurred: $msg")
     context.parent ! adResponseFactory.create(adRequest, Error(123, msg))
-    context stop self
   }
 }
 
