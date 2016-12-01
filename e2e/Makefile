@@ -14,13 +14,18 @@ prepare:
 	$(MAKE) -C $(DB_DIR) prepare
 	$(MAKE) -C $(DB_DIR) run env=e2e command=update
 
+#TODO: place run and stop rtb-exchange commands
+
 run: prepare
 	cat $(NEWMAN_ENV) | sed -r -e 's/\{\{rtb-exchange-host\}\}/$(rtb_host)/' > $(NEWMAN_TEMP_ENV)
 	echo '<?xml version="1.0" encoding="UTF-8"?>' > $(REPORT_FILE)
 	for row in `cat $(TEST_CASES)` ; do \
+		sqlfile=$(BIDDER_SQL_DIR)/`echo $$row | cut -d, -f1` ; \
 		col=$(COLLECTIONS_DIR)/`echo $$row | cut -d, -f2` ; \
-		sqlfile=$(BIDDER_SQL_DIR)/`echo $$row | cut -d, -f2` ; \
+		./query.sh $(bidder_host) $$sqlfile ; \
+		\
 		newman run $$col -e $(NEWMAN_TEMP_ENV) --reporters junit --reporter-junit-export $(REPORT_PART) ; \
+		\
 		tail $(REPORT_PART) -n +2 >> $(REPORT_FILE) ; \
 	done
 	rm -f $(TEMP_FILES)
