@@ -2,13 +2,12 @@ package com.bitworks.rtb.application
 
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, Materializer}
+import com.bitworks.rtb.model.http.{ContentTypeModel, Json, Unknown}
 import com.bitworks.rtb.service.actor._
 import com.bitworks.rtb.service.dao._
 import com.bitworks.rtb.service.factory._
-import com.bitworks.rtb.service.parser.{AdRequestJsonParser, AdRequestParser,
-BidResponseJsonParser, BidResponseParser}
-import com.bitworks.rtb.service.writer.{AdResponseJsonWriter, AdResponseWriter,
-BidRequestJsonWriter, BidRequestWriter}
+import com.bitworks.rtb.service.parser._
+import com.bitworks.rtb.service.writer._
 import com.bitworks.rtb.service._
 import scaldi.Module
 
@@ -38,13 +37,12 @@ class RtbModule extends Module {
 
   bind[HttpRequestMaker] toNonLazy injected[AkkaHttpRequestMaker]
 
+  bindAdModelConverters
+  bindBidModelConverters
 
-  bind[AdRequestParser] toNonLazy injected[AdRequestJsonParser]
-  bind[AdResponseWriter] toNonLazy injected[AdResponseJsonWriter]
-  bind[BidRequestWriter] toNonLazy injected[BidRequestJsonWriter]
-  bind[BidResponseParser] toNonLazy injected[BidResponseJsonParser]
   bind[BidRequestFactory] toNonLazy injected[BidRequestFactoryImpl]
   bind[AdResponseFactory] toNonLazy injected[AdResponseFactoryImpl]
+
   bind[Auction] toNonLazy injected[AuctionImpl]
 
   bind[BidRequestMaker] toNonLazy injected[BidRequestMakerImpl]
@@ -52,4 +50,36 @@ class RtbModule extends Module {
 
   bind[BidActor] toProvider new BidActor
   bind[WinActor] toProvider new WinActor
+
+  def bindAdModelConverters = {
+    bind[Map[ContentTypeModel, AdRequestParser]] toNonLazy {
+      val map: Map[ContentTypeModel, AdRequestParser] =
+        Map(Json -> injected[AdRequestJsonParser])
+      map
+    }
+    bind[Map[ContentTypeModel, AdResponseWriter]] toNonLazy {
+      val map: Map[ContentTypeModel, AdResponseWriter] =
+        Map(Json -> injected[AdResponseJsonWriter])
+      map
+    }
+
+    bind[AdModelConverter] toNonLazy injected[AdModelConverterImpl]
+  }
+
+  def bindBidModelConverters = {
+    bind[Map[ContentTypeModel, BidResponseParser]] toNonLazy {
+      val jsonParser = injected[BidResponseJsonParser]
+      val map: Map[ContentTypeModel, BidResponseParser] =
+        Map(Json -> jsonParser, Unknown -> jsonParser)
+      map
+    }
+    bind[Map[ContentTypeModel, BidRequestWriter]] toNonLazy {
+      val jsonWriter = injected[BidRequestJsonWriter]
+      val map: Map[ContentTypeModel, BidRequestWriter] =
+        Map(Json -> jsonWriter, Unknown -> jsonWriter)
+      map
+    }
+
+    bind[BidModelConverter] toNonLazy injected[BidModelConverterImpl]
+  }
 }

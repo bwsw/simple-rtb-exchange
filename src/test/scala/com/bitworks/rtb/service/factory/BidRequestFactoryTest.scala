@@ -4,6 +4,7 @@ import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.{request => ad}
 import com.bitworks.rtb.model.db
 import com.bitworks.rtb.model.db.IABCategory
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request._
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.service.dao._
@@ -334,7 +335,7 @@ class BidRequestFactoryTest
       .withMobile(0)
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -384,7 +385,7 @@ class BidRequestFactoryTest
       .withMobile(0)
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -406,7 +407,7 @@ class BidRequestFactoryTest
       .withPageCat(getCategoriesId(Seq(5)))
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withApp(adApp)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -449,7 +450,7 @@ class BidRequestFactoryTest
       .withPageCat(getCategoriesId(Seq(5)))
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withApp(adApp)
       .withUser(correctAdUser)
       .withDevice(correctDevice)
@@ -480,7 +481,7 @@ class BidRequestFactoryTest
       .withMobile(0)
       .withContent(correctContent)
       .build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withApp(adApp)
       .withSite(adSite)
       .withUser(correctAdUser)
@@ -513,7 +514,7 @@ class BidRequestFactoryTest
       val banner = bannerBuilder.build
 
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSiteBuilder.build).build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withBanner(banner).build
@@ -536,7 +537,7 @@ class BidRequestFactoryTest
       val banner = bannerBuilder.build
 
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSiteBuilder.build).build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withBanner(banner).build
@@ -578,7 +579,7 @@ class BidRequestFactoryTest
       val banner = bannerBuilder.build
 
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSiteBuilder.build).build
 
       factory.create(adRequest) shouldBe None
     }
@@ -593,7 +594,7 @@ class BidRequestFactoryTest
       val banner = bannerBuilder.build
 
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSiteBuilder.build).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSiteBuilder.build).build
 
       factory.create(adRequest) shouldBe None
     }
@@ -874,7 +875,7 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withBanner(banner).build
@@ -1331,7 +1332,7 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withBanner(banner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       factory.create(adRequest) shouldBe None
     }
@@ -1804,7 +1805,7 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withVideo(video).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withVideo(video).build
@@ -2710,7 +2711,7 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withVideo(video).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       factory.create(adRequest) shouldBe None
     }
@@ -2733,7 +2734,7 @@ class BidRequestFactoryTest
       val native = Native("native", ver, api, battr, None)
       val adImp = ad.builder.ImpBuilder("1").withNative(native).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       val site = siteBuilder.withPublisher(publisher1).build
       val imp = ImpBuilder(adImp.id).withNative(native).build
@@ -2768,7 +2769,7 @@ class BidRequestFactoryTest
       val native = Native(request, ver, api, battr, None)
       val adImp = ad.builder.ImpBuilder("1").withNative(native).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       factory.create(adRequest) shouldBe None
     }
@@ -2777,7 +2778,7 @@ class BidRequestFactoryTest
   it should "not create bid request for ad request without banner, video and native" in {
     val adImp = ad.builder.ImpBuilder("1").build
     val adSite = adSiteBuilder.build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp)).withSite(adSite).build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
     factory.create(adRequest) shouldBe None
   }
@@ -2805,7 +2806,7 @@ class BidRequestFactoryTest
       val adUser = ad.User(id, yob, gender, keywords, geo)
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withUser(adUser)
         .build
@@ -2849,7 +2850,7 @@ class BidRequestFactoryTest
       val adUser = ad.User(id, yob, gender, keywords, geo)
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withUser(adUser)
         .build
@@ -3765,7 +3766,7 @@ class BidRequestFactoryTest
     forAll(correctDevices) { device =>
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withDevice(device)
         .build
@@ -5471,7 +5472,7 @@ class BidRequestFactoryTest
     forAll(incorrectDevices) { device =>
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withDevice(device)
         .build
@@ -5640,7 +5641,7 @@ class BidRequestFactoryTest
       val adUser = ad.builder.UserBuilder().withGeo(geo).build
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withUser(adUser)
         .build
@@ -5899,7 +5900,7 @@ class BidRequestFactoryTest
       val adUser = ad.builder.UserBuilder().withGeo(geo).build
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .withUser(adUser)
         .build
@@ -6373,7 +6374,7 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.withContent(content).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .build
 
@@ -7143,7 +7144,7 @@ class BidRequestFactoryTest
         None)
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.withContent(content).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .build
 
@@ -7172,7 +7173,7 @@ class BidRequestFactoryTest
       val content = ContentBuilder().withProducer(producer).build
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.withContent(content).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .build
 
@@ -7214,7 +7215,7 @@ class BidRequestFactoryTest
       val content = ContentBuilder().withProducer(producer).build
       val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
       val adSite = adSiteBuilder.withContent(content).build
-      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+      val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
         .withSite(adSite)
         .build
 
@@ -7226,7 +7227,7 @@ class BidRequestFactoryTest
     val regs = RegsBuilder().withCoppa(1).build
     val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
     val adSite = adSiteBuilder.build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .withRegs(regs)
       .build
@@ -7247,7 +7248,7 @@ class BidRequestFactoryTest
     val regs = RegsBuilder().withCoppa(2).build
     val adImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
     val adSite = adSiteBuilder.build
-    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp))
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
       .withSite(adSite)
       .withRegs(regs)
       .build
