@@ -93,4 +93,15 @@ class ConfigurationTest extends FlatSpec with Matchers {
       val ct = conf.bidRequestContentType
     }
   }
+
+  it should "load auction timeout correctly" in {
+    System.setProperty("rtb-exchange.auction-timeout", "600 milliseconds")
+
+    ConfigFactory.invalidateCaches()
+    val conf = new Configuration
+
+    val timeout = conf.auctionTimeout
+
+    timeout shouldBe 600.milliseconds
+  }
 }

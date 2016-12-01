@@ -25,11 +25,14 @@ trait Auction {
   *
   * @author Egor Ilchenko
   */
-class AuctionImpl extends Auction with Logging {
+class AuctionImpl(configuration: Configuration) extends Auction with Logging {
+
+  val timeout = configuration.auctionTimeout
 
   override def winners(responses: Seq[BidResponse]): Seq[BidResponse] = {
     val groups = toBidGroups(responses)
-    val combinations = maxCombination(groups)
+    val targetTime = System.currentTimeMillis() + timeout.toMillis
+    val combinations = maxCombination(groups, targetTime)
     val result = toBidResponses(combinations)
     result
   }
@@ -39,9 +42,9 @@ class AuctionImpl extends Auction with Logging {
     *
     * @param groups all bid groups
     */
-  private def maxCombination(groups: List[BidGroup]) = (1 to groups.length)
+  private def maxCombination(groups: List[BidGroup], targetTime: Long) = (1 to groups.length)
     .view
-    .map(combinations(_, groups))
+    .map(combinations(_, groups, targetTime))
     .takeWhile(_.nonEmpty)
     .flatten
     .toList match {
@@ -55,24 +58,31 @@ class AuctionImpl extends Auction with Logging {
     * @param k      amount of groups in one combination
     * @param groups bid groups to make combinations with
     */
-  private def combinations(k: Int, groups: List[BidGroup]): List[List[BidGroup]] = groups match {
-    case Nil => Nil
-    case head :: tail =>
-      if (k <= 0 || k > groups.length) {
-        Nil
-      }
-      else if (k == 1) {
-        groups.map(List(_))
-      }
-      else {
-        val filtered = tail.filter { elem =>
-          !elem.impIds.exists(bb => head.impIds.contains(bb))
+  private def combinations(
+      k: Int,
+      groups: List[BidGroup],
+      targetTime: Long): List[List[BidGroup]] = if (timeIsOut(targetTime)) {
+    Nil
+  } else {
+    groups match {
+      case Nil => Nil
+      case head :: tail =>
+        if (k <= 0 || k > groups.length) {
+          Nil
         }
+        else if (k == 1) {
+          groups.map(List(_))
+        }
+        else {
+          val filtered = tail.filter { elem =>
+            !elem.impIds.exists(bb => head.impIds.contains(bb))
+          }
 
-        val left = combinations(k - 1, filtered).map(head :: _)
-        val right = combinations(k, tail)
-        left ::: right
-      }
+          val left = combinations(k - 1, filtered, targetTime).map(head :: _)
+          val right = combinations(k, tail, targetTime)
+          left ::: right
+        }
+    }
   }
 
   /**
@@ -124,6 +134,15 @@ class AuctionImpl extends Auction with Logging {
           }
         }
     }.toList
+
+  /**
+    * Checks if current time reaches time to stop.
+    *
+    * @param timeToStop time limit
+    * @return true if current time reaches time to stop
+    */
+  def timeIsOut(timeToStop: Long) = System.currentTimeMillis() >= timeToStop
+
 }
 
 /**
