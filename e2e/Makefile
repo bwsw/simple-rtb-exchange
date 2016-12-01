@@ -3,18 +3,25 @@ TEST_CASES:=test_cases.txt
 COLLECTIONS_DIR:=collections
 BIDDER_SQL_DIR:=bidders
 NEWMAN_ENV:=env.json
+REPORT_FILE:=report.xml
+
+NEWMAN_TEMP_ENV:=.temp_env.json
+REPORT_PART:=.report_part.xml
+
+TEMP_FILES:=$(NEWMAN_TEMP_ENV) $(REPORT_PART)
 
 prepare:
 	$(MAKE) -C $(DB_DIR) prepare
 	$(MAKE) -C $(DB_DIR) run env=e2e command=update
 
 run: prepare
-	echo '<?xml version="1.0" encoding="UTF-8"?>' > report.xml
+	cat $(NEWMAN_ENV) | sed -r -e 's/\{\{rtb-exchange-host\}\}/$(rtb_host)/' > $(NEWMAN_TEMP_ENV)
+	echo '<?xml version="1.0" encoding="UTF-8"?>' > $(REPORT_FILE)
 	for row in `cat $(TEST_CASES)` ; do \
 		col=$(COLLECTIONS_DIR)/`echo $$row | cut -d, -f2` ; \
 		sqlfile=$(BIDDER_SQL_DIR)/`echo $$row | cut -d, -f2` ; \
-		newman run $$col -e $(NEWMAN_ENV) --reporters junit --reporter-junit-export tmp.xml ; \
-		tail tmp.xml -n +2 >> report.xml ; \
+		newman run $$col -e $(NEWMAN_TEMP_ENV) --reporters junit --reporter-junit-export $(REPORT_PART) ; \
+		tail $(REPORT_PART) -n +2 >> $(REPORT_FILE) ; \
 	done
-	rm -f tmp.xml
+	rm -f $(TEMP_FILES)
 
