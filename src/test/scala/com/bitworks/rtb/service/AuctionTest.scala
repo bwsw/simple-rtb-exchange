@@ -48,7 +48,7 @@ class AuctionTest extends FlatSpec with Matchers with EasyMockSugar {
     }
   }
 
-  it should "return empty response if cant find winner" in {
+  it should "return empty response if it can not find winner" in {
     val confMock = mock[Configuration]
     expecting {
       confMock.auctionTimeout.andStubReturn(10.seconds)

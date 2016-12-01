@@ -61,27 +61,29 @@ class AuctionImpl(configuration: Configuration) extends Auction with Logging {
   private def combinations(
       k: Int,
       groups: List[BidGroup],
-      targetTime: Long): List[List[BidGroup]] = if (timeIsOut(targetTime)) {
-    Nil
-  } else {
-    groups match {
-      case Nil => Nil
-      case head :: tail =>
-        if (k <= 0 || k > groups.length) {
-          Nil
-        }
-        else if (k == 1) {
-          groups.map(List(_))
-        }
-        else {
-          val filtered = tail.filter { elem =>
-            !elem.impIds.exists(bb => head.impIds.contains(bb))
+      targetTime: Long): List[List[BidGroup]] = {
+    if (isTimeoutExpired(targetTime)) {
+      Nil
+    } else {
+      groups match {
+        case Nil => Nil
+        case head :: tail =>
+          if (k <= 0 || k > groups.length) {
+            Nil
           }
+          else if (k == 1) {
+            groups.map(List(_))
+          }
+          else {
+            val filtered = tail.filter { elem =>
+              !elem.impIds.exists(bb => head.impIds.contains(bb))
+            }
 
-          val left = combinations(k - 1, filtered, targetTime).map(head :: _)
-          val right = combinations(k, tail, targetTime)
-          left ::: right
-        }
+            val left = combinations(k - 1, filtered, targetTime).map(head :: _)
+            val right = combinations(k, tail, targetTime)
+            left ::: right
+          }
+      }
     }
   }
 
@@ -141,7 +143,7 @@ class AuctionImpl(configuration: Configuration) extends Auction with Logging {
     * @param timeToStop time limit
     * @return true if current time reaches time to stop
     */
-  def timeIsOut(timeToStop: Long) = System.currentTimeMillis() >= timeToStop
+  def isTimeoutExpired(timeToStop: Long) = System.currentTimeMillis() >= timeToStop
 
 }
 
