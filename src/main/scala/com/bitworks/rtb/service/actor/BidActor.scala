@@ -2,10 +2,9 @@ package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
 import com.bitworks.rtb.model.message.{BidRequestFail, BidRequestSuccess, SendBidRequest}
-import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
 import com.bitworks.rtb.service.{BidRequestMaker, Configuration}
-import scaldi.Injector
 import scaldi.Injectable._
+import scaldi.Injector
 
 import scala.concurrent.Await
 

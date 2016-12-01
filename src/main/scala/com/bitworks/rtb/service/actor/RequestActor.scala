@@ -1,31 +1,23 @@
 package com.bitworks.rtb.service.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
-import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
-import com.bitworks.rtb.model.ad.request.AdRequest
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
-import com.bitworks.rtb.model.db.Bidder
-import com.bitworks.rtb.model.message.{BidRequestResult, _}
-import com.bitworks.rtb.model.request.BidRequest
+import com.bitworks.rtb.model.message._
+import com.bitworks.rtb.service.Configuration
 import com.bitworks.rtb.service.ContentTypeConversions._
-import com.bitworks.rtb.service.dao.BidderDao
 import com.bitworks.rtb.service.factory.{AdModelConverter, AdResponseFactory, BidRequestFactory}
-import com.bitworks.rtb.service.{Auction, Configuration}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
-
-import scala.collection.mutable.ListBuffer
 
 /**
   * Main actor to process ad requests.
   *
   * @author Egor Ilchenko
   */
-class RequestActor(
-    request: HttpRequestWrapper)(
-    implicit inj: Injector) extends Actor with ActorLogging {
+class RequestActor(request: HttpRequestWrapper)
+  (implicit inj: Injector) extends Actor with ActorLogging {
 
   import context.dispatcher
 
@@ -33,25 +25,7 @@ class RequestActor(
   val configuration = inject[Configuration]
   val adConverter = inject[AdModelConverter]
   val factory = inject[BidRequestFactory]
-  val auction = inject[Auction]
-  val bidderDao = inject[BidderDao]
   val adResponseFactory = inject[AdResponseFactory]
-
-  val bidders = bidderDao.getAll
-  val receivedBidResponses = new ListBuffer[BidRequestResult]
-
-  var auctionStarted = false
-
-  val bidActorProps = injectActorProps[BidActor]
-  val bidRouter = context.actorOf(
-    RoundRobinPool(bidders.length)
-      .props(bidActorProps), "bidrouter")
-
-  val winActor = injectActorRef[WinActor]
-
-  var adRequest: Option[AdRequest] = None
-
-  var bidRequest: Option[BidRequest] = None
 
   override def receive: Receive = {
 
@@ -62,73 +36,30 @@ class RequestActor(
         entity =>
           val bytes = entity.data.toArray
           log.debug(s"content-type: ${entity.contentType}")
-          adRequest = Some(adConverter.parse(bytes, entity.contentType))
-          bidRequest = factory.create(adRequest.get)
-          if (bidRequest.isDefined) {
-            bidders match {
-              case Seq() => onError("bidders not found")
-              case _: Seq[Bidder] =>
-                bidders.foreach { bidder =>
-                  bidRouter ! SendBidRequest(bidder, bidRequest.get)
-                }
-
-                context.system.scheduler.scheduleOnce(
-                  configuration.bidRequestTimeout,
-                  self,
-                  StartAuction)
-            }
-          } else {
-            onError("Bid request can not be constructed.")
+          val adRequest = adConverter.parse(bytes, entity.contentType)
+          factory.create(adRequest) match {
+            case Some(bidRequest) =>
+              val props = BidRequestActor.props(adRequest, bidRequest)
+              context.actorOf(props) ! HandleRequest
+            case None =>
+              val msg = "bid request not created"
+              log.debug(msg)
+              val response = adResponseFactory.create(adRequest, Error(123, msg))
+              completeRequest(response)
           }
-
       } onFailure {
         case exc => onError(exc.toString)
       }
 
-    case msg: BidRequestResult =>
-      log.debug(s"bid response received: $msg")
-      receivedBidResponses.append(msg)
-      if (receivedBidResponses.size == bidders.length)
-        self ! StartAuction
-
-    case CreateAdResponse(responses) =>
-      log.debug("bid responses received")
-      adRequest match {
-        case Some(ar) =>
-          try {
-            val response = adResponseFactory.create(ar, responses)
-            completeRequest(response)
-          } catch {
-            case e: Throwable => onError(e.getMessage)
-          }
-        case None =>
-          log.error("ad request is not defined")
-          request.fail()
-      }
-
-    case StartAuction =>
-      if (!auctionStarted) {
-        auctionStarted = true
-        log.debug("auction started")
-        val successful = receivedBidResponses
-          .collect {
-            case BidRequestSuccess(response) => response
-          }
-        log.debug(s"auction participants: ${successful.length}")
-        val winners = auction.winners(successful)
-        log.debug(s"auction winners: $winners")
-
-        winners match {
-          case Nil => onError("winner not defined")
-          case _ => winActor ! SendWinNotice(bidRequest.get, winners)
-        }
-      }
+    case adResponse: AdResponse =>
+      log.debug("ad response received")
+      completeRequest(adResponse)
   }
 
   /**
     * Completes request with ad response.
     *
-    * @param response [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]]
+    * @param response [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]] object
     */
   def completeRequest(response: AdResponse) = {
     log.debug("completing request...")
@@ -143,23 +74,12 @@ class RequestActor(
     */
   def onError(msg: String) = {
     log.debug(s"an error occurred: $msg")
-
-    adRequest match {
-      case Some(ar) =>
-        val response = adResponseFactory.create(ar, Error(123, msg))
-        completeRequest(response)
-      case None =>
-        log.error("ad request is not defined")
-        request.fail()
-    }
+    request.fail()
   }
 }
 
 object RequestActor {
 
   /** Returns Props for [[com.bitworks.rtb.service.actor.RequestActor RequestActor]]. */
-  def props(
-      wrapper: HttpRequestWrapper)()(implicit inj: Injector) = {
-    Props(new RequestActor(wrapper))
-  }
+  def props(wrapper: HttpRequestWrapper)(implicit inj: Injector) = Props(new RequestActor(wrapper))
 }
