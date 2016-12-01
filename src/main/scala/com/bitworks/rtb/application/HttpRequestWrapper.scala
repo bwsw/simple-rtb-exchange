@@ -1,6 +1,8 @@
 package com.bitworks.rtb.application
 
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
+import com.bitworks.rtb.model.http.ContentTypeModel
+import com.bitworks.rtb.service.ContentTypeConversions._
 
 import scala.concurrent.Promise
 
@@ -18,8 +20,8 @@ class HttpRequestWrapper(val inner: HttpRequest, p: Promise[HttpResponse]) {
     *
     * @param bytes response body
     */
-  def complete(bytes: Array[Byte]) = {
-    p.success(HttpResponse().withEntity(bytes))
+  def complete(bytes: Array[Byte], ct: ContentTypeModel) = {
+    p.success(HttpResponse().withEntity(ct, bytes))
   }
 
   /**
