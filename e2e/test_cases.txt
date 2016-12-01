@@ -1,0 +1,2 @@
+bidder1.sql,col1.json
+bidder2.sql,col2.json
