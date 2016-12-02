@@ -22,7 +22,8 @@ run: prepare
 	for row in `cat $(TEST_CASES)` ; do \
 		sqlfile=$(BIDDER_SQL_DIR)/`echo $$row | cut -d, -f1` ; \
 		./query.sh $(bidder_host) $$sqlfile ; \
-		java -Dconfig.resource=application.e2e.conf -jar ../target/scala-2.11/rtb-exchange-assembly-1.0.0-SNAPSHOT.jar & \
+		java -Dconfig.resource=application.e2e.conf \
+			-jar ../target/scala-2.11/rtb-exchange-1.0.0-SNAPSHOT.jar & \
 		sleep 3 ; \
 		col=$(COLLECTIONS_DIR)/`echo $$row | cut -d, -f2` ; \
 		newman run $$col -e $(NEWMAN_TEMP_ENV) --reporters junit --reporter-junit-export $(REPORT_PART) ; \
