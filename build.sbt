@@ -48,9 +48,25 @@ publishTo := {
     Some("releases" at nexus + "bitworks-rtb/")
 }
 
-artifact in (Compile, assembly) := {
-  val art = (artifact in (Compile, assembly)).value
+artifact in(Compile, assembly) := {
+  val art = (artifact in(Compile, assembly)).value
   art.copy(`classifier` = Some("assembly"))
 }
 
-addArtifact(artifact in (Compile, assembly), assembly)
+addArtifact(artifact in(Compile, assembly), assembly)
+
+import sbt.complete.DefaultParsers._
+val teste2e = inputKey[Unit]("Integration testing")
+teste2e := {
+  val args: Seq[String] = spaceDelimited("<arg>").parsed
+  if (args.length != 3){
+    println("teste2e Usage: env bidderhost reportpath")
+  } else {
+    val env = args(0)
+    val bidderHost = args(1)
+    val reportPath = args(2)
+    val a = assembly.value
+    s"make -C e2e execute ENV=$env BIDDER_HOST=$bidderHost REPORT_PATH=$reportPath" !
+  }
+}
+

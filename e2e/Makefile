@@ -1,42 +1,26 @@
-DB_DIR:=../db
-TEST_CASES:=test_cases.txt
-COLLECTIONS_DIR:=collections
-BIDDER_SQL_DIR:=bidders
-NEWMAN_ENV:=env.json
-REPORT_FILE:=report.xml
+ENV:=e2e
+BIDDER_HOST:=rtb-ci.z1.netpoint-dc.com:8083
+REPORT_PATH:=../target/test-reports/
 
-NEWMAN_TEMP_ENV:=.temp_env.json
-REPORT_PART:=.report_part.xml
-
-TEMP_FILES:=$(NEWMAN_TEMP_ENV) $(REPORT_PART)
-
-app_start:
-	assembly=`find ../target/scala-2.11 -iname "*-assembly.jar" -printf "%f\n"` ; \
+app_start: app_stop
 	docker network create rtb-ci-network || true ; \
 	docker network connect --alias=db rtb-ci-network private-postgres || true ; \
-	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v `cd "../target/scala-2.11/"; pwd`:/workdir -w=/workdir --network=rtb-ci-network  isuper/java-oracle:server_jre_8 /usr/bin/java -Dconfig.resource=application.e2e.conf -jar $${assembly}
+	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v `cd "../target/scala-2.11/"; pwd`:/workdir -w=/workdir --network=rtb-ci-network  isuper/java-oracle:server_jre_8 /usr/bin/java -Dconfig.resource=application.$(ENV).conf -jar `find ../target/scala-2.11 -iname "*-assembly.jar" -printf "%f"` ; \
+    sleep 3 ; \
 
 app_stop:
 	docker stop rtb-exchange-e2e || true && docker rm rtb-exchange-e2e || true
 
 prepare:
-	$(MAKE) -C $(DB_DIR) prepare
-	$(MAKE) -C $(DB_DIR) run env=e2e command=update
+	$(MAKE) -C ../db run env=e2e command=update
 
-#TODO: place run and stop rtb-exchange commands
+execute : prepare app_start run app_stop
 
-run: prepare
-	cat $(NEWMAN_ENV) | sed -r -e 's/\{\{rtb-exchange-host\}\}/$(rtb_host)/' > $(NEWMAN_TEMP_ENV)
-	echo '<?xml version="1.0" encoding="UTF-8"?>' > $(REPORT_FILE)
-	for row in `cat $(TEST_CASES)` ; do \
-		sqlfile=$(BIDDER_SQL_DIR)/`echo $$row | cut -d, -f1` ; \
-		./query.sh $(bidder_host) $$sqlfile ; \
-		java -Dconfig.resource=application.e2e.conf \
-			-jar ../target/scala-2.11/rtb-exchange-1.0.0-SNAPSHOT.jar & \
-		sleep 3 ; \
-		col=$(COLLECTIONS_DIR)/`echo $$row | cut -d, -f2` ; \
-		newman run $$col -e $(NEWMAN_TEMP_ENV) --reporters junit --reporter-junit-export $(REPORT_PART) ; \
-		kill -KILL `jps | grep rtb-exchange | cut -d' ' -f1` ; \
-		tail $(REPORT_PART) -n +2 >> $(REPORT_FILE); \
-	done
-	rm -f $(TEMP_FILES)
+run:
+	for row in `cat test_cases`; do \
+		sqlfile=sql/`echo $$row | cut -d, -f1` ; \
+		col=`echo $$row | cut -d, -f2` ; \
+		echo "asdasd : $$col" ; \
+		./query.sh e2e $(BIDDER_HOST) $$sqlfile ; \
+		newman run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli --reporter-junit-export $(REPORT_PATH)$$col.xml || $(MAKE) app_stop && 1 ; \
+	done ; \
