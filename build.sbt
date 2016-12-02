@@ -66,7 +66,12 @@ teste2e := {
     val bidderHost = args(1)
     val reportPath = args(2)
     val a = assembly.value
-    s"make -C e2e execute ENV=$env BIDDER_HOST=$bidderHost REPORT_PATH=$reportPath" !
+    val result = {
+      s"make -C e2e execute ENV=$env BIDDER_HOST=$bidderHost REPORT_PATH=$reportPath" !
+    }
+    if (result != 0){
+      sys.error("Integration tests failed")
+    }
   }
 }
 
