@@ -15,7 +15,7 @@ app_stop:
 	(docker stop rtb-exchange-e2e && docker rm rtb-exchange-e2e) || true
 
 prepare:
-	$(MAKE) -C ../db run env=e2e command=update
+	$(MAKE) -C ../db run env=$(ENV) command=update
 
 execute : prepare app_start run app_stop
 
