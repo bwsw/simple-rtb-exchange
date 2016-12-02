@@ -59,19 +59,21 @@ import sbt.complete.DefaultParsers._
 val teste2e = inputKey[Unit]("Integration testing")
 teste2e := {
   val args: Seq[String] = spaceDelimited("<arg>").parsed
-  if (args.length != 3){
-    println("teste2e Usage: env bidderhost reportpath")
+  val (env, bidderHost, reportPath) = if (args.length == 3) {
+    (args(0), args(1), args(2))
   } else {
-    val env = args(0)
-    val bidderHost = args(1)
-    val reportPath = args(2)
-    val a = assembly.value
-    val result = {
-      s"make -C e2e execute ENV=$env BIDDER_HOST=$bidderHost REPORT_PATH=$reportPath" !
-    }
-    if (result != 0){
-      sys.error("Integration tests failed")
-    }
+    println("parameters not specified, using defaults")
+    ("e2e", "rtb-ci.z1.netpoint-dc.com:8083", "../target/test-reports/")
   }
+
+  val a = assembly.value
+
+  val result = {
+    s"make -C e2e execute ENV=$env BIDDER_HOST=$bidderHost REPORT_PATH=$reportPath assembly=${a.getPath}" !
+  }
+  if (result != 0) {
+    sys.error("Integration tests failed")
+  }
+
 }
 
