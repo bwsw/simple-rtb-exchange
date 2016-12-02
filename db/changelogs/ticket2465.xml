@@ -17,47 +17,13 @@
             <tableExists tableName="bidder"/>
         </preConditions>
 
-        <loadData tableName="publisher" file="resources/ticket2465/publisher.csv">
-            <column name="name" type="string"/>
-            <column name="domain" type="string"/>
-        </loadData>
-
-        <loadData tableName="publisher_category"
-                  file="resources/ticket2465/publisher_category.csv">
-            <column name="publisher_id" type="numeric"/>
-            <column name="iab_category_id" type="numeric"/>
-        </loadData>
-
-        <loadData tableName="publisher_blocked_advertiser"
-                  file="resources/ticket2465/publisher_blocked_advertiser.csv">
-            <column name="publisher_id" type="numeric"/>
-            <column name="domain" type="string"/>
-        </loadData>
-
-        <loadData tableName="site" file="resources/ticket2465/site.csv">
-            <column name="name" type="string"/>
-            <column name="type" type="numeric"/>
-            <column name="publisher_id" type="numeric"/>
-            <column name="status" type="numeric"/>
-            <column name="privacy_policy" type="numeric"/>
-            <column name="test" type="boolean"/>
-            <column name="domain" type="string"/>
-        </loadData>
-
-        <loadData tableName="site_category"
-                  file="resources/ticket2465/site_category.csv">
-            <column name="site_id" type="numeric"/>
-            <column name="iab_category_id" type="numeric"/>
-        </loadData>
-
-        <rollback>
-            <delete tableName="site_category"/>
-            <delete tableName="site"/>
-            <delete tableName="publisher_blocked_advertiser"/>
-            <delete tableName="publisher_blocked_category"/>
-            <delete tableName="publisher_category"/>
-            <delete tableName="publisher"/>
-        </rollback>
+        <delete tableName="publisher_blocked_advertiser"/>
+        <delete tableName="publisher_category"/>
+        <delete tableName="publisher_blocked_category"/>
+        <delete tableName="publisher"/>
+        <delete tableName="site_category"/>
+        <delete tableName="site"/>
+        <delete tableName="bidder"/>
     </changeSet>
 
 </databaseChangeLog>

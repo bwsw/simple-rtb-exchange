@@ -1,2 +1,0 @@
-publisher_id,domain
-(SELECT id FROM publisher WHERE name = 'pub1'),"adv1"

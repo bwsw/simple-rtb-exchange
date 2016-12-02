@@ -11,5 +11,6 @@
     <include file="changelogs/ticket2602.xml"/>
     <include file="changelogs/ticket2645.xml"/>
     <include file="changelogs/ticket2465.xml"/>
+    <include file="changelogs/ticket2712.xml"/>
 
 </databaseChangeLog>
