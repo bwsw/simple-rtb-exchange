@@ -35,7 +35,7 @@ fork in Test := true
 javaOptions in Test += "-Dconfig.resource=application.test.conf"
 
 
-assemblyJarName := s"${name.value}-${version.value}.jar"
+assemblyJarName := s"${name.value}-${version.value}-assembly.jar"
 mainClass in assembly := Some("com.bitworks.rtb.application.RtbApplication")
 
 

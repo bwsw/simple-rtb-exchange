@@ -10,6 +10,15 @@ REPORT_PART:=.report_part.xml
 
 TEMP_FILES:=$(NEWMAN_TEMP_ENV) $(REPORT_PART)
 
+app_start:
+	assembly=`find ../target/scala-2.11 -iname "*-assembly.jar" -printf "%f\n"` ; \
+	docker network create rtb-ci-network || true ; \
+	docker network connect --alias=db rtb-ci-network private-postgres || true ; \
+	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v `cd "../target/scala-2.11/"; pwd`:/workdir -w=/workdir --network=rtb-ci-network  isuper/java-oracle:server_jre_8 /usr/bin/java -Dconfig.resource=application.e2e.conf -jar $${assembly}
+
+app_stop:
+	docker stop rtb-exchange-e2e || true && docker rm rtb-exchange-e2e || true
+
 prepare:
 	$(MAKE) -C $(DB_DIR) prepare
 	$(MAKE) -C $(DB_DIR) run env=e2e command=update
