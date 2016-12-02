@@ -19,5 +19,5 @@ replaced_script="${script//\{\{host\}\}/$2}"
 IFS=';'
 for x in $replaced_script; do
     [ -z "${x// }" ] && continue
-    psql $connectionString -U $username -w  -c $x
+    (psql $connectionString -U $username -w  -c $x) || exit 1
 done
