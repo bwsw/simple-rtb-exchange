@@ -56,7 +56,7 @@ class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "write ad response using suitable writer" in {
-    val response = AdResponseBuilder("id", Json).build
+    val response = AdResponseBuilder(Json).build
     val bytes = new Array[Byte](0)
     val writerMock = mock[AdResponseWriter]
     expecting {
@@ -72,7 +72,7 @@ class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "throw exception if writer not found" in {
-    val response = AdResponseBuilder("id", Json).build
+    val response = AdResponseBuilder(Json).build
     val writer = mock[AdResponseWriter]
     val converter = new AdModelConverterImpl(Map.empty, Map(Avro -> writer))
 
@@ -83,7 +83,7 @@ class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "throw exception if header in ad response is missed" in {
-    val response = AdResponseBuilder("id", NoContentType).build
+    val response = AdResponseBuilder(NoContentType).build
     val writer = mock[AdResponseWriter]
     val converter = new AdModelConverterImpl(Map.empty, Map(Avro -> writer))
 

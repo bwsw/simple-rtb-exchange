@@ -42,7 +42,8 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
               .build))
           .build))
       .build
-    val expectedResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
+    val expectedResponse = AdResponseBuilder(adRequest.ct)
+      .withId(adRequest.id)
       .withImp(
         Seq(
           com.bitworks.rtb.model.ad.response.builder.ImpBuilder(
@@ -83,7 +84,8 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
               .build))
           .build))
       .build
-    val expectedResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
+    val expectedResponse = AdResponseBuilder(adRequest.ct)
+      .withId(adRequest.id)
       .withImp(
         Seq(
           com.bitworks.rtb.model.ad.response.builder.ImpBuilder(
@@ -124,7 +126,8 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
               .build))
           .build))
       .build
-    val expectedResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
+    val expectedResponse = AdResponseBuilder(adRequest.ct)
+      .withId(adRequest.id)
       .withImp(
         Seq(
           com.bitworks.rtb.model.ad.response.builder.ImpBuilder(
@@ -205,11 +208,24 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
     val factory = new AdResponseFactoryImpl
     val error = Error(ErrorCode.NOT_SPECIFIED_ERROR, "123")
     val adRequest = AdRequestBuilder("reqId", Seq(), Json).build
-    val expectedResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
+    val expectedResponse = AdResponseBuilder(adRequest.ct)
+      .withId(adRequest.id)
       .withError(error)
       .build
 
     val response = factory.create(adRequest, error)
+
+    response shouldBe expectedResponse
+  }
+
+  it should "build ad response with error and without ad request correctly" in {
+    val factory = new AdResponseFactoryImpl
+    val error = Error(ErrorCode.NOT_SPECIFIED_ERROR, "123")
+    val expectedResponse = AdResponseBuilder(Json)
+      .withError(error)
+      .build
+
+    val response = factory.create(error)
 
     response shouldBe expectedResponse
   }

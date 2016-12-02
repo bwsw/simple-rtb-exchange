@@ -3,6 +3,7 @@ package com.bitworks.rtb.service.factory
 import com.bitworks.rtb.model.ad.request.{AdRequest, Imp}
 import com.bitworks.rtb.model.ad.response.{AdResponse, Error, ErrorCode}
 import com.bitworks.rtb.model.ad.response.builder.{AdResponseBuilder, ImpBuilder}
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.response.{Bid, BidResponse}
 import com.bitworks.rtb.service.{DataValidationException, Logging}
 
@@ -28,6 +29,13 @@ trait AdResponseFactory {
     * @param error   [[com.bitworks.rtb.model.ad.response.Error Error]]
     */
   def create(request: AdRequest, error: Error): AdResponse
+
+  /**
+    * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
+    *
+    * @param error   [[com.bitworks.rtb.model.ad.response.Error Error]]
+    */
+  def create(error: Error): AdResponse
 }
 
 /**
@@ -44,13 +52,21 @@ class AdResponseFactoryImpl extends AdResponseFactory with Logging {
       .bid
       .map(getImp(request, _))
 
-    AdResponseBuilder(request.id, request.ct)
+    AdResponseBuilder(request.ct)
+      .withId(request.id)
       .withImp(imps)
       .build
   }
 
   override def create(request: AdRequest, error: Error) = {
-    AdResponseBuilder(request.id, request.ct)
+    AdResponseBuilder(request.ct)
+      .withId(request.id)
+      .withError(error)
+      .build
+  }
+
+  override def create(error: Error) = {
+    AdResponseBuilder(Json)
       .withError(error)
       .build
   }

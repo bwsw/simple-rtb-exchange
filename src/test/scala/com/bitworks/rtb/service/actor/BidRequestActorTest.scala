@@ -72,12 +72,14 @@ class BidRequestActorTest
   val bidRequestResult3 = BidRequestSuccess(bidResponse3)
 
   val adResponseImp1 = ad.response.Imp(imp.id, bid1.adm.get, 1)
-  val adResponse1 = AdResponseBuilder(adRequest.id, adRequest.ct).withImp(Seq(adResponseImp1)).build
+  val adResponse1 = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
+    .withImp(Seq(adResponseImp1)).build
 
   val adResponseImp3 = ad.response.Imp(imp.id, bid3.adm.get, 1)
-  val adResponse3 = AdResponseBuilder(adRequest.id, adRequest.ct).withImp(Seq(adResponseImp3)).build
+  val adResponse3 = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
+    .withImp(Seq(adResponseImp3)).build
 
-  val errorResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
+  val errorResponse = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
     .withError(Error(ErrorCode.NO_AD_FOUND, "error"))
     .build
 

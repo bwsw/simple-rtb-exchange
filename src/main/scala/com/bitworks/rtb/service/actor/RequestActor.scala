@@ -3,7 +3,7 @@ package com.bitworks.rtb.service.actor
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
-import com.bitworks.rtb.model.ad.response.AdResponse
+import com.bitworks.rtb.model.ad.response.{AdResponse, Error, ErrorCode}
 import com.bitworks.rtb.model.message._
 import com.bitworks.rtb.service.ContentTypeConversions._
 import com.bitworks.rtb.service.{Configuration, DataValidationException}
@@ -49,7 +49,13 @@ class RequestActor(request: HttpRequestWrapper)
               completeRequest(response)
           }
       } onFailure {
-        case exc => onError(exc.toString)
+        case e: DataValidationException =>
+          val adResponse = adResponseFactory.create(e.getError)
+          completeRequest(adResponse)
+        case e: Throwable =>
+          val error = Error(ErrorCode.INCORRECT_REQUEST)
+          val adResponse = adResponseFactory.create(error)
+          completeRequest(adResponse)
       }
 
     case adResponse: AdResponse =>

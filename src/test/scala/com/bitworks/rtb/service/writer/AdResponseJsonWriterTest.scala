@@ -20,7 +20,7 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers {
   "AdResponseJsonWriter" should "write json correctly" in {
     val imps = Seq(Imp("id1", "adm1", 1), Imp("id2", "adm2", 2))
     val error = Error(ErrorCode.NOT_SPECIFIED_ERROR, "error message")
-    val adResponse = AdResponse("id", Some(imps), Some(error), Json)
+    val adResponse = AdResponse(Some("id"), Some(imps), Some(error), Json)
 
     val json = writer.write(adResponse)
     val path = getClass.getResource("adresponse.json").getPath
@@ -33,10 +33,10 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers {
   }
 
   it should "write json without optional fields correctly" in {
-    val adResponse = AdResponse("id", None, None, Json)
+    val adResponse = AdResponse(None, None, None, Json)
 
     val json = writer.write(adResponse)
-    val expectedJson = """{"id":"id"}"""
+    val expectedJson = "{}"
 
     val jsonNode = mapper.readTree(json)
     val expectedJsonNode = mapper.readTree(expectedJson)
