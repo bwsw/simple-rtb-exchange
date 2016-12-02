@@ -53,6 +53,12 @@ class Configuration {
           s"unknown bid request content type in config: $s"))
   }
 
+  /** Auction timeout. */
+  def auctionTimeout = FiniteDuration(
+    conf.getDuration(
+      "auction-timeout")
+      .toMillis, TimeUnit.MILLISECONDS)
+
   /** Timeout for converting HttpEntity to strict Entity. */
   def toStrictTimeout = 1.second
 }
