@@ -1,0 +1,2 @@
+name,type,publisher_id,status,privacy_policy,test,domain
+"site1",1,(SELECT id FROM publisher WHERE name = 'pub1'),1,1,true,"site1.com"

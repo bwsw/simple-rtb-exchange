@@ -34,6 +34,11 @@ libraryDependencies ++= Seq(
 fork in Test := true
 javaOptions in Test += "-Dconfig.resource=application.test.conf"
 
+
+assemblyJarName := s"${name.value}-${version.value}-assembly.jar"
+mainClass in assembly := Some("com.bitworks.rtb.application.RtbApplication")
+
+
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 publishTo := {
   val nexus = "http://rtb-ci.z1.netpoint-dc.com:8081/nexus/content/repositories/"
@@ -42,3 +47,30 @@ publishTo := {
   else
     Some("releases" at nexus + "bitworks-rtb/")
 }
+
+artifact in(Compile, assembly) := {
+  val art = (artifact in(Compile, assembly)).value
+  art.copy(`classifier` = Some("assembly"))
+}
+
+addArtifact(artifact in(Compile, assembly), assembly)
+
+import sbt.complete.DefaultParsers._
+val testE2E = inputKey[Unit]("Integration testing")
+testE2E := {
+  val args: Seq[String] = spaceDelimited("<arg>").parsed
+  val (env, bidderHost, reportPath) = if (args.length == 3) {
+    (args(0), args(1), args(2))
+  } else {
+    sys.error("""usage: "testE2E <env> <bidder_host> <report_path>"""")
+  }
+  val assemblyPath = assembly.value.getPath
+  val result = {
+    s"make -C e2e execute ENV=$env BIDDER_HOST=$bidderHost " +
+      s"REPORT_PATH=$reportPath ASSEMBLY=$assemblyPath" !
+  }
+  if (result != 0) {
+    sys.error("Integration tests failed")
+  }
+}
+

@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.writer
 
-import com.bitworks.rtb.model.ad.response.{AdResponse, Error, Imp}
+import com.bitworks.rtb.model.ad.response.{AdResponse, Error, ErrorCode, Imp}
 import com.bitworks.rtb.model.http.Json
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.scalatest.{FlatSpec, Matchers}
@@ -19,7 +19,7 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers {
 
   "AdResponseJsonWriter" should "write json correctly" in {
     val imps = Seq(Imp("id1", "adm1", 1), Imp("id2", "adm2", 2))
-    val error = Error(24, "error message")
+    val error = Error(ErrorCode.NOT_SPECIFIED_ERROR, "error message")
     val adResponse = AdResponse("id", Some(imps), Some(error), Json)
 
     val json = writer.write(adResponse)

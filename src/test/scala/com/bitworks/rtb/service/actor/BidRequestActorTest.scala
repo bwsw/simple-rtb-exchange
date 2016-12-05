@@ -6,7 +6,7 @@ import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.bitworks.rtb.model.ad
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
-import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
+import com.bitworks.rtb.model.ad.response.{AdResponse, Error, ErrorCode}
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.message._
@@ -78,7 +78,7 @@ class BidRequestActorTest
   val adResponse3 = AdResponseBuilder(adRequest.id, adRequest.ct).withImp(Seq(adResponseImp3)).build
 
   val errorResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
-    .withError(Error(123, "error"))
+    .withError(Error(ErrorCode.NO_AD_FOUND, "error"))
     .build
 
   val smallAuctionTimeout = 1.nanos

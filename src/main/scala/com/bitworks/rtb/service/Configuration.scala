@@ -2,6 +2,7 @@ package com.bitworks.rtb.service
 
 import java.util.concurrent.TimeUnit
 
+import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json, Protobuf}
 import com.typesafe.config.ConfigFactory
 
@@ -47,7 +48,9 @@ class Configuration {
     case "protobuf" => Protobuf
     case s =>
       throw new DataValidationException(
-        s"unknown bid request content type in config: $s")
+        Error(
+          ErrorCode.INCORRECT_HEADER_VALUE,
+          s"unknown bid request content type in config: $s"))
   }
 
   /** Auction timeout. */
