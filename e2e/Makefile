@@ -16,12 +16,14 @@ app_stop:
 prepare:
 	$(MAKE) -C ../db run env=$(ENV) command=update
 
-execute : prepare app_start run app_stop
+execute : prepare app_start run
 
 run:
 	for row in `cat test_cases`; do \
 		sqlfile=sql/`echo $$row | cut -d, -f1` && \
 		col=`echo $$row | cut -d, -f2` && \
 		./query.sh e2e $(BIDDER_HOST) $$sqlfile && \
+		sleep 3 && \
 		newman run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli --reporter-junit-export $(REPORT_PATH)$$col.xml || ($(MAKE) app_stop && exit 1) ; \
-	done ; \
+	done && \
+	$(MAKE) app_stop
