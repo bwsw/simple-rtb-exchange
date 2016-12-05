@@ -8,8 +8,7 @@ app_start: app_stop
 	mkdir -p $$workdir && cp $(assembly) $$workdir && \
 	((docker network create rtb-ci-network && docker network connect --alias=db rtb-ci-network private-postgres) || true) && \
 	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v $$workdir:/workdir -w=/workdir --network=rtb-ci-network  isuper/java-oracle:server_jre_8 /usr/bin/java -Dconfig.resource=application.$(ENV).conf -jar `basename $(assembly)` && \
-	echo "sleeping for $(SLEEP) s" && \
-	sleep $(SLEEP)
+	./waitUp.sh localhost:8082
 
 app_stop:
 	(docker stop rtb-exchange-e2e && docker rm rtb-exchange-e2e) || true
