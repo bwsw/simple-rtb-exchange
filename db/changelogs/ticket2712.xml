@@ -6,7 +6,27 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="1" author="Pavel Tomskikh" context="e2e">
+    <changeSet id="1" author="Egor Ilchenko" context="e2e">
+        <preConditions>
+            <tableExists tableName="publisher"/>
+            <tableExists tableName="publisher_blocked_advertiser"/>
+            <tableExists tableName="publisher_category"/>
+            <tableExists tableName="publisher_blocked_category"/>
+            <tableExists tableName="site"/>
+            <tableExists tableName="site_category"/>
+            <tableExists tableName="bidder"/>
+        </preConditions>
+
+        <delete tableName="publisher_blocked_advertiser"/>
+        <delete tableName="publisher_category"/>
+        <delete tableName="publisher_blocked_category"/>
+        <delete tableName="publisher"/>
+        <delete tableName="site_category"/>
+        <delete tableName="site"/>
+        <delete tableName="bidder"/>
+    </changeSet>
+
+    <changeSet id="2" author="Pavel Tomskikh" context="e2e">
         <preConditions>
             <tableExists tableName="publisher"/>
             <tableExists tableName="publisher_blocked_advertiser"/>
