@@ -7,7 +7,7 @@ package com.bitworks.rtb.model.ad.response
   */
 object ErrorCode extends Enumeration {
   val UNKNOWN_ERROR = Value(0, "UNKNOWN_ERROR")
-  val MISSING_HEADER = Value(1, "MISSING_HEADER")
+  val MISSED_HEADER = Value(1, "MISSED_HEADER")
   val INCORRECT_HEADER_VALUE = Value(2, "INCORRECT_HEADER_VALUE")
   val INCORRECT_REQUEST = Value(3, "INCORRECT_REQUEST")
   val SITE_OR_APP_NOT_FOUND = Value(4, "SITE_OR_APP_NOT_FOUND")
