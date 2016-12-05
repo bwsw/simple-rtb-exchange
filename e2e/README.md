@@ -14,7 +14,7 @@ Where:
 - \<report_path\> path for newman reports (default ../target/test-reports/)
 ### Run tests using Makefile
 In e2e directory:
-**make run ENV=\<env\> BIDDER_HOST=\<bidder_host\> REPORT_PATH=\<report_path\> ASSEMBLY=\<assembly\>**
+**make execute ENV=\<env\> BIDDER_HOST=\<bidder_host\> REPORT_PATH=\<report_path\> ASSEMBLY=\<assembly\>**
 Where 
 - \<env\> environment for DB and tests (default = e2e),
 - \<bidder_host\> base url for fake bidders (default = rtb-ci.z1.netpoint-dc.com:8083),
