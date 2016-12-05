@@ -70,8 +70,7 @@ class AkkaHttpRequestMaker(
     val headers = request.headers.map { case h@HttpHeaderModel(key, value) =>
       HttpHeader.parse(key, value) match {
         case Ok(header, _) => header
-        case _ => throw new DataValidationException(
-          Error(ErrorCode.MISSING_HEADER, s"cannot parse $h"))
+        case _ => throw new DataValidationException(ErrorCode.MISSING_HEADER)
       }
     }.toList
 

@@ -1,8 +1,8 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
-import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
+import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request.builder.{BannerBuilder, NativeBuilder, VideoBuilder}
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
@@ -204,28 +204,30 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
     }
   }
 
+  val unknownErrorMsg = "Unknown error"
+
   it should "build ad response with error correctly" in {
     val factory = new AdResponseFactoryImpl
-    val error = Error(ErrorCode.UNKNOWN_ERROR, "123")
+    val error = Error(ErrorCode.UNKNOWN_ERROR, unknownErrorMsg)
     val adRequest = AdRequestBuilder("reqId", Seq(), Json).build
     val expectedResponse = AdResponseBuilder(adRequest.ct)
       .withId(adRequest.id)
       .withError(error)
       .build
 
-    val response = factory.create(adRequest, error)
+    val response = factory.create(adRequest, error.code)
 
     response shouldBe expectedResponse
   }
 
   it should "build ad response with error and without ad request correctly" in {
     val factory = new AdResponseFactoryImpl
-    val error = Error(ErrorCode.UNKNOWN_ERROR, "123")
+    val error = Error(ErrorCode.UNKNOWN_ERROR, unknownErrorMsg)
     val expectedResponse = AdResponseBuilder(Json)
       .withError(error)
       .build
 
-    val response = factory.create(error)
+    val response = factory.create(error.code)
 
     response shouldBe expectedResponse
   }

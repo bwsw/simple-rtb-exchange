@@ -46,11 +46,7 @@ class Configuration {
     case "json" => Json
     case "avro" => Avro
     case "protobuf" => Protobuf
-    case s =>
-      throw new DataValidationException(
-        Error(
-          ErrorCode.INCORRECT_HEADER_VALUE,
-          s"unknown bid request content type in config: $s"))
+    case s => throw new DataValidationException(ErrorCode.INCORRECT_HEADER_VALUE)
   }
 
   /** Auction timeout. */

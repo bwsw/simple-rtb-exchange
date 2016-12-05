@@ -53,8 +53,7 @@ class AdModelConverterImpl(
   override def parse(bytes: Array[Byte], ct: ContentTypeModel) = {
     adRequestParsers.get(ct) match {
       case Some(parser) => parser.parse(bytes)
-      case None => throw new DataValidationException(
-        Error(ErrorCode.INCORRECT_HEADER_VALUE, s"cannot find ad request parser for $ct"))
+      case None => throw new DataValidationException(ErrorCode.INCORRECT_HEADER_VALUE)
     }
   }
 
@@ -67,10 +66,7 @@ class AdModelConverterImpl(
   override def write(response: AdResponse): Array[Byte] = {
     adResponseWriters.get(response.ct) match {
       case Some(writer) => writer.write(response)
-      case None => throw new DataValidationException(
-        Error(
-          ErrorCode.INCORRECT_HEADER_VALUE,
-          s"cannot find ad response writer for ${response.ct}"))
+      case None => throw new DataValidationException(ErrorCode.INCORRECT_HEADER_VALUE)
     }
   }
 }

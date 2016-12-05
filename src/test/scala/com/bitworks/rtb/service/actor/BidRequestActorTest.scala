@@ -157,7 +157,7 @@ class BidRequestActorTest
   expecting {
     adResponseFactory.create(adRequest, Seq(bidResponse1)).andStubReturn(adResponse1)
     adResponseFactory.create(adRequest, Seq(bidResponse3)).andStubReturn(adResponse3)
-    adResponseFactory.create(EasyMock.eq(adRequest), EasyMock.anyObject(classOf[Error]))
+    adResponseFactory.create(EasyMock.eq(adRequest), EasyMock.anyObject(classOf[ErrorCode.Value]))
       .andStubReturn(errorResponse)
     EasyMock.replay(adResponseFactory)
   }

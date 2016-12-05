@@ -42,7 +42,7 @@ class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     val thrown = the[DataValidationException] thrownBy {
       converter.parse(new Array[Byte](0), Json)
     }
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_HEADER_VALUE
+    thrown.getError shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
 
   it should "write ad response using suitable writer" in {
@@ -69,7 +69,7 @@ class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     val thrown = the[DataValidationException] thrownBy {
       converter.write(response)
     }
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_HEADER_VALUE
+    thrown.getError shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
 
 }

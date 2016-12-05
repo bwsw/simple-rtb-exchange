@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service
 
-import com.bitworks.rtb.model.ad.response.Error
+import com.bitworks.rtb.model.ad.response.ErrorCode
 
 /**
   * An exception that indicates about incorrectness of data.
@@ -8,14 +8,14 @@ import com.bitworks.rtb.model.ad.response.Error
   * @author Pavel Tomskikh
   */
 class DataValidationException(
-    error: Error,
+    errorCode: ErrorCode.Value,
     cause: Throwable = null)
   extends Exception(
-    DataValidationException.defaultMessage(error),
+    DataValidationException.defaultMessage(errorCode),
     cause) {
-  def getError = error
+  def getError = errorCode
 }
 
 object DataValidationException {
-  def defaultMessage(error: Error): String = error.toString
+  def defaultMessage(errorCode: ErrorCode.Value): String = errorCode.toString
 }

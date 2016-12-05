@@ -23,8 +23,7 @@ trait AdRequestParser {
     catch {
       case e: DataValidationException => throw e
       case e: Throwable =>
-        val error = Error(ErrorCode.INCORRECT_REQUEST)
-        throw new DataValidationException(error, e)
+        throw new DataValidationException(ErrorCode.INCORRECT_REQUEST, e)
     }
   }
 

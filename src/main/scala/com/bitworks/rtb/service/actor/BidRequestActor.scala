@@ -103,7 +103,7 @@ class BidRequestActor(
     */
   def onError(msg: String) = {
     log.debug(s"an error occurred: $msg")
-    context.parent ! adResponseFactory.create(adRequest, Error(ErrorCode.NO_AD_FOUND, msg))
+    context.parent ! adResponseFactory.create(adRequest, ErrorCode.NO_AD_FOUND)
   }
 }
 

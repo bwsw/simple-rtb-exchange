@@ -53,8 +53,7 @@ class RequestActor(request: HttpRequestWrapper)
           val adResponse = adResponseFactory.create(e.getError)
           completeRequest(adResponse)
         case e: Throwable =>
-          val error = Error(ErrorCode.INCORRECT_REQUEST)
-          val adResponse = adResponseFactory.create(error)
+          val adResponse = adResponseFactory.create(ErrorCode.INCORRECT_REQUEST)
           completeRequest(adResponse)
       }
 
