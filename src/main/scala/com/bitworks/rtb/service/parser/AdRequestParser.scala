@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.parser
 
 import com.bitworks.rtb.model.ad.request.AdRequest
-import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.service.DataValidationException
 
 /**

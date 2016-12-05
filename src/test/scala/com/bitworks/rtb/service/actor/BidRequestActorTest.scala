@@ -80,7 +80,7 @@ class BidRequestActorTest
     .withImp(Seq(adResponseImp3)).build
 
   val errorResponse = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
-    .withError(Error(ErrorCode.NO_AD_FOUND, "error"))
+    .withError(Error(ErrorCode.NO_AD_FOUND.id, "error"))
     .build
 
   val smallAuctionTimeout = 1.nanos

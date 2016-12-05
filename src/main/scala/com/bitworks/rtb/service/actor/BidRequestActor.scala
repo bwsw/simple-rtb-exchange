@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, Props}
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.model.ad.request.AdRequest
-import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message._
 import com.bitworks.rtb.model.request.BidRequest

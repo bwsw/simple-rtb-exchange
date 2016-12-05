@@ -3,7 +3,7 @@ package com.bitworks.rtb.service.factory
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
-import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json, NoContentType}
+import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json}
 import com.bitworks.rtb.service.DataValidationException
 import com.bitworks.rtb.service.parser.AdRequestParser
 import com.bitworks.rtb.service.writer.AdResponseWriter

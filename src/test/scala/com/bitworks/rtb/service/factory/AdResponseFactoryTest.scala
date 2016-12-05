@@ -208,26 +208,26 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
 
   it should "build ad response with error correctly" in {
     val factory = new AdResponseFactoryImpl
-    val error = Error(ErrorCode.UNKNOWN_ERROR, unknownErrorMsg)
+    val error = Error(ErrorCode.UNKNOWN_ERROR.id, unknownErrorMsg)
     val adRequest = AdRequestBuilder("reqId", Seq(), Json).build
     val expectedResponse = AdResponseBuilder(adRequest.ct)
       .withId(adRequest.id)
       .withError(error)
       .build
 
-    val response = factory.create(adRequest, error.code)
+    val response = factory.create(adRequest, ErrorCode.apply(error.code))
 
     response shouldBe expectedResponse
   }
 
   it should "build ad response with error and without ad request correctly" in {
     val factory = new AdResponseFactoryImpl
-    val error = Error(ErrorCode.UNKNOWN_ERROR, unknownErrorMsg)
+    val error = Error(ErrorCode.UNKNOWN_ERROR.id, unknownErrorMsg)
     val expectedResponse = AdResponseBuilder(Json)
       .withError(error)
       .build
 
-    val response = factory.create(error.code)
+    val response = factory.create(ErrorCode.apply(error.code))
 
     response shouldBe expectedResponse
   }

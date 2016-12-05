@@ -19,7 +19,7 @@ class AdResponseJsonWriterTest extends FlatSpec with Matchers {
 
   "AdResponseJsonWriter" should "write json correctly" in {
     val imps = Seq(Imp("id1", "adm1", 1), Imp("id2", "adm2", 2))
-    val error = Error(ErrorCode.UNKNOWN_ERROR, "error message")
+    val error = Error(ErrorCode.UNKNOWN_ERROR.id, "error message")
     val adResponse = AdResponse(Some("id"), Some(imps), Some(error), Json)
 
     val json = writer.write(adResponse)

@@ -7,4 +7,6 @@ package com.bitworks.rtb.model.ad.response
   * @param message error message
   * @author Pavel Tomskikh
   */
-case class Error(code: ErrorCode.Value, message: String)
+case class Error(
+    code: Int,
+    message: String)

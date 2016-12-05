@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.factory
 
-import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
-import com.bitworks.rtb.model.http.{ContentTypeModel, NoContentType}
+import com.bitworks.rtb.model.ad.response.ErrorCode
+import com.bitworks.rtb.model.http.ContentTypeModel
 import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.DataValidationException

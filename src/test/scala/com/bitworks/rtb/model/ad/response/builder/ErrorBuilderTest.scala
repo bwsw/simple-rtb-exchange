@@ -26,7 +26,7 @@ class ErrorBuilderTest extends FlatSpec with Matchers with TableDrivenPropertyCh
   "ErrorBuilder" should "create Error correctly" in {
     forAll(errors) { (code: Value, message: String) =>
       val error = ErrorBuilder(code).build
-      val expectedError = Error(code, message)
+      val expectedError = Error(code.id, message)
 
       error shouldBe expectedError
     }

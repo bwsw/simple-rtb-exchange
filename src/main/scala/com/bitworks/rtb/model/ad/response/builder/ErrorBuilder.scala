@@ -11,7 +11,7 @@ import com.typesafe.config.{Config, ConfigFactory}
   */
 class ErrorBuilder private(code: Value, conf: Config) {
 
-  def build = Error(code, getMessage(code.toString))
+  def build = Error(code.id, getMessage(code.toString))
 
   private def getMessage(code: String) = {
     if (conf.hasPath(code)) {
