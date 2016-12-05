@@ -5,8 +5,8 @@ directory for sql files is _sql_
 directory for collections is _collections_
 ## Usage
 ### Run tests using sbt task
-Preferable way of running e2e tests is to run **sbt testE2E**
-This command has optional arguments:
+Preferable way of running e2e tests is to use **sbt testE2E**
+This command has arguments:
 **sbt "testE2E \<env\> \<bidders-host\> \<report-path\>"**
 Where:
 - \<env\> environment for DB and tests (default = e2e),
