@@ -53,9 +53,6 @@ class BidModelConverterImpl(
     * @throws DataValidationException in case of missing handler or invalid bytes
     */
   override def parse(bytes: Array[Byte], ct: ContentTypeModel) = {
-    if (ct == NoContentType) {
-      throw new DataValidationException(Error(ErrorCode.MISSING_HEADER))
-    }
     bidResponseParsers.get(ct) match {
       case Some(parser) => parser.parse(bytes)
       case None => throw new DataValidationException(
@@ -73,9 +70,6 @@ class BidModelConverterImpl(
     * @param ct      [[com.bitworks.rtb.model.http.ContentTypeModel ContentTypeModel]]
     */
   override def write(request: BidRequest, ct: ContentTypeModel) = {
-    if (ct == NoContentType) {
-      throw new DataValidationException(Error(ErrorCode.MISSING_HEADER))
-    }
     bidRequestWriters.get(ct) match {
       case Some(writer) => writer.write(request)
       case None => throw new DataValidationException(

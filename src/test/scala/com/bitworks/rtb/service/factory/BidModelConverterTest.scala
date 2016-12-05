@@ -45,17 +45,6 @@ class BidModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     thrown.getError.code shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
 
-  it should "throw exception if header in bid response is missed" in {
-    val parser = mock[BidResponseParser]
-    val converter = new BidModelConverterImpl(Map(Avro -> parser), Map.empty)
-
-    val thrown = the[DataValidationException] thrownBy {
-      converter.parse(new Array[Byte](0), NoContentType)
-    }
-    thrown.getError.code shouldBe ErrorCode.MISSING_HEADER
-  }
-
-
   it should "write bid request using suitable writer" in {
     val request = BidRequestBuilder("id", Nil).build
     val bytes = new Array[Byte](0)
@@ -80,16 +69,6 @@ class BidModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
       converter.write(request, Json)
     }
     thrown.getError.code shouldBe ErrorCode.INCORRECT_HEADER_VALUE
-  }
-
-  it should "throw exception if header in bid request is missed" in {
-    val request = BidRequestBuilder("id", Nil).build
-    val writerMock = mock[BidRequestWriter]
-    val converter = new BidModelConverterImpl(Map.empty, Map(Avro -> writerMock))
-    val thrown = the[DataValidationException] thrownBy {
-      converter.write(request, NoContentType)
-    }
-    thrown.getError.code shouldBe ErrorCode.MISSING_HEADER
   }
 
 }

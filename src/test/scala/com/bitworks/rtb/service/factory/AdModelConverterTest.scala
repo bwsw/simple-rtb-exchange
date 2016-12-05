@@ -45,16 +45,6 @@ class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     thrown.getError.code shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
 
-  it should "throw exception if header in ad request is missed" in {
-    val parser = mock[AdRequestParser]
-    val converter = new AdModelConverterImpl(Map(Avro -> parser), Map.empty)
-
-    val thrown = the[DataValidationException] thrownBy {
-      converter.parse(new Array[Byte](0), NoContentType)
-    }
-    thrown.getError.code shouldBe ErrorCode.MISSING_HEADER
-  }
-
   it should "write ad response using suitable writer" in {
     val response = AdResponseBuilder(Json).build
     val bytes = new Array[Byte](0)
@@ -80,17 +70,6 @@ class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
       converter.write(response)
     }
     thrown.getError.code shouldBe ErrorCode.INCORRECT_HEADER_VALUE
-  }
-
-  it should "throw exception if header in ad response is missed" in {
-    val response = AdResponseBuilder(NoContentType).build
-    val writer = mock[AdResponseWriter]
-    val converter = new AdModelConverterImpl(Map.empty, Map(Avro -> writer))
-
-    val thrown = the[DataValidationException] thrownBy {
-      converter.write(response)
-    }
-    thrown.getError.code shouldBe ErrorCode.MISSING_HEADER
   }
 
 }
