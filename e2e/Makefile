@@ -1,7 +1,6 @@
 ENV:=e2e
 BIDDER_HOST:=rtb-ci.z1.netpoint-dc.com:8083
 REPORT_PATH:=../target/test-reports/
-SLEEP:=10
 
 app_start: app_stop
 	workdir=`cd ../target; pwd`/workdir &&\
