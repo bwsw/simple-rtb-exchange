@@ -6,7 +6,7 @@ package com.bitworks.rtb.model.ad.response
   * @author Pavel Tomskikh
   */
 object ErrorCode extends Enumeration {
-  val NOT_SPECIFIED_ERROR = Value(0)
+  val UNKNOWN_ERROR = Value(0)
   val MISSING_HEADER = Value(1)
   val INCORRECT_HEADER_VALUE = Value(2)
   val INCORRECT_REQUEST = Value(3)

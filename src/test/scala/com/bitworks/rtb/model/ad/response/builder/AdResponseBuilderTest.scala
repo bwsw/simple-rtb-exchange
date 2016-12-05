@@ -13,7 +13,7 @@ class AdResponseBuilderTest extends FlatSpec with Matchers {
 
   "AdResponseBuilder" should "build AdResponse correctly" in {
     val imp = Imp("123", "admarkup", 1)
-    val error = Error(ErrorCode.NOT_SPECIFIED_ERROR, "some error")
+    val error = Error(ErrorCode.UNKNOWN_ERROR, "some error")
     val ct = Json
     val adResponse = AdResponse(Some("123"), Some(Seq(imp)), Some(error), Json)
 

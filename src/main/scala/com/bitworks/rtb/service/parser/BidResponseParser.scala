@@ -24,7 +24,7 @@ trait BidResponseParser {
     catch {
       case e: DataValidationException => throw e
       case e: Throwable =>
-        val error = Error(ErrorCode.NOT_SPECIFIED_ERROR)
+        val error = Error(ErrorCode.UNKNOWN_ERROR)
         throw new DataValidationException(error, e)
     }
   }
