@@ -7,7 +7,8 @@ app_start: app_stop
 	workdir=`cd ../target; pwd`/workdir &&\
 	mkdir -p $$workdir && cp $(ASSEMBLY) $$workdir && \
 	((docker network create rtb-ci-network && docker network connect --alias=db rtb-ci-network private-postgres) || true) && \
-	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v $$workdir:/workdir -w=/workdir --network=rtb-ci-network  isuper/java-oracle:server_jre_8 /usr/bin/java -Dconfig.resource=application.$(ENV).conf -jar `basename $(ASSEMBLY)` && \
+	docker login -u rtb-dev-team -p rtb-dev-team-password ci.bw-sw.com:5000 && \
+	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v $$workdir:/workdir -w=/workdir --network=rtb-ci-network  ci.bw-sw.com:5000/rtb-dev-team/oracle-java:8 /usr/bin/java -Dconfig.resource=application.$(ENV).conf -jar `basename $(ASSEMBLY)` && \
 	./waitUp.sh localhost:8082
 
 app_stop:
