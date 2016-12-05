@@ -8,7 +8,7 @@ import com.bitworks.rtb.model.http.ContentTypeModel
   *
   * @author Pavel Tomskikh
   */
-class AdResponseBuilder private( ct: ContentTypeModel) {
+class AdResponseBuilder private(ct: ContentTypeModel) {
   var id: Option[String] = None
   var imp: Option[Seq[Imp]] = None
   var error: Option[Error] = None
