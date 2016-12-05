@@ -55,6 +55,7 @@
         </loadData>
 
         <loadData tableName="site" file="resources/ticket2712/site.csv">
+            <column name="id" type="numeric"/>
             <column name="name" type="string"/>
             <column name="type" type="numeric"/>
             <column name="publisher_id" type="numeric"/>
@@ -62,6 +63,9 @@
             <column name="privacy_policy" type="numeric"/>
             <column name="test" type="boolean"/>
             <column name="domain" type="string"/>
+            <column name="app_bundle" type="string"/>
+            <column name="app_store" type="string"/>
+            <column name="app_ver" type="string"/>
         </loadData>
 
         <loadData tableName="site_category"
