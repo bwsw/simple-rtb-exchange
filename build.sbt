@@ -56,8 +56,8 @@ artifact in(Compile, assembly) := {
 addArtifact(artifact in(Compile, assembly), assembly)
 
 import sbt.complete.DefaultParsers._
-val teste2e = inputKey[Unit]("Integration testing")
-teste2e := {
+val testE2E = inputKey[Unit]("Integration testing")
+testE2E := {
   val args: Seq[String] = spaceDelimited("<arg>").parsed
   val (env, bidderHost, reportPath) = if (args.length == 3) {
     (args(0), args(1), args(2))
@@ -66,10 +66,10 @@ teste2e := {
     ("e2e", "rtb-ci.z1.netpoint-dc.com:8083", "../target/test-reports/")
   }
 
-  val a = assembly.value
+  val assemblyPath = assembly.value.getPath
 
   val result = {
-    s"make -C e2e execute ENV=$env BIDDER_HOST=$bidderHost REPORT_PATH=$reportPath ASSEMBLY=${a.getPath}" !
+    s"make -C e2e execute ENV=$env BIDDER_HOST=$bidderHost REPORT_PATH=$reportPath ASSEMBLY=$assemblyPath" !
   }
   if (result != 0) {
     sys.error("Integration tests failed")
