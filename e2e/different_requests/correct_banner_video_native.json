@@ -1,0 +1,20 @@
+{
+  "id": "12345",
+  "imp": [
+    {
+      "id": "1",
+      "banner": {},
+      "native": {
+        "request": "native request"
+      },
+      "video": {
+        "mimes": [
+          "video/mp4"
+        ]
+      }
+    }
+  ],
+  "site": {
+    "id": 1
+  }
+}

@@ -16,3 +16,12 @@ collection_name,request_file,content_type,error_code,id
 "Request with incorrect app",incorrect_app.json,"application/json",3,12345
 "Request with site and app",site_and_app.json,"application/json",3,12345
 
+"Request with empty imp",empty_imp.json,"application/json",3,12345
+"Request with imp without banner, video or native",imp_without_banner_video_native.json,"application/json",3,12345
+"Request with incorrect banner",incorrect_banner.json,"application/json",3,12345
+"Request with incorrect video",incorrect_video.json,"application/json",3,12345
+"Request with incorrect native",incorrect_native.json,"application/json",3,12345
+"Request with correct banner, video and native",correct_banner_video_native.json,"application/json",8,12345
+"Request with several correct imps",several_correct_imps.json,"application/json",8,12345
+"Request with dublicates id in imps",dublicates_id_in_imps.json,"application/json",3,12345
+"Request with mixed correct and incorrect imps",mixed_correct_and_incorrect_imps.json,"application/json",3,12345
