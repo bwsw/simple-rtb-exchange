@@ -1,3 +1,4 @@
-collection_name,request_file,content_type,error_code
-"Request only with id",only_id_request.json,"application/json",3
+collection_name,request_file,content_type,error_code,id
+"Request only with id",only_id_request.json,"application/json",3,
+"Request with correct site",request_with_correct_site.json,"application/json",8,12345
 

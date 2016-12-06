@@ -35,36 +35,42 @@ for row in r:
 
     header = []
     content_type = row['content_type']
-    if len(content_type) > 0:
+    if content_type:
         content_type_json = {
-            "key": "Content-Type",
-            "value": content_type
+            'key': 'Content-Type',
+            'value': content_type
         }
         header.append(content_type_json)
 
+    tests = [
+        'tests["Status code is 200"] = responseCode.code === 200;',
+        'var jsonData = JSON.parse(responseBody);',
+        'tests["Error code is correct"] = jsonData.error.code === ' +
+        row['error_code'] + ';'
+    ]
+
+    if row['id']:
+        id_test = 'tests["Id is correct"] = jsonData.id === "' + row['id'] + '"'
+        tests.append(id_test)
+
     collection_item = {
-        "name": collection_item_name,
-        "event": [
+        'name': collection_item_name,
+        'event': [
             {
-                "listen": "test",
-                "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                        "tests[\"Status code is 200\"] = responseCode.code === 200;",
-                        "var jsonData = JSON.parse(responseBody);",
-                        "tests[\"Error code is correct\"] = jsonData.error.code === " +
-                        row['error_code'] + ";"
-                    ]
+                'listen': 'test',
+                'script': {
+                    'type': 'text/javascript',
+                    'exec': tests
                 }
             }
         ],
-        "request": {
-            "url": "{{url}}",
-            "method": "POST",
-            "header": header,
-            "body": {
-                "mode": "raw",
-                "raw": request
+        'request': {
+            'url': '{{url}}',
+            'method': 'POST',
+            'header': header,
+            'body': {
+                'mode': 'raw',
+                'raw': request
             }
         }
     }
@@ -72,13 +78,13 @@ for row in r:
     collection_items.append(collection_item)
 
 collection = {
-    "info": {
-        "name": collection_name
+    'info': {
+        'name': collection_name
     },
-    "item": collection_items
+    'item': collection_items
 }
 
-if len(collection_filename) > 0:
+if collection_filename:
     collection_file = open(collection_filename, 'w')
     collection_file.write(json.dumps(collection))
     collection_file.close()
