@@ -1,2 +1,7 @@
 publisher_id,iab_category_id
 (SELECT id FROM publisher WHERE name = 'pub1'),(SELECT id FROM iab_category WHERE iab_id = 'IAB1')
+(SELECT id FROM publisher WHERE name = 'pub1'),(SELECT id FROM iab_category WHERE iab_id = 'IAB2')
+(SELECT id FROM publisher WHERE name = 'pub2'),(SELECT id FROM iab_category WHERE iab_id = 'IAB2')
+(SELECT id FROM publisher WHERE name = 'pub2'),(SELECT id FROM iab_category WHERE iab_id = 'IAB3')
+(SELECT id FROM publisher WHERE name = 'pub3'),(SELECT id FROM iab_category WHERE iab_id = 'IAB3')
+(SELECT id FROM publisher WHERE name = 'pub3'),(SELECT id FROM iab_category WHERE iab_id = 'IAB4')
