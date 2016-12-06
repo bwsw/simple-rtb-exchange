@@ -1,18 +1,18 @@
 collection_name,request_file,content_type,error_code,id
-"Request only with id",only_id_request.json,"application/json",3,
+"Request only with id",id_only.json,"application/json",3,
 
-"Correct request without content-type",request_with_correct_site.json,,8,12345
-"Correct request with correct content-type",request_with_correct_site.json,"application/json",8,12345
-"Correct request with incorrect content-type",request_with_correct_site.json,"unknown",2,
+"Correct request without content-type",correct_site.json,,8,12345
+"Correct request with correct content-type",correct_site.json,"application/json",8,12345
+"Correct request with incorrect content-type",correct_site.json,"unknown",2,
 
-"Request with correct site",request_with_correct_site.json,"application/json",8,12345
-"Request with inactive site",request_with_inactive_site.json,"application/json",5,12345
-"Request with site which not in DB",request_with_site_not_from_db.json,"application/json",4,12345
-"Request with incorrect site",request_with_incorrect_site.json,"application/json",3,12345
+"Request with correct site",correct_site.json,"application/json",8,12345
+"Request with inactive site",inactive_site.json,"application/json",5,12345
+"Request with site which not in DB",site_not_from_db.json,"application/json",4,12345
+"Request with incorrect site",incorrect_site.json,"application/json",3,12345
 
-"Request with correct app",request_with_correct_app.json,"application/json",8,12345
-"Request with inactive app",request_with_inactive_app.json,"application/json",5,12345
-"Request with app which not in DB",request_with_app_not_from_db.json,"application/json",4,12345
-"Request with incorrect app",request_with_incorrect_app.json,"application/json",3,12345
-"Request with site and app",request_with_site_and_app.json,"application/json",3,12345
+"Request with correct app",correct_app.json,"application/json",8,12345
+"Request with inactive app",inactive_app.json,"application/json",5,12345
+"Request with app which not in DB",app_not_from_db.json,"application/json",4,12345
+"Request with incorrect app",incorrect_app.json,"application/json",3,12345
+"Request with site and app",site_and_app.json,"application/json",3,12345
 
