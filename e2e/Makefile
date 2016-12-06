@@ -18,7 +18,8 @@ app_stop:
 	(docker stop rtb-exchange-e2e && docker rm rtb-exchange-e2e) || true
 
 prepare:
-	$(MAKE) -C ../db run env=$(ENV) command=update
+	$(MAKE) -C ../db run env=$(ENV) command=update && \
+	./query.sh $(ENV) $(BIDDER_HOST) sql/cleanup.sql
 
 execute : prepare app_start run
 
@@ -26,9 +27,14 @@ run:
 	for row in `cat test_cases`; do \
 		sqlfile=sql/`echo $$row | cut -d, -f1` && \
 		col=`echo $$row | cut -d, -f2` && \
-		./query.sh e2e $(BIDDER_HOST) $$sqlfile && \
+		./query.sh $(ENV) $(BIDDER_HOST) $$sqlfile && \
 		sleep 3 && \
-		newman run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli \
-		    --reporter-junit-export $(REPORT_PATH)$$col.xml || ($(MAKE) app_stop && exit 1) ; \
-	done && \
+		if newman run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli --reporter-junit-export $(REPORT_PATH)$$col.xml ; then \
+			echo "passed"; \
+		else \
+			$(MAKE) app_stop; \
+			false; \
+			exit; \
+		fi; \
+	done; \
 	$(MAKE) app_stop
