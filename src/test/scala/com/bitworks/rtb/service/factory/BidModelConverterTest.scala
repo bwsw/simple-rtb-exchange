@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.response.ErrorCode
-import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json, NoContentType}
+import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json}
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
 import com.bitworks.rtb.service.DataValidationException

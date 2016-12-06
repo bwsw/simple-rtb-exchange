@@ -2,7 +2,7 @@ package com.bitworks.rtb.application
 
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, Materializer}
-import com.bitworks.rtb.model.http.{ContentTypeModel, Json, NoContentType, Unknown}
+import com.bitworks.rtb.model.http.{ContentTypeModel, Json, Unknown}
 import com.bitworks.rtb.service.actor._
 import com.bitworks.rtb.service.dao._
 import com.bitworks.rtb.service.factory._
@@ -54,15 +54,11 @@ class RtbModule extends Module {
   def bindAdModelConverters = {
     bind[Map[ContentTypeModel, AdRequestParser]] toNonLazy {
       val jsonParser = injected[AdRequestJsonParser]
-      Map[ContentTypeModel, AdRequestParser](
-        Json -> jsonParser,
-        NoContentType -> jsonParser)
+      Map[ContentTypeModel, AdRequestParser](Json -> jsonParser)
     }
     bind[Map[ContentTypeModel, AdResponseWriter]] toNonLazy {
       val jsonWriter = injected[AdResponseJsonWriter]
-      Map[ContentTypeModel, AdResponseWriter](
-        Json -> jsonWriter,
-        NoContentType -> jsonWriter)
+      Map[ContentTypeModel, AdResponseWriter](Json -> jsonWriter)
     }
 
     bind[AdModelConverter] toNonLazy injected[AdModelConverterImpl]
@@ -73,15 +69,13 @@ class RtbModule extends Module {
       val jsonParser = injected[BidResponseJsonParser]
       Map[ContentTypeModel, BidResponseParser](
         Json -> jsonParser,
-        Unknown -> jsonParser,
-        NoContentType -> jsonParser)
+        Unknown -> jsonParser)
     }
     bind[Map[ContentTypeModel, BidRequestWriter]] toNonLazy {
       val jsonWriter = injected[BidRequestJsonWriter]
       Map[ContentTypeModel, BidRequestWriter](
         Json -> jsonWriter,
-        Unknown -> jsonWriter,
-        NoContentType -> jsonWriter)
+        Unknown -> jsonWriter)
     }
 
     bind[BidModelConverter] toNonLazy injected[BidModelConverterImpl]
