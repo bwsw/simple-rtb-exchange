@@ -28,7 +28,7 @@ r = csv.DictReader(csvfile)
 
 for row in r:
     req_file = open(request_directory + row['request_file'], 'r')
-    request = req_file.read()
+    request = req_file.read().replace(' ', '').replace('\n', '')
     req_file.close()
 
     collection_item_name = row['collection_name']
