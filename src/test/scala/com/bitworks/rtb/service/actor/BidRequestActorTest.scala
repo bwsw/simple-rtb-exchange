@@ -72,13 +72,15 @@ class BidRequestActorTest
   val bidRequestResult3 = BidRequestSuccess(bidResponse3)
 
   val adResponseImp1 = ad.response.Imp(imp.id, bid1.adm.get, 1)
-  val adResponse1 = AdResponseBuilder(adRequest.id, adRequest.ct).withImp(Seq(adResponseImp1)).build
+  val adResponse1 = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
+    .withImp(Seq(adResponseImp1)).build
 
   val adResponseImp3 = ad.response.Imp(imp.id, bid3.adm.get, 1)
-  val adResponse3 = AdResponseBuilder(adRequest.id, adRequest.ct).withImp(Seq(adResponseImp3)).build
+  val adResponse3 = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
+    .withImp(Seq(adResponseImp3)).build
 
-  val errorResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
-    .withError(Error(ErrorCode.NO_AD_FOUND, "error"))
+  val errorResponse = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
+    .withError(Error(ErrorCode.NO_AD_FOUND.id, "error"))
     .build
 
   val smallAuctionTimeout = 1.nanos
@@ -155,7 +157,7 @@ class BidRequestActorTest
   expecting {
     adResponseFactory.create(adRequest, Seq(bidResponse1)).andStubReturn(adResponse1)
     adResponseFactory.create(adRequest, Seq(bidResponse3)).andStubReturn(adResponse3)
-    adResponseFactory.create(EasyMock.eq(adRequest), EasyMock.anyObject(classOf[Error]))
+    adResponseFactory.create(EasyMock.eq(adRequest), EasyMock.anyObject(classOf[ErrorCode.Value]))
       .andStubReturn(errorResponse)
     EasyMock.replay(adResponseFactory)
   }
