@@ -20,7 +20,11 @@ app_stop:
 prepare:
 	$(MAKE) -C ../db run env=$(ENV) command=update
 
-execute : prepare app_start run
+create_request_test_collection:
+	./create_collection.py different_requests different_requests\
+	    collections/different_requests.json collection.csv
+
+execute: prepare create_request_test_collection app_start run
 
 run:
 	for row in `cat test_cases`; do \
