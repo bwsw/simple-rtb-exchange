@@ -1,0 +1,46 @@
+{
+	"variables": [],
+	"info": {
+		"name": "only_one_valid_bidder",
+		"_postman_id": "1fc86095-3a7a-eb1a-3a50-12eed0bc7ecc",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Only one valid bidder",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var response = JSON.parse(responseBody);",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is json\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"var adm = response.imp[0].adm;",
+							"tests[\"Price for the only valid bidder\"] = adm.match(/.*&price=294.*/g) !== null;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"1235432152\",\n    \"imp\": [\n        {\n            \"id\": \"33\",\n            \"banner\": {}\n        }\n    ],\n    \"site\": {\n        \"id\": 1\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,46 @@
+{
+	"variables": [],
+	"info": {
+		"name": "all_bidders_no_ad",
+		"_postman_id": "364be64b-5666-9731-9e63-6d320827b612",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "All bidders return no ad response",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var response = JSON.parse(responseBody);",
+							"tests[\"Error code is bidders not found\"] = response.error.code === 8;",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is json\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"tests[\"Response time is less than 1500ms\"] = responseTime < 500;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"1235432152\",\n    \"imp\": [\n        {\n            \"id\": \"33\",\n            \"banner\": {}\n        }\n    ],\n    \"site\": {\n        \"id\": 1\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
