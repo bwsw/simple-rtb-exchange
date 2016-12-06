@@ -8,21 +8,21 @@
 
     <changeSet id="1" author="Egor Ilchenko" context="e2e">
         <preConditions>
+            <tableExists tableName="site"/>
+            <tableExists tableName="site_category"/>
             <tableExists tableName="publisher"/>
             <tableExists tableName="publisher_blocked_advertiser"/>
             <tableExists tableName="publisher_category"/>
             <tableExists tableName="publisher_blocked_category"/>
-            <tableExists tableName="site"/>
-            <tableExists tableName="site_category"/>
             <tableExists tableName="bidder"/>
         </preConditions>
 
+        <delete tableName="site_category"/>
+        <delete tableName="site"/>
         <delete tableName="publisher_blocked_advertiser"/>
         <delete tableName="publisher_category"/>
         <delete tableName="publisher_blocked_category"/>
         <delete tableName="publisher"/>
-        <delete tableName="site_category"/>
-        <delete tableName="site"/>
         <delete tableName="bidder"/>
     </changeSet>
 
@@ -55,6 +55,7 @@
         </loadData>
 
         <loadData tableName="site" file="resources/ticket2712/site.csv">
+            <column name="id" type="numeric"/>
             <column name="name" type="string"/>
             <column name="type" type="numeric"/>
             <column name="publisher_id" type="numeric"/>
@@ -62,6 +63,9 @@
             <column name="privacy_policy" type="numeric"/>
             <column name="test" type="boolean"/>
             <column name="domain" type="string"/>
+            <column name="app_bundle" type="string"/>
+            <column name="app_store" type="string"/>
+            <column name="app_ver" type="string"/>
         </loadData>
 
         <loadData tableName="site_category"

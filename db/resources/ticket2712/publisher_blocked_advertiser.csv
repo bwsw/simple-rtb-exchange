@@ -1,2 +1,7 @@
 publisher_id,domain
 (SELECT id FROM publisher WHERE name = 'pub1'),"adv1"
+(SELECT id FROM publisher WHERE name = 'pub1'),"adv2"
+(SELECT id FROM publisher WHERE name = 'pub2'),"adv2"
+(SELECT id FROM publisher WHERE name = 'pub2'),"adv3"
+(SELECT id FROM publisher WHERE name = 'pub3'),"adv3"
+(SELECT id FROM publisher WHERE name = 'pub3'),"adv4"
