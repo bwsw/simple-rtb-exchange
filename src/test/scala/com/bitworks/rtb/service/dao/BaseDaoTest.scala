@@ -4,7 +4,9 @@ import java.io.File
 
 import com.typesafe.config.ConfigFactory
 import org.dbunit.JdbcDatabaseTester
+import org.dbunit.database.DatabaseConfig
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder
+import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory
 import org.dbunit.operation.DatabaseOperation
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import scaldi.Module
@@ -32,6 +34,9 @@ trait BaseDaoTest extends FlatSpec with BeforeAndAfterAll with Matchers {
     password)
 
   val connection = tester.getConnection
+  
+  val dbConfig = connection.getConfig
+  dbConfig.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory)
 
   implicit val dbModule = new Module {
     bind[DbContext] toNonLazy new DbContext("db")
