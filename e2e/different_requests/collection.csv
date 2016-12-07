@@ -38,3 +38,14 @@ collection_name,request_file,content_type,error_code,id
 "Request with incorrect user",incorrect_user.json,"application/json",3,12345
 "Request with correct regs",correct_regs.json,"application/json",8,12345
 "Request with incorrect regs",incorrect_regs.json,"application/json",3,12345
+
+"Request with correct categories (with site)",correct_categories_site.json,"application/json",8,12345
+"Request with incorrect category in site (sectioncat)",incorrect_category_in_site_sectioncat.json,"application/json",7,12345
+"Request with incorrect category in site (pagecat)",incorrect_category_in_site_pagecat.json,"application/json",7,12345
+"Request with incorrect category in content (site)",incorrect_category_in_content_site.json,"application/json",7,12345
+"Request with incorrect category in producer (site)",incorrect_category_in_producer_site.json,"application/json",7,12345
+"Request with correct categories (with app)",correct_categories_app.json,"application/json",8,12345
+"Request with incorrect category in app (sectioncat)",incorrect_category_in_app_sectioncat.json,"application/json",7,12345
+"Request with incorrect category in app (pagecat)",incorrect_category_in_app_pagecat.json,"application/json",7,12345
+"Request with incorrect category in content (app)",incorrect_category_in_content_app.json,"application/json",7,12345
+"Request with incorrect category in producer (app)",incorrect_category_in_producer_app.json,"application/json",7,12345
