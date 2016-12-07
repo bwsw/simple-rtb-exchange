@@ -19,6 +19,5 @@ class CacheUpdaterActor(dbUpdater: CacheUpdater) extends Actor with ActorLogging
       log.info("cache updating started...")
       dbUpdater.notifyAll(UpdateCache)
       log.info("cache updating finished")
-    case _ =>
   }
 }
