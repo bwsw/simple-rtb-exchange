@@ -1041,4 +1041,132 @@ class BidRequestFactoryTest
 
     factory.create(adRequest) shouldBe None
   }
+
+  it should "not create bid request if db not contains sites" in {
+    val siteDao = mock[SiteDao]
+    expecting {
+      siteDao.getAll.andStubReturn(Seq.empty)
+      siteDao.get(anyInt).andStubReturn(None)
+      siteDao.get(anyObject[Seq[Int]]).andStubReturn(Seq.empty)
+      replay(siteDao)
+    }
+    val factory = new BidRequestFactoryImpl(categoryDao, publisherDao, siteDao, appDao)
+
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adSite = adSiteBuilder
+      .withSectionCat(getCategoriesId(Seq(1, 2)))
+      .withPageCat(getCategoriesId(Seq(1)))
+      .withPage("page123")
+      .withRef("from.com")
+      .withSearch("search")
+      .withMobile(0)
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
+      .withSite(adSite)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "not create bid request if db not contains apps" in {
+    val appDao = mock[AppDao]
+    expecting {
+      appDao.getAll.andStubReturn(Seq.empty)
+      appDao.get(anyInt).andStubReturn(None)
+      appDao.get(anyObject[Seq[Int]]).andStubReturn(Seq.empty)
+      replay(appDao)
+    }
+    val factory = new BidRequestFactoryImpl(categoryDao, publisherDao, siteDao, appDao)
+
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adApp = adAppBuilder
+      .withSectionCat(getCategoriesId(Seq(5, 6)))
+      .withPageCat(getCategoriesId(Seq(5)))
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
+      .withApp(adApp)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "not create bid request if db not contains categories" in {
+    val categoryDao = mock[CategoryDao]
+    expecting {
+      categoryDao.getAll.andStubReturn(Seq.empty)
+      categoryDao.get(anyInt).andStubReturn(None)
+      categoryDao.get(anyObject[Seq[Int]]).andStubReturn(Seq.empty)
+      replay(categoryDao)
+    }
+    val factory = new BidRequestFactoryImpl(categoryDao, publisherDao, siteDao, appDao)
+
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adApp = adAppBuilder
+      .withSectionCat(getCategoriesId(Seq(5, 6)))
+      .withPageCat(getCategoriesId(Seq(5)))
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
+      .withApp(adApp)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
+
+  it should "not create bid request if db not contains publishers" in {
+    val publisherDao = mock[PublisherDao]
+    expecting {
+      publisherDao.getAll.andStubReturn(Seq.empty)
+      publisherDao.get(anyInt).andStubReturn(None)
+      publisherDao.get(anyObject[Seq[Int]]).andStubReturn(Seq.empty)
+      replay(publisherDao)
+    }
+    val factory = new BidRequestFactoryImpl(categoryDao, publisherDao, siteDao, appDao)
+
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adApp = adAppBuilder
+      .withSectionCat(getCategoriesId(Seq(5, 6)))
+      .withPageCat(getCategoriesId(Seq(5)))
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
+      .withApp(adApp)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    factory.create(adRequest) shouldBe None
+  }
 }
