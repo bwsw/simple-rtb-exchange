@@ -116,7 +116,8 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
       .build
     val bid2 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("two")
       .build
-    val seatBid = SeatBidBuilder(Seq(bid, bid1, bid2)).build
+    val bid3 = BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("adm").build
+    val seatBid = SeatBidBuilder(Seq(bid, bid1, bid2, bid3)).build
     val bidResponse = BidResponseBuilder("respid", Seq(seatBid)).build
 
     val admone = "admone"
@@ -135,6 +136,8 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
       requestMaker.replaceMacros("two", bidRequest, bidResponse, seatBid, bid2).andStubReturn("two")
       requestMaker.getAdMarkup("two").andReturn(Future.successful(admtwo)).times(1)
       requestMaker.replaceMacros(admtwo, bidRequest, bidResponse, seatBid, bid2).andStubReturn(admtwo)
+
+      requestMaker.replaceMacros("adm", bidRequest, bidResponse, seatBid, bid3).andStubReturn("adm")
     }
 
     implicit val module = new Module {
@@ -150,7 +153,8 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
           Seq(
             BidBuilder("bidid", "impid", BigDecimal(0)).withAdm(admone).withNurl("one").build,
             BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("someAdm").withNurl("three").build,
-            BidBuilder("bidid", "impid", BigDecimal(0)).withAdm(admtwo).withNurl("two").build)
+            BidBuilder("bidid", "impid", BigDecimal(0)).withAdm(admtwo).withNurl("two").build,
+            bid3)
         ).build))
       .build
 
