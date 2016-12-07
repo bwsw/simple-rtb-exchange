@@ -32,7 +32,7 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterAll
   }
 
   override def afterAll = {
-    server.shutdown()
+    server.stop()
   }
 
   implicit val system = ActorSystem("test")
