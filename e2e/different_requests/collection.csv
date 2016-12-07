@@ -25,3 +25,8 @@ collection_name,request_file,content_type,error_code,id
 "Request with several correct imps",several_correct_imps.json,"application/json",8,12345
 "Request with dublicates id in imps",dublicates_id_in_imps.json,"application/json",3,12345
 "Request with mixed correct and incorrect imps",mixed_correct_and_incorrect_imps.json,"application/json",3,12345
+
+"Request with correct content",correct_content.json,"application/json",8,12345
+"Request with incorrect content",incorrect_content.json,"application/json",3,12345
+"Request with correct producer",correct_producer.json,"application/json",8,12345
+"Request with incorrect producer",incorrect_producer.json,"application/json",3,12345
