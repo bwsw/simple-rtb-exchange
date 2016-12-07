@@ -1,7 +1,7 @@
 {
 	"variables": [],
 	"info": {
-		"name": "all_bidders_timeouted",
+		"name": "All bidders timeouted",
 		"_postman_id": "f0e68b66-8629-64c3-f4be-abfd141f3673",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"

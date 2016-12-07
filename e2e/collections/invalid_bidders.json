@@ -1,7 +1,7 @@
 {
 	"variables": [],
 	"info": {
-		"name": "all_bidders_invalid",
+		"name": "All bidders are invalid",
 		"_postman_id": "24886011-c01e-b5b2-033a-88b9f91af4da",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"

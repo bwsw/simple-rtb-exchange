@@ -1,7 +1,7 @@
 {
 	"variables": [],
 	"info": {
-		"name": "no_bidders_no_ad",
+		"name": "No bidders",
 		"_postman_id": "aaee2c72-0eb6-6139-1158-b7518b3ceea8",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
