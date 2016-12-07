@@ -1,7 +1,7 @@
 collection_name,request_file,content_type,error_code,id
 "Request only with id",id_only.json,"application/json",3,
 
-"Correct request without content-type",correct_site.json,,8,12345
+"Correct request without content-type",empty_file,,3,
 "Correct request with correct content-type",correct_site.json,"application/json",8,12345
 "Correct request with incorrect content-type",correct_site.json,"unknown",2,
 
