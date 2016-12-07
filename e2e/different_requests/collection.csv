@@ -30,3 +30,11 @@ collection_name,request_file,content_type,error_code,id
 "Request with incorrect content",incorrect_content.json,"application/json",3,12345
 "Request with correct producer",correct_producer.json,"application/json",8,12345
 "Request with incorrect producer",incorrect_producer.json,"application/json",3,12345
+"Request with correct device",correct_device.json,"application/json",8,12345
+"Request with incorrect device",incorrect_device.json,"application/json",3,12345
+"Request with correct geo",correct_geo.json,"application/json",8,12345
+"Request with incorrect geo",incorrect_geo.json,"application/json",3,12345
+"Request with correct user",correct_user.json,"application/json",8,12345
+"Request with incorrect user",incorrect_user.json,"application/json",3,12345
+"Request with correct regs",correct_regs.json,"application/json",8,12345
+"Request with incorrect regs",incorrect_regs.json,"application/json",3,12345
