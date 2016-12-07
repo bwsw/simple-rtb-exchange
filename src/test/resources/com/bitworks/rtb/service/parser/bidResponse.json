@@ -2,6 +2,8 @@
   "id": "1234567890",
   "bidid": "abc1123",
   "cur": "RUB",
+  "customdata": "customdata",
+  "nbr": 1,
   "seatbid": [
     {
       "seat": "512",
@@ -31,7 +33,14 @@
         {
           "id": "3",
           "impid": "7",
-          "price": 13
+          "price": 13,
+          "adid": "adid",
+          "adm": "admarkup",
+          "bundle": "bundle",
+          "cat": ["IAB1", "IAB2"],
+          "dealid": "dealid",
+          "h": 100,
+          "w": 200
         }
       ]
     }
