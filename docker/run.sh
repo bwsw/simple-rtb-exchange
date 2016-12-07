@@ -10,10 +10,7 @@ fi
 
 echo "version: $1 env: $2"
 
-docker login -u rtb-dev-team -p rtb-dev-team-password ci.bw-sw.com:5000
 docker pull ci.bw-sw.com:5000/rtb-dev-team/rtb-exchange:$1
 docker stop rtb-exchange || true && docker rm rtb-exchange || true
-
 docker network create rtb-ci-network || true
-docker network connect --alias=db rtb-ci-network private-postgres || true
 docker run --name rtb-exchange -d -p 8085:8081 --network=rtb-ci-network ci.bw-sw.com:5000/rtb-dev-team/rtb-exchange:$1 -Dconfig.resource=application.$2.conf -jar rtb-exchange.jar
