@@ -65,6 +65,9 @@ class WinNoticeRequestMakerImpl(
   override def getAdMarkup(nurl: String) = {
     httpRequestMaker.make(HttpRequestModel(nurl))
       .map { response =>
+        if(response.status > 299){
+          throw new RuntimeException("incorrect status code")
+        }
         new String(response.body)
       }
   }
