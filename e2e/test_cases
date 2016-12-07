@@ -1,1 +1,4 @@
-bidders_example.sql,error_response_test_example.json
+all_bidders_ad_in_winnotice.sql,all_bidders_ad_in_winnotice.json
+win_bidder_broken_winnotice.sql,win_bidder_broken_winnotice.json
+win_bidder_timeout_winnotice.sql,win_bidder_timeout_winnotice.json
+win_bidder_ad_in_winnotice.sql,win_bidder_ad_in_winnotice.json
