@@ -1,2 +1,1 @@
 DELETE FROM bidder;
-

@@ -24,6 +24,10 @@
         <delete tableName="publisher_blocked_category"/>
         <delete tableName="publisher"/>
         <delete tableName="bidder"/>
+
+        <rollback>
+
+        </rollback>
     </changeSet>
 
     <changeSet id="2" author="Pavel Tomskikh" context="e2e">
@@ -34,7 +38,12 @@
             <tableExists tableName="publisher_blocked_category"/>
             <tableExists tableName="site"/>
             <tableExists tableName="site_category"/>
-            <tableExists tableName="bidder"/>
+            <sqlCheck expectedResult="0">select count(*) from publisher</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from publisher_blocked_advertiser</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from publisher_category</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from publisher_blocked_category</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from site</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from site_category</sqlCheck>
         </preConditions>
 
         <loadData tableName="publisher" file="resources/ticket2712/publisher.csv">
@@ -44,6 +53,12 @@
 
         <loadData tableName="publisher_category"
                   file="resources/ticket2712/publisher_category.csv">
+            <column name="publisher_id" type="numeric"/>
+            <column name="iab_category_id" type="numeric"/>
+        </loadData>
+
+        <loadData tableName="publisher_blocked_category"
+                  file="resources/ticket2712/publisher_blocked_category.csv">
             <column name="publisher_id" type="numeric"/>
             <column name="iab_category_id" type="numeric"/>
         </loadData>
