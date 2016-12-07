@@ -22,6 +22,12 @@ class BidderDaoTest extends BaseDaoTest {
     val notFoundBidder = bidderDao.get(1)
     notFoundBidder should not be defined
 
+    val notFoundBidders = bidderDao.get(Seq(1, 2, 3))
+    notFoundBidders shouldBe Seq.empty
+
+    val noBidders = bidderDao.getAll
+    noBidders shouldBe Seq.empty
+
     bidderDao.notify(InitCache)
 
     val expectedBidder = Some(

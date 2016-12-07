@@ -22,6 +22,12 @@ class SiteDaoTest extends BaseDaoTest {
     val notFoundSite = siteDao.get(11)
     notFoundSite should not be defined
 
+    val notFoundSites = siteDao.get(Seq(1, 2, 3))
+    notFoundSites shouldBe Seq.empty
+
+    val noSites = siteDao.getAll
+    noSites shouldBe Seq.empty
+
     siteDao.notify(InitCache)
 
     val expectedSite = Some(

@@ -22,6 +22,12 @@ class AppDaoTest extends BaseDaoTest {
     val notFoundApp = appDao.get(1)
     notFoundApp should not be defined
 
+    val notFoundApps = appDao.get(Seq(1, 2, 3))
+    notFoundApps shouldBe Seq.empty
+
+    val noApps = appDao.getAll
+    noApps shouldBe Seq.empty
+
     appDao.notify(InitCache)
 
     val expectedApp = Some(

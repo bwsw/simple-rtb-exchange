@@ -22,6 +22,12 @@ class PublisherDaoTest extends BaseDaoTest {
     val notFoundPublisher = publisherDao.get(1)
     notFoundPublisher should not be defined
 
+    val notFoundPublishers = publisherDao.get(Seq(1, 2, 3))
+    notFoundPublishers shouldBe Seq.empty
+
+    val noPublishers = publisherDao.getAll
+    noPublishers shouldBe Seq.empty
+
     publisherDao.notify(InitCache)
 
     val expectedPublisher = Some(

@@ -21,6 +21,12 @@ class CategoryDaoTest extends BaseDaoTest {
     val notFoundCategory = categoryDao.get(2)
     notFoundCategory should not be defined
 
+    val notFoundCategories = categoryDao.get(Seq(1, 2, 3))
+    notFoundCategories shouldBe Seq.empty
+
+    val noCategories = categoryDao.getAll
+    noCategories shouldBe Seq.empty
+
     categoryDao.notify(InitCache)
 
     val expectedCategory = Some(
