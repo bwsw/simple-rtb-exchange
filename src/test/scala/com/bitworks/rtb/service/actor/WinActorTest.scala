@@ -14,6 +14,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
 import scaldi.Module
+import org.easymock.EasyMock._
 
 import scala.concurrent.duration.{FiniteDuration, _}
 import scala.concurrent.{Await, Future}
@@ -121,15 +122,19 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
     val admone = "admone"
     val admtwo = "admtwo"
 
-    val requestMaker = niceMock[WinNoticeRequestMaker]
+    val requestMaker = strictMock[WinNoticeRequestMaker]
     expecting {
       requestMaker.replaceMacros("one", bidRequest, bidResponse, seatBid, bid).andStubReturn("one")
-      requestMaker.replaceMacros("three", bidRequest, bidResponse, seatBid, bid1)
-        .andStubReturn("three")
-      requestMaker.replaceMacros("two", bidRequest, bidResponse, seatBid, bid2)
-        .andStubReturn("two")
       requestMaker.getAdMarkup("one").andReturn(Future.successful(admone)).times(1)
+      requestMaker.replaceMacros(admone, bidRequest, bidResponse, seatBid, bid).andStubReturn(admone)
+
+      requestMaker.replaceMacros("three", bidRequest, bidResponse, seatBid, bid1).andStubReturn("three")
+      requestMaker.sendWinNotice(anyObject()).andStubReturn(Future.failed(new TimeoutException()))
+      requestMaker.replaceMacros("someAdm", bidRequest, bidResponse, seatBid, bid1).andStubReturn("someAdm")
+
+      requestMaker.replaceMacros("two", bidRequest, bidResponse, seatBid, bid2).andStubReturn("two")
       requestMaker.getAdMarkup("two").andReturn(Future.successful(admtwo)).times(1)
+      requestMaker.replaceMacros(admtwo, bidRequest, bidResponse, seatBid, bid2).andStubReturn(admtwo)
     }
 
     implicit val module = new Module {
@@ -151,8 +156,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
 
     whenExecuting(requestMaker, configuration) {
       val actor = TestActorRef(new WinActor)
-      val fAnswer = (actor ? SendWinNotice(bidRequest, Seq(bidResponse)))
-        .recover { case _ => bidResponse }
+      val fAnswer = actor ? SendWinNotice(bidRequest, Seq(bidResponse))
 
       val ans = Await.result(fAnswer, duration)
       ans shouldBe CreateAdResponse(Seq(expectedBidResponse))
