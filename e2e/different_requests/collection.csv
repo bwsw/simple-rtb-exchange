@@ -49,3 +49,6 @@ collection_name,request_file,content_type,error_code,id
 "Request with incorrect category in app (pagecat)",categories/incorrect_category_in_app_pagecat.json,"application/json",7,12345
 "Request with incorrect category in content (app)",categories/incorrect_category_in_content_app.json,"application/json",7,12345
 "Request with incorrect category in producer (app)",categories/incorrect_category_in_producer_app.json,"application/json",7,12345
+
+"Request with deleted publisher in site",publisher/deleted_publisher_in_site.json,"application/json",6,12345
+"Request with deleted publisher in app",publisher/deleted_publisher_in_app.json,"application/json",6,12345
