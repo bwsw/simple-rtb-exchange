@@ -317,4 +317,35 @@ class BidRequestActorTest
     }
   }
 
+  it should "send error when win bidder sent incorrect response" in {
+    val configuration = niceMock[Configuration]
+    expecting {
+      configuration.bidRequestTimeout.andStubReturn(bigAuctionTimeout)
+      EasyMock.replay(configuration)
+    }
+
+    val bidderDao = mock[BidderDao]
+    expecting {
+      bidderDao.getAll.andStubReturn(Seq(bidder1, bidder2, bidder3))
+      EasyMock.replay(bidderDao)
+    }
+
+    implicit val injector = new Module {
+      bind[BidderDao] toNonLazy bidderDao
+      bind[Configuration] toNonLazy configuration
+      bind[BidActor] toProvider new BidActorMockForwarder
+      bind[WinActor] toProvider new WinActorMock
+    } :: predefinedInjector
+
+    val bid = BidBuilder("1", imp.id, 1).build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid))
+      .withBidId(bidder1.id.toString)
+      .build
+
+    childActorOf(
+      BidRequestActor.props(adRequest, bidRequest),
+      "bidRequestActor") ! CreateAdResponse(Seq(bidResponse))
+    expectMsg(errorResponse)
+  }
 }
