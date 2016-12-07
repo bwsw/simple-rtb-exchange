@@ -213,4 +213,16 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
       response.contentType shouldBe Protobuf
     }
   }
+
+  it should "throw DataValidationException when request contains incorrect header" in {
+    val path = "/post"
+
+    val uri = s"http://localhost:$port$path"
+    val request = HttpRequestModel(
+      uri,
+      headers = Seq(HttpHeaderModel("(", ""))
+    )
+
+    an[DataValidationException] should be thrownBy maker.make(request)
+  }
 }
