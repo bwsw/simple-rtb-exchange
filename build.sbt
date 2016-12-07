@@ -35,7 +35,7 @@ fork in Test := true
 javaOptions in Test += "-Dconfig.resource=application.test.conf"
 
 
-assemblyJarName := s"${name.value}-${version.value}-assembly.jar"
+assemblyJarName := s"${name.value}-${version.value}-jar-with-dependencies.jar"
 mainClass in assembly := Some("com.bitworks.rtb.application.RtbApplication")
 
 
@@ -50,7 +50,7 @@ publishTo := {
 
 artifact in(Compile, assembly) := {
   val art = (artifact in(Compile, assembly)).value
-  art.copy(`classifier` = Some("assembly"))
+  art.copy(`classifier` = Some("jar-with-dependencies"))
 }
 
 addArtifact(artifact in(Compile, assembly), assembly)
