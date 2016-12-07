@@ -2,50 +2,50 @@ collection_name,request_file,content_type,error_code,id
 "Request only with id",id_only.json,"application/json",3,
 
 "Correct request without content-type",empty_file,,3,
-"Correct request with correct content-type",correct_site.json,"application/json",8,12345
-"Correct request with incorrect content-type",correct_site.json,"unknown",2,
+"Correct request with correct content-type",site_and_app/correct_site.json,"application/json",8,12345
+"Correct request with incorrect content-type",site_and_app/correct_site.json,"unknown",2,
 
-"Request with correct site",correct_site.json,"application/json",8,12345
-"Request with inactive site",inactive_site.json,"application/json",5,12345
-"Request with site which not in DB",site_not_from_db.json,"application/json",4,12345
-"Request with incorrect site",incorrect_site.json,"application/json",3,12345
+"Request with correct site",site_and_app/correct_site.json,"application/json",8,12345
+"Request with inactive site",site_and_app/inactive_site.json,"application/json",5,12345
+"Request with site which not in DB",site_and_app/site_not_from_db.json,"application/json",4,12345
+"Request with incorrect site",site_and_app/incorrect_site.json,"application/json",3,12345
 
-"Request with correct app",correct_app.json,"application/json",8,12345
-"Request with inactive app",inactive_app.json,"application/json",5,12345
-"Request with app which not in DB",app_not_from_db.json,"application/json",4,12345
-"Request with incorrect app",incorrect_app.json,"application/json",3,12345
-"Request with site and app",site_and_app.json,"application/json",3,12345
+"Request with correct app",site_and_app/correct_app.json,"application/json",8,12345
+"Request with inactive app",site_and_app/inactive_app.json,"application/json",5,12345
+"Request with app which not in DB",site_and_app/app_not_from_db.json,"application/json",4,12345
+"Request with incorrect app",site_and_app/incorrect_app.json,"application/json",3,12345
+"Request with site and app",site_and_app/site_and_app.json,"application/json",3,12345
 
-"Request with empty imp",empty_imp.json,"application/json",3,12345
-"Request with imp without banner, video or native",imp_without_banner_video_native.json,"application/json",3,12345
-"Request with incorrect banner",incorrect_banner.json,"application/json",3,12345
-"Request with incorrect video",incorrect_video.json,"application/json",3,12345
-"Request with incorrect native",incorrect_native.json,"application/json",3,12345
-"Request with correct banner, video and native",correct_banner_video_native.json,"application/json",8,12345
-"Request with several correct imps",several_correct_imps.json,"application/json",8,12345
-"Request with dublicates id in imps",dublicates_id_in_imps.json,"application/json",3,12345
-"Request with mixed correct and incorrect imps",mixed_correct_and_incorrect_imps.json,"application/json",3,12345
+"Request with empty imp",imp/empty_imp.json,"application/json",3,12345
+"Request with imp without banner, video or native",imp/imp_without_banner_video_native.json,"application/json",3,12345
+"Request with several correct imps",imp/several_correct_imps.json,"application/json",8,12345
+"Request with dublicates id in imps",imp/dublicates_id_in_imps.json,"application/json",3,12345
+"Request with mixed correct and incorrect imps",imp/mixed_correct_and_incorrect_imps.json,"application/json",3,12345
 
-"Request with correct content",correct_content.json,"application/json",8,12345
-"Request with incorrect content",incorrect_content.json,"application/json",3,12345
-"Request with correct producer",correct_producer.json,"application/json",8,12345
-"Request with incorrect producer",incorrect_producer.json,"application/json",3,12345
-"Request with correct device",correct_device.json,"application/json",8,12345
-"Request with incorrect device",incorrect_device.json,"application/json",3,12345
-"Request with correct geo",correct_geo.json,"application/json",8,12345
-"Request with incorrect geo",incorrect_geo.json,"application/json",3,12345
-"Request with correct user",correct_user.json,"application/json",8,12345
-"Request with incorrect user",incorrect_user.json,"application/json",3,12345
-"Request with correct regs",correct_regs.json,"application/json",8,12345
-"Request with incorrect regs",incorrect_regs.json,"application/json",3,12345
+"Request with incorrect banner",other_models/incorrect_banner.json,"application/json",3,12345
+"Request with incorrect video",other_models/incorrect_video.json,"application/json",3,12345
+"Request with incorrect native",other_models/incorrect_native.json,"application/json",3,12345
+"Request with correct banner, video and native",other_models/correct_banner_video_native.json,"application/json",8,12345
+"Request with correct content",other_models/correct_content.json,"application/json",8,12345
+"Request with incorrect content",other_models/incorrect_content.json,"application/json",3,12345
+"Request with correct producer",other_models/correct_producer.json,"application/json",8,12345
+"Request with incorrect producer",other_models/incorrect_producer.json,"application/json",3,12345
+"Request with correct device",other_models/correct_device.json,"application/json",8,12345
+"Request with incorrect device",other_models/incorrect_device.json,"application/json",3,12345
+"Request with correct geo",other_models/correct_geo.json,"application/json",8,12345
+"Request with incorrect geo",other_models/incorrect_geo.json,"application/json",3,12345
+"Request with correct user",other_models/correct_user.json,"application/json",8,12345
+"Request with incorrect user",other_models/incorrect_user.json,"application/json",3,12345
+"Request with correct regs",other_models/correct_regs.json,"application/json",8,12345
+"Request with incorrect regs",other_models/incorrect_regs.json,"application/json",3,12345
 
-"Request with correct categories (with site)",correct_categories_site.json,"application/json",8,12345
-"Request with incorrect category in site (sectioncat)",incorrect_category_in_site_sectioncat.json,"application/json",7,12345
-"Request with incorrect category in site (pagecat)",incorrect_category_in_site_pagecat.json,"application/json",7,12345
-"Request with incorrect category in content (site)",incorrect_category_in_content_site.json,"application/json",7,12345
-"Request with incorrect category in producer (site)",incorrect_category_in_producer_site.json,"application/json",7,12345
-"Request with correct categories (with app)",correct_categories_app.json,"application/json",8,12345
-"Request with incorrect category in app (sectioncat)",incorrect_category_in_app_sectioncat.json,"application/json",7,12345
-"Request with incorrect category in app (pagecat)",incorrect_category_in_app_pagecat.json,"application/json",7,12345
-"Request with incorrect category in content (app)",incorrect_category_in_content_app.json,"application/json",7,12345
-"Request with incorrect category in producer (app)",incorrect_category_in_producer_app.json,"application/json",7,12345
+"Request with correct categories (with site)",categories/correct_categories_site.json,"application/json",8,12345
+"Request with incorrect category in site (sectioncat)",categories/incorrect_category_in_site_sectioncat.json,"application/json",7,12345
+"Request with incorrect category in site (pagecat)",categories/incorrect_category_in_site_pagecat.json,"application/json",7,12345
+"Request with incorrect category in content (site)",categories/incorrect_category_in_content_site.json,"application/json",7,12345
+"Request with incorrect category in producer (site)",categories/incorrect_category_in_producer_site.json,"application/json",7,12345
+"Request with correct categories (with app)",categories/correct_categories_app.json,"application/json",8,12345
+"Request with incorrect category in app (sectioncat)",categories/incorrect_category_in_app_sectioncat.json,"application/json",7,12345
+"Request with incorrect category in app (pagecat)",categories/incorrect_category_in_app_pagecat.json,"application/json",7,12345
+"Request with incorrect category in content (app)",categories/incorrect_category_in_content_app.json,"application/json",7,12345
+"Request with incorrect category in producer (app)",categories/incorrect_category_in_producer_app.json,"application/json",7,12345
