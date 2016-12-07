@@ -365,12 +365,6 @@ class BidRequestFactoryImpl(
     ids.toSet.size == ids.size
   }
 
-  private def getPublisherId(site: Site) =
-    siteDao.get(site.id.get.toInt).get.publisherId
-
-  private def getPublisherId(app: App) =
-    appDao.get(app.id.get.toInt).get.publisherId
-
   private def getBlockedCategories(publisher: db.Publisher): Seq[String] = {
     getCategories(publisher.blockedCategoriesIds)
   }
