@@ -8,7 +8,8 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers}
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 
 
 /**
@@ -85,5 +86,23 @@ class WinNoticeRequestMakerTest extends FlatSpec with Matchers with EasyMockSuga
       s"/${seatBid.seat.get}/${bid.adId.get}/${bid.price.toString}/${response.cur}"
 
     result shouldBe expected
+  }
+
+  it should "throw exception if win notice returned non success status code" in {
+    val expectingRequest = HttpRequestModel("someuri", GET)
+    val response = HttpResponseModel(new Array[Byte](0), 500, Unknown, Seq.empty)
+    val httpRequestMakerMock = mock[HttpRequestMaker]
+    expecting {
+      httpRequestMakerMock.make(expectingRequest).andReturn(Future.successful(response)).times(1)
+    }
+
+    val winNoticeRequestMaker = new WinNoticeRequestMakerImpl(httpRequestMakerMock, system)
+
+    whenExecuting(httpRequestMakerMock) {
+      val fBody = winNoticeRequestMaker.getAdMarkup(expectingRequest.uri)
+      whenReady(fBody.failed) { e =>
+        e shouldBe a[RuntimeException]
+      }
+    }
   }
 }
