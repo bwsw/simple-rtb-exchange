@@ -2,12 +2,10 @@ ENV:=e2e
 REPORT_PATH:=../target/test-reports/
 
 app_start: app_stop
-	docker network create rtb-ci-network || true; \
-	docker network connect --alias=db rtb-ci-network private-postgres || true; \
-	docker login -u rtb-dev-team -p rtb-dev-team-password ci.bw-sw.com:5000 && \
 	mkdir -p ../target/workdir && \
 	workdir=`cd ../target/workdir && pwd` && \
 	cp $(ASSEMBLY) $$workdir && \
+	(docker network create rtb-ci-network || true) && \
 	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v $$workdir:/workdir -w=/workdir \
 	    --network=rtb-ci-network  ci.bw-sw.com:5000/rtb-dev-team/oracle-java:8 \
 	    /usr/bin/java -Dconfig.resource=application.$(ENV).conf -jar `basename $(ASSEMBLY)` && \
