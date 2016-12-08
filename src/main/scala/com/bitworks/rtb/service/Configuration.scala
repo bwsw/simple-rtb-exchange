@@ -56,6 +56,12 @@ class Configuration {
       "auction-timeout")
       .toMillis, TimeUnit.MILLISECONDS)
 
+  /** Delay before request actor shutdown. */
+  def actorShutdownDelay = FiniteDuration(
+    conf.getDuration(
+      "actor-shutdown-delay")
+      .toMillis, TimeUnit.MILLISECONDS)
+
   /** Timeout for converting HttpEntity to strict Entity. */
   def toStrictTimeout = 1.second
 }
