@@ -97,6 +97,7 @@ class BidRequestFactoryImpl(
     builder
       .withBcat(getBlockedCategories(publisher.get))
       .withBadv(publisher.get.blockedDomains)
+      .withTest(adRequest.test)
       .build
   }
 
