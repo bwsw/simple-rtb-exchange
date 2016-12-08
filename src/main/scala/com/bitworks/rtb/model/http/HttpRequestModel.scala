@@ -14,5 +14,5 @@ case class HttpRequestModel(
     uri: String,
     method: Method = GET,
     body: Option[Array[Byte]] = None,
-    contentType: ContentTypeModel = Unknown,
+    contentType: ContentTypeModel = Json,
     headers: Seq[HttpHeaderModel] = Seq.empty)

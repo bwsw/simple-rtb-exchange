@@ -13,11 +13,12 @@ class AdResponseBuilderTest extends FlatSpec with Matchers {
 
   "AdResponseBuilder" should "build AdResponse correctly" in {
     val imp = Imp("123", "admarkup", 1)
-    val error = Error(33, "some error")
+    val error = Error(ErrorCode.UNKNOWN_ERROR.id, "some error")
     val ct = Json
-    val adResponse = AdResponse("123", Some(Seq(imp)), Some(error), Json)
+    val adResponse = AdResponse(Some("123"), Some(Seq(imp)), Some(error), Json)
 
-    var builder = AdResponseBuilder(adResponse.id, adResponse.ct)
+    var builder = AdResponseBuilder(adResponse.ct)
+    adResponse.id.foreach(id => builder = builder.withId(id))
     adResponse.imp.foreach(imp => builder = builder.withImp(imp))
     adResponse.error.foreach(error => builder = builder.withError(error))
 
@@ -27,8 +28,8 @@ class AdResponseBuilderTest extends FlatSpec with Matchers {
   }
 
   it should "build AdResponse with default values correctly" in {
-    val adResponse = AdResponse("123", None, None, Json)
-    val builtAdResponse = AdResponseBuilder(adResponse.id, adResponse.ct).build
+    val adResponse = AdResponse(None, None, None, Json)
+    val builtAdResponse = AdResponseBuilder(adResponse.ct).build
 
     builtAdResponse shouldBe adResponse
   }

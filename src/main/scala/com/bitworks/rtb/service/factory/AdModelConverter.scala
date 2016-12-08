@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.AdRequest
-import com.bitworks.rtb.model.ad.response.AdResponse
+import com.bitworks.rtb.model.ad.response.{AdResponse, ErrorCode}
 import com.bitworks.rtb.model.http.ContentTypeModel
 import com.bitworks.rtb.service.DataValidationException
 import com.bitworks.rtb.service.parser.AdRequestParser
@@ -53,7 +53,7 @@ class AdModelConverterImpl(
   override def parse(bytes: Array[Byte], ct: ContentTypeModel) = {
     adRequestParsers.get(ct) match {
       case Some(parser) => parser.parse(bytes)
-      case None => throw new DataValidationException(s"cannot find ad request parser for $ct")
+      case None => throw new DataValidationException(ErrorCode.INCORRECT_HEADER_VALUE)
     }
   }
 
@@ -66,8 +66,7 @@ class AdModelConverterImpl(
   override def write(response: AdResponse): Array[Byte] = {
     adResponseWriters.get(response.ct) match {
       case Some(writer) => writer.write(response)
-      case None => throw new DataValidationException(
-        s"cannot find ad response writer for ${response.ct}")
+      case None => throw new DataValidationException(ErrorCode.INCORRECT_HEADER_VALUE)
     }
   }
 }
