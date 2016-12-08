@@ -89,7 +89,7 @@ class ConfigurationTest extends FlatSpec with Matchers {
     ConfigFactory.invalidateCaches()
     val conf = new Configuration
 
-    an[DataValidationException] shouldBe thrownBy {
+    an[Exception] shouldBe thrownBy {
       val ct = conf.bidRequestContentType
     }
   }

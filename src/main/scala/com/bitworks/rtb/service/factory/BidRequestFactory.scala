@@ -54,8 +54,7 @@ class BidRequestFactoryImpl(
       !adRequest.device.forall(check) ||
       !adRequest.regs.forall(check) ||
       !checkImpIds(adRequest.imp)) {
-      throw new DataValidationException(
-        Error(ErrorCode.INCORRECT_REQUEST, "incorrect AdRequest object"))
+      throw new DataValidationException(ErrorCode.INCORRECT_REQUEST)
     }
 
     val imps = adRequest.imp.map(create)
@@ -73,11 +72,11 @@ class BidRequestFactoryImpl(
     if (adRequest.site.nonEmpty) {
       val dbSite = siteDao.get(adRequest.site.get.id)
       if (dbSite.isEmpty) {
-        throw new DataValidationException(Error(ErrorCode.SITE_OR_APP_NOT_FOUND))
+        throw new DataValidationException(ErrorCode.SITE_OR_APP_NOT_FOUND)
       }
       publisher = publisherDao.get(dbSite.get.publisherId)
       if (publisher.isEmpty) {
-        throw new DataValidationException(Error(ErrorCode.PUBLISHER_NOT_FOUND))
+        throw new DataValidationException(ErrorCode.PUBLISHER_NOT_FOUND)
       }
       val site = create(adRequest.site.get, dbSite.get, publisher.get)
       builder.withSite(site)
@@ -85,11 +84,11 @@ class BidRequestFactoryImpl(
     else {
       val dbApp = appDao.get(adRequest.app.get.id)
       if (dbApp.isEmpty) {
-        throw new DataValidationException(Error(ErrorCode.SITE_OR_APP_NOT_FOUND))
+        throw new DataValidationException(ErrorCode.SITE_OR_APP_NOT_FOUND)
       }
       publisher = publisherDao.get(dbApp.get.publisherId)
       if (publisher.isEmpty) {
-        throw new DataValidationException(Error(ErrorCode.PUBLISHER_NOT_FOUND))
+        throw new DataValidationException(ErrorCode.PUBLISHER_NOT_FOUND)
       }
       val app = create(adRequest.app.get, dbApp.get, publisher.get)
       builder.withApp(app)
@@ -98,6 +97,7 @@ class BidRequestFactoryImpl(
     builder
       .withBcat(getBlockedCategories(publisher.get))
       .withBadv(publisher.get.blockedDomains)
+      .withTest(adRequest.test)
       .build
   }
 
@@ -110,7 +110,7 @@ class BidRequestFactoryImpl(
       !adImp.video.forall(check) ||
       !adImp.native.forall(check)) {
       throw new DataValidationException(
-        Error(ErrorCode.INCORRECT_REQUEST, s"incorrect Imp(${adImp.id}) object"))
+        ErrorCode.INCORRECT_REQUEST)
     }
 
     val builder = ImpBuilder(adImp.id)
@@ -133,12 +133,12 @@ class BidRequestFactoryImpl(
       !adSite.mobile.forall(isFlag) ||
       !adSite.content.forall(check)) {
       throw new DataValidationException(
-        Error(ErrorCode.INCORRECT_REQUEST, "incorrect Site object"))
+        ErrorCode.INCORRECT_REQUEST)
     }
 
     if (site.status != Status.active) {
       throw new DataValidationException(
-        Error(ErrorCode.SITE_OR_APP_INACTIVE, "site is inactive"))
+        ErrorCode.SITE_OR_APP_INACTIVE)
     }
 
     val builder = SiteBuilder()
@@ -173,12 +173,12 @@ class BidRequestFactoryImpl(
       !adApp.pageCat.forall(checkCategories) ||
       !adApp.content.forall(check)) {
       throw new DataValidationException(
-        Error(ErrorCode.INCORRECT_REQUEST, "incorrect App object"))
+        ErrorCode.INCORRECT_REQUEST)
     }
 
     if (app.status != Status.active) {
       throw new DataValidationException(
-        Error(ErrorCode.SITE_OR_APP_INACTIVE, "app is inactive"))
+        ErrorCode.SITE_OR_APP_INACTIVE)
     }
 
     val builder = AppBuilder()
@@ -225,7 +225,7 @@ class BidRequestFactoryImpl(
       !adUser.geo.forall(check) ||
       !adUser.keywords.forall(_.nonEmpty)) {
       throw new DataValidationException(
-        Error(ErrorCode.INCORRECT_REQUEST, "incorrect User object"))
+        ErrorCode.INCORRECT_REQUEST)
     }
 
     val builder = UserBuilder()
@@ -358,7 +358,7 @@ class BidRequestFactoryImpl(
 
   private def checkCategories(s: Seq[String]): Boolean = {
     if (s.forall(cat => categoryDao.getAll.exists(_.iabId == cat))) s.nonEmpty
-    else throw new DataValidationException(Error(ErrorCode.IAB_CATEGORY_NOT_FOUND))
+    else throw new DataValidationException(ErrorCode.IAB_CATEGORY_NOT_FOUND)
   }
 
   private def checkImpIds(imps: Seq[ad.request.Imp]): Boolean = {
