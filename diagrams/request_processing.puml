@@ -3,57 +3,57 @@
 title RTB request processing
 
 participant Publisher
-participant Exchange
+participant RequestActor
 participant Factory
 participant Parser
 participant Validator
 participant Writer
 
-Publisher -> Exchange: HTTP request
-activate Exchange
+Publisher -> RequestActor: HTTP request
+activate RequestActor
 
-Exchange -> Parser: HTTP request
+RequestActor -> Parser: HTTP request
 activate Parser
 
 alt HTTP request parsed to AdRequest
-    Exchange <-- Parser: AdRequest
+    RequestActor <-- Parser: AdRequest
     deactivate Parser
-    Exchange -> Factory: AdRequest
+    RequestActor -> Factory: AdRequest
     activate Factory
 
     alt BidRequest created from AdRequest
-        Exchange <-- Factory: BidRequest
+        RequestActor <-- Factory: BidRequest
         deactivate Factory
 
-        ref over Exchange: getting AdResponse
+        ref over RequestActor: getting AdResponse
 
     else BidRequest not created from AdRequest
-        Exchange <-- Factory: fail
+        RequestActor <-- Factory: fail
         deactivate Factory
 
-        Exchange -> Factory: Error
+        RequestActor -> Factory: Error
         activate Factory
-        Exchange <-- Factory: AdResponse
+        RequestActor <-- Factory: AdResponse
         deactivate Factory
 
         activate Parser
     end
 
 else HTTP request not parsed to AdRequest
-    Exchange <-- Parser: fail
+    RequestActor <-- Parser: fail
     deactivate Parser
 
-    Exchange -> Factory: Error
+    RequestActor -> Factory: Error
     activate Factory
-    Exchange <-- Factory: AdResponse
+    RequestActor <-- Factory: AdResponse
     deactivate Factory
 end
 
-Exchange -> Writer: AdResponse
+RequestActor -> Writer: AdResponse
 activate Writer
-Exchange <-- Writer: HTTP response
+RequestActor <-- Writer: HTTP response
 deactivate Writer
-Exchange --> Publisher: HTTP response
-deactivate Exchange
+RequestActor --> Publisher: HTTP response
+deactivate RequestActor
 
 @enduml
