@@ -104,15 +104,4 @@ class ConfigurationTest extends FlatSpec with Matchers {
 
     timeout shouldBe 600.milliseconds
   }
-
-  it should "load actor shutdown delay correctly" in {
-    System.setProperty("rtb-exchange.actor-shutdown-delay", "700 milliseconds")
-
-    ConfigFactory.invalidateCaches()
-    val conf = new Configuration
-
-    val delay = conf.actorShutdownDelay
-
-    delay shouldBe 700.milliseconds
-  }
 }

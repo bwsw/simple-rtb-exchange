@@ -65,7 +65,7 @@ class RequestActor(request: HttpRequestWrapper)
     log.debug("completing request...")
     val bytes = adConverter.write(response)
     request.complete(bytes, response.ct)
-    schedulePoisonPill()
+    shutdownActor()
   }
 
   /**
@@ -76,18 +76,12 @@ class RequestActor(request: HttpRequestWrapper)
   def onError(msg: String) = {
     log.debug(s"an error occurred: $msg")
     request.fail()
-    schedulePoisonPill()
+    shutdownActor()
   }
 
-  /** Schedules actor's suicide. */
-  def schedulePoisonPill() = {
-    context
-      .system
-      .scheduler
-      .scheduleOnce(
-        configuration.actorShutdownDelay,
-        self,
-        PoisonPill)
+  /** Shutdown actor. */
+  def shutdownActor() = {
+    self ! PoisonPill
   }
 }
 
