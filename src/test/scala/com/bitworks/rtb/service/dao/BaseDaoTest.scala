@@ -25,6 +25,7 @@ trait BaseDaoTest extends FlatSpec with BeforeAndAfterAll with Matchers {
   private val dcClassName = conf.getString("db.dataSourceClassName")
   private val user = conf.getString("db.dataSource.user")
   private val password = conf.getString("db.dataSource.password")
+  private val factoryClass = conf.getString("dbUnitDatatypeFactory")
   private val connectionUrl = s"jdbc:postgresql://$host:$port/$dbName"
 
   private val tester = new JdbcDatabaseTester(
@@ -33,10 +34,10 @@ trait BaseDaoTest extends FlatSpec with BeforeAndAfterAll with Matchers {
     user,
     password)
 
-  val connection = tester.getConnection
-  
-  val dbConfig = connection.getConfig
-  dbConfig.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory)
+  private val connection = tester.getConnection
+  private val dbConfig = connection.getConfig
+  private val factory = Class.forName(factoryClass).newInstance
+  dbConfig.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, factory)
 
   implicit val dbModule = new Module {
     bind[DbContext] toNonLazy new DbContext("db")
