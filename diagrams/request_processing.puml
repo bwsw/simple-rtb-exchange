@@ -4,9 +4,9 @@ title RTB request processing
 
 participant Publisher
 participant RequestActor
-participant Factory
+participant BidRequestFactory
+participant AdResponseFactory
 participant Parser
-participant Validator
 participant Writer
 
 Publisher -> RequestActor: HTTP request
@@ -18,23 +18,23 @@ activate Parser
 alt HTTP request parsed to AdRequest
     RequestActor <-- Parser: AdRequest
     deactivate Parser
-    RequestActor -> Factory: AdRequest
-    activate Factory
+    RequestActor -> BidRequestFactory: AdRequest
+    activate BidRequestFactory
 
     alt BidRequest created from AdRequest
-        RequestActor <-- Factory: BidRequest
-        deactivate Factory
+        RequestActor <-- BidRequestFactory: BidRequest
+        deactivate BidRequestFactory
 
         ref over RequestActor: getting AdResponse
 
     else BidRequest not created from AdRequest
-        RequestActor <-- Factory: fail
-        deactivate Factory
+        RequestActor <-- BidRequestFactory: fail
+        deactivate BidRequestFactory
 
-        RequestActor -> Factory: Error
-        activate Factory
-        RequestActor <-- Factory: AdResponse
-        deactivate Factory
+        RequestActor -> AdResponseFactory: Error
+        activate AdResponseFactory
+        RequestActor <-- AdResponseFactory: AdResponse
+        deactivate AdResponseFactory
 
         activate Parser
     end
@@ -43,10 +43,10 @@ else HTTP request not parsed to AdRequest
     RequestActor <-- Parser: fail
     deactivate Parser
 
-    RequestActor -> Factory: Error
-    activate Factory
-    RequestActor <-- Factory: AdResponse
-    deactivate Factory
+    RequestActor -> BidRequestFactory: Error
+    activate BidRequestFactory
+    RequestActor <-- BidRequestFactory: AdResponse
+    deactivate BidRequestFactory
 end
 
 RequestActor -> Writer: AdResponse

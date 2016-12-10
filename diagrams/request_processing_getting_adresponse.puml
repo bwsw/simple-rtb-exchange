@@ -7,7 +7,7 @@ participant BidRequestActor
 participant BidActor
 participant WinBidActor
 participant Bidder
-participant Factory
+participant AdResponseFactory
 participant Parser
 participant Validator
 participant Writer
@@ -73,16 +73,16 @@ alt Win Bidder is found
     BidRequestActor <-- WinBidActor: BidResponse with ad url/markup
     deactivate WinBidActor
 
-    BidRequestActor -> Factory: BidResponse
-    activate Factory
-    BidRequestActor <-- Factory: AdResponse
-    deactivate Factory
+    BidRequestActor -> AdResponseFactory: BidResponse
+    activate AdResponseFactory
+    BidRequestActor <-- AdResponseFactory: AdResponse
+    deactivate AdResponseFactory
 
 else Win Bidder is not found
-    BidRequestActor -> Factory: Error
-    activate Factory
-    BidRequestActor <-- Factory: AdResponse
-    deactivate Factory
+    BidRequestActor -> AdResponseFactory: Error
+    activate AdResponseFactory
+    BidRequestActor <-- AdResponseFactory: AdResponse
+    deactivate AdResponseFactory
 end
 
 BidRequestActor ->> RequestActor: AdResponse
