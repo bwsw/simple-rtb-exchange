@@ -2,19 +2,32 @@
 
 title RTB request processing: getting AdResponse
 
-participant Exchange
-participant Factory
-participant Parser
-participant Validator
-participant Writer
+participant RequestActor
+participant BidRequestActor
 participant BidActor
 participant WinBidActor
 participant Bidder
+participant AdResponseFactory
+participant Parser
+participant Validator
+participant Writer
 
-activate Exchange
-Exchange ->> BidActor: BidRequest
+activate RequestActor
+
+
+create BidRequestActor
+RequestActor -> BidRequestActor: new(BidRequest, AdRequest)
+RequestActor -> BidRequestActor: HandleRequest
+activate BidRequestActor
+
+create BidActor
+BidRequestActor -> BidActor: new
+
+create WinBidActor
+BidRequestActor -> WinBidActor: new
+
+BidRequestActor -> BidActor: BidRequest
 activate BidActor
-
 BidActor -> Writer: BidRequest
 activate Writer
 Writer --> BidActor: HTTP request
@@ -37,17 +50,17 @@ opt Got HTTP response
         BidActor <-- Validator: true/false
         deactivate Validator
         opt BidResponse is valid
-            Exchange <<- BidActor: BidResponse
+            BidRequestActor <<- BidActor: BidResponse
         end
     end
 end
 
 deactivate BidActor
     
-Exchange -> Exchange: Auction
+BidRequestActor -> BidRequestActor: Auction
 
 alt Win Bidder is found
-    Exchange -> WinBidActor: Winner BidResponse
+    BidRequestActor -> WinBidActor: Winner BidResponse
     activate WinBidActor
     opt BidResponse has winurl
         WinBidActor -> Bidder: HTTP request
@@ -57,19 +70,23 @@ alt Win Bidder is found
             deactivate Bidder
         end
     end
-    Exchange <-- WinBidActor: BidResponse with ad url/markup
+    BidRequestActor <-- WinBidActor: BidResponse with ad url/markup
     deactivate WinBidActor
 
-    Exchange -> Factory: BidResponse
-    activate Factory
-    Exchange <-- Factory: AdResponse
-    deactivate Factory
+    BidRequestActor -> AdResponseFactory: BidResponse
+    activate AdResponseFactory
+    BidRequestActor <-- AdResponseFactory: AdResponse
+    deactivate AdResponseFactory
 
 else Win Bidder is not found
-    Exchange -> Factory: Error
-    activate Factory
-    Exchange <-- Factory: AdResponse
-    deactivate Factory
+    BidRequestActor -> AdResponseFactory: Error
+    activate AdResponseFactory
+    BidRequestActor <-- AdResponseFactory: AdResponse
+    deactivate AdResponseFactory
 end
+
+BidRequestActor ->> RequestActor: AdResponse
+deactivate BidRequestActor
+deactivate RequestActor
 
 @enduml

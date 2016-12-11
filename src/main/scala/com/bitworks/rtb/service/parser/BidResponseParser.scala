@@ -1,5 +1,6 @@
 package com.bitworks.rtb.service.parser
 
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.DataValidationException
 
@@ -22,7 +23,8 @@ trait BidResponseParser {
     }
     catch {
       case e: DataValidationException => throw e
-      case e: Throwable => throw new DataValidationException(cause = e)
+      case e: Throwable =>
+        throw new DataValidationException(ErrorCode.UNKNOWN_ERROR, e)
     }
   }
 

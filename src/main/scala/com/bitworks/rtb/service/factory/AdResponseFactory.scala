@@ -1,8 +1,9 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.{AdRequest, Imp}
-import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
-import com.bitworks.rtb.model.ad.response.builder.{AdResponseBuilder, ImpBuilder}
+import com.bitworks.rtb.model.ad.response.{AdResponse, ErrorCode}
+import com.bitworks.rtb.model.ad.response.builder.{AdResponseBuilder, ErrorBuilder, ImpBuilder}
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.response.{Bid, BidResponse}
 import com.bitworks.rtb.service.{DataValidationException, Logging}
 
@@ -24,10 +25,17 @@ trait AdResponseFactory {
   /**
     * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
     *
-    * @param request [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
-    * @param error   [[com.bitworks.rtb.model.ad.response.Error Error]]
+    * @param request   [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]]
+    * @param errorCode [[com.bitworks.rtb.model.ad.response.ErrorCode.Value ErrorCode.Value]]
     */
-  def create(request: AdRequest, error: Error): AdResponse
+  def create(request: AdRequest, errorCode: ErrorCode.Value): AdResponse
+
+  /**
+    * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
+    *
+    * @param errorCode [[com.bitworks.rtb.model.ad.response.ErrorCode.Value ErrorCode.Value]]
+    */
+  def create(errorCode: ErrorCode.Value): AdResponse
 }
 
 /**
@@ -44,13 +52,23 @@ class AdResponseFactoryImpl extends AdResponseFactory with Logging {
       .bid
       .map(getImp(request, _))
 
-    AdResponseBuilder(request.id, request.ct)
+    AdResponseBuilder(request.ct)
+      .withId(request.id)
       .withImp(imps)
       .build
   }
 
-  override def create(request: AdRequest, error: Error) = {
-    AdResponseBuilder(request.id, request.ct)
+  override def create(request: AdRequest, errorCode: ErrorCode.Value) = {
+    val error = ErrorBuilder(errorCode).build
+    AdResponseBuilder(request.ct)
+      .withId(request.id)
+      .withError(error)
+      .build
+  }
+
+  override def create(errorCode: ErrorCode.Value) = {
+    val error = ErrorBuilder(errorCode).build
+    AdResponseBuilder(Json)
       .withError(error)
       .build
   }
@@ -67,14 +85,14 @@ class AdResponseFactoryImpl extends AdResponseFactory with Logging {
       case Some(Imp(_, None, Some(_), None)) => ImpBuilder.videoType
       case Some(Imp(_, None, None, Some(_))) => ImpBuilder.nativeType
       case _ =>
-        log.error(s"cannot determine type of adRequest. r: $request; bid: $bid")
-        throw new DataValidationException("cannot determine ad response type")
+        log.debug(s"cannot determine type of adRequest. r: $request; bid: $bid")
+        throw new DataValidationException(ErrorCode.INCORRECT_REQUEST)
     }
     val adMarkup = bid.adm match {
       case Some(adm) => adm
       case None =>
-        log.error(s"cannot build ad response. Empty adm")
-        throw new DataValidationException("cannot build ad response. Empty adm")
+        log.debug(s"cannot build ad response. Empty adm")
+        throw new DataValidationException(ErrorCode.NO_AD_FOUND)
     }
 
     ImpBuilder(bid.impId, adMarkup, `type`).build
