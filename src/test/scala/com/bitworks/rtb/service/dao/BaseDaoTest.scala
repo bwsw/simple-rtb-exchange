@@ -6,7 +6,6 @@ import com.typesafe.config.ConfigFactory
 import org.dbunit.JdbcDatabaseTester
 import org.dbunit.database.DatabaseConfig
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder
-import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory
 import org.dbunit.operation.DatabaseOperation
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import scaldi.Module
@@ -25,7 +24,7 @@ trait BaseDaoTest extends FlatSpec with BeforeAndAfterAll with Matchers {
   private val dcClassName = conf.getString("db.dataSourceClassName")
   private val user = conf.getString("db.dataSource.user")
   private val password = conf.getString("db.dataSource.password")
-  private val factoryClass = conf.getString("dbUnitDatatypeFactory")
+  private val factoryClass = conf.getString("dbUnit.datatypeFactory")
   private val connectionUrl = s"jdbc:postgresql://$host:$port/$dbName"
 
   private val tester = new JdbcDatabaseTester(
