@@ -8,8 +8,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers}
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
+import scala.concurrent.Future
 
 
 /**
