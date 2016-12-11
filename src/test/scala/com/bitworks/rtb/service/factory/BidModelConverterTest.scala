@@ -1,5 +1,6 @@
 package com.bitworks.rtb.service.factory
 
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json}
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
@@ -38,9 +39,10 @@ class BidModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     val parser = mock[BidResponseParser]
     val converter = new BidModelConverterImpl(Map(Avro -> parser), Map.empty)
 
-    an[DataValidationException] should be thrownBy {
+    val thrown = the[DataValidationException] thrownBy {
       converter.parse(new Array[Byte](0), Json)
     }
+    thrown.getError shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
 
   it should "write bid request using suitable writer" in {
@@ -63,9 +65,10 @@ class BidModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     val request = BidRequestBuilder("id", Nil).build
     val writerMock = mock[BidRequestWriter]
     val converter = new BidModelConverterImpl(Map.empty, Map(Avro -> writerMock))
-    an[DataValidationException] should be thrownBy {
+    val thrown = the[DataValidationException] thrownBy {
       converter.write(request, Json)
     }
+    thrown.getError shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
 
 }

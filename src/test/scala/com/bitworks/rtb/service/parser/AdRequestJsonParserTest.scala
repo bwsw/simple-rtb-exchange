@@ -1,6 +1,7 @@
 package com.bitworks.rtb.service.parser
 
 import com.bitworks.rtb.model._
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request._
 import com.bitworks.rtb.service.DataValidationException
@@ -19,28 +20,32 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val incorrectJson = "incorrectJson".getBytes
     val parser = new AdRequestJsonParser
 
-    an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
+    val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "throw exception if datatype in JSON doesn`t match model datatype" in {
     val incorrectJson = """{"imp": "wrong", "device":"wrong too"}""".getBytes
     val parser = new AdRequestJsonParser
 
-    an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
+    val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "throw exception if id is missed" in {
     val incorrectJson = """{"imp": []}""".getBytes
     val parser = new AdRequestJsonParser
 
-    an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
+    val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "throw exception if imp is missed" in {
     val incorrectJson = """{"id": "id"}""".getBytes
     val parser = new AdRequestJsonParser
 
-    an[DataValidationException] should be thrownBy parser.parse(incorrectJson)
+    val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "correctly parse JSON without optional fields" in {

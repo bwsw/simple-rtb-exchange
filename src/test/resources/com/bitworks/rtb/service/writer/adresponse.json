@@ -1,7 +1,7 @@
 {
   "id": "id",
   "error": {
-    "code": 24,
+    "code": 0,
     "message": "error message"
   },
   "imp": [
