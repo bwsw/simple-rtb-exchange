@@ -1,7 +1,5 @@
 package com.bitworks.rtb.service.actor
 
-import java.util.concurrent.TimeUnit
-
 import akka.actor.{Actor, ActorLogging, Cancellable, Props}
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
@@ -17,7 +15,6 @@ import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.duration.FiniteDuration
 
 /**
   * The main actor to process bid requests.
