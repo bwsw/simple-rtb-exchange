@@ -1,6 +1,7 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
 import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json}
 import com.bitworks.rtb.service.DataValidationException
@@ -38,13 +39,14 @@ class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     val parser = mock[AdRequestParser]
     val converter = new AdModelConverterImpl(Map(Avro -> parser), Map.empty)
 
-    an[DataValidationException] should be thrownBy {
+    val thrown = the[DataValidationException] thrownBy {
       converter.parse(new Array[Byte](0), Json)
     }
+    thrown.getError shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
 
   it should "write ad response using suitable writer" in {
-    val response = AdResponseBuilder("id", Json).build
+    val response = AdResponseBuilder(Json).build
     val bytes = new Array[Byte](0)
     val writerMock = mock[AdResponseWriter]
     expecting {
@@ -60,12 +62,14 @@ class AdModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "throw exception if writer not found" in {
-    val response = AdResponseBuilder("id", Json).build
+    val response = AdResponseBuilder(Json).build
     val writer = mock[AdResponseWriter]
     val converter = new AdModelConverterImpl(Map.empty, Map(Avro -> writer))
-    an[DataValidationException] should be thrownBy {
+
+    val thrown = the[DataValidationException] thrownBy {
       converter.write(response)
     }
+    thrown.getError shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
 
 }

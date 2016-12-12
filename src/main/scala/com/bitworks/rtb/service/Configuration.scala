@@ -45,9 +45,7 @@ class Configuration {
     case "json" => Json
     case "avro" => Avro
     case "protobuf" => Protobuf
-    case s =>
-      throw new DataValidationException(
-        s"unknown bid request content type in config: $s")
+    case s => throw new Exception(s"unknown bid request content type in config: $s")
   }
 
   /** Auction timeout. */
