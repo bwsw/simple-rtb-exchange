@@ -3,10 +3,10 @@ package com.bitworks.rtb.service.actor
 import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
-import com.bitworks.rtb.model.ad.response.{AdResponse, Error}
+import com.bitworks.rtb.model.ad.response.{AdResponse, ErrorCode}
 import com.bitworks.rtb.model.message._
-import com.bitworks.rtb.service.Configuration
 import com.bitworks.rtb.service.ContentTypeConversions._
+import com.bitworks.rtb.service.{Configuration, DataValidationException}
 import com.bitworks.rtb.service.factory.{AdModelConverter, AdResponseFactory, BidRequestFactory}
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable._
@@ -37,18 +37,20 @@ class RequestActor(request: HttpRequestWrapper)
           val bytes = entity.data.toArray
           log.debug(s"content-type: ${entity.contentType}")
           val adRequest = adConverter.parse(bytes, entity.contentType)
-          factory.create(adRequest) match {
-            case Some(bidRequest) =>
-              val props = BidRequestActor.props(adRequest, bidRequest)
-              context.actorOf(props) ! HandleRequest
-            case None =>
-              val msg = "bid request not created"
-              log.debug(msg)
-              val response = adResponseFactory.create(adRequest, Error(123, msg))
-              completeRequest(response)
+          try {
+            val bidRequest = factory.create(adRequest)
+            val props = BidRequestActor.props(adRequest, bidRequest)
+            context.actorOf(props) ! HandleRequest
+          } catch {
+            case e: DataValidationException =>
+              log.debug("bid request not created")
+               completeRequest(adResponseFactory.create(adRequest, e.getError))
           }
       } onFailure {
-        case exc => onError(exc.toString)
+        case e: DataValidationException =>
+          completeRequest(adResponseFactory.create(e.getError))
+        case e: Throwable =>
+          completeRequest(adResponseFactory.create(ErrorCode.INCORRECT_REQUEST))
       }
 
     case adResponse: AdResponse =>

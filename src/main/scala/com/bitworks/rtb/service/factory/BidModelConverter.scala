@@ -1,5 +1,6 @@
 package com.bitworks.rtb.service.factory
 
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.http.ContentTypeModel
 import com.bitworks.rtb.model.request.BidRequest
 import com.bitworks.rtb.model.response.BidResponse
@@ -54,7 +55,7 @@ class BidModelConverterImpl(
   override def parse(bytes: Array[Byte], ct: ContentTypeModel) = {
     bidResponseParsers.get(ct) match {
       case Some(parser) => parser.parse(bytes)
-      case None => throw new DataValidationException(s"cannot find bid response parser for $ct")
+      case None => throw new DataValidationException(ErrorCode.INCORRECT_HEADER_VALUE)
     }
   }
 
@@ -68,7 +69,7 @@ class BidModelConverterImpl(
   override def write(request: BidRequest, ct: ContentTypeModel) = {
     bidRequestWriters.get(ct) match {
       case Some(writer) => writer.write(request)
-      case None => throw new DataValidationException(s"cannot find bid request writer for $ct")
+      case None => throw new DataValidationException(ErrorCode.INCORRECT_HEADER_VALUE)
     }
   }
 }

@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorLogging, Cancellable, Props}
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.model.ad.request.AdRequest
-import com.bitworks.rtb.model.ad.response.Error
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.db.Bidder
 import com.bitworks.rtb.model.message._
 import com.bitworks.rtb.model.request.BidRequest
@@ -108,7 +108,7 @@ class BidRequestActor(
     */
   def onError(msg: String) = {
     log.debug(s"an error occurred: $msg")
-    context.parent ! adResponseFactory.create(adRequest, Error(123, msg))
+    context.parent ! adResponseFactory.create(adRequest, ErrorCode.NO_AD_FOUND)
   }
 }
 

@@ -1,10 +1,12 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.request.AdRequest
+import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.db.Status
 import com.bitworks.rtb.model.request._
 import com.bitworks.rtb.model.request.builder._
 import com.bitworks.rtb.model.{ad, db}
+import com.bitworks.rtb.service.DataValidationException
 import com.bitworks.rtb.service.dao.{AppDao, CategoryDao, PublisherDao, SiteDao}
 
 /**
@@ -19,7 +21,7 @@ trait BidRequestFactory {
     *
     * @param ad [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]] object
     */
-  def create(ad: AdRequest): Option[BidRequest]
+  def create(ad: AdRequest): BidRequest
 }
 
 /**
@@ -43,7 +45,7 @@ class BidRequestFactoryImpl(
     * @param adRequest [[com.bitworks.rtb.model.ad.request.AdRequest AdRequest]] object
     * @return created Some(BidRequest) if adRequest is valid, or None if not valid
     */
-  override def create(adRequest: AdRequest): Option[BidRequest] = {
+  override def create(adRequest: AdRequest): BidRequest = {
     if (adRequest.id.isEmpty ||
       adRequest.imp.isEmpty ||
       (adRequest.site.isEmpty == adRequest.app.isEmpty) ||
@@ -52,66 +54,54 @@ class BidRequestFactoryImpl(
       !adRequest.device.forall(check) ||
       !adRequest.regs.forall(check) ||
       !checkImpIds(adRequest.imp)) {
-      return None
+      throw new DataValidationException(ErrorCode.INCORRECT_REQUEST)
     }
 
     val imps = adRequest.imp.map(create)
-    if (!checkSeq(imps)) return None
 
-    val builder = BidRequestBuilder(adRequest.id, imps.map(_.get))
-      .withTest(adRequest.test)
+    val builder = BidRequestBuilder(adRequest.id, imps)
 
     adRequest.tmax.foreach(builder.withTmax)
     adRequest.device.foreach(builder.withDevice)
     adRequest.regs.foreach(builder.withRegs)
 
-    if (adRequest.user.nonEmpty) {
-      val user = create(adRequest.user.get)
-      if (user.nonEmpty) builder.withUser(user.get)
-      else return None
-    }
+    adRequest.user.foreach(u => builder.withUser(create(u)))
 
     var publisher: Option[db.Publisher] = None
 
     if (adRequest.site.nonEmpty) {
       val dbSite = siteDao.get(adRequest.site.get.id)
       if (dbSite.isEmpty) {
-        return None
+        throw new DataValidationException(ErrorCode.SITE_OR_APP_NOT_FOUND)
       }
       publisher = publisherDao.get(dbSite.get.publisherId)
       if (publisher.isEmpty) {
-        return None
+        throw new DataValidationException(ErrorCode.PUBLISHER_NOT_FOUND)
       }
       val site = create(adRequest.site.get, dbSite.get, publisher.get)
-      if (site.isEmpty) {
-        return None
-      }
-      builder.withSite(site.get)
+      builder.withSite(site)
     }
     else {
       val dbApp = appDao.get(adRequest.app.get.id)
       if (dbApp.isEmpty) {
-        return None
+        throw new DataValidationException(ErrorCode.SITE_OR_APP_NOT_FOUND)
       }
       publisher = publisherDao.get(dbApp.get.publisherId)
       if (publisher.isEmpty) {
-        return None
+        throw new DataValidationException(ErrorCode.PUBLISHER_NOT_FOUND)
       }
       val app = create(adRequest.app.get, dbApp.get, publisher.get)
-      if (app.isEmpty) {
-        return None
-      }
-      builder.withApp(app.get)
+      builder.withApp(app)
     }
 
     builder
       .withBcat(getBlockedCategories(publisher.get))
       .withBadv(publisher.get.blockedDomains)
-
-    Some(builder.build)
+      .withTest(adRequest.test)
+      .build
   }
 
-  private def create(adImp: ad.request.Imp): Option[Imp] = {
+  private def create(adImp: ad.request.Imp): Imp = {
     if (adImp.id.isEmpty ||
       (adImp.banner.isEmpty &&
         adImp.video.isEmpty &&
@@ -119,7 +109,8 @@ class BidRequestFactoryImpl(
       !adImp.banner.forall(check) ||
       !adImp.video.forall(check) ||
       !adImp.native.forall(check)) {
-      return None
+      throw new DataValidationException(
+        ErrorCode.INCORRECT_REQUEST)
     }
 
     val builder = ImpBuilder(adImp.id)
@@ -127,13 +118,13 @@ class BidRequestFactoryImpl(
     adImp.video.foreach(builder.withVideo)
     adImp.native.foreach(builder.withNative)
 
-    Some(builder.build)
+    builder.build
   }
 
   private def create(
       adSite: ad.request.Site,
       site: db.Site,
-      publisher: db.Publisher): Option[Site] = {
+      publisher: db.Publisher): Site = {
     if (!adSite.sectionCat.forall(checkCategories) ||
       !adSite.pageCat.forall(checkCategories) ||
       !adSite.page.forall(_.nonEmpty) ||
@@ -141,11 +132,13 @@ class BidRequestFactoryImpl(
       !adSite.search.forall(_.nonEmpty) ||
       !adSite.mobile.forall(isFlag) ||
       !adSite.content.forall(check)) {
-      return None
+      throw new DataValidationException(
+        ErrorCode.INCORRECT_REQUEST)
     }
 
     if (site.status != Status.active) {
-      return None
+      throw new DataValidationException(
+        ErrorCode.SITE_OR_APP_INACTIVE)
     }
 
     val builder = SiteBuilder()
@@ -169,18 +162,23 @@ class BidRequestFactoryImpl(
       builder.withCat(cats)
     }
 
-    Some(builder.build)
+    builder.build
   }
 
-  private def create(adApp: ad.request.App, app: db.App, publisher: db.Publisher): Option[App] = {
+  private def create(
+      adApp: ad.request.App,
+      app: db.App,
+      publisher: db.Publisher): App = {
     if (!adApp.sectionCat.forall(checkCategories) ||
       !adApp.pageCat.forall(checkCategories) ||
       !adApp.content.forall(check)) {
-      return None
+      throw new DataValidationException(
+        ErrorCode.INCORRECT_REQUEST)
     }
 
     if (app.status != Status.active) {
-      return None
+      throw new DataValidationException(
+        ErrorCode.SITE_OR_APP_INACTIVE)
     }
 
     val builder = AppBuilder()
@@ -203,7 +201,7 @@ class BidRequestFactoryImpl(
       builder.withCat(cats)
     }
 
-    Some(builder.build)
+    builder.build
   }
 
   private def create(dbPublisher: db.Publisher): Publisher = {
@@ -220,13 +218,14 @@ class BidRequestFactoryImpl(
     builder.build
   }
 
-  private def create(adUser: ad.request.User): Option[User] = {
+  private def create(adUser: ad.request.User): User = {
     if (!adUser.id.forall(_.nonEmpty) ||
       !adUser.yob.forall(isValidBirthdayYear) ||
       !adUser.gender.forall(genders.contains) ||
       !adUser.geo.forall(check) ||
       !adUser.keywords.forall(_.nonEmpty)) {
-      return None
+      throw new DataValidationException(
+        ErrorCode.INCORRECT_REQUEST)
     }
 
     val builder = UserBuilder()
@@ -235,7 +234,7 @@ class BidRequestFactoryImpl(
     adUser.gender.foreach(builder.withGender)
     adUser.geo.foreach(builder.withGeo)
     adUser.keywords.foreach(builder.withKeywords)
-    Some(builder.build)
+    builder.build
   }
 
   private def check(banner: Banner): Boolean = {
@@ -357,8 +356,10 @@ class BidRequestFactoryImpl(
 
   private def check(regs: Regs): Boolean = regs.coppa.forall(isFlag)
 
-  private def checkCategories(s: Seq[String]): Boolean =
-    s.nonEmpty && s.forall(cat => categoryDao.getAll.exists(_.iabId == cat))
+  private def checkCategories(s: Seq[String]): Boolean = {
+    if (s.forall(cat => categoryDao.getAll.exists(_.iabId == cat))) s.nonEmpty
+    else throw new DataValidationException(ErrorCode.IAB_CATEGORY_NOT_FOUND)
+  }
 
   private def checkImpIds(imps: Seq[ad.request.Imp]): Boolean = {
     val ids = imps.map(_.id)
