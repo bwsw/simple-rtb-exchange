@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, Cancellable, Props}
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.model.ad.request.AdRequest
@@ -45,6 +45,7 @@ class BidRequestActor(
   val winActor = injectActorRef[WinActor]
 
   var auctionStarted = false
+  var auctionCancellable: Option[Cancellable] = None
 
   override def receive: Receive = {
     case HandleRequest =>
@@ -56,10 +57,10 @@ class BidRequestActor(
           bidders.foreach { bidder =>
             bidRouter ! SendBidRequest(bidder, bidRequest)
           }
-          context.system.scheduler.scheduleOnce(
-            configuration.bidRequestTimeout,
+          auctionCancellable = Some(context.system.scheduler.scheduleOnce(
+            configuration.bidRequestTimeout + configuration.additionalAuctionTime,
             self,
-            StartAuction)
+            StartAuction))
       }
 
     case bidRequestResult: BidRequestResult =>
@@ -81,6 +82,7 @@ class BidRequestActor(
     case StartAuction =>
       if (!auctionStarted) {
         auctionStarted = true
+        auctionCancellable.foreach(_.cancel())
         log.debug("auction started")
         val successful = receivedBidResponses.collect {
           case BidRequestSuccess(response) => response
