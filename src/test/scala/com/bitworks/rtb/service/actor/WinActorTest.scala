@@ -33,7 +33,7 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
   }
 
   implicit val timeout: Timeout = 1.second
-  val duration = Duration(2, "s")
+  val duration = Duration(1, "s")
   implicit val system = ActorSystem("test")
 
   "WinActor" should "send win notices to bidders if admarkup is in bid response" in {
@@ -129,16 +129,20 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
       requestMaker.replaceMacros("one", bidRequest, bidResponse, seatBid, bid).andStubReturn("one")
       requestMaker.getAdMarkup("one").andReturn(Future.successful(admone)).times(1)
 
-      requestMaker.replaceMacros(admone, bidRequest, bidResponse, seatBid, bid).andStubReturn(admone)
+      requestMaker.replaceMacros(admone, bidRequest, bidResponse, seatBid, bid)
+        .andStubReturn(admone)
 
-      requestMaker.replaceMacros("three", bidRequest, bidResponse, seatBid, bid1).andStubReturn("three")
+      requestMaker.replaceMacros("three", bidRequest, bidResponse, seatBid, bid1)
+        .andStubReturn("three")
       requestMaker.sendWinNotice(anyObject()).andStubReturn(Future.failed(new TimeoutException()))
-      requestMaker.replaceMacros("someAdm", bidRequest, bidResponse, seatBid, bid1).andStubReturn("someAdm")
+      requestMaker.replaceMacros("someAdm", bidRequest, bidResponse, seatBid, bid1)
+        .andStubReturn("someAdm")
 
       requestMaker.replaceMacros("two", bidRequest, bidResponse, seatBid, bid2).andStubReturn("two")
 
       requestMaker.getAdMarkup("two").andReturn(Future.successful(admtwo)).times(1)
-      requestMaker.replaceMacros(admtwo, bidRequest, bidResponse, seatBid, bid2).andStubReturn(admtwo)
+      requestMaker.replaceMacros(admtwo, bidRequest, bidResponse, seatBid, bid2)
+        .andStubReturn(admtwo)
 
       requestMaker.replaceMacros("adm", bidRequest, bidResponse, seatBid, bid3).andStubReturn("adm")
     }
