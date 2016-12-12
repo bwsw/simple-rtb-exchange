@@ -1,7 +1,7 @@
 package com.bitworks.rtb.service.factory
 
 import com.bitworks.rtb.model.ad.response.ErrorCode
-import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json, NoContentType}
+import com.bitworks.rtb.model.http.{Avro, ContentTypeModel, Json}
 import com.bitworks.rtb.model.request.builder.BidRequestBuilder
 import com.bitworks.rtb.model.response.builder.BidResponseBuilder
 import com.bitworks.rtb.service.DataValidationException
@@ -42,19 +42,8 @@ class BidModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     val thrown = the[DataValidationException] thrownBy {
       converter.parse(new Array[Byte](0), Json)
     }
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_HEADER_VALUE
+    thrown.getError shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
-
-  it should "throw exception if header in bid response is missed" in {
-    val parser = mock[BidResponseParser]
-    val converter = new BidModelConverterImpl(Map(Avro -> parser), Map.empty)
-
-    val thrown = the[DataValidationException] thrownBy {
-      converter.parse(new Array[Byte](0), NoContentType)
-    }
-    thrown.getError.code shouldBe ErrorCode.MISSING_HEADER
-  }
-
 
   it should "write bid request using suitable writer" in {
     val request = BidRequestBuilder("id", Nil).build
@@ -79,17 +68,7 @@ class BidModelConverterTest extends FlatSpec with Matchers with EasyMockSugar {
     val thrown = the[DataValidationException] thrownBy {
       converter.write(request, Json)
     }
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_HEADER_VALUE
-  }
-
-  it should "throw exception if header in bid request is missed" in {
-    val request = BidRequestBuilder("id", Nil).build
-    val writerMock = mock[BidRequestWriter]
-    val converter = new BidModelConverterImpl(Map.empty, Map(Avro -> writerMock))
-    val thrown = the[DataValidationException] thrownBy {
-      converter.write(request, NoContentType)
-    }
-    thrown.getError.code shouldBe ErrorCode.MISSING_HEADER
+    thrown.getError shouldBe ErrorCode.INCORRECT_HEADER_VALUE
   }
 
 }

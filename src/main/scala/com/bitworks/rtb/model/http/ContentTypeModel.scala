@@ -34,10 +34,3 @@ case object Protobuf extends ContentTypeModel
   * @author Egor Ilchenko
   */
 case object Unknown extends ContentTypeModel
-
-/**
-  * No content type.
-  *
-  * @author Pavel Tomskikh
-  */
-case object NoContentType extends ContentTypeModel
