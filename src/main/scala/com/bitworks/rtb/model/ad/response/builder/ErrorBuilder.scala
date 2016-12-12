@@ -2,7 +2,10 @@ package com.bitworks.rtb.model.ad.response.builder
 
 import com.bitworks.rtb.model.ad.response.Error
 import com.bitworks.rtb.model.ad.response.ErrorCode._
-import com.typesafe.config.{Config, ConfigFactory}
+import com.bitworks.rtb.service.Configuration
+import com.typesafe.config.Config
+import scaldi.Injectable.inject
+import scaldi.Injector
 
 /**
   * Builder for [[com.bitworks.rtb.model.ad.response.Error Error]].
@@ -23,7 +26,6 @@ class ErrorBuilder private(code: Value, conf: Config) {
 }
 
 object ErrorBuilder {
-  private val conf = ConfigFactory.parseResources("error_messages.properties")
-
-  def apply(code: Value): ErrorBuilder = new ErrorBuilder(code, conf)
+  def apply(code: Value)(implicit injector: Injector): ErrorBuilder =
+    new ErrorBuilder(code, inject[Configuration].errorMessages)
 }

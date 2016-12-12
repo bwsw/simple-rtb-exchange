@@ -6,6 +6,7 @@ import com.bitworks.rtb.model.ad.response.builder.{AdResponseBuilder, ErrorBuild
 import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.response.{Bid, BidResponse}
 import com.bitworks.rtb.service.{DataValidationException, Logging}
+import scaldi.Injector
 
 /**
   * Factory for [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
@@ -44,7 +45,7 @@ trait AdResponseFactory {
   *
   * @author Egor Ilchenko
   */
-class AdResponseFactoryImpl extends AdResponseFactory with Logging {
+class AdResponseFactoryImpl(implicit injector: Injector) extends AdResponseFactory with Logging {
   override def create(request: AdRequest, responses: Seq[BidResponse]) = {
     val imps = responses
       .flatMap(_.seatBid)

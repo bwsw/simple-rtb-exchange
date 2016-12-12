@@ -56,4 +56,7 @@ class Configuration {
 
   /** Timeout for converting HttpEntity to strict Entity. */
   def toStrictTimeout = 1.second
+
+  /** Error messages configuration for error codes. */
+  val errorMessages = ConfigFactory.parseResources(conf.getString("error-messages-file"))
 }

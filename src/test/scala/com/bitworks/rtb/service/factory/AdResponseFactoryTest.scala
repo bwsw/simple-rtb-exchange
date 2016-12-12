@@ -6,8 +6,14 @@ import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request.builder.{BannerBuilder, NativeBuilder, VideoBuilder}
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
-import com.bitworks.rtb.service.DataValidationException
+import com.bitworks.rtb.service.{Configuration, DataValidationException}
+import com.typesafe.config.ConfigFactory
+import org.easymock.EasyMock._
+import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers}
+import scaldi.Module
+
+import scala.collection.JavaConversions.mapAsJavaMap
 
 /**
   * Test for
@@ -15,7 +21,20 @@ import org.scalatest.{FlatSpec, Matchers}
   *
   * @author Egor Ilchenko
   */
-class AdResponseFactoryTest extends FlatSpec with Matchers {
+class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
+
+  val unknownErrorMsg = "UNKNOWN_ERROR"
+  val errorMessages = ConfigFactory.parseMap(Map("UNKNOWN_ERROR" -> unknownErrorMsg))
+
+  val configuration = mock[Configuration]
+  expecting {
+    configuration.errorMessages.andStubReturn(errorMessages)
+    replay(configuration)
+  }
+
+  implicit val module = new Module {
+    bind[Configuration] toNonLazy configuration
+  }
 
   "AdResponseFactory" should "return AdResponse with banner correctly" in {
     val factory = new AdResponseFactoryImpl
@@ -203,8 +222,6 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
       factory.create(adRequest, Seq(bidResponse))
     }
   }
-
-  val unknownErrorMsg = "Unknown error"
 
   it should "build ad response with error correctly" in {
     val factory = new AdResponseFactoryImpl
