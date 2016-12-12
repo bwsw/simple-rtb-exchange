@@ -75,48 +75,49 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
       response: BidResponse,
       seatBid: SeatBid,
       bid: Bid): Future[Bid] = {
-    bid.nurl match {
+    val fAdm = bid.nurl match {
       case Some(nurl) =>
-
         val preparedNurl = requestMaker.replaceMacros(
           nurl,
           request,
           response,
           seatBid,
           bid)
-
-        bid.adm match {
-          case Some(_) => sendWinNotice(bid, preparedNurl)
-          case None => getBidWithAdm(bid, preparedNurl)
+       bid.adm match {
+          case Some(_) =>
+            sendWinNotice(preparedNurl)
+            Future.successful(bid.adm)
+          case None =>
+            getAdm(preparedNurl)
         }
-      case None => Future.successful(bid)
+      case None => Future.successful(bid.adm)
+    }
+    fAdm.map {
+      case Some(ad) =>
+        val replaced = requestMaker.replaceMacros(ad, request, response, seatBid, bid)
+        log.debug(s"replaced adm: $replaced, source adm: $ad")
+        if (bid.adm.contains(replaced)) bid else bid.copy(adm = Some(replaced))
+      case None => bid
     }
   }
 
   /**
     * Sends win notice to bid.
     *
-    * @param bid          [[com.bitworks.rtb.model.response.Bid Bid]]
     * @param preparedNurl ready to request win notice URL
     */
-  def sendWinNotice(
-      bid: Bid,
-      preparedNurl: String): Future[Bid] = {
+  def sendWinNotice(preparedNurl: String): Unit = {
     log.debug(s"""sending win notice to "$preparedNurl"""")
 
     requestMaker.sendWinNotice(preparedNurl)
-    Future.successful(bid)
   }
 
   /**
-    * Returns [[com.bitworks.rtb.model.response.Bid Bid]] with admarkup.
+    * Returns admarkup.
     *
-    * @param bid          [[com.bitworks.rtb.model.response.Bid Bid]]
     * @param preparedNurl ready to request win notice URL
     */
-  def getBidWithAdm(
-      bid: Bid,
-      preparedNurl: String): Future[Bid] = {
+  def getAdm(preparedNurl: String): Future[Option[String]] = {
     log.debug(s"""getting ad markup from "$preparedNurl"""")
 
     val fAdMarkup = requestMaker.getAdMarkup(preparedNurl).map(adm => Some(adm))
@@ -132,7 +133,7 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
 
     fAdMarkupWithTimeout.map { adm =>
       log.debug(s"""admarkup from "$preparedNurl" received: "$adm""""")
-      bid.copy(adm = adm)
+      adm
     }
   }
 }
