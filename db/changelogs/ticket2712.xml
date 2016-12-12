@@ -25,9 +25,7 @@
         <delete tableName="publisher"/>
         <delete tableName="bidder"/>
 
-        <rollback>
-
-        </rollback>
+        <rollback />
     </changeSet>
 
     <changeSet id="2" author="Pavel Tomskikh" context="e2e">
@@ -38,12 +36,12 @@
             <tableExists tableName="publisher_blocked_category"/>
             <tableExists tableName="site"/>
             <tableExists tableName="site_category"/>
-            <sqlCheck expectedResult="0">select count(*) from publisher</sqlCheck>
-            <sqlCheck expectedResult="0">select count(*) from publisher_blocked_advertiser</sqlCheck>
-            <sqlCheck expectedResult="0">select count(*) from publisher_category</sqlCheck>
-            <sqlCheck expectedResult="0">select count(*) from publisher_blocked_category</sqlCheck>
-            <sqlCheck expectedResult="0">select count(*) from site</sqlCheck>
-            <sqlCheck expectedResult="0">select count(*) from site_category</sqlCheck>
+            <tableIsEmpty tableName="publisher"/>
+            <tableIsEmpty tableName="publisher_blocked_advertiser"/>
+            <tableIsEmpty tableName="publisher_category"/>
+            <tableIsEmpty tableName="publisher_blocked_category"/>
+            <tableIsEmpty tableName="site"/>
+            <tableIsEmpty tableName="site_category"/>
         </preConditions>
 
         <loadData tableName="publisher" file="resources/ticket2712/publisher.csv">

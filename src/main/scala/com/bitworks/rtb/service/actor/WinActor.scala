@@ -108,6 +108,7 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
     */
   def sendWinNotice(preparedNurl: String): Unit = {
     log.debug(s"""sending win notice to "$preparedNurl"""")
+
     requestMaker.sendWinNotice(preparedNurl)
   }
 

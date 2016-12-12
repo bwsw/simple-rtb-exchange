@@ -3,7 +3,7 @@ package com.bitworks.rtb.service.actor
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
-import com.bitworks.rtb.model.ad.response.AdResponse
+import com.bitworks.rtb.model.ad.response.{AdResponse, ErrorCode}
 import com.bitworks.rtb.model.message._
 import com.bitworks.rtb.service.ContentTypeConversions._
 import com.bitworks.rtb.service.{Configuration, DataValidationException}
@@ -44,12 +44,13 @@ class RequestActor(request: HttpRequestWrapper)
           } catch {
             case e: DataValidationException =>
               log.debug("bid request not created")
-              val response = adResponseFactory.create(adRequest, e.getError)
-
-              completeRequest(response)
+               completeRequest(adResponseFactory.create(adRequest, e.getError))
           }
       } onFailure {
-        case exc => onError(exc.toString)
+        case e: DataValidationException =>
+          completeRequest(adResponseFactory.create(e.getError))
+        case e: Throwable =>
+          completeRequest(adResponseFactory.create(ErrorCode.INCORRECT_REQUEST))
       }
 
     case adResponse: AdResponse =>

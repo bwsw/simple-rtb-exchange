@@ -396,7 +396,7 @@ class BidRequestFactoryTest
       .build
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_INACTIVE
+    thrown.getError shouldBe ErrorCode.SITE_OR_APP_INACTIVE
   }
 
   it should "throw DataValidationException for ad request with site which not in db" in {
@@ -423,7 +423,7 @@ class BidRequestFactoryTest
       .build
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
+    thrown.getError shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
   }
 
   it should "create bid request for correct ad request with app" in {
@@ -489,7 +489,7 @@ class BidRequestFactoryTest
       .build
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_INACTIVE
+    thrown.getError shouldBe ErrorCode.SITE_OR_APP_INACTIVE
   }
 
   it should "throw DataValidationException for ad request with app which not in db" in {
@@ -512,7 +512,7 @@ class BidRequestFactoryTest
       .build
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError.code shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
+    thrown.getError shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
   }
 
   it should "throw DataValidationException for ad request with site and app" in {
@@ -545,7 +545,7 @@ class BidRequestFactoryTest
       .build
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   val correctSizes = Table(
@@ -640,7 +640,7 @@ class BidRequestFactoryTest
         .build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -657,7 +657,7 @@ class BidRequestFactoryTest
         .build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -1396,7 +1396,7 @@ class BidRequestFactoryTest
       val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -2776,7 +2776,7 @@ class BidRequestFactoryTest
       val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -2835,7 +2835,7 @@ class BidRequestFactoryTest
       val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -2845,7 +2845,7 @@ class BidRequestFactoryTest
     val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json).withSite(adSite).build
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "create bid request for ad request with correct user" in {
@@ -2921,7 +2921,7 @@ class BidRequestFactoryTest
         .build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -5544,7 +5544,7 @@ class BidRequestFactoryTest
         .build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -5973,7 +5973,7 @@ class BidRequestFactoryTest
         .build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -7217,7 +7217,7 @@ class BidRequestFactoryTest
         .build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -7231,7 +7231,7 @@ class BidRequestFactoryTest
       .build
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError.code shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
+    thrown.getError shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
   }
 
   it should "create bid request for ad request with correct producer" in {
@@ -7302,7 +7302,7 @@ class BidRequestFactoryTest
         .build
 
       val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-      thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+      thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
     }
   }
 
@@ -7317,7 +7317,7 @@ class BidRequestFactoryTest
       .build
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError.code shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
+    thrown.getError shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
   }
 
   it should "create bid request for ad request with correct regs" in {
@@ -7351,6 +7351,6 @@ class BidRequestFactoryTest
       .build
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 }

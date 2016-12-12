@@ -15,17 +15,17 @@ class AdResponseJsonWriter extends AdResponseWriter with JsonWriteHelper {
   }
 
   private def getAdResponseNode(response: AdResponse) = createObject
-      .put("id", response.id)
-      .putOption("error", response.error, getErrorNode)
-      .putOptionArray("imp", response.imp, getImpNode)
+    .putOptionString("id", response.id)
+    .putOption("error", response.error, getErrorNode)
+    .putOptionArray("imp", response.imp, getImpNode)
 
   private def getErrorNode(error: Error) = createObject
-      .put("code", error.code.id)
-      .put("message", error.message)
+    .put("code", error.code)
+    .put("message", error.message)
 
   private def getImpNode(imp: Imp) = createObject
-      .put("id", imp.id)
-      .put("adm", imp.adm)
-      .put("type", imp.`type`)
+    .put("id", imp.id)
+    .put("adm", imp.adm)
+    .put("type", imp.`type`)
 
 }

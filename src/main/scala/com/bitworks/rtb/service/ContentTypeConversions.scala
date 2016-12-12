@@ -44,7 +44,7 @@ object ContentTypeConversions {
       case ContentTypes.`application/json` => Json
       case `avro/binary` => Avro
       case `application/x-protobuf` => Protobuf
-      case ContentTypes.NoContentType => NoContentType
+      case ContentTypes.NoContentType => Json
       case _ => Unknown
     }
   }
