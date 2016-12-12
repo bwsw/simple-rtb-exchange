@@ -11,9 +11,10 @@ src_managed/
 project/boot/
 project/plugins/project/
 logs
+db/liquibase/
 
 *.iml
 *.ipr
 *.iws
+*.swp
 .idea
-

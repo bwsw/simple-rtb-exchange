@@ -53,14 +53,12 @@ class RtbModule extends Module {
 
   def bindAdModelConverters = {
     bind[Map[ContentTypeModel, AdRequestParser]] toNonLazy {
-      val map: Map[ContentTypeModel, AdRequestParser] =
-        Map(Json -> injected[AdRequestJsonParser])
-      map
+      val jsonParser = injected[AdRequestJsonParser]
+      Map[ContentTypeModel, AdRequestParser](Json -> jsonParser)
     }
     bind[Map[ContentTypeModel, AdResponseWriter]] toNonLazy {
-      val map: Map[ContentTypeModel, AdResponseWriter] =
-        Map(Json -> injected[AdResponseJsonWriter])
-      map
+      val jsonWriter = injected[AdResponseJsonWriter]
+      Map[ContentTypeModel, AdResponseWriter](Json -> jsonWriter)
     }
 
     bind[AdModelConverter] toNonLazy injected[AdModelConverterImpl]
@@ -69,15 +67,15 @@ class RtbModule extends Module {
   def bindBidModelConverters = {
     bind[Map[ContentTypeModel, BidResponseParser]] toNonLazy {
       val jsonParser = injected[BidResponseJsonParser]
-      val map: Map[ContentTypeModel, BidResponseParser] =
-        Map(Json -> jsonParser, Unknown -> jsonParser)
-      map
+      Map[ContentTypeModel, BidResponseParser](
+        Json -> jsonParser,
+        Unknown -> jsonParser)
     }
     bind[Map[ContentTypeModel, BidRequestWriter]] toNonLazy {
       val jsonWriter = injected[BidRequestJsonWriter]
-      val map: Map[ContentTypeModel, BidRequestWriter] =
-        Map(Json -> jsonWriter, Unknown -> jsonWriter)
-      map
+      Map[ContentTypeModel, BidRequestWriter](
+        Json -> jsonWriter,
+        Unknown -> jsonWriter)
     }
 
     bind[BidModelConverter] toNonLazy injected[BidModelConverterImpl]

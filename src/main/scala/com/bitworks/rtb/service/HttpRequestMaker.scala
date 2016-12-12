@@ -5,6 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import akka.http.scaladsl.model.{HttpEntity, _}
 import akka.stream.Materializer
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.http._
 import com.bitworks.rtb.service.ContentTypeConversions._
 
@@ -69,7 +70,7 @@ class AkkaHttpRequestMaker(
     val headers = request.headers.map { case h@HttpHeaderModel(key, value) =>
       HttpHeader.parse(key, value) match {
         case Ok(header, _) => header
-        case _ => throw new DataValidationException(s"cannot parse $h")
+        case _ => throw new DataValidationException(ErrorCode.INCORRECT_HEADER_VALUE)
       }
     }.toList
 
