@@ -5,8 +5,9 @@ import com.bitworks.rtb.model.ad.response.{AdResponse, ErrorCode}
 import com.bitworks.rtb.model.ad.response.builder.{AdResponseBuilder, ErrorBuilder, ImpBuilder}
 import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.response.{Bid, BidResponse}
-import com.bitworks.rtb.service.{DataValidationException, Logging}
+import com.bitworks.rtb.service.{Configuration, DataValidationException, Logging}
 import scaldi.Injector
+import scaldi.Injectable._
 
 /**
   * Factory for [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
@@ -60,7 +61,7 @@ class AdResponseFactoryImpl(implicit injector: Injector) extends AdResponseFacto
   }
 
   override def create(request: AdRequest, errorCode: ErrorCode.Value) = {
-    val error = ErrorBuilder(errorCode).build
+    val error = ErrorBuilder(errorCode, inject[Configuration].errorMessages).build
     AdResponseBuilder(request.ct)
       .withId(request.id)
       .withError(error)
@@ -68,7 +69,7 @@ class AdResponseFactoryImpl(implicit injector: Injector) extends AdResponseFacto
   }
 
   override def create(errorCode: ErrorCode.Value) = {
-    val error = ErrorBuilder(errorCode).build
+    val error = ErrorBuilder(errorCode, inject[Configuration].errorMessages).build
     AdResponseBuilder(Json)
       .withError(error)
       .build
