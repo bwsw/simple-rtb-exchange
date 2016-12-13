@@ -255,9 +255,10 @@ class BidRequestActorTest
   }
 
   it should "send error when bid responses not received from bidders" in {
-    val configuration = niceMock[Configuration]
+    val configuration = mock[Configuration]
     expecting {
       configuration.bidRequestTimeout.andStubReturn(smallAuctionTimeout)
+      configuration.additionalAuctionTime.andStubReturn(smallAuctionTimeout)
       EasyMock.replay(configuration)
     }
 
@@ -293,9 +294,10 @@ class BidRequestActorTest
 
   forAll(responsesForBidders) { (bidders: Seq[Bidder], adResponse: AdResponse) =>
     it should s"send ad response for $bidders correctly" in {
-      val configuration = niceMock[Configuration]
+      val configuration = mock[Configuration]
       expecting {
         configuration.bidRequestTimeout.andStubReturn(bigAuctionTimeout)
+        configuration.additionalAuctionTime.andStubReturn(smallAuctionTimeout)
         EasyMock.replay(configuration)
       }
 
