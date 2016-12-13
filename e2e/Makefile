@@ -15,8 +15,11 @@ app_stop:
 	(docker stop rtb-exchange-e2e && docker rm rtb-exchange-e2e) || true
 
 prepare:
-	$(MAKE) -C ../db run env=$(ENV) command=update && \
-	./query.sh $(ENV) $(BIDDER_HOST) sql/cleanup.sql
+	$(MAKE) -C ../db prepare && \
+	docker run --rm --volume=`cd ../db && pwd`:/workdir -w=/workdir --network=rtb-ci-network openjdk \
+    	liquibase/liquibase --logLevel=info --defaultsFile=$(ENV).liquibase.properties update ;
+	docker run --rm --volume=`cd .. && pwd`:/workdir -w=/workdir/e2e --network=rtb-ci-network postgres \
+		/bin/bash ./query.sh $(ENV) $(BIDDER_HOST) sql/cleanup.sql
 
 execute : prepare app_start run
 
@@ -24,7 +27,9 @@ run:
 	for row in `cat test_cases`; do \
 		sqlfile=sql/`echo $$row | cut -d, -f1` && \
 		col=`echo $$row | cut -d, -f2` && \
-		./query.sh $(ENV) $(BIDDER_HOST) $$sqlfile && \
+		docker run --rm --volume=`cd .. && pwd`:/workdir -w=/workdir/e2e \
+		--network=rtb-ci-network postgres \
+		/bin/bash ./query.sh $(ENV) $(BIDDER_HOST) $$sqlfile && \
 		sleep 3 && \
 		if newman run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli --reporter-junit-export $(REPORT_PATH)$$col.xml ; then \
 			echo "passed"; \
