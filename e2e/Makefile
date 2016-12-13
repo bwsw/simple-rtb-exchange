@@ -18,7 +18,7 @@ prepare:
 	$(MAKE) -C ../db run env=$(ENV) command=update && \
 	./query.sh $(ENV) $(BIDDER_HOST) sql/cleanup.sql
 
-execute : prepare app_start run
+execute: prepare app_start run
 
 run:
 	for row in `cat test_cases`; do \
