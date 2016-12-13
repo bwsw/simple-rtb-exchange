@@ -1,14 +1,14 @@
 {
 	"variables": [],
 	"info": {
-		"name": "All bidders timeouted",
-		"_postman_id": "f0e68b66-8629-64c3-f4be-abfd141f3673",
+		"name": "All bidders are with time-out",
+		"_postman_id": "d05e2500-7e29-3a0c-d82b-d3fd8b9d1d02",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "All bidders time outed",
+			"name": "All bidders are with time-out",
 			"event": [
 				{
 					"listen": "test",
@@ -18,7 +18,7 @@
 							"var response = JSON.parse(responseBody);",
 							"tests[\"Error code is bidders not found\"] = response.error.code === 8;",
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is json\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
 							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
 						]
 					}
@@ -36,7 +36,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": \"1235432152\",\n    \"imp\": [\n        {\n            \"id\": \"33\",\n            \"banner\": {}\n        }\n    ],\n    \"site\": {\n        \"id\": 1\n    }\n}"
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"banner\":{}}],\"site\":{\"id\":1}}"
 				},
 				"description": ""
 			},

@@ -2,13 +2,13 @@
 	"variables": [],
 	"info": {
 		"name": "No bidders",
-		"_postman_id": "aaee2c72-0eb6-6139-1158-b7518b3ceea8",
+		"_postman_id": "e11336c7-3545-d364-c886-86b5edb84599",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Bidders not found",
+			"name": "Bidders are not found",
 			"event": [
 				{
 					"listen": "test",
@@ -17,9 +17,9 @@
 						"exec": [
 							"var response = JSON.parse(responseBody);",
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is json\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
 							"tests[\"Error code is bidders not found\"] = response.error.code === 8;",
-							""
+							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
 						]
 					}
 				}
@@ -36,7 +36,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": \"1235432152\",\n    \"imp\": [\n        {\n            \"id\": \"33\",\n            \"banner\": {}\n        }\n    ],\n    \"site\": {\n        \"id\": 1\n    }\n}"
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"banner\":{}}],\"site\":{\"id\":1}}"
 				},
 				"description": ""
 			},

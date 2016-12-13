@@ -2,13 +2,13 @@
 	"variables": [],
 	"info": {
 		"name": "All bidders are valid",
-		"_postman_id": "b91032c1-de18-12d1-3d02-74bf5456ac42",
+		"_postman_id": "494b3eac-9057-638e-6b14-6b97bcc75bb7",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Banner with biggest price",
+			"name": "Banner with the biggest price",
 			"event": [
 				{
 					"listen": "test",
@@ -17,10 +17,11 @@
 						"exec": [
 							"var response = JSON.parse(responseBody);",
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is json\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
 							"var adm = response.imp[0].adm;",
-							"tests[\"Bidder with biggest price selection\"] = adm.match(/.*&price=301.*/g) !== null;",
-							"tests[\"Imp type should be banner\"] = response.imp[0].type === 1"
+							"tests[\"Bidder with biggest price is selected\"] = adm.match(/.*&price=301.*/g) !== null;",
+							"tests[\"Imp type should be banner\"] = response.imp[0].type === 1;",
+							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
 						]
 					}
 				}
@@ -37,14 +38,14 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": \"1235432152\",\n    \"imp\": [\n        {\n            \"id\": \"33\",\n            \"banner\": {}\n        }\n    ],\n    \"site\": {\n        \"id\": 1\n    }\n}"
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"banner\":{}}],\"site\":{\"id\":1}}"
 				},
 				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "Native with biggest price",
+			"name": "Native with the biggest price",
 			"event": [
 				{
 					"listen": "test",
@@ -53,9 +54,11 @@
 						"exec": [
 							"var response = JSON.parse(responseBody);",
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is json\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
 							"var adm = response.imp[0].adm;",
-							"tests[\"Imp type should be native\"] = response.imp[0].type === 3"
+							"tests[\"Adm is defined\"] = Boolean(adm.trim());",
+							"tests[\"Imp type should be native\"] = response.imp[0].type === 3;",
+							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
 						]
 					}
 				}
@@ -72,14 +75,14 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": \"1235432152\",\n    \"imp\": [\n        {\n            \"id\": \"33\",\n            \"native\": {\n            \t\"request\": \"payload\"\n            }\n        }\n    ],\n    \"site\": {\n        \"id\": 1\n    }\n}"
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"native\":{\t\"request\":\"payload\"}}],\"site\":{\"id\":1}}"
 				},
 				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "Video with biggest price",
+			"name": "Video with the biggest price",
 			"event": [
 				{
 					"listen": "test",
@@ -88,9 +91,11 @@
 						"exec": [
 							"var response = JSON.parse(responseBody);",
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is json\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
 							"var adm = response.imp[0].adm;",
-							"tests[\"Imp type should be video\"] = response.imp[0].type === 2"
+							"tests[\"Adm is defined\"] = Boolean(adm.trim());",
+							"tests[\"Imp type should be video\"] = response.imp[0].type === 2;",
+							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
 						]
 					}
 				}
@@ -107,7 +112,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": \"1235432152\",\n    \"imp\": [\n        {\n            \"id\": \"33\",\n            \"video\": {\n            \t\"mimes\":[]\n            }\n        }\n    ],\n    \"site\": {\n        \"id\": 1\n    }\n}"
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"video\":{\"mimes\":[]}}],\"site\":{\"id\":1}}"
 				},
 				"description": ""
 			},
