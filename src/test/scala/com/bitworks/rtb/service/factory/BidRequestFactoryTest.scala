@@ -393,7 +393,7 @@ class BidRequestFactoryTest
     thrown.getError shouldBe ErrorCode.SITE_OR_APP_INACTIVE
   }
 
-  it should "throw DataValidationException for ad request with site which db does not contains" in {
+  it should "throw DataValidationException for ad request with site which db does not contain" in {
     val adImp = ad.builder.ImpBuilder("1")
       .withBanner(correctBanner)
       .withNative(correctNative)
@@ -486,7 +486,7 @@ class BidRequestFactoryTest
     thrown.getError shouldBe ErrorCode.SITE_OR_APP_INACTIVE
   }
 
-  it should "throw DataValidationException for ad request with app which db does not contains" in {
+  it should "throw DataValidationException for ad request with app which db does not contain" in {
     val adImp = ad.builder.ImpBuilder("1")
       .withBanner(correctBanner)
       .withNative(correctNative)
@@ -7303,7 +7303,7 @@ class BidRequestFactoryTest
     thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
-  it should "not create bid request if db does not contains sites" in {
+  it should "not create bid request if db does not contain sites" in {
     val siteDao = mock[SiteDao]
     expecting {
       siteDao.getAll.andStubReturn(Seq.empty)
@@ -7339,7 +7339,7 @@ class BidRequestFactoryTest
     thrown.getError shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
   }
 
-  it should "not create bid request if db does not contains apps" in {
+  it should "not create bid request if db does not contain apps" in {
     val appDao = mock[AppDao]
     expecting {
       appDao.getAll.andStubReturn(Seq.empty)
@@ -7371,7 +7371,7 @@ class BidRequestFactoryTest
     thrown.getError shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
   }
 
-  it should "not create bid request if db does not contains categories" in {
+  it should "not create bid request if db does not contain categories" in {
     val categoryDao = mock[CategoryDao]
     expecting {
       categoryDao.getAll.andStubReturn(Seq.empty)
@@ -7403,7 +7403,7 @@ class BidRequestFactoryTest
     thrown.getError shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
   }
 
-  it should "not create bid request if db does not contains publishers" in {
+  it should "not create bid request if db does not contain publishers" in {
     val publisherDao = mock[PublisherDao]
     expecting {
       publisherDao.getAll.andStubReturn(Seq.empty)
