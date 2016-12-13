@@ -12,3 +12,6 @@ build:
 		docker build -t rtb-exchange:$$version . --build-arg APP_PATH=$$app_path; \
 	fi
 	rm -f $(TEMP_FILE)
+
+test:
+	sbt test
