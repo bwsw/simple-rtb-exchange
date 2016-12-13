@@ -45,7 +45,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     deal.bidFloor + 0.1)
     .withAdId("adid")
     .withNurl("nurl")
-    .withAdm("\"<img src=\\\"http://localhost/img.jpg\\\" />\"")
+    .withAdm("<img src=\"http://localhost/img.jpg\" />")
     .withAdomain(deal.wadomain.get)
     .withBundle(app.bundle.get)
     .withCat(Seq("IAB2-2"))
@@ -486,7 +486,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     val bidRequest = BidRequestBuilder("19875198", Seq(imp)).build
 
     val bid = BidBuilder("1", imp.id, 1)
-      .withAdm("\"<img src=\\\"http://localhost/img.jpg\\\" />\"")
+      .withAdm("<img src=\"http://localhost/img.jpg\" />")
       .withAdomain(Seq("domain.com"))
       .withDealId(deal.id)
       .build
