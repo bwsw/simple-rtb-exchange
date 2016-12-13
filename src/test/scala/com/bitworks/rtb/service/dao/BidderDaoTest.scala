@@ -19,15 +19,6 @@ class BidderDaoTest extends BaseDaoTest {
   "BidderDao" should "load bidder by ID correctly after cache init" in {
     val bidderDao = inject[BidderDao]
 
-    val notFoundBidder = bidderDao.get(1)
-    notFoundBidder should not be defined
-
-    val notFoundBidders = bidderDao.get(Seq(1, 2, 3))
-    notFoundBidders shouldBe Seq.empty
-
-    val noBidders = bidderDao.getAll
-    noBidders shouldBe Seq.empty
-
     bidderDao.notify(InitCache)
 
     val expectedBidder = Some(
@@ -39,6 +30,27 @@ class BidderDaoTest extends BaseDaoTest {
     val bidder = bidderDao.get(1)
 
     bidder shouldBe expectedBidder
+  }
+
+  it should "not load bidder before cache init" in {
+    val bidderDao = inject[BidderDao]
+
+    val notFoundBidder = bidderDao.get(1)
+    notFoundBidder should not be defined
+  }
+
+  it should "not load some bidders before cache init" in {
+    val bidderDao = inject[BidderDao]
+
+    val notFoundBidder = bidderDao.get(Seq(1, 2, 3))
+    notFoundBidder shouldBe Seq.empty
+  }
+
+  it should "not load any bidders before cache init" in {
+    val bidderDao = inject[BidderDao]
+
+    val notFoundBidder = bidderDao.getAll
+    notFoundBidder shouldBe Seq.empty
   }
 
   it should "not load deleted bidder from DB" in {

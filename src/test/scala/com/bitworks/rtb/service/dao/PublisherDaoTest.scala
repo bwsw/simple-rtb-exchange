@@ -19,15 +19,6 @@ class PublisherDaoTest extends BaseDaoTest {
   "PublisherDao" should "load publisher by ID correctly after cache init" in {
     val publisherDao = inject[PublisherDao]
 
-    val notFoundPublisher = publisherDao.get(1)
-    notFoundPublisher should not be defined
-
-    val notFoundPublishers = publisherDao.get(Seq(1, 2, 3))
-    notFoundPublishers shouldBe Seq.empty
-
-    val noPublishers = publisherDao.getAll
-    noPublishers shouldBe Seq.empty
-
     publisherDao.notify(InitCache)
 
     val expectedPublisher = Some(
@@ -42,6 +33,27 @@ class PublisherDaoTest extends BaseDaoTest {
     val publisher = publisherDao.get(1)
 
     publisher shouldBe expectedPublisher
+  }
+
+  it should "not load publisher before cache init" in {
+    val publisherDao = inject[PublisherDao]
+
+    val notFoundPublisher = publisherDao.get(1)
+    notFoundPublisher should not be defined
+  }
+
+  it should "not load some publishers before cache init" in {
+    val publisherDao = inject[PublisherDao]
+
+    val notFoundPublisher = publisherDao.get(Seq(1, 2, 3))
+    notFoundPublisher shouldBe Seq.empty
+  }
+
+  it should "not load any publishers before cache init" in {
+    val publisherDao = inject[PublisherDao]
+
+    val notFoundPublisher = publisherDao.getAll
+    notFoundPublisher shouldBe Seq.empty
   }
 
   it should "not load deleted publisher from DB" in {

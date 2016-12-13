@@ -19,15 +19,6 @@ class SiteDaoTest extends BaseDaoTest {
   "SiteDao" should "load site by ID correctly after cache init" in {
     val siteDao = inject[SiteDao]
 
-    val notFoundSite = siteDao.get(11)
-    notFoundSite should not be defined
-
-    val notFoundSites = siteDao.get(Seq(1, 2, 3))
-    notFoundSites shouldBe Seq.empty
-
-    val noSites = siteDao.getAll
-    noSites shouldBe Seq.empty
-
     siteDao.notify(InitCache)
 
     val expectedSite = Some(
@@ -45,6 +36,27 @@ class SiteDaoTest extends BaseDaoTest {
     val site = siteDao.get(11)
 
     site shouldBe expectedSite
+  }
+
+  it should "not load site before cache init" in {
+    val siteDao = inject[SiteDao]
+
+    val notFoundSite = siteDao.get(1)
+    notFoundSite should not be defined
+  }
+
+  it should "not load some sites before cache init" in {
+    val siteDao = inject[SiteDao]
+
+    val notFoundSite = siteDao.get(Seq(1, 2, 3))
+    notFoundSite shouldBe Seq.empty
+  }
+
+  it should "not load any sites before cache init" in {
+    val siteDao = inject[SiteDao]
+
+    val notFoundSite = siteDao.getAll
+    notFoundSite shouldBe Seq.empty
   }
 
   it should "not load deleted site from DB" in {

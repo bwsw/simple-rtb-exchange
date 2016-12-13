@@ -18,15 +18,6 @@ class CategoryDaoTest extends BaseDaoTest {
   "CategoryDao" should "load category by ID correctly after cache init" in {
     val categoryDao = inject[CategoryDao]
 
-    val notFoundCategory = categoryDao.get(2)
-    notFoundCategory should not be defined
-
-    val notFoundCategories = categoryDao.get(Seq(1, 2, 3))
-    notFoundCategories shouldBe Seq.empty
-
-    val noCategories = categoryDao.getAll
-    noCategories shouldBe Seq.empty
-
     categoryDao.notify(InitCache)
 
     val expectedCategory = Some(
@@ -39,6 +30,27 @@ class CategoryDaoTest extends BaseDaoTest {
     val category = categoryDao.get(2)
 
     category shouldBe expectedCategory
+  }
+
+  it should "not load category before cache init" in {
+    val categoryDao = inject[CategoryDao]
+
+    val notFoundCategory = categoryDao.get(1)
+    notFoundCategory should not be defined
+  }
+
+  it should "not load some categorys before cache init" in {
+    val categoryDao = inject[CategoryDao]
+
+    val notFoundCategory = categoryDao.get(Seq(1, 2, 3))
+    notFoundCategory shouldBe Seq.empty
+  }
+
+  it should "not load any categorys before cache init" in {
+    val categoryDao = inject[CategoryDao]
+
+    val notFoundCategory = categoryDao.getAll
+    notFoundCategory shouldBe Seq.empty
   }
 
   it should "not load deleted category from DB" in {

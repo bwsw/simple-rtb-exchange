@@ -19,15 +19,6 @@ class AppDaoTest extends BaseDaoTest {
   "AppDao" should "load app by ID correctly after cache init" in {
     val appDao = inject[AppDao]
 
-    val notFoundApp = appDao.get(1)
-    notFoundApp should not be defined
-
-    val notFoundApps = appDao.get(Seq(1, 2, 3))
-    notFoundApps shouldBe Seq.empty
-
-    val noApps = appDao.getAll
-    noApps shouldBe Seq.empty
-
     appDao.notify(InitCache)
 
     val expectedApp = Some(
@@ -48,6 +39,27 @@ class AppDaoTest extends BaseDaoTest {
     val app = appDao.get(1)
 
     app shouldBe expectedApp
+  }
+
+  it should "not load app before cache init" in {
+    val appDao = inject[AppDao]
+
+    val notFoundApp = appDao.get(1)
+    notFoundApp should not be defined
+  }
+
+  it should "not load some apps before cache init" in {
+    val appDao = inject[AppDao]
+
+    val notFoundApp = appDao.get(Seq(1, 2, 3))
+    notFoundApp shouldBe Seq.empty
+  }
+
+  it should "not load any apps before cache init" in {
+    val appDao = inject[AppDao]
+
+    val notFoundApp = appDao.getAll
+    notFoundApp shouldBe Seq.empty
   }
 
   it should "not load deleted app from DB" in {
