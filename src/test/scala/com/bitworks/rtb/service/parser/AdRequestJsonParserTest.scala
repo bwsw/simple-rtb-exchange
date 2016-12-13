@@ -81,11 +81,11 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     parsedModel shouldBe expectedModel
   }
 
-  it should "ignore not specified fields" in {
+  it should "ignore extra fields" in {
     val expectedModel = getAdRequestModel
     val parser = new AdRequestJsonParser
 
-    val path = getClass.getResource("adrequest_with_not_specified_fields.json").getPath
+    val path = getClass.getResource("adrequest_extra_fields.json").getPath
     val json = Source.fromFile(path).mkString.getBytes
 
     val parsedModel = parser.parse(json)
