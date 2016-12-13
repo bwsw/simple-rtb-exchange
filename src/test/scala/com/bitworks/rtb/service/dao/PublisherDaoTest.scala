@@ -16,44 +16,58 @@ class PublisherDaoTest extends BaseDaoTest {
     bind[PublisherDao] toProvider injected[PublisherDaoImpl] // new instance per inject
   } :: dbModule
 
+  val expectedPublisher = Publisher(
+    1,
+    "publisher",
+    Seq(1),
+    "domain",
+    Seq("blocked_domain"),
+    Seq(2))
+
+  val expectedForDeletePublisher = Publisher(
+    3,
+    "fordelete",
+    Seq(),
+    "fordelete",
+    Seq(),
+    Seq())
+
   "PublisherDao" should "load publisher by ID correctly after cache init" in {
     val publisherDao = inject[PublisherDao]
 
+    val notFoundPublisher = publisherDao.get(expectedPublisher.id)
+    notFoundPublisher should not be defined
+
     publisherDao.notify(InitCache)
 
-    val expectedPublisher = Some(
-      Publisher(
-        1,
-        "publisher",
-        Seq(1),
-        "domain",
-        Seq("blocked_domain"),
-        Seq(2)))
+    val publisher = publisherDao.get(expectedPublisher.id)
 
-    val publisher = publisherDao.get(1)
-
-    publisher shouldBe expectedPublisher
+    publisher shouldBe Some(expectedPublisher)
   }
 
-  it should "not load publisher before cache init" in {
+  it should "load some publishers correctly after cache init" in {
     val publisherDao = inject[PublisherDao]
+    val ids = Seq(expectedPublisher.id, -1, expectedForDeletePublisher.id)
 
-    val notFoundPublisher = publisherDao.get(1)
-    notFoundPublisher should not be defined
+    val notFoundPublishers = publisherDao.get(ids)
+    notFoundPublishers shouldBe Seq.empty
+
+    publisherDao.notify(InitCache)
+
+    val publishers = publisherDao.get(ids)
+    publishers should contain theSameElementsAs Seq(expectedPublisher, expectedForDeletePublisher)
   }
 
-  it should "not load some publishers before cache init" in {
+  it should "load all publishers correctly after cache init" in {
     val publisherDao = inject[PublisherDao]
 
-    val notFoundPublisher = publisherDao.get(Seq(1, 2, 3))
-    notFoundPublisher shouldBe Seq.empty
-  }
+    val notFoundPublishers = publisherDao.getAll
+    notFoundPublishers shouldBe Seq.empty
 
-  it should "not load any publishers before cache init" in {
-    val publisherDao = inject[PublisherDao]
+    publisherDao.notify(InitCache)
 
-    val notFoundPublisher = publisherDao.getAll
-    notFoundPublisher shouldBe Seq.empty
+    val publishers = publisherDao.getAll
+    publishers should contain theSameElementsAs Seq(expectedPublisher, expectedForDeletePublisher)
   }
 
   it should "not load deleted publisher from DB" in {
@@ -72,21 +86,12 @@ class PublisherDaoTest extends BaseDaoTest {
     publisherDao.notify(InitCache)
     executeQuery("publisher-delete.xml", Update)
 
-    val expectedForDeletePublisher = Some(
-      Publisher(
-        3,
-        "fordelete",
-        Seq(),
-        "fordelete",
-        Seq(),
-        Seq()))
+    val forDeletePublisher = publisherDao.get(expectedForDeletePublisher.id)
 
-    val forDeletePublisher = publisherDao.get(3)
-
-    forDeletePublisher shouldBe expectedForDeletePublisher
+    forDeletePublisher shouldBe Some(expectedForDeletePublisher)
 
     publisherDao.notify(UpdateCache)
-    val deletedPublisher = publisherDao.get(3)
+    val deletedPublisher = publisherDao.get(expectedForDeletePublisher.id)
 
     deletedPublisher should not be defined
   }
@@ -97,21 +102,20 @@ class PublisherDaoTest extends BaseDaoTest {
     publisherDao.notify(InitCache)
     executeQuery("publisher-insert.xml", Insert)
 
-    val notFoundPublisher = publisherDao.get(4)
+    val expectedPublisher = Publisher(
+      4,
+      "insertedpublisher",
+      Seq(),
+      "inserteddomain",
+      Seq(),
+      Seq())
+
+    val notFoundPublisher = publisherDao.get(expectedPublisher.id)
     notFoundPublisher should not be defined
 
     publisherDao.notify(UpdateCache)
 
-    val expectedPublisher = Some(
-      Publisher(
-        4,
-        "insertedpublisher",
-        Seq(),
-        "inserteddomain",
-        Seq(),
-        Seq()))
-
-    val publisher = publisherDao.get(4)
-    publisher shouldBe expectedPublisher
+    val publisher = publisherDao.get(expectedPublisher.id)
+    publisher shouldBe Some(expectedPublisher)
   }
 }

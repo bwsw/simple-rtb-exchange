@@ -15,38 +15,66 @@ class CategoryDaoTest extends BaseDaoTest {
     bind[CategoryDao] toProvider injected[CategoryDaoImpl] // new instance per inject
   } :: dbModule
 
+  val parentCategory = IABCategory(
+    1,
+    "IAB1",
+    "parent",
+    None)
+
+  val expectedCategory = IABCategory(
+    2,
+    "IAB2",
+    "iabname",
+    Some(1))
+
+  val expectedForDeleteCategory = IABCategory(
+    4,
+    "fordelet",
+    "fordelete",
+    None)
+
   "CategoryDao" should "load category by ID correctly after cache init" in {
     val categoryDao = inject[CategoryDao]
 
+    val notFoundCategory = categoryDao.get(expectedCategory.id)
+    notFoundCategory should not be defined
+
     categoryDao.notify(InitCache)
 
-    val expectedCategory = Some(
-      IABCategory(
-        2,
-        "IAB2",
-        "iabname",
-        Some(1)))
+    val category = categoryDao.get(expectedCategory.id)
 
-    val category = categoryDao.get(2)
-
-    category shouldBe expectedCategory
+    category shouldBe Some(expectedCategory)
   }
 
-  it should "not load category before cache init" in {
+  it should "load some categories correctly after cache init" in {
+    val categoryDao = inject[CategoryDao]
+    val ids = Seq(expectedCategory.id, -1, expectedForDeleteCategory.id)
+
+    val notFoundCategories = categoryDao.get(ids)
+    notFoundCategories shouldBe Seq.empty
+
+    categoryDao.notify(InitCache)
+
+    val categories = categoryDao.get(ids)
+    categories should contain theSameElementsAs Seq(expectedCategory, expectedForDeleteCategory)
+  }
+
+  it should "load all categories correctly after cache init" in {
     val categoryDao = inject[CategoryDao]
 
-    val notFoundCategory = categoryDao.get(1)
-    notFoundCategory should not be defined
+    val notFoundCategories = categoryDao.getAll
+    notFoundCategories shouldBe Seq.empty
+
+    categoryDao.notify(InitCache)
+
+    val categories = categoryDao.getAll
+    categories should contain theSameElementsAs Seq(
+      parentCategory,
+      expectedCategory,
+      expectedForDeleteCategory)
   }
 
-  it should "not load some categorys before cache init" in {
-    val categoryDao = inject[CategoryDao]
-
-    val notFoundCategory = categoryDao.get(Seq(1, 2, 3))
-    notFoundCategory shouldBe Seq.empty
-  }
-
-  it should "not load any categorys before cache init" in {
+  it should "not load any categories before cache init" in {
     val categoryDao = inject[CategoryDao]
 
     val notFoundCategory = categoryDao.getAll
@@ -69,19 +97,12 @@ class CategoryDaoTest extends BaseDaoTest {
     categoryDao.notify(InitCache)
     executeQuery("category-delete.xml", Update)
 
-    val expectedForDeleteCategory = Some(
-      IABCategory(
-        4,
-        "fordelet",
-        "fordelete",
-        None))
+    val forDeleteCategory = categoryDao.get(expectedForDeleteCategory.id)
 
-    val forDeleteCategory = categoryDao.get(4)
-
-    forDeleteCategory shouldBe expectedForDeleteCategory
+    forDeleteCategory shouldBe Some(expectedForDeleteCategory)
 
     categoryDao.notify(UpdateCache)
-    val deletedCategory = categoryDao.get(4)
+    val deletedCategory = categoryDao.get(expectedForDeleteCategory.id)
 
     deletedCategory should not be defined
   }
@@ -92,20 +113,18 @@ class CategoryDaoTest extends BaseDaoTest {
     categoryDao.notify(InitCache)
     executeQuery("category-insert.xml", Insert)
 
-    val notFoundCategory = categoryDao.get(5)
+    val expectedCategory = IABCategory(
+      5,
+      "IAB3",
+      "inserted",
+      None)
+
+    val notFoundCategory = categoryDao.get(expectedCategory.id)
     notFoundCategory should not be defined
 
     categoryDao.notify(UpdateCache)
 
-    val expectedCategory = Some(
-      IABCategory(
-        5,
-        "IAB3",
-        "inserted",
-        None))
-
-    val category = categoryDao.get(5)
-
-    category shouldBe expectedCategory
+    val category = categoryDao.get(expectedCategory.id)
+    category shouldBe Some(expectedCategory)
   }
 }

@@ -16,50 +16,70 @@ class AppDaoTest extends BaseDaoTest {
     bind[AppDao] toProvider injected[AppDaoImpl] // new instance per inject
   } :: dbModule
 
+  val expectedApp = App(
+    1,
+    "app",
+    1,
+    Status.active,
+    1,
+    false,
+    Some("app_domain"),
+    Some("keyword"),
+    Seq(1),
+    "bundle",
+    "store",
+    "ver")
+
+  val expectedForDeleteApp = App(
+    3,
+    "fordelete",
+    1,
+    Status.active,
+    1,
+    false,
+    Some("app_domain"),
+    Some("keyword"),
+    Seq(),
+    "bundle",
+    "store",
+    "ver")
+
   "AppDao" should "load app by ID correctly after cache init" in {
     val appDao = inject[AppDao]
 
+    val notFoundApp = appDao.get(expectedApp.id)
+    notFoundApp should not be defined
+
     appDao.notify(InitCache)
 
-    val expectedApp = Some(
-      App(
-        1,
-        "app",
-        1,
-        Status.active,
-        1,
-        false,
-        Some("app_domain"),
-        Some("keyword"),
-        Seq(1),
-        "bundle",
-        "store",
-        "ver"))
+    val app = appDao.get(expectedApp.id)
 
-    val app = appDao.get(1)
-
-    app shouldBe expectedApp
+    app shouldBe Some(expectedApp)
   }
 
-  it should "not load app before cache init" in {
+  it should "load some apps correctly after cache init" in {
     val appDao = inject[AppDao]
+    val ids = Seq(expectedApp.id, -1, expectedForDeleteApp.id)
 
-    val notFoundApp = appDao.get(1)
-    notFoundApp should not be defined
+    val notFoundApps = appDao.get(ids)
+    notFoundApps shouldBe Seq.empty
+
+    appDao.notify(InitCache)
+
+    val apps = appDao.get(ids)
+    apps should contain theSameElementsAs Seq(expectedApp, expectedForDeleteApp)
   }
 
-  it should "not load some apps before cache init" in {
+  it should "load all apps correctly after cache init" in {
     val appDao = inject[AppDao]
 
-    val notFoundApp = appDao.get(Seq(1, 2, 3))
-    notFoundApp shouldBe Seq.empty
-  }
+    val notFoundApps = appDao.getAll
+    notFoundApps shouldBe Seq.empty
 
-  it should "not load any apps before cache init" in {
-    val appDao = inject[AppDao]
+    appDao.notify(InitCache)
 
-    val notFoundApp = appDao.getAll
-    notFoundApp shouldBe Seq.empty
+    val apps = appDao.getAll
+    apps should contain theSameElementsAs Seq(expectedApp, expectedForDeleteApp)
   }
 
   it should "not load deleted app from DB" in {
@@ -78,27 +98,12 @@ class AppDaoTest extends BaseDaoTest {
     appDao.notify(InitCache)
     executeQuery("app-delete.xml", Update)
 
-    val expectedForDeleteApp = Some(
-      App(
-        3,
-        "fordelete",
-        1,
-        Status.active,
-        1,
-        false,
-        Some("app_domain"),
-        Some("keyword"),
-        Seq(),
-        "bundle",
-        "store",
-        "ver"))
+    val forDeleteApp = appDao.get(expectedForDeleteApp.id)
 
-    val forDeleteApp = appDao.get(3)
-
-    forDeleteApp shouldBe expectedForDeleteApp
+    forDeleteApp shouldBe Some(expectedForDeleteApp)
 
     appDao.notify(UpdateCache)
-    val deletedApp = appDao.get(3)
+    val deletedApp = appDao.get(expectedForDeleteApp.id)
 
     deletedApp should not be defined
   }
@@ -109,26 +114,26 @@ class AppDaoTest extends BaseDaoTest {
     appDao.notify(InitCache)
     executeQuery("app-insert.xml", Insert)
 
-    val notFoundApp = appDao.get(4)
+    val expectedApp = App(
+      4,
+      "insertedapp",
+      1,
+      Status.active,
+      1,
+      false,
+      Some("app_domain"),
+      Some("keyword"),
+      Seq(),
+      "bundle",
+      "store",
+      "ver")
+
+    val notFoundApp = appDao.get(expectedApp.id)
     notFoundApp should not be defined
 
     appDao.notify(UpdateCache)
 
-    val expectedApp = Some(
-      App(
-        4,
-        "insertedapp",
-        1,
-        Status.active,
-        1,
-        false,
-        Some("app_domain"),
-        Some("keyword"),
-        Seq(),
-        "bundle",
-        "store",
-        "ver"))
-    val app = appDao.get(4)
-    app shouldBe expectedApp
+    val app = appDao.get(expectedApp.id)
+    app shouldBe Some(expectedApp)
   }
 }
