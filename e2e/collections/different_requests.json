@@ -1,1 +1,1427 @@
-{"info": {"name": "different_requests"}, "item": [{"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"123\"}", "mode": "raw"}, "method": "POST"}, "name": "Request only with id", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;"]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [], "body": {"raw": "", "mode": "raw"}, "method": "POST"}, "name": "Correct request without content-type", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;"]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Correct request with correct content-type", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "unknown", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Correct request with incorrect content-type", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 2;"]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct site", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":4}}", "mode": "raw"}, "method": "POST"}, "name": "Request with inactive site", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 5;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":999}}", "mode": "raw"}, "method": "POST"}, "name": "Request with site which not in DB", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 4;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"search\":\"\"}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect site", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct app", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":14}}", "mode": "raw"}, "method": "POST"}, "name": "Request with inactive app", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 5;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":999}}", "mode": "raw"}, "method": "POST"}, "name": "Request with app which not in DB", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 4;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"content\":{\"id\":\"\"}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect app", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"app\":{\"id\":11}}", "mode": "raw"}, "method": "POST"}, "name": "Request with site and app", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with empty imp", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\"}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with imp without banner, video or native", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}},{\"id\":\"2\",\"native\":{\"request\":\"nativerequest\"}},{\"id\":\"3\",\"video\":{\"mimes\":[\"video/mp4\"]}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with several correct imps", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}},{\"id\":\"2\",\"native\":{\"request\":\"nativerequest\"}},{\"id\":\"1\",\"video\":{\"mimes\":[\"video/mp4\"]}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with dublicates id in imps", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}},{\"id\":\"\"},{\"id\":\"3\",\"video\":{\"mimes\":[\"video/mp4\"]}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with mixed correct and incorrect imps", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{\"w\":-1}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect banner", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"video\":{\"mimes\":[\"\"]}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect video", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"native\":{\"request\":\"\"}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect native", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{},\"native\":{\"request\":\"nativerequest\"},\"video\":{\"mimes\":[\"video/mp4\"]}}],\"site\":{\"id\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct banner, video and native", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"content\":{\"id\":\"7asd65bd\",\"episode\":3,\"context\":2}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct content", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"content\":{\"id\":\"7asd65bd\",\"episode\":3,\"context\":22}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect content", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"content\":{\"producer\":{\"name\":\"producer\"}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct producer", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"content\":{\"producer\":{\"name\":\"\"}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect producer", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"device\":{\"ua\":\"useragent\",\"lmt\":1,\"ip\":\"10.10.10.10\"}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct device", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"device\":{\"ua\":\"useragent\",\"lmt\":2,\"ip\":\"10.10.10.10\"}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect device", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"device\":{\"ua\":\"useragent\",\"lmt\":1,\"ip\":\"10.10.10.10\",\"geo\":{\"lat\":11.11,\"lon\":22.22}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct geo", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"device\":{\"ua\":\"useragent\",\"lmt\":1,\"ip\":\"10.10.10.10\",\"geo\":{\"lat\":11.11,\"lon\":222.22}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect geo", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"user\":{\"yob\":1980,\"gender\":\"M\"}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct user", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"user\":{\"yob\":1980,\"gender\":\"qwerty\"}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect user", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"regs\":{\"coppa\":1}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct regs", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"regs\":{\"coppa\":11}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect regs", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 3;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct categories (with site)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect category in site (sectioncat)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 7;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect category in site (pagecat)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 7;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect category in content (site)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 7;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect category in producer (site)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 7;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with correct categories (with app)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 8;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect category in app (sectioncat)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 7;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect category in app (pagecat)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 7;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect category in content (app)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 7;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"]}}}}", "mode": "raw"}, "method": "POST"}, "name": "Request with incorrect category in producer (app)", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 7;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":10000}}", "mode": "raw"}, "method": "POST"}, "name": "Request with deleted publisher in site", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 6;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}, {"request": {"url": "{{url}}", "header": [{"value": "application/json", "key": "Content-Type"}], "body": {"raw": "{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":10001}}", "mode": "raw"}, "method": "POST"}, "name": "Request with deleted publisher in app", "event": [{"script": {"type": "text/javascript", "exec": ["tests[\"Status code is 200\"] = responseCode.code === 200;", "var jsonData = JSON.parse(responseBody);", "tests[\"Error code is correct\"] = jsonData.error.code === 6;", "tests[\"Id is correct\"] = jsonData.id === \"12345\""]}, "listen": "test"}]}]}
+{
+  "info":{
+    "name":"different_requests"
+  },
+  "item":[
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"123\"}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request only with id",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;"
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+
+        ],
+        "body":{
+          "raw":"",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Correct request without content-type",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;"
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Correct request with correct content-type",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"unknown",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Correct request with incorrect content-type",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 2;"
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct site",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":4}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with inactive site",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 5;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":999}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with site which not in DB",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 4;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"search\":\"\"}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect site",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct app",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":14}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with inactive app",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 5;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":999}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with app which not in DB",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 4;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"content\":{\"id\":\"\"}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect app",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"app\":{\"id\":11}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with site and app",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with empty imp",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\"}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with imp without banner, video or native",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}},{\"id\":\"2\",\"native\":{\"request\":\"nativerequest\"}},{\"id\":\"3\",\"video\":{\"mimes\":[\"video/mp4\"]}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with several correct imps",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}},{\"id\":\"2\",\"native\":{\"request\":\"nativerequest\"}},{\"id\":\"1\",\"video\":{\"mimes\":[\"video/mp4\"]}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with dublicates id in imps",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}},{\"id\":\"\"},{\"id\":\"3\",\"video\":{\"mimes\":[\"video/mp4\"]}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with mixed correct and incorrect imps",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{\"w\":-1}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect banner",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"video\":{\"mimes\":[\"\"]}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect video",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"native\":{\"request\":\"\"}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect native",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{},\"native\":{\"request\":\"nativerequest\"},\"video\":{\"mimes\":[\"video/mp4\"]}}],\"site\":{\"id\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct banner, video and native",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"content\":{\"id\":\"7asd65bd\",\"episode\":3,\"context\":2}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct content",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"content\":{\"id\":\"7asd65bd\",\"episode\":3,\"context\":22}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect content",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"content\":{\"producer\":{\"name\":\"producer\"}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct producer",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"content\":{\"producer\":{\"name\":\"\"}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect producer",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"device\":{\"ua\":\"useragent\",\"lmt\":1,\"ip\":\"10.10.10.10\"}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct device",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"device\":{\"ua\":\"useragent\",\"lmt\":2,\"ip\":\"10.10.10.10\"}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect device",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"device\":{\"ua\":\"useragent\",\"lmt\":1,\"ip\":\"10.10.10.10\",\"geo\":{\"lat\":11.11,\"lon\":22.22}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct geo",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"device\":{\"ua\":\"useragent\",\"lmt\":1,\"ip\":\"10.10.10.10\",\"geo\":{\"lat\":11.11,\"lon\":222.22}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect geo",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"user\":{\"yob\":1980,\"gender\":\"M\"}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct user",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"user\":{\"yob\":1980,\"gender\":\"qwerty\"}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect user",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"regs\":{\"coppa\":1}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct regs",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1},\"regs\":{\"coppa\":11}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect regs",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 3;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct categories (with site)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect category in site (sectioncat)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 7;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect category in site (pagecat)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 7;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect category in content (site)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 7;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":1,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect category in producer (site)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 7;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with correct categories (with app)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 8;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect category in app (sectioncat)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 7;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect category in app (pagecat)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 7;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect category in content (app)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 7;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":11,\"sectioncat\":[\"IAB1\",\"IAB2\"],\"pagecat\":[\"IAB1\",\"IAB2\"],\"content\":{\"cat\":[\"IAB1\",\"IAB2\"],\"producer\":{\"cat\":[\"IAB1\",\"incorrect_category\",\"IAB2\"]}}}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with incorrect category in producer (app)",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 7;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"site\":{\"id\":10000}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with deleted publisher in site",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 6;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    },
+    {
+      "request":{
+        "url":"{{url}}",
+        "header":[
+          {
+            "value":"application/json",
+            "key":"Content-Type"
+          }
+        ],
+        "body":{
+          "raw":"{\"id\":\"12345\",\"imp\":[{\"id\":\"1\",\"banner\":{}}],\"app\":{\"id\":10001}}",
+          "mode":"raw"
+        },
+        "method":"POST"
+      },
+      "name":"Request with deleted publisher in app",
+      "event":[
+        {
+          "script":{
+            "type":"text/javascript",
+            "exec":[
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "var jsonData = JSON.parse(responseBody);",
+              "tests[\"Error code is correct\"] = jsonData.error.code === 6;",
+              "tests[\"Id is correct\"] = jsonData.id === \"12345\""
+            ]
+          },
+          "listen":"test"
+        }
+      ]
+    }
+  ]
+}
