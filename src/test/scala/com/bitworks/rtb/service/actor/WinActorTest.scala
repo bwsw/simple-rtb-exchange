@@ -14,10 +14,10 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
 import scaldi.Module
-import org.easymock.EasyMock._
 
 import scala.concurrent.duration.{FiniteDuration, _}
 import scala.concurrent.{Await, Future}
+import org.easymock.EasyMock._
 
 /**
   * Test for [[com.bitworks.rtb.service.actor.WinActor WinActor]].
@@ -112,11 +112,13 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
   it should "insert received ad markup to bids" in {
     val bidRequest = BidRequestBuilder("reqid", Seq.empty).build
     val bid = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("one").build
-    val bid1 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("three").withAdm("someAdm")
+    val bid1 = BidBuilder("bidid", "impid", BigDecimal(0))
+      .withNurl("three")
+      .withAdm("someAdm")
       .build
-    val bid2 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("two")
-      .build
-    val seatBid = SeatBidBuilder(Seq(bid, bid1, bid2)).build
+    val bid2 = BidBuilder("bidid", "impid", BigDecimal(0)).withNurl("two").build
+    val bid3 = BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("adm").build
+    val seatBid = SeatBidBuilder(Seq(bid, bid1, bid2, bid3)).build
     val bidResponse = BidResponseBuilder("respid", Seq(seatBid)).build
 
     val admone = "admone"
@@ -126,15 +128,23 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
     expecting {
       requestMaker.replaceMacros("one", bidRequest, bidResponse, seatBid, bid).andStubReturn("one")
       requestMaker.getAdMarkup("one").andReturn(Future.successful(admone)).times(1)
-      requestMaker.replaceMacros(admone, bidRequest, bidResponse, seatBid, bid).andStubReturn(admone)
 
-      requestMaker.replaceMacros("three", bidRequest, bidResponse, seatBid, bid1).andStubReturn("three")
+      requestMaker.replaceMacros(admone, bidRequest, bidResponse, seatBid, bid)
+        .andStubReturn(admone)
+
+      requestMaker.replaceMacros("three", bidRequest, bidResponse, seatBid, bid1)
+        .andStubReturn("three")
       requestMaker.sendWinNotice(anyObject()).andStubReturn(Future.failed(new TimeoutException()))
-      requestMaker.replaceMacros("someAdm", bidRequest, bidResponse, seatBid, bid1).andStubReturn("someAdm")
+      requestMaker.replaceMacros("someAdm", bidRequest, bidResponse, seatBid, bid1)
+        .andStubReturn("someAdm")
 
       requestMaker.replaceMacros("two", bidRequest, bidResponse, seatBid, bid2).andStubReturn("two")
+
       requestMaker.getAdMarkup("two").andReturn(Future.successful(admtwo)).times(1)
-      requestMaker.replaceMacros(admtwo, bidRequest, bidResponse, seatBid, bid2).andStubReturn(admtwo)
+      requestMaker.replaceMacros(admtwo, bidRequest, bidResponse, seatBid, bid2)
+        .andStubReturn(admtwo)
+
+      requestMaker.replaceMacros("adm", bidRequest, bidResponse, seatBid, bid3).andStubReturn("adm")
     }
 
     implicit val module = new Module {
@@ -150,7 +160,8 @@ class WinActorTest extends FlatSpec with Matchers with EasyMockSugar with ScalaF
           Seq(
             BidBuilder("bidid", "impid", BigDecimal(0)).withAdm(admone).withNurl("one").build,
             BidBuilder("bidid", "impid", BigDecimal(0)).withAdm("someAdm").withNurl("three").build,
-            BidBuilder("bidid", "impid", BigDecimal(0)).withAdm(admtwo).withNurl("two").build)
+            BidBuilder("bidid", "impid", BigDecimal(0)).withAdm(admtwo).withNurl("two").build,
+            bid3)
         ).build))
       .build
 

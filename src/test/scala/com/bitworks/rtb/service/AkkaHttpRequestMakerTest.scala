@@ -6,11 +6,12 @@ import com.bitworks.rtb.model.http._
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import org.easymock.EasyMock
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.time.{Seconds, Span}
-import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
+import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -19,11 +20,21 @@ import scala.concurrent.duration.FiniteDuration
   *
   * @author Egor Ilchenko
   */
-class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
+class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterAll
   with ScalaFutures with EasyMockSugar with Matchers {
 
   val port = 6423
-  val server = new WireMockServer(port)
+  val server = new WireMockServer(wireMockConfig().port(port))
+
+  override def beforeAll = {
+    server.start()
+    WireMock.configureFor(port)
+  }
+
+  override def afterAll = {
+    server.stop()
+  }
+
   implicit val system = ActorSystem("test")
   implicit val materializer = ActorMaterializer()
 
@@ -34,15 +45,6 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
   EasyMock.replay(configuration)
 
   val maker = new AkkaHttpRequestMaker()(system, materializer, configuration)
-
-  override def beforeEach = {
-    server.start()
-    WireMock.configureFor(port)
-  }
-
-  override def afterEach() = {
-    server.stop()
-  }
 
   private val responseBody = "somestr"
   private val contentTypeHeader = "Content-Type"
@@ -212,5 +214,17 @@ class AkkaHttpRequestMakerTest extends FlatSpec with BeforeAndAfterEach
 
       response.contentType shouldBe Protobuf
     }
+  }
+
+  it should "throw DataValidationException when request contains incorrect header" in {
+    val path = "/post"
+
+    val uri = s"http://localhost:$port$path"
+    val request = HttpRequestModel(
+      uri,
+      headers = Seq(HttpHeaderModel("(", ""))
+    )
+
+    an[DataValidationException] should be thrownBy maker.make(request)
   }
 }

@@ -97,6 +97,7 @@ class BidRequestFactoryImpl(
     builder
       .withBcat(getBlockedCategories(publisher.get))
       .withBadv(publisher.get.blockedDomains)
+      .withTest(adRequest.test)
       .build
   }
 
@@ -364,12 +365,6 @@ class BidRequestFactoryImpl(
     val ids = imps.map(_.id)
     ids.toSet.size == ids.size
   }
-
-  private def getPublisherId(site: Site) =
-    siteDao.get(site.id.get.toInt).get.publisherId
-
-  private def getPublisherId(app: App) =
-    appDao.get(app.id.get.toInt).get.publisherId
 
   private def getBlockedCategories(publisher: db.Publisher): Seq[String] = {
     getCategories(publisher.blockedCategoriesIds)

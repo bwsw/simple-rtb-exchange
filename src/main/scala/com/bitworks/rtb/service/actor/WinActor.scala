@@ -75,32 +75,29 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
       response: BidResponse,
       seatBid: SeatBid,
       bid: Bid): Future[Bid] = {
-    bid.nurl match {
+    val fAdm = bid.nurl match {
       case Some(nurl) =>
-
         val preparedNurl = requestMaker.replaceMacros(
           nurl,
           request,
           response,
           seatBid,
           bid)
-
-        val fAdm = bid.adm match {
+       bid.adm match {
           case Some(_) =>
             sendWinNotice(preparedNurl)
             Future.successful(bid.adm)
           case None =>
             getAdm(preparedNurl)
         }
-        val ff = fAdm.map {
-          case Some(ad) =>
-            val replaced = requestMaker.replaceMacros(ad, request, response, seatBid, bid)
-            log.debug(s"replaced adm: $replaced, source adm: $ad")
-            if (bid.adm.contains(replaced)) bid else bid.copy(adm = Some(replaced))
-          case None => bid
-        }
-        ff
-      case None => Future.successful(bid)
+      case None => Future.successful(bid.adm)
+    }
+    fAdm.map {
+      case Some(ad) =>
+        val replaced = requestMaker.replaceMacros(ad, request, response, seatBid, bid)
+        log.debug(s"replaced adm: $replaced, source adm: $ad")
+        if (bid.adm.contains(replaced)) bid else bid.copy(adm = Some(replaced))
+      case None => bid
     }
   }
 
@@ -111,6 +108,7 @@ class WinActor(implicit injector: Injector) extends Actor with ActorLogging {
     */
   def sendWinNotice(preparedNurl: String): Unit = {
     log.debug(s"""sending win notice to "$preparedNurl"""")
+
     requestMaker.sendWinNotice(preparedNurl)
   }
 

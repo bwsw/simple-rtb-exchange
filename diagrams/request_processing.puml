@@ -3,57 +3,57 @@
 title RTB request processing
 
 participant Publisher
-participant Exchange
-participant Factory
+participant RequestActor
+participant BidRequestFactory
+participant AdResponseFactory
 participant Parser
-participant Validator
 participant Writer
 
-Publisher -> Exchange: HTTP request
-activate Exchange
+Publisher -> RequestActor: HTTP request
+activate RequestActor
 
-Exchange -> Parser: HTTP request
+RequestActor -> Parser: HTTP request
 activate Parser
 
 alt HTTP request parsed to AdRequest
-    Exchange <-- Parser: AdRequest
+    RequestActor <-- Parser: AdRequest
     deactivate Parser
-    Exchange -> Factory: AdRequest
-    activate Factory
+    RequestActor -> BidRequestFactory: AdRequest
+    activate BidRequestFactory
 
     alt BidRequest created from AdRequest
-        Exchange <-- Factory: BidRequest
-        deactivate Factory
+        RequestActor <-- BidRequestFactory: BidRequest
+        deactivate BidRequestFactory
 
-        ref over Exchange: getting AdResponse
+        ref over RequestActor: getting AdResponse
 
     else BidRequest not created from AdRequest
-        Exchange <-- Factory: fail
-        deactivate Factory
+        RequestActor <-- BidRequestFactory: fail
+        deactivate BidRequestFactory
 
-        Exchange -> Factory: Error
-        activate Factory
-        Exchange <-- Factory: AdResponse
-        deactivate Factory
+        RequestActor -> AdResponseFactory: Error
+        activate AdResponseFactory
+        RequestActor <-- AdResponseFactory: AdResponse
+        deactivate AdResponseFactory
 
         activate Parser
     end
 
 else HTTP request not parsed to AdRequest
-    Exchange <-- Parser: fail
+    RequestActor <-- Parser: fail
     deactivate Parser
 
-    Exchange -> Factory: Error
-    activate Factory
-    Exchange <-- Factory: AdResponse
-    deactivate Factory
+    RequestActor -> BidRequestFactory: Error
+    activate BidRequestFactory
+    RequestActor <-- BidRequestFactory: AdResponse
+    deactivate BidRequestFactory
 end
 
-Exchange -> Writer: AdResponse
+RequestActor -> Writer: AdResponse
 activate Writer
-Exchange <-- Writer: HTTP response
+RequestActor <-- Writer: HTTP response
 deactivate Writer
-Exchange --> Publisher: HTTP response
-deactivate Exchange
+RequestActor --> Publisher: HTTP response
+deactivate RequestActor
 
 @enduml
