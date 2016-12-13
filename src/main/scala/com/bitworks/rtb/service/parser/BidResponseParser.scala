@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.parser
 
-import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
+import com.bitworks.rtb.model.ad.response.ErrorCode
 import com.bitworks.rtb.model.response.BidResponse
 import com.bitworks.rtb.service.DataValidationException
 
@@ -22,10 +22,8 @@ trait BidResponseParser {
       parseInternal(bytes)
     }
     catch {
-      case e: DataValidationException => throw e
       case e: Throwable =>
-        val error = Error(ErrorCode.NOT_SPECIFIED_ERROR)
-        throw new DataValidationException(error, e)
+        throw new DataValidationException(ErrorCode.UNKNOWN_ERROR, e)
     }
   }
 

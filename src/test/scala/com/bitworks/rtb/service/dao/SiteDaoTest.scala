@@ -16,29 +16,64 @@ class SiteDaoTest extends BaseDaoTest {
     bind[SiteDao] toProvider injected[SiteDaoImpl] // new instance per inject
   } :: dbModule
 
+  val expectedSite = Site(
+    11,
+    "site",
+    1,
+    Status.active,
+    1,
+    false,
+    "site_domain",
+    Some("keyword"),
+    Seq(1))
+
+  val expectedForDeleteSite = Site(
+    13,
+    "fordelete",
+    1,
+    Status.active,
+    1,
+    false,
+    "site_domain",
+    Some("keyword"),
+    Seq())
+
   "SiteDao" should "load site by ID correctly after cache init" in {
     val siteDao = inject[SiteDao]
 
-    val notFoundSite = siteDao.get(11)
+    val notFoundSite = siteDao.get(expectedSite.id)
     notFoundSite should not be defined
 
     siteDao.notify(InitCache)
 
-    val expectedSite = Some(
-      Site(
-        11,
-        "site",
-        1,
-        Status.active,
-        1,
-        false,
-        "site_domain",
-        Some("keyword"),
-        Seq(1)))
+    val site = siteDao.get(expectedSite.id)
 
-    val site = siteDao.get(11)
+    site shouldBe Some(expectedSite)
+  }
 
-    site shouldBe expectedSite
+  it should "load some sites correctly after cache init" in {
+    val siteDao = inject[SiteDao]
+    val ids = Seq(expectedSite.id, -1, expectedForDeleteSite.id)
+
+    val notFoundSites = siteDao.get(ids)
+    notFoundSites shouldBe Seq.empty
+
+    siteDao.notify(InitCache)
+
+    val sites = siteDao.get(ids)
+    sites should contain theSameElementsAs Seq(expectedSite, expectedForDeleteSite)
+  }
+
+  it should "load all sites correctly after cache init" in {
+    val siteDao = inject[SiteDao]
+
+    val notFoundSites = siteDao.getAll
+    notFoundSites shouldBe Seq.empty
+
+    siteDao.notify(InitCache)
+
+    val sites = siteDao.getAll
+    sites should contain theSameElementsAs Seq(expectedSite, expectedForDeleteSite)
   }
 
   it should "not load deleted site from DB" in {
@@ -57,24 +92,12 @@ class SiteDaoTest extends BaseDaoTest {
     siteDao.notify(InitCache)
     executeQuery("site-delete.xml", Update)
 
-    val expectedForDeleteSite = Some(
-      Site(
-        13,
-        "fordelete",
-        1,
-        Status.active,
-        1,
-        false,
-        "site_domain",
-        Some("keyword"),
-        Seq()))
+    val forDeleteSite = siteDao.get(expectedForDeleteSite.id)
 
-    val forDeleteSite = siteDao.get(13)
-
-    forDeleteSite shouldBe expectedForDeleteSite
+    forDeleteSite shouldBe Some(expectedForDeleteSite)
 
     siteDao.notify(UpdateCache)
-    val deletedSite = siteDao.get(13)
+    val deletedSite = siteDao.get(expectedForDeleteSite.id)
 
     deletedSite should not be defined
   }
@@ -85,24 +108,23 @@ class SiteDaoTest extends BaseDaoTest {
     siteDao.notify(InitCache)
     executeQuery("site-insert.xml", Insert)
 
-    val notFoundSite = siteDao.get(14)
+    val expectedSite = Site(
+      14,
+      "insertedsite",
+      1,
+      Status.active,
+      1,
+      false,
+      "site_domain",
+      Some("keyword"),
+      Seq())
+
+    val notFoundSite = siteDao.get(expectedSite.id)
     notFoundSite should not be defined
 
     siteDao.notify(UpdateCache)
 
-    val expectedSite = Some(
-      Site(
-        14,
-        "insertedsite",
-        1,
-        Status.active,
-        1,
-        false,
-        "site_domain",
-        Some("keyword"),
-        Seq()))
-
-    val site = siteDao.get(14)
-    site shouldBe expectedSite
+    val site = siteDao.get(expectedSite.id)
+    site shouldBe Some(expectedSite)
   }
 }

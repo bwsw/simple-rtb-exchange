@@ -30,9 +30,9 @@ trait WinNoticeRequestMaker {
   def getAdMarkup(nurl: String): Future[String]
 
   /**
-    * Replaces macros in text with appropriate data.
+    * Replaces macros in win notice URL with appropriate data.
     *
-    * @param text     text with macros
+    * @param nurl     win notice URL
     * @param request  [[com.bitworks.rtb.model.request.BidRequest BidRequest]]
     * @param response [[com.bitworks.rtb.model.response.BidResponse BidResponse]]
     * @param seatBid  [[com.bitworks.rtb.model.response.SeatBid SeatBid]]
@@ -40,7 +40,7 @@ trait WinNoticeRequestMaker {
     * @return win notice URL with replaced macros
     */
   def replaceMacros(
-      text: String,
+      nurl: String,
       request: BidRequest,
       response: BidResponse,
       seatBid: SeatBid,
@@ -65,7 +65,7 @@ class WinNoticeRequestMakerImpl(
   override def getAdMarkup(nurl: String) = {
     httpRequestMaker.make(HttpRequestModel(nurl))
       .map { response =>
-        if(response.status > 299){
+        if (response.status != 200) {
           throw new RuntimeException("incorrect status code")
         }
         new String(response.body)
@@ -73,7 +73,7 @@ class WinNoticeRequestMakerImpl(
   }
 
   override def replaceMacros(
-      text: String,
+      nurl: String,
       request: BidRequest,
       response: BidResponse,
       seatBid: SeatBid,
@@ -87,7 +87,7 @@ class WinNoticeRequestMakerImpl(
       "${AUCTION_PRICE}" -> bid.price.toString,
       "${AUCTION_CURRENCY}" -> response.cur
     )
-    replace(text, subs)
+    replace(nurl, subs)
   }
 
   /**

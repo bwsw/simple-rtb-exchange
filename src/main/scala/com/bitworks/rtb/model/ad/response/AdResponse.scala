@@ -13,7 +13,7 @@ import com.bitworks.rtb.model.http.ContentTypeModel
   * @author Pavel Tomskikh
   */
 case class AdResponse(
-    id: String,
+    id: Option[String],
     imp: Option[Seq[Imp]],
     error: Option[Error],
     ct: ContentTypeModel)

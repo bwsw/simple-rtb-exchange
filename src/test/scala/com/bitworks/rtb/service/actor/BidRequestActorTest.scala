@@ -72,13 +72,15 @@ class BidRequestActorTest
   val bidRequestResult3 = BidRequestSuccess(bidResponse3)
 
   val adResponseImp1 = ad.response.Imp(imp.id, bid1.adm.get, 1)
-  val adResponse1 = AdResponseBuilder(adRequest.id, adRequest.ct).withImp(Seq(adResponseImp1)).build
+  val adResponse1 = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
+    .withImp(Seq(adResponseImp1)).build
 
   val adResponseImp3 = ad.response.Imp(imp.id, bid3.adm.get, 1)
-  val adResponse3 = AdResponseBuilder(adRequest.id, adRequest.ct).withImp(Seq(adResponseImp3)).build
+  val adResponse3 = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
+    .withImp(Seq(adResponseImp3)).build
 
-  val errorResponse = AdResponseBuilder(adRequest.id, adRequest.ct)
-    .withError(Error(ErrorCode.NO_AD_FOUND, "error"))
+  val errorResponse = AdResponseBuilder(adRequest.ct).withId(adRequest.id)
+    .withError(Error(ErrorCode.NO_AD_FOUND.id, "error"))
     .build
 
   val smallAuctionTimeout = 1.nanos
@@ -155,7 +157,7 @@ class BidRequestActorTest
   expecting {
     adResponseFactory.create(adRequest, Seq(bidResponse1)).andStubReturn(adResponse1)
     adResponseFactory.create(adRequest, Seq(bidResponse3)).andStubReturn(adResponse3)
-    adResponseFactory.create(EasyMock.eq(adRequest), EasyMock.anyObject(classOf[Error]))
+    adResponseFactory.create(EasyMock.eq(adRequest), EasyMock.anyObject(classOf[ErrorCode.Value]))
       .andStubReturn(errorResponse)
     EasyMock.replay(adResponseFactory)
   }
@@ -253,9 +255,10 @@ class BidRequestActorTest
   }
 
   it should "send error when bid responses not received from bidders" in {
-    val configuration = niceMock[Configuration]
+    val configuration = mock[Configuration]
     expecting {
       configuration.bidRequestTimeout.andStubReturn(smallAuctionTimeout)
+      configuration.additionalAuctionTime.andStubReturn(smallAuctionTimeout)
       EasyMock.replay(configuration)
     }
 
@@ -291,9 +294,10 @@ class BidRequestActorTest
 
   forAll(responsesForBidders) { (bidders: Seq[Bidder], adResponse: AdResponse) =>
     it should s"send ad response for $bidders correctly" in {
-      val configuration = niceMock[Configuration]
+      val configuration = mock[Configuration]
       expecting {
         configuration.bidRequestTimeout.andStubReturn(bigAuctionTimeout)
+        configuration.additionalAuctionTime.andStubReturn(smallAuctionTimeout)
         EasyMock.replay(configuration)
       }
 
@@ -317,4 +321,35 @@ class BidRequestActorTest
     }
   }
 
+  it should "send error when win bidder sent incorrect response" in {
+    val configuration = niceMock[Configuration]
+    expecting {
+      configuration.bidRequestTimeout.andStubReturn(bigAuctionTimeout)
+      EasyMock.replay(configuration)
+    }
+
+    val bidderDao = mock[BidderDao]
+    expecting {
+      bidderDao.getAll.andStubReturn(Seq(bidder1, bidder2, bidder3))
+      EasyMock.replay(bidderDao)
+    }
+
+    implicit val injector = new Module {
+      bind[BidderDao] toNonLazy bidderDao
+      bind[Configuration] toNonLazy configuration
+      bind[BidActor] toProvider new BidActorMockForwarder
+      bind[WinActor] toProvider new WinActorMock
+    } :: predefinedInjector
+
+    val bid = BidBuilder("1", imp.id, 1).build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid))
+      .withBidId(bidder1.id.toString)
+      .build
+
+    childActorOf(
+      BidRequestActor.props(adRequest, bidRequest),
+      "bidRequestActor") ! CreateAdResponse(Seq(bidResponse))
+    expectMsg(errorResponse)
+  }
 }

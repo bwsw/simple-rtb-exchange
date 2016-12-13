@@ -21,7 +21,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val parser = new AdRequestJsonParser
 
     val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "throw exception if datatype in JSON doesn`t match model datatype" in {
@@ -29,7 +29,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val parser = new AdRequestJsonParser
 
     val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "throw exception if id is missed" in {
@@ -37,7 +37,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val parser = new AdRequestJsonParser
 
     val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "throw exception if imp is missed" in {
@@ -45,7 +45,7 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val parser = new AdRequestJsonParser
 
     val thrown = the[DataValidationException] thrownBy parser.parse(incorrectJson)
-    thrown.getError.code shouldBe ErrorCode.INCORRECT_REQUEST
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
 
   it should "correctly parse JSON without optional fields" in {
@@ -74,6 +74,18 @@ class AdRequestJsonParserTest extends FlatSpec with Matchers {
     val parser = new AdRequestJsonParser
 
     val path = getClass.getResource("adrequest.json").getPath
+    val json = Source.fromFile(path).mkString.getBytes
+
+    val parsedModel = parser.parse(json)
+
+    parsedModel shouldBe expectedModel
+  }
+
+  it should "ignore extra fields" in {
+    val expectedModel = getAdRequestModel
+    val parser = new AdRequestJsonParser
+
+    val path = getClass.getResource("adrequest_extra_fields.json").getPath
     val json = Source.fromFile(path).mkString.getBytes
 
     val parsedModel = parser.parse(json)

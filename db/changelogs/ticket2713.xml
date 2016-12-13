@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="Pavel Tomskikh" context="e2e">
+        <preConditions>
+            <tableExists tableName="publisher"/>
+            <tableExists tableName="site"/>
+            <sqlCheck expectedResult="0">
+                select count(*) from publisher where name = 'deleted_publisher'
+            </sqlCheck>
+            <sqlCheck expectedResult="0">
+                select count(*) from site where id = 10000 or id = 10001
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="publisher">
+            <column name="name" value="deleted_publisher"/>
+            <column name="domain" value="deleted_publisher.com"/>
+            <column name="deleted" value="true"/>
+        </insert>
+
+        <loadData tableName="site" file="resources/ticket2713/site.csv">
+            <column name="id" type="numeric"/>
+            <column name="name" type="string"/>
+            <column name="type" type="numeric"/>
+            <column name="publisher_id" type="numeric"/>
+            <column name="status" type="numeric"/>
+            <column name="privacy_policy" type="numeric"/>
+            <column name="test" type="boolean"/>
+            <column name="domain" type="string"/>
+            <column name="app_bundle" type="string"/>
+            <column name="app_store" type="string"/>
+            <column name="app_ver" type="string"/>
+        </loadData>
+
+        <rollback>
+            <sql>
+                delete from site where id = 10000 or id = 10001;
+                delete from publisher where name = 'deleted_publisher'
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
