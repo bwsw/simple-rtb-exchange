@@ -54,6 +54,10 @@ class Configuration {
       "auction-timeout")
       .toMillis, TimeUnit.MILLISECONDS)
 
+
+  /** Time added to auction timeout. */
+  def additionalAuctionTime = 20.millisecond
+
   /** Timeout for converting HttpEntity to strict Entity. */
   def toStrictTimeout = 1.second
 }
