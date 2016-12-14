@@ -44,6 +44,6 @@ run:
 			false; \
 			exit; \
 		fi; \
-	done; \
+	done
 	$(MAKE) -C .. app_stop ENV=e2e
 	$(MAKE) cleanup
