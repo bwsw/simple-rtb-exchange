@@ -9,3 +9,4 @@ all_bidders_ad_in_winnotice.sql,all_bidders_ad_in_winnotice.json
 win_bidder_broken_winnotice.sql,win_bidder_broken_winnotice.json
 win_bidder_timeout_winnotice.sql,win_bidder_timeout_winnotice.json
 win_bidder_ad_in_winnotice.sql,win_bidder_ad_in_winnotice.json
+win_bidder_ad_in_adm_w_winnotice.sql,win_bidder_ad_in_adm_w_winnotice.json

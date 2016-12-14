@@ -1,8 +1,8 @@
 {
 	"variables": [],
 	"info": {
-		"name": "All bidders are valid, ad is in win notice",
-		"_postman_id": "6e4dcd7e-10bf-6183-db9b-3775e97dfaa3",
+		"name": "Win bidder ad is in adm with win notice",
+		"_postman_id": "1631c50a-c442-1e82-8617-cadf20c33260",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -20,7 +20,7 @@
 							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
 							"var adm = response.imp[0].adm;",
 							"tests[\"Bidder with biggest price is selected\"] = adm.match(/.*&price=301.*/g) !== null;",
-							"tests[\"Imp type should be banner\"] = response.imp[0].type === 1"
+							"tests[\"Imp type should be banner\"] = response.imp[0].type === 1;"
 						]
 					}
 				}
@@ -56,7 +56,7 @@
 							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
 							"var adm = response.imp[0].adm;",
 							"tests[\"Adm is defined\"] = Boolean(adm.trim());",
-							"tests[\"Imp type should be native\"] = response.imp[0].type === 3"
+							"tests[\"Imp type should be native\"] = response.imp[0].type === 3;"
 						]
 					}
 				}
@@ -92,7 +92,7 @@
 							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
 							"var adm = response.imp[0].adm;",
 							"tests[\"Adm is defined\"] = Boolean(adm.trim());",
-							"tests[\"Imp type should be video\"] = response.imp[0].type === 2"
+							"tests[\"Imp type should be video\"] = response.imp[0].type === 2;"
 						]
 					}
 				}
@@ -109,7 +109,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"video\":{\t\"mimes\":[]}}],\"site\":{\"id\":1}}"
+					"raw": "{\n    \"id\": \"1235432152\",\n    \"imp\": [\n        {\n            \"id\": \"33\",\n            \"video\": {\n            \t\"mimes\":[]\n            }\n        }\n    ],\n    \"site\": {\n        \"id\": 1\n    }\n}"
 				},
 				"description": ""
 			},

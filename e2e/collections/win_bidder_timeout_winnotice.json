@@ -2,13 +2,13 @@
 	"variables": [],
 	"info": {
 		"name": "Winner bid timeouted in win notice",
-		"_postman_id": "0c6d81d7-1be9-21e5-b6ad-825e0edfb1cc",
+		"_postman_id": "e8368d7b-caab-7993-9e2f-8c13559fe799",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "No ad response",
+			"name": "Response is no ad",
 			"event": [
 				{
 					"listen": "test",
@@ -18,7 +18,7 @@
 							"var response = JSON.parse(responseBody);",
 							"tests[\"Error code is bidders not found\"] = response.error.code === 8;",
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is json\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
 							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
 						]
 					}
@@ -36,7 +36,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": \"1235432152\",\n    \"imp\": [\n        {\n            \"id\": \"33\",\n            \"banner\": {}\n        }\n    ],\n    \"site\": {\n        \"id\": 1\n    }\n}"
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"banner\":{}}],\"site\":{\"id\":1}}"
 				},
 				"description": ""
 			},
