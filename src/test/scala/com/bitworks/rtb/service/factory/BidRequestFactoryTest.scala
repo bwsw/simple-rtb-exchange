@@ -15,8 +15,6 @@ import org.easymock.IAnswer
 import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.{FlatSpec, Matchers, OneInstancePerTest}
-import scaldi.Injectable._
-import scaldi.Module
 
 /**
   * Test for [[com.bitworks.rtb.service.factory.BidRequestFactory BidRequestFactory]].
@@ -28,7 +26,6 @@ class BidRequestFactoryTest
     with Matchers
     with EasyMockSugar
     with OneInstancePerTest {
-
   val intCapture = newCapture[Int]
   val seqIntCapture = newCapture[Seq[Int]]
 
@@ -47,7 +44,6 @@ class BidRequestFactoryTest
 
   def getCategoriesId(ids: Seq[Int]) = getCategories(ids).map(_.iabId)
 
-  val correctIabsExample = getCategories(Seq(1, 2, 3)).map(_.iabId)
   val categoryDao = mock[CategoryDao]
   expecting {
     categoryDao.getAll.andStubReturn(iabCategories)
@@ -186,16 +182,9 @@ class BidRequestFactoryTest
 
   val adRequestId = "12345"
 
-  implicit val module = new Module {
-    bind[CategoryDao] toNonLazy categoryDao
-    bind[PublisherDao] toNonLazy publisherDao
-    bind[SiteDao] toNonLazy siteDao
-    bind[AppDao] toNonLazy appDao
-    bind[BidRequestFactory] toProvider injected[BidRequestFactoryImpl]
-  }
+  val factory = new BidRequestFactoryImpl(categoryDao, publisherDao, siteDao, appDao)
 
-  val factory = inject[BidRequestFactory]
-
+  val correctIabsExample = getCategories(Seq(1, 2, 3)).map(_.iabId)
   val correctProducer = ProducerBuilder()
     .withId("444")
     .withName("prod")
@@ -322,6 +311,11 @@ class BidRequestFactoryTest
     .withBattr(Seq(1, 2, 3, 7, 15, 16))
     .build
 
+  // incorrect models
+  val incorrectProducer = ProducerBuilder().withName("").build
+  val incorrectGeo = GeoBuilder().withLat(1000).build
+  val incorrectBanner = BannerBuilder().withH(-1).build
+
   "BidRequestFactory" should "create bid request for correct ad request with site" in {
     val adImp = ad.builder.ImpBuilder("1")
       .withBanner(correctBanner)
@@ -399,7 +393,7 @@ class BidRequestFactoryTest
     thrown.getError shouldBe ErrorCode.SITE_OR_APP_INACTIVE
   }
 
-  it should "throw DataValidationException for ad request with site which not in db" in {
+  it should "throw DataValidationException for ad request with site which db does not contain" in {
     val adImp = ad.builder.ImpBuilder("1")
       .withBanner(correctBanner)
       .withNative(correctNative)
@@ -492,7 +486,7 @@ class BidRequestFactoryTest
     thrown.getError shouldBe ErrorCode.SITE_OR_APP_INACTIVE
   }
 
-  it should "throw DataValidationException for ad request with app which not in db" in {
+  it should "throw DataValidationException for ad request with app which db does not contain" in {
     val adImp = ad.builder.ImpBuilder("1")
       .withBanner(correctBanner)
       .withNative(correctNative)
@@ -584,6 +578,25 @@ class BidRequestFactoryTest
     }
   }
 
+  val incorrectSizes = Table(
+    ("min", "exp", "max"),
+    (Some(100), Some(99), Some(300)),
+    (Some(100), Some(200), Some(199)),
+    (Some(100), Some(99), Some(98)),
+    (Some(100), Some(99), None),
+    (Some(100), None, Some(98)),
+    (Some(0), None, None),
+    (None, Some(99), Some(98)),
+    (None, Some(0), None),
+    (None, None, Some(0)),
+    (Some(-100), Some(200), Some(300)),
+    (Some(100), Some(-200), Some(300)),
+    (Some(100), Some(200), Some(-300)),
+    (Some(-3), Some(-2), Some(-1)),
+    (None, None, Some(-10)),
+    (None, Some(-10), None),
+    (Some(-10), None, None))
+
   it should "create bid request for ad request with correct banner width" in {
     forAll(correctSizes) { (min: Option[Int], exp: Option[Int], max: Option[Int]) =>
       val bannerBuilder = BannerBuilder()
@@ -607,25 +620,6 @@ class BidRequestFactoryTest
       factory.create(adRequest) shouldBe expectedBidRequest
     }
   }
-
-  val incorrectSizes = Table(
-    ("min", "exp", "max"),
-    (Some(100), Some(99), Some(300)),
-    (Some(100), Some(200), Some(199)),
-    (Some(100), Some(99), Some(98)),
-    (Some(100), Some(99), None),
-    (Some(100), None, Some(98)),
-    (Some(0), None, None),
-    (None, Some(99), Some(98)),
-    (None, Some(0), None),
-    (None, None, Some(0)),
-    (Some(-100), Some(200), Some(300)),
-    (Some(100), Some(-200), Some(300)),
-    (Some(100), Some(200), Some(-300)),
-    (Some(-3), Some(-2), Some(-1)),
-    (None, None, Some(-10)),
-    (None, Some(-10), None),
-    (Some(-10), None, None))
 
   it should "throw DataValidationException for ad request with incorrect banner height" in {
     forAll(incorrectSizes) { (min: Option[Int], exp: Option[Int], max: Option[Int]) =>
@@ -1882,7 +1876,6 @@ class BidRequestFactoryTest
   }
 
   it should "throw DataValidationException for ad request with incorrect video" in {
-    val incorrectBanner = BannerBuilder().withH(-1).build
     val incorrectVideos = Table(
       ("mimes",
         "minDuration",
@@ -2812,7 +2805,7 @@ class BidRequestFactoryTest
   }
 
   it should "throw DataValidationException for ad request with incorrect native" in {
-    val correctNatives = Table(
+    val incorrectNatives = Table(
       ("request", "ver", "api", "battr"),
       ("", None, None, None),
       ("native", Some(""), None, None),
@@ -2823,7 +2816,7 @@ class BidRequestFactoryTest
       ("native", Some("1.1"), Some(Seq()), Some(Seq(1, 3, 5))),
       ("native", Some("1.1"), Some(Seq(1, 3)), Some(Seq())))
 
-    forAll(correctNatives) { (
+    forAll(incorrectNatives) { (
       request: String,
       ver: Option[String],
       api: Option[Seq[Int]],
@@ -2891,7 +2884,6 @@ class BidRequestFactoryTest
   }
 
   it should "throw DataValidationException for ad request with incorrect user" in {
-    val incorrectGeo = GeoBuilder().withLat(1000).build
     val incorrectUsers = Table(
       ("id", "yob", "gender", "keywords", "geo"),
       (Some(""), Some(1990), Some("M"), Some("kw1,kw2"), Some(correctGeo)),
@@ -3851,7 +3843,6 @@ class BidRequestFactoryTest
   }
 
   it should "throw DataValidationException for ad request with incorrect device" in {
-    val incorrectGeo = GeoBuilder().withLat(1000).build
     val incorrectDevices = Table[Device](
       "device",
       Device(
@@ -6462,7 +6453,6 @@ class BidRequestFactoryTest
   }
 
   it should "throw DataValidationException for ad request with incorrect content" in {
-    val incorrectProducer = ProducerBuilder().withName("").build
     val incorrectContents = Table(
       ("id",
         "episode",
@@ -6586,25 +6576,6 @@ class BidRequestFactoryTest
         None,
         Some(""),
         None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None),
-      (None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        Some(Seq()),
         None,
         None,
         None,
@@ -6946,25 +6917,6 @@ class BidRequestFactoryTest
         Some("s3"),
         Some(correctProducer),
         Some("content.com"),
-        Some(Seq()),
-        Some(2),
-        Some(1),
-        Some("MPAA"),
-        Some("middle"),
-        Some(2),
-        Some("kw1,kw2"),
-        Some(1),
-        Some(0),
-        Some(30),
-        Some("ru"),
-        Some(0)),
-      (Some("123"),
-        Some(5),
-        Some("title"),
-        Some("auto"),
-        Some("s3"),
-        Some(correctProducer),
-        Some("content.com"),
         Some(getCategoriesId(Seq(1, 2))),
         Some(-1),
         Some(1),
@@ -7242,8 +7194,7 @@ class BidRequestFactoryTest
       (None, Some("prod"), None, None),
       (None, None, Some(correctIabsExample), None),
       (None, None, None, Some("prod.com")),
-      (Some("123"), Some("prod"), Some(correctIabsExample), Some("prod.com"))
-    )
+      (Some("123"), Some("prod"), Some(correctIabsExample), Some("prod.com")))
 
     forAll(correctProducers) { (
       id: Option[String],
@@ -7279,13 +7230,11 @@ class BidRequestFactoryTest
       ("id", "name", "cat", "domain"),
       (Some(""), Some("prod"), Some(correctIabsExample), Some("prod.com")),
       (Some("123"), Some(""), Some(correctIabsExample), Some("prod.com")),
-      (Some("123"), Some("prod"), Some(Seq()), Some("prod.com")),
       (Some("123"), Some("prod"), Some(correctIabsExample), Some("")),
       (Some(""), None, None, None),
       (None, Some(""), None, None),
       (None, None, Some(Seq()), None),
-      (None, None, None, Some(""))
-    )
+      (None, None, None, Some("")))
 
     forAll(incorrectProducers) { (
       id: Option[String],
@@ -7352,5 +7301,137 @@ class BidRequestFactoryTest
 
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
+  }
+
+  it should "not create bid request if db does not contain sites" in {
+    val siteDao = mock[SiteDao]
+    expecting {
+      siteDao.getAll.andStubReturn(Seq.empty)
+      siteDao.get(anyInt).andStubReturn(None)
+      siteDao.get(anyObject[Seq[Int]]).andStubReturn(Seq.empty)
+      replay(siteDao)
+    }
+    val factory = new BidRequestFactoryImpl(categoryDao, publisherDao, siteDao, appDao)
+
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adSite = adSiteBuilder
+      .withSectionCat(getCategoriesId(Seq(1, 2)))
+      .withPageCat(getCategoriesId(Seq(1)))
+      .withPage("page123")
+      .withRef("from.com")
+      .withSearch("search")
+      .withMobile(0)
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
+      .withSite(adSite)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
+  }
+
+  it should "not create bid request if db does not contain apps" in {
+    val appDao = mock[AppDao]
+    expecting {
+      appDao.getAll.andStubReturn(Seq.empty)
+      appDao.get(anyInt).andStubReturn(None)
+      appDao.get(anyObject[Seq[Int]]).andStubReturn(Seq.empty)
+      replay(appDao)
+    }
+    val factory = new BidRequestFactoryImpl(categoryDao, publisherDao, siteDao, appDao)
+
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adApp = adAppBuilder
+      .withSectionCat(getCategoriesId(Seq(5, 6)))
+      .withPageCat(getCategoriesId(Seq(5)))
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
+      .withApp(adApp)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError shouldBe ErrorCode.SITE_OR_APP_NOT_FOUND
+  }
+
+  it should "not create bid request if db does not contain categories" in {
+    val categoryDao = mock[CategoryDao]
+    expecting {
+      categoryDao.getAll.andStubReturn(Seq.empty)
+      categoryDao.get(anyInt).andStubReturn(None)
+      categoryDao.get(anyObject[Seq[Int]]).andStubReturn(Seq.empty)
+      replay(categoryDao)
+    }
+    val factory = new BidRequestFactoryImpl(categoryDao, publisherDao, siteDao, appDao)
+
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adApp = adAppBuilder
+      .withSectionCat(getCategoriesId(Seq(5, 6)))
+      .withPageCat(getCategoriesId(Seq(5)))
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
+      .withApp(adApp)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError shouldBe ErrorCode.IAB_CATEGORY_NOT_FOUND
+  }
+
+  it should "not create bid request if db does not contain publishers" in {
+    val publisherDao = mock[PublisherDao]
+    expecting {
+      publisherDao.getAll.andStubReturn(Seq.empty)
+      publisherDao.get(anyInt).andStubReturn(None)
+      publisherDao.get(anyObject[Seq[Int]]).andStubReturn(Seq.empty)
+      replay(publisherDao)
+    }
+    val factory = new BidRequestFactoryImpl(categoryDao, publisherDao, siteDao, appDao)
+
+    val adImp = ad.builder.ImpBuilder("1")
+      .withBanner(correctBanner)
+      .withNative(correctNative)
+      .withVideo(correctVideo)
+      .build
+    val adApp = adAppBuilder
+      .withSectionCat(getCategoriesId(Seq(5, 6)))
+      .withPageCat(getCategoriesId(Seq(5)))
+      .withContent(correctContent)
+      .build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(adImp), Json)
+      .withApp(adApp)
+      .withUser(correctAdUser)
+      .withDevice(correctDevice)
+      .withRegs(correctRegs)
+      .withTmax(500)
+      .build
+
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError shouldBe ErrorCode.PUBLISHER_NOT_FOUND
   }
 }

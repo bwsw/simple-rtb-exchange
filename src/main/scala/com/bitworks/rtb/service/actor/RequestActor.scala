@@ -1,6 +1,6 @@
 package com.bitworks.rtb.service.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.response.{AdResponse, ErrorCode}
@@ -67,6 +67,7 @@ class RequestActor(request: HttpRequestWrapper)
     log.debug("completing request...")
     val bytes = adConverter.write(response)
     request.complete(bytes, response.ct)
+    shutdownActor()
   }
 
   /**
@@ -77,6 +78,12 @@ class RequestActor(request: HttpRequestWrapper)
   def onError(msg: String) = {
     log.debug(s"an error occurred: $msg")
     request.fail()
+    shutdownActor()
+  }
+
+  /** Shutdown actor. */
+  def shutdownActor() = {
+    self ! PoisonPill
   }
 }
 

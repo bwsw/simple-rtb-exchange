@@ -1,0 +1,122 @@
+{
+	"variables": [],
+	"info": {
+		"name": "All bidders are valid",
+		"_postman_id": "494b3eac-9057-638e-6b14-6b97bcc75bb7",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Banner with the biggest price",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var response = JSON.parse(responseBody);",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"var adm = response.imp[0].adm;",
+							"tests[\"Bidder with biggest price is selected\"] = adm.match(/.*&price=301.*/g) !== null;",
+							"tests[\"Imp type should be banner\"] = response.imp[0].type === 1;",
+							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"banner\":{}}],\"site\":{\"id\":1}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Native with the biggest price",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var response = JSON.parse(responseBody);",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"var adm = response.imp[0].adm;",
+							"tests[\"Adm is defined\"] = Boolean(adm.trim());",
+							"tests[\"Imp type should be native\"] = response.imp[0].type === 3;",
+							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"native\":{\t\"request\":\"payload\"}}],\"site\":{\"id\":1}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Video with the biggest price",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var response = JSON.parse(responseBody);",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"var adm = response.imp[0].adm;",
+							"tests[\"Adm is defined\"] = Boolean(adm.trim());",
+							"tests[\"Imp type should be video\"] = response.imp[0].type === 2;",
+							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"video\":{\"mimes\":[]}}],\"site\":{\"id\":1}}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
