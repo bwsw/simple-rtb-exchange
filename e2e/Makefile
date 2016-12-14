@@ -7,7 +7,7 @@ app_start: app_stop
 	cp $(ASSEMBLY) $$workdir && \
 	(docker network create rtb-ci-network || true) && \
 	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v $$workdir:/workdir -w=/workdir \
-	    --network=rtb-ci-network  ci.bw-sw.com:5000/rtb-dev-team/oracle-java:8 \
+	    --network=rtb-ci-network --network-alias=rtb-application ci.bw-sw.com:5000/rtb-dev-team/oracle-java:8 \
 	    /usr/bin/java -Dconfig.resource=application.$(ENV).conf -jar `basename $(ASSEMBLY)` && \
 	./waitUp.sh localhost:8082
 
@@ -26,7 +26,9 @@ run:
 		col=`echo $$row | cut -d, -f2` && \
 		./query.sh $(ENV) $(BIDDER_HOST) $$sqlfile && \
 		sleep 3 && \
-		if newman run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli --reporter-junit-export $(REPORT_PATH)$$col.xml ; then \
+		if docker run --volume="`pwd`:/workdir" -w="/workdir" --network=rtb-ci-network -t postman/newman_alpine33 \
+		     run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli \
+		    --reporter-junit-export $(REPORT_PATH)$$col.xml ; then \
 			echo "passed"; \
 		else \
 			$(MAKE) app_stop; \
