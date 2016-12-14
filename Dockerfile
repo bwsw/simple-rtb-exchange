@@ -6,7 +6,6 @@ WORKDIR /data
 ARG APP_PATH
 
 COPY $APP_PATH rtb-exchange.jar
-COPY docker-startup.sh docker-startup.sh
 
 ENV env "prod"
 
