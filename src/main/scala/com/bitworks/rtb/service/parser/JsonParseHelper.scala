@@ -36,14 +36,14 @@ trait JsonParseHelper {
       *
       * @throws scala.IllegalArgumentException if node is not a string array
       */
-    def getStringSeq = getSeq(n => n.getString)
+    def getStringSeq = getSeq(_.getString)
 
     /**
       * Returns node value as Seq[Int].
       *
       * @throws scala.IllegalArgumentException if node is not an int array
       */
-    def getIntSeq = getSeq(n => n.getInt)
+    def getIntSeq = getSeq(_.getInt)
 
     /**
       * Returns node value as Seq[T].
@@ -54,7 +54,7 @@ trait JsonParseHelper {
       */
     def getSeq[T](f: JsonNode => T): Seq[T] = {
       require(node.isArray, "node must be an array")
-      node.elements().asScala.map(f).toSeq
+      node.elements().asScala.toList.map(f)
     }
 
     /**
