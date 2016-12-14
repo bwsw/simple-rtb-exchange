@@ -18,20 +18,17 @@ class BidResponseJsonParserTest extends FlatSpec with Matchers {
 
   "BidResponseJsonParser" should "throw exception if JSON format is incorrect" in {
     val json = "not JSON".getBytes
-    an[DataValidationException] should be thrownBy
-        parser.parse(json)
+    an[DataValidationException] should be thrownBy parser.parse(json)
   }
 
   it should "thrown exception if datatype in JSON is wrong" in {
     val json = """{ "id":"123", "seatbid":"notseatbid"} """.getBytes()
-    an[DataValidationException] should be thrownBy
-        parser.parse(json)
+    an[DataValidationException] should be thrownBy parser.parse(json)
   }
 
   it should "throw exception if required fields are missing" in {
     val json = """{ "id":"123" } """.getBytes
-    an[DataValidationException] should be thrownBy
-        parser.parse(json)
+    an[DataValidationException] should be thrownBy parser.parse(json)
   }
 
   it should "correctly parse JSON without optional fields" in {
@@ -101,41 +98,38 @@ class BidResponseJsonParserTest extends FlatSpec with Matchers {
       "3",
       "7",
       BigDecimal(13),
+      Some("adid"),
+      None,
+      Some("admarkup"),
+      None,
+      Some("bundle"),
       None,
       None,
       None,
+      Some(Seq("IAB1", "IAB2")),
       None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
+      Some("dealid"),
+      Some(100),
+      Some(200),
       None)
     val seatBid1 = SeatBid(
       Seq(bid1, bid2),
       Some("512"),
       1,
-      None
-    )
+      None)
     val seatBid2 = SeatBid(
       Seq(bid3),
       Some("s11"),
       0,
-      None
-    )
+      None)
     val bidResponse = BidResponse(
       "1234567890",
       Seq(seatBid1, seatBid2),
       Some("abc1123"),
       "RUB",
-      None,
-      None,
-      None
-    )
+      Some("customdata"),
+      Some(1),
+      None)
 
     bidResponse
   }
