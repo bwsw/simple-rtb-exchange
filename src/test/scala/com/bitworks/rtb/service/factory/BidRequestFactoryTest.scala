@@ -7447,4 +7447,15 @@ class BidRequestFactoryTest
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
   }
+
+  it should "throw DataValidationException when banner contains stream with incorrect battr" in {
+    val banner = BannerBuilder().withBattr(Stream(1, 2, 45)).build
+    val imp = ad.builder.ImpBuilder("1").withBanner(banner).build
+    val adRequest = AdRequestBuilder(adRequestId, Seq(imp), Json)
+      .withSite(adSiteBuilder.build)
+      .build
+
+    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
+    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
+  }
 }
