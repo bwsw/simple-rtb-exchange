@@ -14,42 +14,21 @@ import scala.collection.JavaConversions.mapAsJavaMap
   * @author Pavel Tomskikh
   */
 class ErrorBuilderTest extends FlatSpec with Matchers with TableDrivenPropertyChecks {
-  val unknownErrorMsg = "Unknown error"
-  val missedHeaderMsg = "Missed header"
-  val incorrectHeaderValueMsg = "Incorrect header value"
-  val incorrectRequestMsg = "Incorrect request"
-  val siteOrAppNotFoundMsg = "Site or app not found"
-  val siteOrAppInactive = "Inactive site or app"
-  val publisherNotFound = "Publisher not found"
-  val iabCategoryNotFound = "IAB category not found"
-  val noAdFound = "No ad found"
-
-  val errorMessages = ConfigFactory.parseMap(
-    Map(
-      "UNKNOWN_ERROR" -> unknownErrorMsg,
-      "MISSED_HEADER" -> missedHeaderMsg,
-      "INCORRECT_HEADER_VALUE" -> incorrectHeaderValueMsg,
-      "INCORRECT_REQUEST" -> incorrectRequestMsg,
-      "SITE_OR_APP_NOT_FOUND" -> siteOrAppNotFoundMsg,
-      "SITE_OR_APP_INACTIVE" -> siteOrAppInactive,
-      "PUBLISHER_NOT_FOUND" -> publisherNotFound,
-      "IAB_CATEGORY_NOT_FOUND" -> iabCategoryNotFound,
-      "NO_AD_FOUND" -> noAdFound))
-
   val errors = Table(
     ("code", "message"),
-    (UNKNOWN_ERROR, unknownErrorMsg),
-    (MISSED_HEADER, missedHeaderMsg),
-    (INCORRECT_HEADER_VALUE, incorrectHeaderValueMsg),
-    (INCORRECT_REQUEST, incorrectRequestMsg),
-    (SITE_OR_APP_NOT_FOUND, siteOrAppNotFoundMsg),
-    (SITE_OR_APP_INACTIVE, siteOrAppInactive),
-    (PUBLISHER_NOT_FOUND, publisherNotFound),
-    (IAB_CATEGORY_NOT_FOUND, iabCategoryNotFound),
-    (NO_AD_FOUND, noAdFound))
+    (UNKNOWN_ERROR, "Unknown error"),
+    (MISSED_HEADER, "Missed header"),
+    (INCORRECT_HEADER_VALUE, "Incorrect header value"),
+    (INCORRECT_REQUEST, "Incorrect request"),
+    (SITE_OR_APP_NOT_FOUND, "Site or app not found"),
+    (SITE_OR_APP_INACTIVE, "Inactive site or app"),
+    (PUBLISHER_NOT_FOUND, "Publisher not found"),
+    (IAB_CATEGORY_NOT_FOUND, "IAB category not found"),
+    (NO_AD_FOUND, "No ad found"))
 
   "ErrorBuilder" should "create Error correctly" in {
     forAll(errors) { (code: Value, message: String) =>
+      val errorMessages = ConfigFactory.parseMap(Map(code.toString -> message))
       val error = ErrorBuilder(code, errorMessages).build
       val expectedError = Error(code.id, message)
 
