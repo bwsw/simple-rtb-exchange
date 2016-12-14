@@ -57,7 +57,7 @@ class BidRequestFactoryImpl(
       throw new DataValidationException(ErrorCode.INCORRECT_REQUEST)
     }
 
-    val imps = adRequest.imp.toList.map(create)
+    val imps = adRequest.imp.map(create)
 
     val builder = BidRequestBuilder(adRequest.id, imps)
 

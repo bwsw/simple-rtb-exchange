@@ -7434,17 +7434,4 @@ class BidRequestFactoryTest
     val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
     thrown.getError shouldBe ErrorCode.PUBLISHER_NOT_FOUND
   }
-
-  it should "throw DataValidationException when ad request contains stream of imps and not first " +
-    "imp is incorrect" in {
-    val correctImp = ad.builder.ImpBuilder("1").withBanner(correctBanner).build
-    val incorrectImp = ad.builder.ImpBuilder("2").build
-    val imps = Stream(correctImp, incorrectImp)
-    val adRequest = AdRequestBuilder(adRequestId, imps, Json)
-      .withSite(adSiteBuilder.build)
-      .build
-
-    val thrown = the[DataValidationException] thrownBy factory.create(adRequest)
-    thrown.getError shouldBe ErrorCode.INCORRECT_REQUEST
-  }
 }
