@@ -11,7 +11,6 @@ import com.typesafe.config.ConfigFactory
 import org.easymock.EasyMock._
 import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers}
-import scaldi.Module
 
 import scala.collection.JavaConversions.mapAsJavaMap
 
@@ -32,12 +31,8 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
     replay(configuration)
   }
 
-  implicit val module = new Module {
-    bind[Configuration] toNonLazy configuration
-  }
-
   "AdResponseFactory" should "return AdResponse with banner correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
@@ -79,7 +74,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "return AdResponse with video correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
@@ -121,7 +116,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "return AdResponse with native correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
@@ -163,7 +158,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "throw exception if cant determine type of response imp by request" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val anotherImpId = "anotherImpId"
     val adMarkup = "admarkup"
@@ -195,7 +190,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "throw exception if bid response contains empty adm" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adRequest = AdRequestBuilder(
       "reqId",
@@ -224,7 +219,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "build ad response with error correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val error = Error(ErrorCode.UNKNOWN_ERROR.id, unknownErrorMsg)
     val adRequest = AdRequestBuilder("reqId", Seq(), Json).build
     val expectedResponse = AdResponseBuilder(adRequest.ct)
@@ -238,7 +233,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
   }
 
   it should "build ad response with error and without ad request correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val error = Error(ErrorCode.UNKNOWN_ERROR.id, unknownErrorMsg)
     val expectedResponse = AdResponseBuilder(Json)
       .withError(error)
