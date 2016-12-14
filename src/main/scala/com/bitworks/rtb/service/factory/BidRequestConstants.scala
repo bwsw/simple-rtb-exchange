@@ -28,5 +28,5 @@ trait BidRequestConstants {
   def isVideoStartDelay(i: Int) = i >= -2
 
   def check(range: Range)(i: Iterable[Int]): Boolean =
-    i.nonEmpty && i.forall(range.contains)
+    i.nonEmpty && i.toList.forall(range.contains)
 }

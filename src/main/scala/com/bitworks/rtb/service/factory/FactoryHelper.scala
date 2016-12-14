@@ -12,7 +12,7 @@ trait FactoryHelper {
   def isValidBirthdayYear(i: Int) = between(1900, LocalDate.now.getYear)(i)
 
   def checkSeq[T](p: T => Boolean)(s: Seq[T]): Boolean =
-    s.nonEmpty && s.forall(p)
+    s.nonEmpty && s.toList.forall(p)
 
   def checkSeq(s: Seq[Option[_]]) = checkSeq[Option[_]](_.nonEmpty)(s)
 
