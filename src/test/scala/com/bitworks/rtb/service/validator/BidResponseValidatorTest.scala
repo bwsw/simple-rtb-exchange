@@ -45,7 +45,7 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     deal.bidFloor + 0.1)
     .withAdId("adid")
     .withNurl("nurl")
-    .withAdm("\"<img src=\\\"http://localhost/img.jpg\\\" />\"")
+    .withAdm("<img src=\"http://localhost/img.jpg\" />")
     .withAdomain(deal.wadomain.get)
     .withBundle(app.bundle.get)
     .withCat(Seq("IAB2-2"))
@@ -77,6 +77,14 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
 
   it should "not validate BidResponse with empty bid id" in {
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(correctSeatBid)).withBidId("").build
+
+    validator.validate(bidRequest, bidResponse) shouldBe None
+  }
+
+  it should "not validate BidResponse with incorrect impId" in {
+    val bid = BidBuilder("1", "not_imp_id", 10).build
+    val seatBid = SeatBidBuilder(Seq(bid)).build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
     validator.validate(bidRequest, bidResponse) shouldBe None
   }
@@ -304,32 +312,32 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     validator.validate(bidRequest, bidResponse) shouldBe None
   }
 
-  it should "not validate BidResponse with invalid banner height" in {
-    val heights = Table(
-      ("hmin", "hexp", "hmax", "h"),
-      (Some(100), Some(200), Some(300), None),
-      (Some(100), None, Some(300), None),
-      (Some(100), Some(200), None, None),
-      (None, Some(200), Some(300), None),
-      (None, None, Some(300), None),
-      (Some(100), Some(200), Some(300), Some(0)),
-      (None, None, None, Some(0)),
-      (Some(100), Some(200), Some(300), Some(99)),
-      (Some(100), Some(200), Some(300), Some(301)),
-      (None, Some(200), None, Some(201)))
+  val incorrectSizes = Table(
+    ("min", "exp", "max", "got"),
+    (Some(100), Some(200), Some(300), None),
+    (Some(100), None, Some(300), None),
+    (Some(100), Some(200), None, None),
+    (None, Some(200), Some(300), None),
+    (None, None, Some(300), None),
+    (Some(100), Some(200), Some(300), Some(0)),
+    (None, None, None, Some(0)),
+    (Some(100), Some(200), Some(300), Some(99)),
+    (Some(100), Some(200), Some(300), Some(301)),
+    (None, Some(200), None, Some(201)))
 
-    forAll(heights) {
-      (hmin: Option[Int], hexp: Option[Int], hmax: Option[Int], h: Option[Int]) =>
+  it should "not validate BidResponse with invalid banner height" in {
+    forAll(incorrectSizes) {
+      (min: Option[Int], exp: Option[Int], max: Option[Int], got: Option[Int]) =>
         val bannerBuilder = BannerBuilder()
-        hmin.foreach(bannerBuilder.withHmin)
-        hexp.foreach(bannerBuilder.withH)
-        hmax.foreach(bannerBuilder.withHmax)
+        min.foreach(bannerBuilder.withHmin)
+        exp.foreach(bannerBuilder.withH)
+        max.foreach(bannerBuilder.withHmax)
         val banner = bannerBuilder.build
         val imp = ImpBuilder("1").withBanner(banner).build
         val bidRequest = BidRequestBuilder("987349863", Seq(imp)).build
 
         val bidBuilder = BidBuilder("1", imp.id, 1).withAdm("adm")
-        h.foreach(bidBuilder.withH)
+        got.foreach(bidBuilder.withH)
         val bid = bidBuilder.build
         val seatBid = SeatBidBuilder(Seq(bid)).build
         val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
@@ -339,31 +347,18 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
   }
 
   it should "not validate BidResponse with invalid banner width" in {
-    val widths = Table(
-      ("wmin", "wexp", "wmax", "w"),
-      (Some(100), Some(200), Some(300), None),
-      (Some(100), None, Some(300), None),
-      (Some(100), Some(200), None, None),
-      (None, Some(200), Some(300), None),
-      (None, None, Some(300), None),
-      (Some(100), Some(200), Some(300), Some(0)),
-      (None, None, None, Some(0)),
-      (Some(100), Some(200), Some(300), Some(99)),
-      (Some(100), Some(200), Some(300), Some(301)),
-      (None, Some(200), None, Some(201)))
-
-    forAll(widths) {
-      (wmin: Option[Int], wexp: Option[Int], wmax: Option[Int], w: Option[Int]) =>
+    forAll(incorrectSizes) {
+      (min: Option[Int], exp: Option[Int], max: Option[Int], got: Option[Int]) =>
         val bannerBuilder = BannerBuilder()
-        wmin.foreach(bannerBuilder.withWmin)
-        wexp.foreach(bannerBuilder.withW)
-        wmax.foreach(bannerBuilder.withWmax)
+        min.foreach(bannerBuilder.withWmin)
+        exp.foreach(bannerBuilder.withW)
+        max.foreach(bannerBuilder.withWmax)
         val banner = bannerBuilder.build
         val imp = ImpBuilder("1").withBanner(banner).build
         val bidRequest = BidRequestBuilder("987349863", Seq(imp)).build
 
         val bidBuilder = BidBuilder("1", imp.id, 1).withAdm("adm")
-        w.foreach(bidBuilder.withW)
+        got.foreach(bidBuilder.withW)
         val bid = bidBuilder.build
         val seatBid = SeatBidBuilder(Seq(bid)).build
         val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
@@ -372,35 +367,34 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     }
   }
 
-  it should "validate BidResponse with banner width" in {
-    val widths = Table(
-      ("wmin", "wexp", "wmax", "w"),
-      (Some(100), Some(200), Some(300), Some(100)),
-      (Some(100), Some(200), Some(300), Some(120)),
-      (Some(100), Some(200), Some(300), Some(200)),
-      (Some(100), Some(200), Some(300), Some(230)),
-      (Some(100), Some(200), Some(300), Some(300)),
-      (None, Some(200), Some(300), Some(1)),
-      (None, None, Some(300), Some(1)),
-      (Some(100), Some(200), None, Some(Integer.MAX_VALUE)),
-      (Some(100), None, None, Some(Integer.MAX_VALUE)),
-      (None, Some(200), None, Some(200)),
-      (None, None, None, Some(200)),
-      (None, None, None, None)
-    )
+  val correctSizes = Table(
+    ("min", "exp", "max", "got"),
+    (Some(100), Some(200), Some(300), Some(100)),
+    (Some(100), Some(200), Some(300), Some(120)),
+    (Some(100), Some(200), Some(300), Some(200)),
+    (Some(100), Some(200), Some(300), Some(230)),
+    (Some(100), Some(200), Some(300), Some(300)),
+    (None, Some(200), Some(300), Some(1)),
+    (None, None, Some(300), Some(1)),
+    (Some(100), Some(200), None, Some(Integer.MAX_VALUE)),
+    (Some(100), None, None, Some(Integer.MAX_VALUE)),
+    (None, Some(200), None, Some(200)),
+    (None, None, None, Some(200)),
+    (None, None, None, None))
 
-    forAll(widths) {
-      (wmin: Option[Int], wexp: Option[Int], wmax: Option[Int], w: Option[Int]) =>
+  it should "validate BidResponse with banner width" in {
+    forAll(correctSizes) {
+      (min: Option[Int], exp: Option[Int], max: Option[Int], got: Option[Int]) =>
         val bannerBuilder = BannerBuilder()
-        wmin.foreach(bannerBuilder.withWmin)
-        wexp.foreach(bannerBuilder.withW)
-        wmax.foreach(bannerBuilder.withWmax)
+        min.foreach(bannerBuilder.withWmin)
+        exp.foreach(bannerBuilder.withW)
+        max.foreach(bannerBuilder.withWmax)
         val banner = bannerBuilder.build
         val imp = ImpBuilder("1").withBanner(banner).build
         val bidRequest = BidRequestBuilder("987349863", Seq(imp)).build
 
         val bidBuilder = BidBuilder("1", imp.id, 1).withAdm("adm")
-        w.foreach(bidBuilder.withW)
+        got.foreach(bidBuilder.withW)
         val bid = bidBuilder.build
         val seatBid = SeatBidBuilder(Seq(bid)).build
         val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
@@ -410,34 +404,18 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
   }
 
   it should "validate BidResponse with banner height" in {
-    val heights = Table(
-      ("hmin", "hexp", "hmax", "h"),
-      (Some(100), Some(200), Some(300), Some(100)),
-      (Some(100), Some(200), Some(300), Some(120)),
-      (Some(100), Some(200), Some(300), Some(200)),
-      (Some(100), Some(200), Some(300), Some(230)),
-      (Some(100), Some(200), Some(300), Some(300)),
-      (None, Some(200), Some(300), Some(1)),
-      (None, None, Some(300), Some(1)),
-      (Some(100), Some(200), None, Some(Integer.MAX_VALUE)),
-      (Some(100), None, None, Some(Integer.MAX_VALUE)),
-      (None, Some(200), None, Some(200)),
-      (None, None, None, Some(200)),
-      (None, None, None, None)
-    )
-
-    forAll(heights) {
-      (hmin: Option[Int], hexp: Option[Int], hmax: Option[Int], h: Option[Int]) =>
+    forAll(correctSizes) {
+      (min: Option[Int], exp: Option[Int], max: Option[Int], got: Option[Int]) =>
         val bannerBuilder = BannerBuilder()
-        hmin.foreach(bannerBuilder.withHmin)
-        hexp.foreach(bannerBuilder.withH)
-        hmax.foreach(bannerBuilder.withHmax)
+        min.foreach(bannerBuilder.withHmin)
+        exp.foreach(bannerBuilder.withH)
+        max.foreach(bannerBuilder.withHmax)
         val banner = bannerBuilder.build
         val imp = ImpBuilder("1").withBanner(banner).build
         val bidRequest = BidRequestBuilder("987349863", Seq(imp)).build
 
         val bidBuilder = BidBuilder("1", imp.id, 1).withAdm("adm")
-        h.foreach(bidBuilder.withH)
+        got.foreach(bidBuilder.withH)
         val bid = bidBuilder.build
         val seatBid = SeatBidBuilder(Seq(bid)).build
         val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
@@ -498,6 +476,27 @@ class BidResponseValidatorTest extends FlatSpec with Matchers {
     val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
 
     validator.validate(bidRequest, bidResponse) shouldBe None
+  }
+
+  it should "validate BidResponse for empty whitelist in Deal" in {
+    val seat = "seat1"
+    val deal = DealBuilder("deal1243").withWseat(Seq(seat)).build
+    val pmp = PmpBuilder().withDeals(Seq(deal)).build
+    val imp = ImpBuilder("13512532").withPmp(pmp).build
+    val bidRequest = BidRequestBuilder("19875198", Seq(imp)).build
+
+    val bid = BidBuilder("1", imp.id, 1)
+      .withAdm("<img src=\"http://localhost/img.jpg\" />")
+      .withAdomain(Seq("domain.com"))
+      .withDealId(deal.id)
+      .build
+    val seatBid = SeatBidBuilder(Seq(bid))
+      .withSeat(seat)
+      .withGroup(1)
+      .build
+    val bidResponse = BidResponseBuilder(bidRequest.id, Seq(seatBid)).build
+
+    validator.validate(bidRequest, bidResponse) shouldBe Some(bidResponse)
   }
 
 }

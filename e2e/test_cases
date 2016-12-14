@@ -1,1 +1,7 @@
-bidders_example.sql,error_response_test_example.json
+all_bidders_valid.sql,all_bidders_valid.json
+invalid_bidders.sql,invalid_bidders.json
+no_ad_bidders.sql,no_ad_bidders.json
+no_bidders.sql,no_bidders.json
+only_one_valid_bidder.sql,only_one_valid_bidder.json
+timeouted_bidders.sql,timeouted_bidders.json
+delete_bidders.sql,different_requests.json

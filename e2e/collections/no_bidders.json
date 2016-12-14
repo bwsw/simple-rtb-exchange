@@ -1,0 +1,46 @@
+{
+	"variables": [],
+	"info": {
+		"name": "No bidders",
+		"_postman_id": "e11336c7-3545-d364-c886-86b5edb84599",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Bidders are not found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var response = JSON.parse(responseBody);",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is JSON\"] = postman.getResponseHeader(\"Content-Type\") === \"application/json\";",
+							"tests[\"Error code is bidders not found\"] = response.error.code === 8;",
+							"tests[\"Response time is less than 1500ms\"] = responseTime < 1500;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"banner\":{}}],\"site\":{\"id\":1}}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
