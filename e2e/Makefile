@@ -1,4 +1,3 @@
-SHELL := /bin/bash
 ENV:=e2e
 REPORT_PATH:=../target/test-reports/
 
@@ -24,7 +23,7 @@ prepare: cleanup
 		--network=rtb-e2e-network --network-alias=db postgres && \
 	echo "waiting for db up" && \
 	docker logs -f rtb-database-e2e  | while read LOGLINE ; do \
-		[[ "$${LOGLINE}" == *"PostgreSQL init process complete"* ]] && \
+		echo "$${LOGLINE}" | grep 'PostgreSQL init process complete' && \
 		pkill -P $$$$ -f "docker logs" ; \
 	done ; \
 	docker run --rm --volume=`cd ../db && pwd`:/workdir -w=/workdir --network=rtb-e2e-network openjdk \
