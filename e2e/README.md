@@ -22,13 +22,12 @@ Where:
 
 In e2e directory:
 
-**make execute ENV=\<env\> BIDDER_HOST=\<bidder_host\> REPORT_PATH=\<report_path\> ASSEMBLY=\<assembly\>**
+**make execute ENV=\<env\> BIDDER_HOST=\<bidder_host\> REPORT_PATH=\<report_path\>**
 
 Where:
 - \<env\> environment for DB and tests (default = e2e);
-- \<bidder_host\> base url for fake bidders (default = rtb-ci.z1.netpoint-dc.com:8083);
+- \<bidder_host\> base url for fake bidders;
 - \<report_path\> path for newman reports (default ../target/test-reports/);
-- \<assembly\> path for application executable.
 
-e.g. _make run ASSEMBLY=../target/scala-2.11/rtb-assembly.jar_
+e.g. _make run BIDDER_HOST=rtb-ci.z1.netpoint-dc.com:8083_
 

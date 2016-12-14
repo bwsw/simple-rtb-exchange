@@ -22,7 +22,8 @@ build:
 
 app_start: app_stop
 	log_path=`realpath $(LOG_PATH)`; \
-	docker run -d -p$(PORT):8081 --network=rtb-ci-network -v $$log_path:/data/logs --env env=$(ENV) --name=$(DOCKER_NAME) rtb-exchange
+	docker run -d -p$(PORT):8081 --network=rtb-ci-network --network-alias=rtb-application \
+		-v $$log_path:/data/logs --env env=$(ENV) --name=$(DOCKER_NAME) rtb-exchange
 
 app_stop:
 	(docker stop $(DOCKER_NAME) && docker rm $(DOCKER_NAME)) || true
