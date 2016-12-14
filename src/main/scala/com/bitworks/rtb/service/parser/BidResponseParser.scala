@@ -22,7 +22,6 @@ trait BidResponseParser {
       parseInternal(bytes)
     }
     catch {
-      case e: DataValidationException => throw e
       case e: Throwable =>
         throw new DataValidationException(ErrorCode.UNKNOWN_ERROR, e)
     }
