@@ -12,9 +12,9 @@ RUN \
     export REPO_TYPE="$(echo "${VERSION}" | sed -n 's/.*SNAPSHOT.*/-snapshot/p')" && \
     wget --user=${USERNAME} --password=${PASSWORD} -O rtb-exchange.jar ${URL}
 
-ENV env=
+ENV env=prod
 
 # Run rtb-exchange.
-CMD ["./docker-startup.sh"]
+CMD java -Dconfig.resource=application.${env}.conf -jar rtb-exchange.jar
 
 EXPOSE 8081

@@ -8,9 +8,9 @@ ARG APP_PATH
 COPY $APP_PATH rtb-exchange.jar
 COPY docker-startup.sh docker-startup.sh
 
-ENV env=
+ENV env "prod"
 
 # Run rtb-exchange.
-CMD ["./docker-startup.sh"]
+CMD java -Dconfig.resource=application.${env}.conf -jar rtb-exchange.jar
 
 EXPOSE 8081
