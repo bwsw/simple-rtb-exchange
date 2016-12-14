@@ -30,7 +30,7 @@ prepare: cleanup
 	docker run --rm --volume=`cd ../db && pwd`:/workdir -w=/workdir --network=rtb-e2e-network openjdk \
 		liquibase/liquibase --logLevel=info --defaultsFile=$(ENV).liquibase.properties update ;
 	docker run --rm --volume=`cd .. && pwd`:/workdir -w=/workdir/e2e --network=rtb-e2e-network postgres \
-		/bin/bash ./query.sh $(ENV) $(BIDDER_HOST) sql/cleanup.sql
+		bash ./query.sh $(ENV) $(BIDDER_HOST) sql/cleanup.sql
 
 execute : prepare app_start run
 
@@ -40,7 +40,7 @@ run:
 		col=`echo $$row | cut -d, -f2` && \
 		docker run --rm --volume=`cd .. && pwd`:/workdir -w=/workdir/e2e \
 		--network=rtb-e2e-network postgres \
-		/bin/bash ./query.sh $(ENV) $(BIDDER_HOST) $$sqlfile && \
+		bash ./query.sh $(ENV) $(BIDDER_HOST) $$sqlfile && \
 		sleep 3 && \
 		if newman run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli --reporter-junit-export $(REPORT_PATH)$$col.xml ; then \
 			echo "passed"; \
