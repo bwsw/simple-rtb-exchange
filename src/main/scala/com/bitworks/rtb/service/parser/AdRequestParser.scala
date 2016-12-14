@@ -21,7 +21,6 @@ trait AdRequestParser {
       parseInternal(bytes)
     }
     catch {
-      case e: DataValidationException => throw e
       case e: Throwable =>
         throw new DataValidationException(ErrorCode.INCORRECT_REQUEST, e)
     }

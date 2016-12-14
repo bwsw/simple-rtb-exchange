@@ -6,7 +6,7 @@ app_start:
 	workdir=`cd ../target/workdir && pwd` && \
 	cp $(ASSEMBLY) $$workdir && \
 	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v $$workdir:/workdir -w=/workdir \
-	    --network=rtb-e2e-network  ci.bw-sw.com:5000/rtb-dev-team/oracle-java:8 \
+	    --network=rtb-e2e-network --network-alias=rtb-application ci.bw-sw.com:5000/rtb-dev-team/oracle-java:8 \
 	    /usr/bin/java -Dconfig.resource=application.$(ENV).conf -jar `basename $(ASSEMBLY)` && \
 	./waitUp.sh localhost:8082
 
@@ -31,7 +31,7 @@ prepare: cleanup
 	docker run --rm --volume=`cd .. && pwd`:/workdir -w=/workdir/e2e --network=rtb-e2e-network postgres \
 		bash ./query.sh $(ENV) $(BIDDER_HOST) sql/cleanup.sql
 
-execute : prepare app_start run
+execute: prepare app_start run
 
 run:
 	for row in `cat test_cases`; do \
@@ -41,7 +41,9 @@ run:
 		--network=rtb-e2e-network postgres \
 		bash ./query.sh $(ENV) $(BIDDER_HOST) $$sqlfile && \
 		sleep 3 && \
-		if newman run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli --reporter-junit-export $(REPORT_PATH)$$col.xml ; then \
+		if docker run --volume="`pwd`:/workdir" -w="/workdir" --network=rtb-ci-network -t postman/newman_alpine33 \
+		     run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli \
+		    --reporter-junit-export $(REPORT_PATH)$$col.xml ; then \
 			echo "passed"; \
 		else \
 			$(MAKE) cleanup; \

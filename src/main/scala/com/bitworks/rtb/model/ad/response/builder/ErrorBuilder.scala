@@ -2,20 +2,22 @@ package com.bitworks.rtb.model.ad.response.builder
 
 import com.bitworks.rtb.model.ad.response.Error
 import com.bitworks.rtb.model.ad.response.ErrorCode._
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.Config
 
 /**
   * Builder for [[com.bitworks.rtb.model.ad.response.Error Error]].
   *
+  * @param code          error code
+  * @param errorMessages configuration with error messages
   * @author Pavel Tomskikh
   */
-class ErrorBuilder private(code: Value, conf: Config) {
+class ErrorBuilder private(code: Value, errorMessages: Config) {
 
   def build = Error(code.id, getMessage(code.toString))
 
   private def getMessage(code: String) = {
-    if (conf.hasPath(code)) {
-      conf.getString(code)
+    if (errorMessages.hasPath(code)) {
+      errorMessages.getString(code)
     } else {
       ""
     }
@@ -23,7 +25,6 @@ class ErrorBuilder private(code: Value, conf: Config) {
 }
 
 object ErrorBuilder {
-  private val conf = ConfigFactory.parseResources("error_messages.properties")
-
-  def apply(code: Value): ErrorBuilder = new ErrorBuilder(code, conf)
+  def apply(code: Value, errorMessages: Config): ErrorBuilder =
+    new ErrorBuilder(code, errorMessages)
 }
