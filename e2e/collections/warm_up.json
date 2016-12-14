@@ -1,0 +1,31 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Warm up",
+		"_postman_id": "bdced01a-1921-4db8-646c-5423359f4b11",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Valid ad request",
+			"request": {
+				"url": "{{url}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":\"1235432152\",\"imp\":[{\"id\":\"33\",\"banner\":{}}],\"site\":{\"id\":1}}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
