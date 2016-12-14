@@ -6,3 +6,8 @@ no_bidders.sql,no_bidders.json
 only_one_valid_bidder.sql,only_one_valid_bidder.json
 timeouted_bidders.sql,timeouted_bidders.json
 delete_bidders.sql,different_requests.json
+all_bidders_ad_in_winnotice.sql,all_bidders_ad_in_winnotice.json
+win_bidder_broken_winnotice.sql,win_bidder_broken_winnotice.json
+win_bidder_timeout_winnotice.sql,win_bidder_timeout_winnotice.json
+win_bidder_ad_in_winnotice.sql,win_bidder_ad_in_winnotice.json
+win_bidder_ad_in_adm_w_winnotice.sql,win_bidder_ad_in_adm_w_winnotice.json

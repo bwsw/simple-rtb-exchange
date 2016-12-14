@@ -2,8 +2,11 @@ package com.bitworks.rtb.model.ad.response.builder
 
 import com.bitworks.rtb.model.ad.response.Error
 import com.bitworks.rtb.model.ad.response.ErrorCode._
+import com.typesafe.config.ConfigFactory
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.JavaConversions.mapAsJavaMap
 
 /**
   * Test for [[com.bitworks.rtb.model.ad.response.builder.ErrorBuilder ErrorBuilder]].
@@ -25,7 +28,8 @@ class ErrorBuilderTest extends FlatSpec with Matchers with TableDrivenPropertyCh
 
   "ErrorBuilder" should "create Error correctly" in {
     forAll(errors) { (code: Value, message: String) =>
-      val error = ErrorBuilder(code).build
+      val errorMessages = ConfigFactory.parseMap(Map(code.toString -> message))
+      val error = ErrorBuilder(code, errorMessages).build
       val expectedError = Error(code.id, message)
 
       error shouldBe expectedError
