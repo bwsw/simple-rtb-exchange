@@ -7,12 +7,9 @@ ARG APP_PATH
 
 COPY $APP_PATH rtb-exchange.jar
 
-ENV env=
+ENV env "prod"
 
 # Run rtb-exchange.
-CMD if [[ -z ${env} ]]; \
-        then java -jar rtb-exchange.jar; \
-        else java -Dconfig.resource=application.${env}.conf -jar rtb-exchange.jar; \
-    fi
+CMD java -Dconfig.resource=application.${env}.conf -jar rtb-exchange.jar
 
 EXPOSE 8081
