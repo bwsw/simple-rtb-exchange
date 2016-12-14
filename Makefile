@@ -1,11 +1,8 @@
 TEMP_FILE=.temporary
 PORT=8081
 LOG_PATH=logs
-ifdef ENV
-	DOCKER_NAME=rtb-exchange-$(ENV)
-else
-	DOCKER_NAME=rtb-exchange
-endif
+ENV=prod
+DOCKER_NAME=rtb-exchange-$(ENV)
 
 build:
 	sbt assembly | tee $(TEMP_FILE)
@@ -30,3 +27,16 @@ app_stop:
 
 test:
 	sbt test
+
+db_up: db_down
+	docker run -d -p 5432:5432 --volume=`cd db/init && pwd`:/docker-entrypoint-initdb.d/ \
+	--name rtb-database postgres && \
+	echo "waiting for db up" && \
+	docker logs -f rtb-database  | while read LOGLINE ; do \
+		echo "$${LOGLINE}" | grep 'PostgreSQL init process complete' && \
+		pkill -P $$$$ -f "docker logs" ; \
+	done ; \
+	$(MAKE) -C db run env=test command=update
+
+db_down:
+	docker rm -f -v rtb-database || true
