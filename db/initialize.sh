@@ -14,6 +14,6 @@ password=`cat $path/$1.liquibase.properties | grep password | cut -d":" -f2- | t
 db=`cat $path/$1.liquibase.properties | grep url | cut -d"/" -f4- | tr -d ' '`
 
 sed -e "s/{{user}}/${user}/g;s/{{password}}/${password}/g;s/{{db}}/${db}/g" \
-    $path/init/initialize.tmplsql > $path/init/initialize.sql
+    $path/init/initialize.sql.template > $path/init/initialize.sql
 
 echo "initialize.sql created"
