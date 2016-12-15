@@ -1,26 +1,28 @@
 RTB exchange
 ==============
 
-This project provides RTB exchange implemented according to [OpenRTB API Specification 2.3](https://github.com/openrtb/OpenRTB/blob/master/OpenRTB-API-Specification-Version-2-3-FINAL.pdf).
-
+This project provides RTB exchange implemented for training purposes.
 
 Introduction
 ------------
 
-A basic RTB exchange functionality was implemented. RTB exchange has its own API that is based on
+RTB exchange is based on
 [OpenRTB API Specification 2.3](https://github.com/openrtb/OpenRTB/blob/master/OpenRTB-API-Specification-Version-2-3-FINAL.pdf)
-for bidding.
+for bidding but has its own API. 
+
+A basic RTB exchange functionality was implemented. 
 
 Supported format: JSON.
 
-List of features that are not supported in current version:
+List of features that are not supported in the current version:
 
 * Multiple currencies support. RTB Exchange consider any currency as USD.
-* Private Marketplace. Even though deal ids are being sent in the request, they will not be 
-    considered for any bidding strategy.
+* Private Marketplace. Even though deal ids are being sent in the request, they will not be considered for any bidding strategy.
 * Segments.
 * Data providers.
 * Macro encoding.
+* Avro and Protobuf formats.
+* Statistics (e.g. requests, impressions).
 
 
 Requirements
@@ -29,29 +31,26 @@ Requirements
 * [Sbt](http://www.scala-sbt.org/)
 * [Docker](https://www.docker.com/) 
 
-
 Usage
 ------
 
 ### Build jar file with dependencies
 
-Building requires setting up database for tests or adding `test in assembly := {}` in
-[build.sbt](build.sbt) for disabling tests.
+Building requires setting up database for tests or setting `test in assembly := {}` for disabling tests.
 
-Command `sbt assembly` builds *target/scala-2.11/rtb-exchange-\<VERSION\>-jar-with-dependencies.jar*.
-
+The command `sbt assembly` builds *target/scala-2.11/rtb-exchange-\<VERSION\>-jar-with-dependencies.jar*.
 
 ### Build docker image
 
+This project provides two options for docker images:
+* using Nexus
+
+    docker build -t <image name> -f Nexus.dockerfile --build-arg URL=<nexus URL> --build-arg USERNAME=<nexus user> --build-arg PASSWORD=<nexus user password> .
+
+* using ready jar
+
+    docker build -t <image name> --build-arg APP_PATH=<path to jar with dependencies> .
     
-Building requires setting up database for tests or adding `test in assembly := {}` in
-[build.sbt](build.sbt) for disabling tests.
-
-    make build [IMAGE_NAME=<image_name>]
-    
-* *IMAGE_NAME=\<image_name\>* &mdash; name of docker image. Default *rtb-exchange*.
-
-
 ### Set up database for tests
 
 To start database for tests use command
@@ -62,9 +61,7 @@ To shutdown this database use command
 
     make db_down
 
-
 ### [Set up working database](db/README.md)
-
 
 ### Run application via jar file
 
@@ -78,7 +75,7 @@ is [*application.prod.conf*](src/main/resources/application.prod.conf) is alread
 
 ### Run application in docker
 
-    docker run -d -p<port>:8081 [-v <log_path>:/data/logs] [--env env=<env>] <image_name>
+    docker run -d -p<port>:8081 [-v <log_path>:/opt/rtb-exchange/logs] [--env env=<env>] <image_name>
     
 * *\<env\>* &mdash; application environment (default *prod*). Current directory should contain 
 *application.\<env\>.conf* file if this parameter has been set.
@@ -86,5 +83,4 @@ is [*application.prod.conf*](src/main/resources/application.prod.conf) is alread
 * *\<log_path\>* &mdash; directory for log files. Default value is *./logs*.
 * *\<image_name\>* &mdash; name of docker image.
  
-
 ### [Run E2E tests](e2e/README.md)
