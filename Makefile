@@ -17,17 +17,6 @@ build:
 	fi
 	rm -f $(TEMP_FILE)
 
-app_start: app_stop
-	log_path=`realpath $(LOG_PATH)`; \
-	docker run -d -p$(PORT):8081 --network=rtb-$(ENV)-network --network-alias=rtb-application \
-		-v $$log_path:/data/logs --env env=$(ENV) --name=$(DOCKER_NAME) rtb-exchange
-
-app_stop:
-	(docker stop $(DOCKER_NAME) && docker rm $(DOCKER_NAME)) || true
-
-test:
-	sbt test
-
 db_up: db_down
 	docker run -d -p 5432:5432 --volume=`cd db/init && pwd`:/docker-entrypoint-initdb.d/ \
 	--name rtb-database postgres && \
