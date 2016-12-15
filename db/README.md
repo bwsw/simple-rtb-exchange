@@ -13,11 +13,12 @@ Usage
 
 To run Liquibase execute the following command:
     
-    make run env=<env> command=<liquibase command>
+    make run env=<env> command=<command>
     
-where \<env\> is a prefix of liquibase properties file,
+* *env=\<env\>* &mdash; a prefix of liquibase properties file.
+* *command=\<command\>* &mdash; a liquibase command to be executed.
 
-e.g.
+For example,
     
     make run env=unit command=update
     
