@@ -1,3 +1,4 @@
+all_bidders_valid.sql,warm_up.json
 all_bidders_valid.sql,all_bidders_valid.json
 invalid_bidders.sql,invalid_bidders.json
 no_ad_bidders.sql,no_ad_bidders.json
