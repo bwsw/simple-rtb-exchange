@@ -12,9 +12,9 @@ for bidding but has its own API.
 
 A basic RTB exchange functionality was implemented. 
 
-Supported format: JSON.
+Supported formats: JSON.
 
-List of features that are not supported in the current version:
+A list of features that are not supported in the current version:
 
 * Multiple currencies support. RTB Exchange consider any currency as USD.
 * Private Marketplace. Even though deal ids are being sent in the request, they will not be considered for any bidding strategy.
@@ -44,11 +44,11 @@ The command `sbt assembly` builds *target/scala-2.11/rtb-exchange-\<VERSION\>-ja
 
 This project provides two options for docker images:
 * using Nexus
-
+    
     docker build -t <image name> -f Nexus.dockerfile --build-arg URL=<nexus URL> --build-arg USERNAME=<nexus user> --build-arg PASSWORD=<nexus user password> .
-
-* using ready jar
-
+    
+* using a ready jar
+    
     docker build -t <image name> --build-arg APP_PATH=<path to jar with dependencies> .
     
 ### Set up database for tests

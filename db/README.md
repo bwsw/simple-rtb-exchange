@@ -1,8 +1,21 @@
-To run liquibase execute the following command:
+DB migration
+============
 
-**make run env=\<environment\> command=\<liquibase command\>**
+[Liquibase](http://www.liquibase.org/) is used for database migration.
 
-where \<environment\> is a prefix of liquibase properties file,
+Configuration
+-------------
+
+\<env\>*.liquibase.properties is used for each environment.
+
+Usage
+-----
+
+To run Liquibase execute the following command:
+    
+    make run env=<env> command=<liquibase command>
+    
+where \<env\> is a prefix of liquibase properties file,
 
 e.g.
 
