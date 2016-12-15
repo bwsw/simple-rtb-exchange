@@ -28,7 +28,7 @@ A list of features that are not supported in the current version:
 Requirements
 ------------
 
-* [Sbt](http://www.scala-sbt.org/)
+* [sbt](http://www.scala-sbt.org/)
 * [Docker](https://www.docker.com/) 
 
 Usage

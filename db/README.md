@@ -6,7 +6,7 @@ DB migration
 Configuration
 -------------
 
-\<env\>*.liquibase.properties is used for each environment.
+\<env\>.liquibase.properties is used for each environment.
 
 Usage
 -----
@@ -20,6 +20,6 @@ To run Liquibase execute the following command:
 
 For example,
     
-    make run env=unit command=update
+    make run env=test command=update
     
 Required libraries will be downloaded automatically.

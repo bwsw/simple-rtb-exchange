@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Prepares initialize.sql with given environment
+# Prepares initialize.sql for environment specified.
 
 if [ "$#" -ne 1 ];
 then
