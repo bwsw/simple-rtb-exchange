@@ -41,9 +41,9 @@ run:
 		--network=rtb-e2e-network postgres \
 		bash ./query.sh $(ENV) $(BIDDER_HOST) $$sqlfile && \
 		sleep 3 && \
-		if docker run --volume="`pwd`:/workdir" -w="/workdir" --network=rtb-e2e-network -t postman/newman_alpine33 \
+		if docker run --volume="`pwd`:/workdir" --volume="`realpath $(REPORT_PATH)`":/workdir/reports -w="/workdir" --network=rtb-e2e-network -t postman/newman_alpine33 \
 		     run collections/$$col -e env.newman.$(ENV).json --reporters junit,cli \
-		    --reporter-junit-export $(REPORT_PATH)$$col.xml ; then \
+		    --reporter-junit-export reports/$$col.xml ; then \
 			echo "passed"; \
 		else \
 			$(MAKE) cleanup; \
