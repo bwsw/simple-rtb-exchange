@@ -18,6 +18,7 @@ cleanup:
 prepare: cleanup
 	(docker network create rtb-e2e-network || true) && \
 	$(MAKE) -C ../db prepare && \
+	./../db/initialize.sh e2e && \
 	docker run -d --volume=`cd ../db/init && pwd`:/docker-entrypoint-initdb.d/ \
 		--name rtb-database-e2e  \
 		--network=rtb-e2e-network --network-alias=db postgres && \
