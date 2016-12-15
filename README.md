@@ -3,6 +3,26 @@ RTB exchange
 
 This project provides RTB exchange implemented according to [OpenRTB API Specification 2.3](https://github.com/openrtb/OpenRTB/blob/master/OpenRTB-API-Specification-Version-2-3-FINAL.pdf).
 
+
+Introduction
+------------
+
+A basic RTB exchange functionality was implemented. RTB exchange has its own API that is based on
+[OpenRTB API Specification 2.3](https://github.com/openrtb/OpenRTB/blob/master/OpenRTB-API-Specification-Version-2-3-FINAL.pdf)
+for bidding.
+
+Supported format: JSON.
+
+List of features that are not supported in current version:
+
+* Multiple currencies support. RTB Exchange consider any currency as USD.
+* Private Marketplace. Even though deal ids are being sent in the request, they will not be 
+    considered for any bidding strategy.
+* Segments.
+* Data providers.
+* Macro encoding.
+
+
 Requirements
 ------------
 
