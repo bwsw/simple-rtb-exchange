@@ -1,8 +1,7 @@
-TEMP_FILE=.temporary
-PORT=8081
-LOG_PATH=logs
-ENV=prod
-DOCKER_NAME=rtb-exchange-$(ENV)
+SHELL:=bash
+TEMP_FILE:=.temporary
+DOCKER_NAME:=rtb-exchange-$(ENV)
+IMAGE_NAME:=rtb-exchange
 
 build:
 	sbt assembly | tee $(TEMP_FILE)
@@ -13,7 +12,7 @@ build:
 			| sed -r -e 's/((^\[info\]\sAssembly\sup\sto\sdate:\s)|(^\[info\]\sPackaging\s))(.*?\.jar).*/\4/'`; \
 		version=`sbt -no-colors version | tail -1 | sed -r -e 's/^\[info\]\s//'`; \
 		app_path=`realpath --relative-to=. $$app_path`; \
-		docker build -t rtb-exchange:$$version -t rtb-exchange:latest . --build-arg APP_PATH=$$app_path; \
+		docker build -t $(IMAGE_NAME):$$version -t $(IMAGE_NAME):latest . --build-arg APP_PATH=$$app_path; \
 	fi
 	rm -f $(TEMP_FILE)
 
