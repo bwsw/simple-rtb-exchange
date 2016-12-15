@@ -19,9 +19,20 @@ package service {
     package validator
     package factory
 }
+package Akka {
+    package AkkaHttp
+    package AkkaActor
+    package AkkaStream
+    package AkkaUtil
+    package AkkaPattern
+    package AkkaEvent
+}
+
+
 package application
 
-application -> service
-service -> model
+application .> service
+service .> Akka
+service .> model
 
 @enduml

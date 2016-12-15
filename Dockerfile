@@ -1,7 +1,7 @@
 FROM openjdk:8-alpine
 
 # Define working directory.
-WORKDIR /data
+WORKDIR /opt/rtb-exchange
 
 ARG APP_PATH
 
@@ -11,5 +11,7 @@ ENV env "prod"
 
 # Run rtb-exchange.
 CMD java -Dconfig.resource=application.${env}.conf -jar rtb-exchange.jar
+
+VOLUME ["/opt/rtb-exchange/logs"]
 
 EXPOSE 8081
