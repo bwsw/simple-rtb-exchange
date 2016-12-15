@@ -1,6 +1,15 @@
 ENV:=e2e
 REPORT_PATH:=../target/test-reports/
 
+app_start:
+	mkdir -p ../target/workdir && \
+	workdir=`cd ../target/workdir && pwd` && \
+	cp $(ASSEMBLY) $$workdir && \
+	docker run --name rtb-exchange-e2e -d -p 8082:8081 -v $$workdir:/workdir -w=/workdir \
+	    --network=rtb-e2e-network --network-alias=rtb-application ci.bw-sw.com:5000/rtb-dev-team/oracle-java:8 \
+	    /usr/bin/java -Dconfig.resource=application.$(ENV).conf -jar `basename $(ASSEMBLY)` && \
+	./waitUp.sh localhost:8082
+
 cleanup:
 	docker rm -f -v rtb-exchange-e2e || true && \
 	docker rm -f -v rtb-database-e2e || true && \
@@ -22,12 +31,9 @@ prepare: cleanup
 	docker run --rm --volume=`cd .. && pwd`:/workdir -w=/workdir/e2e --network=rtb-e2e-network postgres \
 		bash ./query.sh $(ENV) $(BIDDER_HOST) sql/cleanup.sql
 
-execute: prepare run
+execute: prepare app_start run
 
 run:
-	mkdir -p ../target/workdir/logs
-	$(MAKE) -C .. app_start ENV=e2e PORT=8082
-	./waitUp.sh localhost:8082
 	for row in `cat test_cases`; do \
 		sqlfile=sql/`echo $$row | cut -d, -f1` && \
 		col=`echo $$row | cut -d, -f2` && \
@@ -44,6 +50,5 @@ run:
 			false; \
 			exit; \
 		fi; \
-	done
-	$(MAKE) -C .. app_stop ENV=e2e
+	done; \
 	$(MAKE) cleanup
