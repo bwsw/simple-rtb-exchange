@@ -1,7 +1,7 @@
 FROM openjdk:8-alpine
 
 # Define working directory.
-WORKDIR /data
+WORKDIR /opt
 
 ARG APP_PATH
 
