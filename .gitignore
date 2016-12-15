@@ -12,6 +12,7 @@ project/boot/
 project/plugins/project/
 logs
 db/liquibase/
+db/init/initialize.sql
 
 *.iml
 *.ipr

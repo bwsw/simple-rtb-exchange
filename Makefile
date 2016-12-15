@@ -17,7 +17,8 @@ build:
 	rm -f $(TEMP_FILE)
 
 db_up: db_down
-	docker run -d -p 5432:5432 --volume=`cd db/init && pwd`:/docker-entrypoint-initdb.d/ \
+	./db/initialize.sh test && \
+	docker run -d -p 5432:5432 --volume=`realpath db/init`:/docker-entrypoint-initdb.d/ \
 	--name rtb-database postgres && \
 	echo "waiting for db up" && \
 	docker logs -f rtb-database  | while read LOGLINE ; do \

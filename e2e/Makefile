@@ -20,6 +20,7 @@ cleanup:
 prepare: cleanup
 	(docker network create rtb-$(ENV)-network || true) && \
 	$(MAKE) -C ../db prepare && \
+	./../db/initialize.sh e2e && \
 	docker run -d --volume=`realpath ../db/init`:/docker-entrypoint-initdb.d/ \
 		--name rtb-database-$(ENV)  \
 		--network=rtb-$(ENV)-network --network-alias=db postgres && \
