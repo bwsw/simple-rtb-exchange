@@ -43,11 +43,12 @@ The command `sbt assembly` builds *target/scala-2.11/rtb-exchange-\<VERSION\>-ja
 ### Build docker image
 
 This project provides two options for docker images:
-* using Nexus
+
+using Nexus
     
     docker build -t <image name> -f Nexus.dockerfile --build-arg URL=<nexus URL> --build-arg USERNAME=<nexus user> --build-arg PASSWORD=<nexus user password> .
     
-* using a ready jar
+using a ready jar
     
     docker build -t <image name> --build-arg APP_PATH=<path to jar with dependencies> .
     

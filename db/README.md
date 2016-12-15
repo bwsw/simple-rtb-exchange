@@ -18,7 +18,7 @@ To run Liquibase execute the following command:
 where \<env\> is a prefix of liquibase properties file,
 
 e.g.
-
-_make run env=unit command=update_
-
+    
+    make run env=unit command=update
+    
 Required libraries will be downloaded automatically.
