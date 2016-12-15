@@ -1,3 +1,4 @@
+SHELL:=bash
 
 db_up: db_down
 	./db/initialize.sh test && \
