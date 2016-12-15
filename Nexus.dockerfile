@@ -1,4 +1,4 @@
-FROM openjdk:8-alpine
+FROM openjdk:8
 
 # Define working directory.
 WORKDIR /opt/rtb-exchange
@@ -8,8 +8,7 @@ ARG USERNAME
 ARG PASSWORD
 
 # Download rtb-exchange from nexus.
-RUN \
-    wget --user=${USERNAME} --password=${PASSWORD} -O rtb-exchange.jar ${URL}
+RUN wget --user="${USERNAME}" --password="${PASSWORD}" -O rtb-exchange.jar "${URL}"
 
 ENV env=prod
 
