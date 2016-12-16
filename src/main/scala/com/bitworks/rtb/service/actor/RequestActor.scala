@@ -4,6 +4,7 @@ import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
 import akka.stream.ActorMaterializer
 import com.bitworks.rtb.application.HttpRequestWrapper
 import com.bitworks.rtb.model.ad.response.{AdResponse, ErrorCode}
+import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.message._
 import com.bitworks.rtb.service.ContentTypeConversions._
 import com.bitworks.rtb.service.{Configuration, DataValidationException}
@@ -48,9 +49,15 @@ class RequestActor(request: HttpRequestWrapper)
           }
       } onFailure {
         case e: DataValidationException =>
-          completeRequest(adResponseFactory.create(e.getError))
+          completeRequest(
+            adResponseFactory.create(
+              e.getError,
+              request.inner.entity.contentType))
         case e: Throwable =>
-          completeRequest(adResponseFactory.create(ErrorCode.INCORRECT_REQUEST))
+          completeRequest(
+            adResponseFactory.create(
+              ErrorCode.INCORRECT_REQUEST,
+              request.inner.entity.contentType))
       }
 
     case adResponse: AdResponse =>
@@ -65,8 +72,15 @@ class RequestActor(request: HttpRequestWrapper)
     */
   def completeRequest(response: AdResponse) = {
     log.debug("completing request...")
-    val bytes = adConverter.write(response)
-    request.complete(bytes, response.ct)
+    try{
+      val bytes = adConverter.write(response)
+      request.complete(bytes, response.ct)
+    }catch {
+      case e: Throwable =>
+        val jsonResponse = response.copy(ct = Json)
+        val bytes = adConverter.write(jsonResponse)
+        request.complete(bytes, jsonResponse.ct)
+    }
     shutdownActor()
   }
 
