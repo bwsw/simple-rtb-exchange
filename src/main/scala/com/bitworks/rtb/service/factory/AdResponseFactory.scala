@@ -3,7 +3,7 @@ package com.bitworks.rtb.service.factory
 import com.bitworks.rtb.model.ad.request.{AdRequest, Imp}
 import com.bitworks.rtb.model.ad.response.builder.{AdResponseBuilder, ErrorBuilder, ImpBuilder}
 import com.bitworks.rtb.model.ad.response.{AdResponse, ErrorCode, Imp => ResponseImp}
-import com.bitworks.rtb.model.http.Json
+import com.bitworks.rtb.model.http.ContentTypeModel
 import com.bitworks.rtb.model.response.{Bid, BidResponse}
 import com.bitworks.rtb.service.{Configuration, DataValidationException, Logging}
 
@@ -34,8 +34,9 @@ trait AdResponseFactory {
     * Returns [[com.bitworks.rtb.model.ad.response.AdResponse AdResponse]].
     *
     * @param errorCode [[com.bitworks.rtb.model.ad.response.ErrorCode.Value ErrorCode.Value]]
+    * @param ct        [[com.bitworks.rtb.model.http.ContentTypeModel contentType]] of request
     */
-  def create(errorCode: ErrorCode.Value): AdResponse
+  def create(errorCode: ErrorCode.Value, ct: ContentTypeModel): AdResponse
 }
 
 /**
@@ -70,9 +71,9 @@ class AdResponseFactoryImpl(configuration: Configuration) extends AdResponseFact
       .build
   }
 
-  override def create(errorCode: ErrorCode.Value) = {
+  override def create(errorCode: ErrorCode.Value, ct: ContentTypeModel) = {
     val error = ErrorBuilder(errorCode, configuration.errorMessages).build
-    AdResponseBuilder(Json)
+    AdResponseBuilder(ct)
       .withError(error)
       .build
   }

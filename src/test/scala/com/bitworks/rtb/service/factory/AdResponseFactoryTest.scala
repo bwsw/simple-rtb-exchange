@@ -3,7 +3,7 @@ package com.bitworks.rtb.service.factory
 import com.bitworks.rtb.model.ad.request.builder.AdRequestBuilder
 import com.bitworks.rtb.model.ad.response.builder.AdResponseBuilder
 import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
-import com.bitworks.rtb.model.http.Json
+import com.bitworks.rtb.model.http.{Avro, Json, Protobuf}
 import com.bitworks.rtb.model.request.builder.{BannerBuilder, NativeBuilder, VideoBuilder}
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
 import com.bitworks.rtb.service.{Configuration, DataValidationException}
@@ -236,13 +236,15 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
   it should "build ad response with error and without ad request correctly" in {
     val factory = new AdResponseFactoryImpl(configuration)
     val error = Error(ErrorCode.UNKNOWN_ERROR.id, unknownErrorMsg)
-    val expectedResponse = AdResponseBuilder(Json)
-      .withError(error)
-      .build
+    Seq(Protobuf, Json, Avro).foreach { ct =>
+      val expectedResponse = AdResponseBuilder(ct)
+        .withError(error)
+        .build
 
-    val response = factory.create(ErrorCode.apply(error.code))
+      val response = factory.create(ErrorCode.apply(error.code), ct)
 
-    response shouldBe expectedResponse
+      response shouldBe expectedResponse
+    }
   }
 
   it should "build ad response with valid imps ignoring invalid" in {
