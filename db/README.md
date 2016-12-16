@@ -1,11 +1,25 @@
-To run liquibase execute the following command:
+DB migration
+============
 
-**make run env=\<environment\> command=\<liquibase command\>**
+[Liquibase](http://www.liquibase.org/) is used for database migration.
 
-where \<environment\> is a prefix of liquibase properties file,
+Configuration
+-------------
 
-e.g.
+\<env\>.liquibase.properties is used for each environment.
 
-_make run env=unit command=update_
+Usage
+-----
 
+To run Liquibase execute the following command:
+    
+    make run env=<env> command=<command>
+    
+* *env=\<env\>* &mdash; a prefix of liquibase properties file.
+* *command=\<command\>* &mdash; a liquibase command to be executed.
+
+For example,
+    
+    make run env=test command=update
+    
 Required libraries will be downloaded automatically.
