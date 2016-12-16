@@ -157,7 +157,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
     response shouldBe expectedResponse
   }
 
-  it should "throw exception if cant determine type of response imp by request" in {
+  it should "throw exception if cant determine type of all impressions by request" in {
     val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val anotherImpId = "anotherImpId"
@@ -189,7 +189,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
     }
   }
 
-  it should "throw exception if bid response contains empty adm" in {
+  it should "throw exception if all impressions contains empty adm" in {
     val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adRequest = AdRequestBuilder(
@@ -246,4 +246,56 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
     }
   }
 
+  it should "build ad response with valid imps ignoring invalid" in {
+    val factory = new AdResponseFactoryImpl(configuration)
+    val impId = "impId"
+    val adMarkup = "admarkup"
+    val adRequest = AdRequestBuilder(
+      "reqId",
+      Seq(
+        com.bitworks.rtb.model.ad.request.builder.ImpBuilder(impId)
+          .withBanner(BannerBuilder().build)
+          .build),
+      Json)
+      .build
+    val bidResponse = BidResponseBuilder(
+      "bidResponseId",
+      Seq(
+        SeatBidBuilder(
+          Seq(
+            BidBuilder(
+              "bidId",
+              impId,
+              BigDecimal("0"))
+              .withAdm(adMarkup)
+              .build,
+            BidBuilder(
+              "bidId",
+              impId,
+              BigDecimal("0"))
+              .withAdm("")
+              .build,
+            BidBuilder(
+              "bidId",
+              impId,
+              BigDecimal("0"))
+              .build))
+          .build))
+      .build
+    val expectedResponse = AdResponseBuilder(adRequest.ct)
+      .withId(adRequest.id)
+      .withImp(
+        Seq(
+          com.bitworks.rtb.model.ad.response.builder.ImpBuilder(
+            impId,
+            adMarkup,
+            1)
+            .build
+        ))
+      .build
+
+    val response = factory.create(adRequest, Seq(bidResponse))
+
+    response shouldBe expectedResponse
+  }
 }
