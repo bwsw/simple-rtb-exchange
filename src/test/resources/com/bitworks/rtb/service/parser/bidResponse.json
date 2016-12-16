@@ -1,0 +1,48 @@
+{
+  "id": "1234567890",
+  "bidid": "abc1123",
+  "cur": "RUB",
+  "customdata": "customdata",
+  "nbr": 1,
+  "seatbid": [
+    {
+      "seat": "512",
+      "group": 1,
+      "bid": [
+        {
+          "id": "1",
+          "impid": "102",
+          "price": 9.43,
+          "nurl": "http://adserver.com/winnotice?impid=102",
+          "iurl": "http://adserver.com/pathtosampleimage",
+          "adomain": ["advertiserdomain.com"],
+          "cid": "campaign111",
+          "crid": "creative112",
+          "attr": [1, 2, 3, 2]
+        },
+        {
+          "id": "2",
+          "impid": "73",
+          "price": 11.05
+        }
+      ]
+    },
+    {
+      "seat": "s11",
+      "bid": [
+        {
+          "id": "3",
+          "impid": "7",
+          "price": 13,
+          "adid": "adid",
+          "adm": "admarkup",
+          "bundle": "bundle",
+          "cat": ["IAB1", "IAB2"],
+          "dealid": "dealid",
+          "h": 100,
+          "w": 200
+        }
+      ]
+    }
+  ]
+}

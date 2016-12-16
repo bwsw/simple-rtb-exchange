@@ -1,0 +1,9 @@
+id,name,type,publisher_id,status,privacy_policy,test,domain,app_bundle,app_store_url,app_ver
+1,"site1",1,(SELECT id FROM publisher WHERE name = 'pub1'),1,1,true,"site1.com",NULL,NULL,NULL
+2,"site2",1,(SELECT id FROM publisher WHERE name = 'pub2'),1,0,true,"site1.com",NULL,NULL,NULL
+3,"site3",1,(SELECT id FROM publisher WHERE name = 'pub3'),1,1,true,"site1.com",NULL,NULL,NULL
+4,"inactive_site",1,(SELECT id FROM publisher WHERE name = 'pub1'),0,1,true,"inactive.com",NULL,NULL,NULL
+11,"app1",2,(SELECT id FROM publisher WHERE name = 'pub1'),1,0,true,NULL,"com.app1","store.com","1.1"
+12,"app2",2,(SELECT id FROM publisher WHERE name = 'pub2'),1,0,true,NULL,"com.app2","store.com","2.2"
+13,"app3",2,(SELECT id FROM publisher WHERE name = 'pub3'),1,1,true,NULL,"com.app3","store.com","3.3"
+14,"inactive_app",2,(SELECT id FROM publisher WHERE name = 'pub3'),0,0,true,NULL,"com.inactive","store.com","4.4"

@@ -1,0 +1,59 @@
+@startuml
+
+title RTB request processing
+
+participant Publisher
+participant RequestActor
+participant BidRequestFactory
+participant AdResponseFactory
+participant Parser
+participant Writer
+
+Publisher -> RequestActor: HTTP request
+activate RequestActor
+
+RequestActor -> Parser: HTTP request
+activate Parser
+
+alt HTTP request parsed to AdRequest
+    RequestActor <-- Parser: AdRequest
+    deactivate Parser
+    RequestActor -> BidRequestFactory: AdRequest
+    activate BidRequestFactory
+
+    alt BidRequest created from AdRequest
+        RequestActor <-- BidRequestFactory: BidRequest
+        deactivate BidRequestFactory
+
+        ref over RequestActor: getting AdResponse
+
+    else BidRequest not created from AdRequest
+        RequestActor <-- BidRequestFactory: fail
+        deactivate BidRequestFactory
+
+        RequestActor -> AdResponseFactory: Error
+        activate AdResponseFactory
+        RequestActor <-- AdResponseFactory: AdResponse
+        deactivate AdResponseFactory
+
+        activate Parser
+    end
+
+else HTTP request not parsed to AdRequest
+    RequestActor <-- Parser: fail
+    deactivate Parser
+
+    RequestActor -> AdResponseFactory: Error
+    activate AdResponseFactory
+    RequestActor <-- AdResponseFactory: AdResponse
+    deactivate AdResponseFactory
+end
+
+RequestActor -> Writer: AdResponse
+activate Writer
+RequestActor <-- Writer: HTTP response
+deactivate Writer
+RequestActor --> Publisher: HTTP response
+deactivate RequestActor
+
+@enduml

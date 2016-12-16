@@ -1,0 +1,19 @@
+{
+  "id": "id",
+  "error": {
+    "code": 0,
+    "message": "error message"
+  },
+  "imp": [
+    {
+      "id": "id1",
+      "adm": "adm1",
+      "type": 1
+    },
+    {
+      "id": "id2",
+      "adm": "adm2",
+      "type": 2
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "id": "id",
+  "imp": [
+    {
+      "id": "id",
+      "banner": {
+        "w": 1,
+        "h": 2,
+        "wmax": 3,
+        "hmax": 4,
+        "wmin": 5,
+        "hmin": 6,
+        "id": "id",
+        "btype": [
+          7
+        ],
+        "battr": [
+          8
+        ],
+        "pos": 9,
+        "mimes": [
+          "mime"
+        ],
+        "topframe": 10,
+        "expdir": [
+          11
+        ],
+        "api": [
+          12
+        ]
+      },
+      "video": {
+        "mimes": [
+          "mime"
+        ],
+        "minduration": 1,
+        "maxduration": 2,
+        "protocol": 3,
+        "protocols": [
+          4
+        ],
+        "w": 5,
+        "h": 6,
+        "startdelay": 7,
+        "linearity": 8,
+        "sequence": 9,
+        "battr": [
+          10
+        ],
+        "maxextended": 11,
+        "minbitrate": 12,
+        "maxbitrate": 13,
+        "boxingallowed": 14,
+        "playbackmethod": [
+          15
+        ],
+        "delivery": [
+          16
+        ],
+        "pos": 17,
+        "companionad": [
+        ],
+        "api": [
+          18
+        ],
+        "companiontype": [
+          19
+        ]
+      },
+      "native": {
+        "request": "request",
+        "ver": "ver",
+        "api": [
+          1
+        ],
+        "battr": [
+          2
+        ]
+      }
+    }
+  ],
+  "site": {
+    "id": 2,
+    "sectioncat": [
+      "sectioncat"
+    ],
+    "pagecat": [
+      "pagecat"
+    ],
+    "page": "page",
+    "ref": "ref",
+    "search": "search",
+    "mobile": 1,
+    "content": {
+      "id": "123",
+      "episode": 5,
+      "title": "title",
+      "series": "auto",
+      "season": "s3",
+      "producer": {
+        "id": "123",
+        "name": "prod",
+        "cat": [
+          "IAB1-2"
+        ],
+        "domain": "prod.com"
+      },
+      "url": "content.com",
+      "cat": [
+        "IAB1-3",
+        "IAB5-7"
+      ],
+      "videoquality": 2,
+      "context": 1,
+      "contentrating": "MPAA",
+      "userrating": "middle",
+      "qagmediarating": 2,
+      "keywords": "kw1,kw2",
+      "livestream": 1,
+      "sourcerelationship": 1,
+      "len": 30,
+      "language": "ru",
+      "embeddable": 0
+    }
+  },
+  "app": {
+    "id": 3,
+    "sectioncat": [
+      "section"
+    ],
+    "pagecat": [
+      "page"
+    ],
+    "content": {
+      "id": "123",
+      "episode": 5,
+      "title": "title",
+      "series": "auto",
+      "season": "s3",
+      "producer": {
+        "id": "123",
+        "name": "prod",
+        "cat": [
+          "IAB1-2"
+        ],
+        "domain": "prod.com"
+      },
+      "url": "content.com",
+      "cat": [
+        "IAB1-3",
+        "IAB5-7"
+      ],
+      "videoquality": 2,
+      "context": 1,
+      "contentrating": "MPAA",
+      "userrating": "middle",
+      "qagmediarating": 2,
+      "keywords": "kw1,kw2",
+      "livestream": 1,
+      "sourcerelationship": 1,
+      "len": 30,
+      "language": "ru",
+      "embeddable": 0
+    }
+  },
+  "device": {
+    "ua": "ua",
+    "geo": {
+      "lat": 42.42,
+      "lon": 24.24,
+      "type": 1,
+      "country": "country",
+      "region": "region",
+      "regionfips104": "regionFips",
+      "metro": "metro",
+      "city": "city",
+      "zip": "zip",
+      "utcoffset": 14
+    },
+    "dnt": 1,
+    "lmt": 2,
+    "ip": "ip",
+    "ipv6": "ipv6",
+    "devicetype": 8,
+    "make": "make",
+    "model": "model",
+    "os": "os",
+    "osv": "osv",
+    "hwv": "hwv",
+    "h": 3,
+    "w": 4,
+    "ppi": 5,
+    "pxratio": 6.0,
+    "js": 7,
+    "flashver": "flashver",
+    "language": "language",
+    "carrier": "carrier",
+    "connectiontype": 9,
+    "ifa": "ifa",
+    "didsha1": "didsha1",
+    "didmd5": "didmd5",
+    "dpidsha1": "dpidsha1",
+    "dpidmd5": "dpidmd5",
+    "macsha1": "macsha1",
+    "macmd5": "macmd5"
+  },
+  "user": {
+    "id": "id",
+    "yob": 2000,
+    "gender": "M",
+    "keywords": "keywords",
+    "geo": {
+      "lat": 42.42,
+      "lon": 24.24,
+      "type": 1,
+      "country": "country",
+      "region": "region",
+      "regionfips104": "regionFips",
+      "metro": "metro",
+      "city": "city",
+      "zip": "zip",
+      "utcoffset": 14
+    }
+  },
+  "test": 1,
+  "tmax": 2,
+  "regs": {
+    "coppa": 42
+  }
+}

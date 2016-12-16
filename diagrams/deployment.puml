@@ -1,0 +1,38 @@
+@startuml
+
+node "API Host" {
+
+    node APIImage [
+        <<image>>
+        <b>API</b>
+    ]
+
+    node PostgreSQLImage [
+        <<image>>
+        <b>PostgreSQL</b>
+    ]
+
+    APIImage -left- PostgreSQLImage
+}
+
+node "UI Host" {
+
+    node UIImage [
+        <<image>>
+        <b>UI</b>
+    ]
+
+    UIImage -- APIImage
+}
+
+
+node "RTB Host" {
+
+    node RtbExchangeImage [
+        <<image>>
+        <b>RtbExchange</b>
+    ]
+}
+RtbExchangeImage -- PostgreSQLImage
+
+@enduml

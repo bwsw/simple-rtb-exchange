@@ -1,0 +1,92 @@
+@startuml
+
+title RTB request processing: getting AdResponse
+
+participant RequestActor
+participant BidRequestActor
+participant BidActor
+participant WinBidActor
+participant Bidder
+participant AdResponseFactory
+participant Parser
+participant Validator
+participant Writer
+
+activate RequestActor
+
+
+create BidRequestActor
+RequestActor -> BidRequestActor: new(BidRequest, AdRequest)
+RequestActor -> BidRequestActor: HandleRequest
+activate BidRequestActor
+
+create BidActor
+BidRequestActor -> BidActor: new
+
+create WinBidActor
+BidRequestActor -> WinBidActor: new
+
+BidRequestActor -> BidActor: BidRequest
+activate BidActor
+BidActor -> Writer: BidRequest
+activate Writer
+Writer --> BidActor: HTTP request
+deactivate Writer
+
+BidActor -> Bidder: HTTP request
+activate Bidder
+opt Got HTTP response
+    BidActor <-- Bidder: HTTP response
+    deactivate Bidder
+
+    BidActor -> Parser: HTTP response
+    activate Parser
+
+    BidActor <-- Parser: BidResponse/Parsing fail
+    deactivate Parser
+    opt HTTP response parsed to BidResponse
+        BidActor -> Validator: BidResponse
+        activate Validator
+        BidActor <-- Validator: true/false
+        deactivate Validator
+        opt BidResponse is valid
+            BidRequestActor <<- BidActor: BidResponse
+        end
+    end
+end
+
+deactivate BidActor
+    
+BidRequestActor -> BidRequestActor: Auction
+
+alt Win Bidder is found
+    BidRequestActor -> WinBidActor: Winner BidResponse
+    activate WinBidActor
+    opt BidResponse has winurl
+        WinBidActor -> Bidder: HTTP request
+        activate Bidder
+        opt If ad url/markup not in BidResponse
+            WinBidActor <-- Bidder: HTTP response
+            deactivate Bidder
+        end
+    end
+    BidRequestActor <-- WinBidActor: BidResponse with ad url/markup
+    deactivate WinBidActor
+
+    BidRequestActor -> AdResponseFactory: BidResponse
+    activate AdResponseFactory
+    BidRequestActor <-- AdResponseFactory: AdResponse
+    deactivate AdResponseFactory
+
+else Win Bidder is not found
+    BidRequestActor -> AdResponseFactory: Error
+    activate AdResponseFactory
+    BidRequestActor <-- AdResponseFactory: AdResponse
+    deactivate AdResponseFactory
+end
+
+BidRequestActor ->> RequestActor: AdResponse
+deactivate BidRequestActor
+deactivate RequestActor
+
+@enduml
