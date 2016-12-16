@@ -189,7 +189,6 @@ class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
     }
   }
 
-
   it should "throw exception if all impressions contains empty adm" in {
     val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
