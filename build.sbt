@@ -54,23 +54,3 @@ artifact in(Compile, assembly) := {
 }
 
 addArtifact(artifact in(Compile, assembly), assembly)
-
-import sbt.complete.DefaultParsers._
-val testE2E = inputKey[Unit]("Integration testing")
-testE2E := {
-  val args: Seq[String] = spaceDelimited("<arg>").parsed
-  val (env, bidderHost, reportPath) = if (args.length == 3) {
-    (args(0), args(1), args(2))
-  } else {
-    sys.error("""usage: "testE2E <env> <bidder_host> <report_path>"""")
-  }
-  val assemblyPath = assembly.value.getPath
-  val result = {
-    s"make -C e2e execute ENV=$env BIDDER_HOST=$bidderHost " +
-      s"REPORT_PATH=$reportPath ASSEMBLY=$assemblyPath" !
-  }
-  if (result != 0) {
-    sys.error("Integration tests failed")
-  }
-}
-

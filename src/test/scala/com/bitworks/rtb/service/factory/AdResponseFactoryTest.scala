@@ -6,8 +6,13 @@ import com.bitworks.rtb.model.ad.response.{Error, ErrorCode}
 import com.bitworks.rtb.model.http.Json
 import com.bitworks.rtb.model.request.builder.{BannerBuilder, NativeBuilder, VideoBuilder}
 import com.bitworks.rtb.model.response.builder.{BidBuilder, BidResponseBuilder, SeatBidBuilder}
-import com.bitworks.rtb.service.DataValidationException
+import com.bitworks.rtb.service.{Configuration, DataValidationException}
+import com.typesafe.config.ConfigFactory
+import org.easymock.EasyMock._
+import org.scalatest.easymock.EasyMockSugar
 import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.JavaConversions.mapAsJavaMap
 
 /**
   * Test for
@@ -15,10 +20,19 @@ import org.scalatest.{FlatSpec, Matchers}
   *
   * @author Egor Ilchenko
   */
-class AdResponseFactoryTest extends FlatSpec with Matchers {
+class AdResponseFactoryTest extends FlatSpec with Matchers with EasyMockSugar {
+
+  val unknownErrorMsg = "UNKNOWN_ERROR"
+  val errorMessages = ConfigFactory.parseMap(Map("UNKNOWN_ERROR" -> unknownErrorMsg))
+
+  val configuration = mock[Configuration]
+  expecting {
+    configuration.errorMessages.andStubReturn(errorMessages)
+    replay(configuration)
+  }
 
   "AdResponseFactory" should "return AdResponse with banner correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
@@ -60,7 +74,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
   }
 
   it should "return AdResponse with video correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
@@ -102,7 +116,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
   }
 
   it should "return AdResponse with native correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(
@@ -144,7 +158,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
   }
 
   it should "throw exception if cant determine type of all impressions by request" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val anotherImpId = "anotherImpId"
     val adMarkup = "admarkup"
@@ -175,8 +189,9 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
     }
   }
 
+
   it should "throw exception if all impressions contains empty adm" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adRequest = AdRequestBuilder(
       "reqId",
@@ -204,10 +219,8 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
     }
   }
 
-  val unknownErrorMsg = "Unknown error"
-
   it should "build ad response with error correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val error = Error(ErrorCode.UNKNOWN_ERROR.id, unknownErrorMsg)
     val adRequest = AdRequestBuilder("reqId", Seq(), Json).build
     val expectedResponse = AdResponseBuilder(adRequest.ct)
@@ -221,7 +234,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
   }
 
   it should "build ad response with error and without ad request correctly" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val error = Error(ErrorCode.UNKNOWN_ERROR.id, unknownErrorMsg)
     val expectedResponse = AdResponseBuilder(Json)
       .withError(error)
@@ -233,7 +246,7 @@ class AdResponseFactoryTest extends FlatSpec with Matchers {
   }
 
   it should "build ad response with valid imps ignoring invalid" in {
-    val factory = new AdResponseFactoryImpl
+    val factory = new AdResponseFactoryImpl(configuration)
     val impId = "impId"
     val adMarkup = "admarkup"
     val adRequest = AdRequestBuilder(

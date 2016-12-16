@@ -43,10 +43,10 @@ else HTTP request not parsed to AdRequest
     RequestActor <-- Parser: fail
     deactivate Parser
 
-    RequestActor -> BidRequestFactory: Error
-    activate BidRequestFactory
-    RequestActor <-- BidRequestFactory: AdResponse
-    deactivate BidRequestFactory
+    RequestActor -> AdResponseFactory: Error
+    activate AdResponseFactory
+    RequestActor <-- AdResponseFactory: AdResponse
+    deactivate AdResponseFactory
 end
 
 RequestActor -> Writer: AdResponse
